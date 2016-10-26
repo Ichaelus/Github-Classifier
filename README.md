@@ -10,6 +10,8 @@
 * "Namespaces"
   * Markante Wörter je nach Klasse
   * Relativ zur Readme Länge
+  * Initiale Bewertung, falls Wahrscheinlichkeit > x% direkte Klassifikation
+  * Ansonsten Entscheidungsfindung durch SVM bzw. Klassenspezifischen Merkmalen
   
 ## Wie wählt man Samples aus?
 
