@@ -1,16 +1,40 @@
 /*
   Author: Michael Leimstädtner
+  JQuery has to be accessible (like on stackoverflow)
   */
+getRepos();
 
-let max_id = 5 * Math.pow(10, 7), // GitHub's current repo amount -1 * 10**7, older repos are more likely to be complete
-    id = Math.random(max_id);
+var client_id = prompt("Please insert your client id"),
+    client_secret = prompt("Please insert your client secret"),
+    oAuth = "client_id="+ client_id + "&client_secret=" + client_secret,
+    min_feedback = 100; // # watches + stars + forks
 
 function getRepos(){
+  // Goes through a random list of repos and, if it fits our needs, adds them to a list
+  console.log("Repocrawler started..");
+  let max_id = 5 * Math.pow(10, 7), // GitHub's current repo amount -1 * 10**7, older repos are more likely to be complete
+    id = Math.floor(Math.random() * max_id);
+  
   runGenerator(function *main(){
+     
       //yield Promise.all(actions);
-     let repoList = yield jQGetPromise('https://api.github.com/repositories?since=' + id, "json");
-      alert("yay");
-     console.log(repoList);
+     let repoList = yield jQGetPromise('https://api.github.com/repositories?since=' + id + "&" + oAuth, "json");
+      console.log(repoList);
+    let repo_urls = repoList.map(function(elem, i){
+      return jQGetPromise(elem.url + "?" + oAuth, "json");
+    });
+    let repos = yield Promise.all(repo_urls);
+    console.log(repos);
+    let result = [],
+        resultstring = "";
+    for(let i = 0; i < repos.length; i++){
+      if(parseInt(repos[i].stargazers_count) + parseInt(repos[i].watchers_count) + parseInt(repos[i].forks_count) >= min_feedback){
+        result.push(repos[i]);
+        resultstring += repos[i].html_url + "\n";
+      }
+    }
+    console.log(result);
+    alert(resultstring);
   });
 }
 
