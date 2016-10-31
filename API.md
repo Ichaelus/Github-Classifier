@@ -22,6 +22,11 @@ Liefert die Anzahl der betroffenen Datensätzen.
 Ein Shortcut for api:all mit entsprechenden Class Filter. Anwendung:
 `/?key=api:class&name=CLASSNAME`
 
+### api:class-count
+
+Kombination der obigen. Liefert die Anzahl der Samples pro Klasse zurück.
+
+
 ## Filtern
 
 Das `filter` Attribut kann, wenn gesetzt, mit einem **base 64 encodierten** Array der Form [attribut1=wert1,...] gefüllt werden. Neben dem Operator `=` können, wenn sinnvoll, auch die Operatoren `<, <=, >, >=` verwendet werden.
