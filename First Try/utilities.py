@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as numpy
 from sklearn.feature_extraction.text import TfidfVectorizer
 import os
@@ -21,7 +22,7 @@ def api_call(url='http://classifier.leimstaedtner.it/ajax.php?key=api:all'):
         print 'Error with api call', e
     return data
 
-
+#nimmt die ersten ratio * 100% elemente zum trainieren, rest zum testen
 def split_train_test(features, labels, ratio=0.7):
     cut = int(ratio * len(features))
     features_train, labels_train = features[:cut], labels[:cut]
@@ -29,6 +30,10 @@ def split_train_test(features, labels, ratio=0.7):
     
     return (features_train, features_test, labels_train, labels_test)
 
+# wandelt text in matrix um, stop_words sind die ausfilterung 
+# von unwichtigen wörtern
+# https://de.wikipedia.org/wiki/Tf-idf-Maß
+# http://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
 def get_feature_vec(features):
     vectorizer = TfidfVectorizer(sublinear_tf=True,
                             #stop_words='english',
@@ -39,9 +44,10 @@ def get_feature_vec(features):
     feature_vec = vectorizer.fit_transform(features)
     return feature_vec.toarray()
 
-def get_synonyms(str):
-	synonyms = []
-	for syn in wn.synsets(str):
-	    for x in syn.lemmas():
-	        synonyms.append(x.name())
-	return synonyms
+# wird im moment nicht verwendet, kann aber später hilfreich sein
+#def get_synonyms(str):
+	#synonyms = []
+	#for syn in wn.synsets(str):
+	    #for x in syn.lemmas():
+	        #synonyms.append(x.name())
+	#return synonyms
