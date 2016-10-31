@@ -9,18 +9,29 @@ Alle Abfragen werden via `GET` an den host `http://classifier.leimstaedtner.it/a
 
 ## Key Attribute
 
+### api:all
+
+Gibt ungefiltert alle Datensätze aus.
+
+### api:class
+
+Ein Shortcut for api:all mit entsprechenden Class Filter. Anwendung:
+`/?key=api:class&name=CLASSNAME`
+
 ## Filtern
 
 Das `filter` Attribut kann, wenn gesetzt, mit einem **base 64 encodierten** Array der Form [attribut1=wert1,...] gefüllt werden. Neben dem Operator `=` können, wenn sinnvoll, auch die Operatoren `<, <=, >, >=` verwendet werden.
 Werden verschiedene Attributfilter mit einem `,` getrennt, resultiert das in eine **AND** Verknüpfung. Will man hingegen eine **OR** Verknüfung, reicht es ein `|` Symbol anstelle des Kommas zu verwenden. (OR bindet hier stärker(!) als AND).
 
-** Beispiel **
+**Beispiel**
 ```javascript 
 btoa("[class=DEV|HW,stars>3]");
 ```
 erzeugt den Filter-Wert der obigen Beispiel-Url. Das SQL Äquivalent ist:
 
-`SELECT ... WHERE (class = DEV OR class = HW) AND stars > 3`
+```sql
+SELECT ... WHERE (class = DEV OR class = HW) AND stars > 3
+```
 
 Mögliche Filterattribute:
 <table>
