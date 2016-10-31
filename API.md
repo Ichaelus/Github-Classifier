@@ -5,7 +5,7 @@
 Alle Abfragen werden via `GET` an den host `http://classifier.leimstaedtner.it/ajax.php` gesendet. Das Attribut `key` unterscheidet dann die gewünschte Grundmenge, `filter` dient zur Verfeinerung der Resultate.
 
 **Beispiel-Url:**
-`http://classifier.leimstaedtner.it/ajax.php?key=api:all&filter=W2NsYXNzPURFVnxIVyxzdGFycz4zXQ==`
+`http://classifier.leimstaedtner.it/ajax.php?key=api:all&filter=Y2xhc3M9REVWfEhXLHN0YXJzPjM=`
 
 ## Key Attribute
 
@@ -25,7 +25,7 @@ Werden verschiedene Attributfilter mit einem `,` getrennt, resultiert das in ein
 
 **Beispiel**
 ```javascript 
-btoa("[class=DEV|HW,stars>3]");
+btoa("class=DEV|HW,stars>3");
 ```
 erzeugt den Filter-Wert der obigen Beispiel-Url. Das SQL Äquivalent ist:
 
