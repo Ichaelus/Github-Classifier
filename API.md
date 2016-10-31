@@ -13,6 +13,10 @@ Alle Abfragen werden via `GET` an den host `http://classifier.leimstaedtner.it/a
 
 Gibt ungefiltert alle Datensätze aus.
 
+### api:count
+
+Liefert die Anzahl der betroffenen Datensätzen.
+
 ### api:class
 
 Ein Shortcut for api:all mit entsprechenden Class Filter. Anwendung:
