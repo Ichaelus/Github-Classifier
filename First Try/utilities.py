@@ -1,19 +1,12 @@
 import numpy as numpy
 from sklearn.feature_extraction.text import TfidfVectorizer
-import requests
 import os
-from bs4 import BeautifulSoup
-import nltk
+#import nltk
 import base64
 import random
-from utilities import *
 import json
 from urllib2 import Request, urlopen, URLError
 
-# For synonyms, corpus must be downloaded first via nltk.download()
-# filesize < 12 MB
-# Probably not as useful as I hoped
-from nltk.corpus import wordnet as wn
 
 
 def text_from_base64(text):
