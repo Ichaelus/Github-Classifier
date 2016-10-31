@@ -13,6 +13,36 @@ from urllib2 import Request, urlopen, URLError
 def text_from_base64(text):
     return base64.b64decode(text)
 
+def process_text(text):
+    return 2
+
+
+def get_data(whatIWant='description'):
+    # Standardmäßig wird NUR die description verwendet, nicht die readme
+
+    #hole data als dict
+    data = api_call()
+    #liste mit strings von den feature texten
+    texts = []
+    #die namen der klassen
+    label_names = []
+    #die klassen
+    labels = []
+    # vectorizer braucht liste von strings, hier wirds umgewandelt
+    for i in xrange(len(data)):
+        if whatIWant == 'readme':
+            #nur die readme ist anscheinend decoded
+            text = text_from_base64(data[i][whatIWant])
+        text = data[i][whatIWant]
+        text = text.replace('\n', ' ')
+        texts.append(text)
+        label = data[i]['class']
+        if label not in label_names:
+            label_names.append(label)
+        labels.append(label_names.index(label))
+    return (texts, labels, label_names)
+
+
 def api_call(url='http://classifier.leimstaedtner.it/ajax.php?key=api:all'):
     request = Request(url)
     try:
@@ -34,7 +64,7 @@ def split_train_test(features, labels, ratio=0.7):
 # von unwichtigen wörtern
 # https://de.wikipedia.org/wiki/Tf-idf-Maß
 # http://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
-def get_feature_vec(features):
+def vectorize_text(features):
     vectorizer = TfidfVectorizer(sublinear_tf=True,
                             #stop_words='english',
                             decode_error='strict',
