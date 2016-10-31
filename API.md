@@ -30,7 +30,7 @@ btoa("class=DEV|HW,stars>3");
 erzeugt den Filter-Wert der obigen Beispiel-Url. Das SQL Äquivalent ist:
 
 ```sql
-SELECT ... WHERE (class = DEV OR class = HW) AND stars > 3
+SELECT ... WHERE  ( `class` = 'DEV' OR `class` = 'HW' ) AND  ( `stars` > '3' )
 ```
 
 Mögliche Filterattribute:
