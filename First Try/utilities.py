@@ -16,6 +16,12 @@ def text_from_base64(text):
 def process_text(text):
     return 2
 
+def shuffle_data(x_train, y_train):
+    x = list(zip(x_train, y_train))
+    random.shuffle(x)
+    x_train, y_train = zip(*x)
+    return x_train, y_train
+
 
 def get_data(whatIWant='description'):
     # Standardmäßig wird NUR die description verwendet, nicht die readme
@@ -53,10 +59,14 @@ def api_call(url='http://classifier.leimstaedtner.it/ajax.php?key=api:all'):
     return data
 
 #nimmt die ersten ratio * 100% elemente zum trainieren, rest zum testen
-def split_train_test(features, labels, ratio=0.7):
+def split_train_test(features, labels, ratio=0.7, shuffle=True):
     cut = int(ratio * len(features))
     features_train, labels_train = features[:cut], labels[:cut]
     features_test, labels_test = features[cut:], labels[cut:]
+    
+    # Shuffle data for better training results
+    if shuffle:
+        features_train, labels_train = shuffle_data(features_train, labels_train)
     
     return (features_train, features_test, labels_train, labels_test)
 

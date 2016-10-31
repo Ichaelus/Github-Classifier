@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Oct 27 11:58:08 2016
+Created on Thu Oct 31 19:26:08 2016
 
 @author: andreas
 """
@@ -17,12 +17,13 @@ texts, labels, label_names = get_data()
 features = vectorize_text(texts)
 
 # x sind die eingabematrizen, y sind die vektoren in denen die ergebnisse stehen
-x_train, x_test, y_train, y_test = split_train_test(features, labels, ratio=0.5)
-
+x_train, x_test, y_train, y_test = split_train_test(features, labels, ratio=0.7)
 
 # das trainieren mit den daten
-from sklearn.naive_bayes import GaussianNB
-clf = GaussianNB()
+from sklearn.svm import  SVC
+
+# TODO: Experimentiere mit C, Gamma
+clf = SVC(C=1000., kernel='rbf')
 clf.fit(x_train, y_train)
 
 #variablen zum analysieren der ergebnisse
@@ -41,6 +42,7 @@ for i in xrange(len(x_test)):
         dev_count = dev_count + 1
 succ = succ / float(total)
 
-print "Ratio predicted Dev vs all classes", dev_count / float(len(x_test))
+print "Ratio assumed dev/ all classes", float(dev_count) / len(x_test)
 print "Result without dev:", succ
 print "Result with dev: ", clf.score(x_test, y_test)
+
