@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import numpy as numpy
+import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 import os
 #import nltk
@@ -7,14 +7,22 @@ import base64
 import random
 import json
 from urllib2 import Request, urlopen, URLError
+import re
 
 
+def one_hot_encoding(labels):
+    # Zur Zeit des Tests war nicht garantiert, dass alle 7 Klassen vertreten waren
+    # One Hot Encoding muss aber für Models immer gleiche Anzahl an Spalten haben
+    arr = np.zeros((len(labels), 7), np.uint8)
+    arr[np.arange(len(labels)), labels] = 1
+    return arr
 
 def text_from_base64(text):
     return base64.b64decode(text)
 
 def process_text(text):
-    return 2
+
+    return text
 
 def shuffle_data(x_train, y_train):
     x = list(zip(x_train, y_train))
@@ -40,7 +48,7 @@ def get_data(whatIWant='description'):
             #nur die readme ist anscheinend decoded
             text = text_from_base64(data[i][whatIWant])
         text = data[i][whatIWant]
-        text = text.replace('\n', ' ')
+        #text = text.replace('\n', ' ')
         texts.append(text)
         label = data[i]['class']
         if label not in label_names:
@@ -76,7 +84,7 @@ def split_train_test(features, labels, ratio=0.7, shuffle=True):
 # http://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
 def vectorize_text(features):
     vectorizer = TfidfVectorizer(sublinear_tf=True,
-                            #stop_words='english',
+                            stop_words='english',
                             decode_error='strict',
                             analyzer='word',
                             max_df=0.5 # Verwendet im ML-Kurs unter Preprocessing                   
