@@ -13,6 +13,10 @@ Alle Abfragen werden via `GET` an den host `http://classifier.leimstaedtner.it/a
 
 Gibt ungefiltert alle Datensätze aus.
 
+### api:equal
+
+Gibt je Klasse gleich viele Datensätze zurück.
+
 ### api:count
 
 Liefert die Anzahl der betroffenen Datensätzen.
