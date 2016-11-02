@@ -40,5 +40,7 @@
 * Tf-Idf (https://de.wikipedia.org/wiki/Tf-idf-Ma%C3%9F)
 * Word2Vec (http://sebastianruder.com/word-embeddings-1/)
 * Doc2Vec (https://linanqiu.github.io/2015/10/07/word2vec-sentiment/)
-
-  
+* Feature Hashing (https://en.wikipedia.org/wiki/Feature_hashing)
+* Libraries:
+  * http://scikit-learn.org/stable/modules/feature_extraction.html
+  * (Gensim für Word2Vec, Doc2Vec) https://rare-technologies.com/doc2vec-tutorial/
