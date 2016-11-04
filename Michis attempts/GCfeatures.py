@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from subprocess import call
 import urllib2, json, base64, string, operator, math, copy, sys, io
+from nltk.stem import PorterStemmer
 
 #### PYTHON 3 ONLY
 # Simple approach to gain filtered and therefore useful wordlists/clouds out of text files such as readme.md
@@ -57,6 +58,11 @@ class PrettyWords:
 
     def generate_histogram(self):
         print("Generating histogram")
+
+        # Create Stemmer to shorten every word
+        # See https://de.wikipedia.org/wiki/Porter-Stemmer-Algorithmus
+        stemmer = PorterStemmer()
+
         for sample in self.data:
             # Adds words to the class specific list
             readme = base64.b64decode(sample["readme"]).decode("utf-8")
@@ -67,6 +73,7 @@ class PrettyWords:
                 readme_codefree += no_code
             #print(readme_codefree)
             for word in [elem.strip(string.punctuation) for elem in readme_codefree.split()]:
+                word = stemmer.stem(word)
                 # Split readme_codefree into words and count up
                 if(len(word) > 0):
                     if not word.lower() in self.wordlist[sample["class"]]:
