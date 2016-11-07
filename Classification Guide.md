@@ -8,8 +8,8 @@
   </tr>
   <tr>
     <td>Themes</td>
+    <td></td>
     <td>https://github.com/tmaiaroto/hugo-redlounge</td>
-    <td>http://classifier.leimstaedtner.it/?x</td>
   </tr>
 </table>
   
