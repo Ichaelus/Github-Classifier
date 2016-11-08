@@ -44,3 +44,6 @@
 * Libraries:
   * http://scikit-learn.org/stable/modules/feature_extraction.html
   * (Gensim für Word2Vec, Doc2Vec) https://rare-technologies.com/doc2vec-tutorial/
+
+## Tools
+* Lime: Explaining the predictions of any machine learning classifier (https://github.com/marcotcr/lime)
