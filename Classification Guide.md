@@ -20,5 +20,20 @@
   <td>Programmierbücher</td>
   <td>EDU</td>
   <td>https://github.com/davicav/grayhat</td>
+  </tr>
+  <tr>
+  <td>Fremdsprachige Repos</td>
+  <td></td>
+  <td>https://github.com/jinxingxing/DNSwitcher</td>
+  </tr>
+  <tr>
+  <td>Implementation Examples</td>
+  <td></td>
+  <td>https://github.com/jamesward/P2Pong</td>
+  </tr>
+  <tr>
+  <td>Simple Forks</td>
+  <td></td>
+  <td></td>
 </table>
   
