@@ -118,6 +118,12 @@
     <td>https://github.com/walmartlabs/hapi-example</td>
   </tr>
   <tr>
+    <td>Implementations</td>
+    <td></td>
+    <td>https://github.com/Nilead/NileadOmniBaoKim</td>
+  </tr>
+  
+  <tr>
   <tr>
     <td>Code für wissensch. Papers</td>
     <td></td>
