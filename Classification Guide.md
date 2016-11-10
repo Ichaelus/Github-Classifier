@@ -92,6 +92,12 @@
     <td>https://github.com/ggustafsson/Dot-Files</td>
   </tr>
   <tr>
+    <td>List of software</td>
+    <td>DOCS</td>
+    <td>https://github.com/opensandiego/awesome-civic</td>
+  </tr>
+  
+  <tr>
     <td>Code snippets</td>
     <td>DOCS</td>
     <td>https://github.com/rShetty/Explore-C</td>
