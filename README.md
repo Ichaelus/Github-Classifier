@@ -21,6 +21,10 @@
 * Liste aller Repositories ab Id:x https://api.github.com/repositories?since=<x>
   * Auswahl an Repos mit Watch + Star + Fork > 100 (e.g.)
 
+## Classification Scheme
+
+<img src="https://github.com/Ichaelus/GithubClassificator/raw/master/classificator-skizze.png">
+
 ## Mögliche Classifier
 
 * Naive Bayes, SVM
