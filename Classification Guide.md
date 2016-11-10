@@ -48,7 +48,7 @@
   </tr>
   <tr>
     <td>Tutorials</td>
-    <td>DEV / EDU?</td>
+    <td>DEV / **EDU**?</td>
     <td>https://github.com/pirelenito/nodejs-in-production</td>
   </tr>
   <tr>
