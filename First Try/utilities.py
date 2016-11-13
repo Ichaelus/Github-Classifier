@@ -67,8 +67,8 @@ def text_from_base64(text):
         text = base64.b64decode(text)
     except TypeError:
         print "Error decoding readme"
-
     return text
+
 
 def process_text(text):
     # Process string
@@ -79,7 +79,6 @@ def process_text(text):
         for no_code in text.split("```")[::2]:
             # skip content code in e.g.  blalba```code```blabla
             readme_codefree += no_code
-        #for word in readme_codefree.split():
         # Remove urls
         readme_urlfree = re.sub(r'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)', ' ', readme_codefree)
         for word in ((char if char.isalpha() else " ") for char in readme_urlfree):
@@ -97,7 +96,7 @@ def shuffle_data(a, b):
     return sklearn.utils.shuffle(a, b)
 
 
-def get_data(whatIWant='description', binary = False, equal=False):
+def get_data(whatIWant='description', binary = False, equal=False, no_dev=False):
     # Standardmäßig wird NUR die description verwendet, nicht die readme
 
     #hole data als dict
@@ -143,11 +142,13 @@ def get_data(whatIWant='description', binary = False, equal=False):
                 label = 'NOTDEV'
         else:
             label = data[i]['class']
-        if label not in label_names:
-            label_names.append(label)
         
-        features.append(feature)
-        labels.append(label_names.index(label))
+        
+        if not no_dev or label != 'DEV':
+            if label not in label_names:
+                label_names.append(label)
+            features.append(feature)
+            labels.append(label_names.index(label))
         #if i % 50 == 0:
         #    print "{} repos processed".format(i)
     return (features, labels, label_names)
@@ -193,8 +194,9 @@ def vectorize_text(features, max_features=2000):
                             stop_words='english',
                             decode_error='strict',
                             analyzer='word',
-                            max_features=max_features,
-                            max_df=0.5 # Verwendet im ML-Kurs unter Preprocessing                   
+                            ngram_range=(1, 2),
+                            max_features=max_features
+                            #max_df=0.5 # Verwendet im ML-Kurs unter Preprocessing                   
                             )
     feature_vec = vectorizer.fit_transform(features)
     return feature_vec.toarray(), vectorizer
