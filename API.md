@@ -32,13 +32,13 @@ Kombination der obigen. Liefert die Anzahl der Samples pro Klasse zurück.
 
 ### api:generate_sample_url
 
-Gibt die Url eines **zufälligen** Github repositorys  zurück.
+Gibt die API-Url eines **zufälligen** Github repositorys  zurück.
 
 `client_id` und `client_secret` müssen mit übergeben werden!
 
 ### api:generate_sample
 
-Für diese Funktion muss ein Parameter `url` gesetzt sein. Für das angegebene repository wird damit ein ungelabelter Datenbankeitnrag bzw. Klassifikationsvektor generiert und im JSON Format ausgegeben.
+Diese Funktion ist vom Parameter `api-url` abhängig. Für das angegebene repository wird damit ein ungelabelter Datenbankeitnrag bzw. Klassifikationsvektor generiert und im JSON Format ausgegeben. Ist `api-url` leer oder nicht gesetzt, wird ein zufälliges sample generiert.
 
 `client_id` und `client_secret` müssen mit übergeben werden!
 
