@@ -38,6 +38,19 @@ try{
                     $data = $db->select("SELECT * FROM `samples` $filter");
                     print(json_encode($data));
                     break;
+                case "api:single":
+                    $data = $db->select("SELECT * FROM `repositories` WHERE class != 'UNLABELED' AND class != 'SKIPPED'  ORDER BY RAND() LIMIT 0, 1");
+                    if(count($data) == 0)
+                        throw new Exception("There is no classified sample.");
+                    print(json_encode($data[0]));
+                    break;
+                case "api:single-unlabeled":
+                case "api:single-unclassified":
+                    $data = $db->select("SELECT * FROM `repositories` WHERE class = 'UNLABELED' LIMIT 0, 1");
+                    if(count($data) == 0)
+                        throw new Exception("There is no unclassified sample.");
+                    print(json_encode($data[0]));
+                    break;
                 case "api:equal":
                     $mdata = $db->select("SELECT COUNT(*) AS minimum FROM samples GROUP BY class ORDER BY minimum LIMIT 0, 1");
                     $minimum = $mdata[0]["minimum"];
@@ -106,7 +119,7 @@ try{
     }
 
 }catch(Exception $e){
-    print(json_encode(array("Error: " => $e->getMessage())));
+    print(json_encode(array("Error" => $e->getMessage())));
 }
 function post_attr($name){
     global $db;
@@ -128,16 +141,15 @@ if(isset($_POST['key'])){
                 break;
             case "skip":
                 // Remove repo link
-                $db->query("DELETE FROM `todo` WHERE `url` = '".post_attr('api_url')."'");
+                $db->query("UPDATE `repositories` SET `class` = 'SKIPPED' WHERE `id` = '".post_attr('id')."'");
                 break;
             case "classify":
-                // Add repo to list
-                $qID = $db->select("SELECT id FROM `repositories` WHERE `class` != 'UNLABELED' AND  `url` = '".post_attr('url')."'");
+                // Classify a generated repo
+                $qID = $db->select("SELECT id FROM `repositories` WHERE `id` = '".post_attr('id')."'");
                 if(count($qID) != 0){
-                    $query = "UPDATE `repositories` SET `class` = '".post_attr('class')."' WHERE `id` = '".$qID[0]["id"]."'";
-                    $db->update($query);
-                    print "Repository classified.";
-                    #print(is_numeric($iid) ? "success" : "error");
+                    $query = "UPDATE `repositories` SET `class` = '".post_attr('class')."', `tagger` = '".post_attr('tagger')."' WHERE `id` = '".post_attr('id')."'";
+                    $db->query($query);
+                    print $query; //"Repository classified.";;
                 }else{
                     print("error: sample not generated");
                 }
@@ -253,19 +265,13 @@ function generateRepoVector($url){
     if($languages == null)
         $languages = array();
     $readme_exists = false;
-    //$folderstring = ""; $fileString = "";
+    $folders = array(); $files = array();
     for($i = 0; $i < count($treeObj["tree"]); $i++){
-      $readme_exists = $readme_exists || (strpos(strtolower($treeObj["tree"][$i]["path"]), "readme") >= 0);
-      $tmp = 
-        '<div title="'.$treeObj["tree"][$i]["type"].'" class="col-xs-12 '.$treeObj["tree"][$i]["type"].'">
-            <div class="col-xs-12">'.$treeObj["tree"][$i]["path"].'</div>
-            <div class="col-xs-0"></div>
-            <div class="col-xs-0"></div>
-        </div>';
+        $readme_exists = $readme_exists || (strpos(strtolower($treeObj["tree"][$i]["path"]), "readme") >= 0);
         if($treeObj["tree"][$i]["type"] == "blob"){
-          $fileString .= $tmp;
+            $files[] = $treeObj["tree"][$i]["path"];
         }else{ // folder or commit
-          $folderstring .= $tmp;
+            $folders[] = $treeObj["tree"][$i]["path"];
         }
     }
 
@@ -286,7 +292,9 @@ function generateRepoVector($url){
       "commit_interval_max" => max($commit_intervals),
       "contributors_count" =>  count($contributors),
       "description" =>  $repo["description"] != null ? $repo["description"] : "",
+      "files" => join(" ", $files),
       "file_count" => $treeData["file_count"],
+      "folders" => join(" ", $folders),
       "folder_count" => $treeData["folder_count"],
       "forks" =>  $repo["forks_count"],
       "hasDownloads" => $repo["has_downloads"],
