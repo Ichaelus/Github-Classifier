@@ -20,7 +20,7 @@ Gibt einen zufälligen klassifizierten Datensatz zurück.
 ### api:single-unlabeled
 ### api:single-unclassified
 
-Gibt einen zufälligen klassifizierten Datensatz zurück.
+Gibt den nächsten unklassifizierten Datensatz zurück.
 
 ### api:equal
 
