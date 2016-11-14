@@ -5,6 +5,14 @@
 * Evtl. ist es sinnvoll bei jeder Speicherung einen TimeStamp mitzuspeichern
 * Wie viel wollen wir Ensemble-Learning verwenden, lohnt es sich hier ausführlich die Struktur zu modularisieren?
 * Bereits relativ früh eine graphische Oberfläche zu haben könnte sehr wertvoll sein!
+* In der DB eine zusätzliche Tabelle für durch Klassifizierer sicher klassifizierte Repos zum Semi-Supervised-Learning?
+
+## Issues we need to deal with
+
+* Manche Klassifizierungsmodule, vor allem solche, die Ensemble-Learning verwenden, müssen wissen, wieviele Trainingsdaten
+    verfügbar sind, z.B. wenn verschiedene Klassifikatoren für unterschiedliche Features verwendet werden, z.b. 90% 
+    der Daten werden zum Trainieren der Klassifikatoren verwendet und die letzten 10% für das Trainieren der Gewichtungen
+    der unterschiedlichen Klassifikatoren
 
 ## Functions User Can Call Manually
 
@@ -43,6 +51,8 @@
 * consists of several Classificator Moduls to train them at the same time with active learning 
 * Is responsible to coordinate each round and to forward function calls to each classificator
     and to check if a classificator is unsure about something
+* Es wäre sinnvoll wenn wir in jeder Session immer sehen welches Klassifizierungsmodul für wieviele 
+    Nachfragen beim Benutzer verantwortlich ist
 
 
 
