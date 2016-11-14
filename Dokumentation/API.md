@@ -13,6 +13,15 @@ Alle Abfragen werden via `GET` an den host `http://classifier.leimstaedtner.it/a
 
 Gibt ungefiltert alle Datensätze aus.
 
+### api:single
+
+Gibt einen zufälligen klassifizierten Datensatz zurück.
+
+### api:single-unlabeled
+### api:single-unclassified
+
+Gibt einen zufälligen klassifizierten Datensatz zurück.
+
 ### api:equal
 
 Gibt je Klasse gleich viele Datensätze zurück.
