@@ -132,9 +132,19 @@ Mögliche Filterattribute:
 	<td></td>
 </tr>
 <tr>
+	<td>files</td>
+	<td>String Array, separator ' '</td>
+	<td>Files of the first layer</td>
+</tr>
+<tr>
 	<td>file_count</td>
 	<td>Integer</td>
 	<td></td>
+</tr>
+<tr>
+	<td>folders</td>
+	<td>String Array, separator ' '</td>
+	<td>Folders of the first layer</td>
 </tr>
 <tr>
 	<td>folder_count</td>
