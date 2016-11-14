@@ -1,7 +1,11 @@
 <?php
 require('mysqli_class.php');
+require("GitHandler.class.php");
+
 $db = new MYSQL();
 if(!$db->init()){ throw new Exception("Could not connect to the database");}
+
+$apihandler = new GitHandler();
 
 $header = 'Content-Type: text/html; charset=utf-8';
 session_start();
@@ -15,6 +19,137 @@ function get_attr($name){
         return "";
     }
 }
+
+try{
+    if(isset($_GET['key'])){
+        $getkey = $db->check($_GET['key']);
+        if($getkey != ""){
+            switch ($getkey) {
+                case "todolist":
+                    $todos = $db->select("SELECT `url` from `todo`");
+                    print("[");
+                    for ($i=0; $i < count($todos); $i++) { 
+                        print('"'.$todos[$i]["url"] . '"'. ($i + 1 < count($todos) ? ", " : ""));
+                    }
+                    print("]");
+                    break;
+                case "api:all":
+                    $filter = generate_filter();
+                    $data = $db->select("SELECT * FROM `samples` $filter");
+                    print(json_encode($data));
+                    break;
+                case "api:equal":
+                    $mdata = $db->select("SELECT COUNT(*) AS minimum FROM samples GROUP BY class ORDER BY minimum LIMIT 0, 1");
+                    $minimum = $mdata[0]["minimum"];
+                    $class_equal_query = "SELECT
+                                          samples.*
+                                        FROM
+                                          samples INNER JOIN (
+                                            SELECT
+                                              class,
+                                              GROUP_CONCAT(id ORDER BY id DESC) grouped_id
+                                            FROM
+                                              samples
+                                            GROUP BY class) group_max
+                                          ON samples.class = group_max.class
+                                             AND FIND_IN_SET(id, grouped_id) BETWEEN 1 AND $minimum
+                                        ORDER BY
+                                          samples.class DESC";
+                    $data = $db->select($class_equal_query);
+                    print(json_encode($data));
+                    break;
+                case "api:class":
+                    $class = get_attr("name");
+                    $data = $db->select("SELECT * FROM `samples` WHERE `class` = '$class'");
+                    print(json_encode($data));
+                    break;
+                case "api:count":
+                    $filter = generate_filter();
+                    $data = $db->select("SELECT COUNT(*) AS count FROM `samples` $filter");
+                    print($data[0]["count"]);
+                    break;
+                case "api:class-count":
+                    $additional = "";
+                    if(get_attr("tagger") != "")
+                        $additional .= "WHERE `tagger` = '".get_attr("tagger")."'";
+                    $data = $db->select("SELECT class, COUNT(*) AS count FROM `samples` $additional GROUP BY `class`");
+                    print(json_encode($data));
+                    break;
+                case "api:generate_sample_url":
+                    $credentials = $apihandler->getAPItoken(get_attr("client_id"), get_attr("client_secret"));
+                    // Either use passed credentials or rotate through the list
+                    if($credentials == false){
+                        throw new Exception("API token missing.");
+                    }else{
+                        print generateSampleUrl();
+                    }
+                    break;
+                case "api:generate_sample":
+                    $credentials = $apihandler->getAPItoken(get_attr("client_id"), get_attr("client_secret"));
+                    // Either use passed credentials or rotate through the list
+                    if($credentials == false){
+                        throw new Exception("API token missing.");
+                    }else{
+                        $url = trim(get_attr("api-url")) == "" ?  generateSampleUrl() : get_attr("api-url");
+                        // Generate new sample url
+                        $url .= "?" . $credentials;
+                        $vector = generateRepoVector($url);
+                        saveVector($vector);
+                        print(json_encode($vector));
+                    }
+                    break;
+                default:
+                    throw new Exception("Nothing in here.");
+                    break;
+            }//switch
+        }
+    }
+
+}catch(Exception $e){
+    print(json_encode(array("Error: " => $e->getMessage())));
+}
+function post_attr($name){
+    global $db;
+    if(isset($_POST[$name])){
+        return $db->check($_POST[$name]);
+    }else{
+        return "";
+    }
+}
+
+if(isset($_POST['key'])){
+    $postkey = post_attr('key');
+    if($postkey != ""){
+        switch ($postkey) {
+            case "unclassified":
+                // Add repo link only, to be classified
+                $iid = $db -> insert("INSERT INTO `todo` (url) VALUES ('".post_attr('api_url')."')");
+                print(is_numeric($iid) ? "success" : "error");
+                break;
+            case "skip":
+                // Remove repo link
+                $db->query("DELETE FROM `todo` WHERE `url` = '".post_attr('api_url')."'");
+                break;
+            case "classify":
+                // Add repo to list
+                $qID = $db->select("SELECT id FROM `repositories` WHERE `class` != 'UNLABELED' AND  `url` = '".post_attr('url')."'");
+                if(count($qID) != 0){
+                    $query = "UPDATE `repositories` SET `class` = '".post_attr('class')."' WHERE `id` = '".$qID[0]["id"]."'";
+                    $db->update($query);
+                    print "Repository classified.";
+                    #print(is_numeric($iid) ? "success" : "error");
+                }else{
+                    print("error: sample not generated");
+                }
+                break;
+            default:
+                print("Nothing in here.");
+                break;
+        }//switch
+    }
+}
+header($header);
+ob_end_flush();
 
 function generate_filter(){
     # Adds potential filters to the sql query
@@ -64,112 +199,157 @@ function generate_filter(){
     return $filter;
 }
 
-if(isset($_GET['key'])){
-    $getkey = $db->check($_GET['key']);
-    if($getkey != ""){
-        switch ($getkey) {
-            case "todolist":
-                $todos = $db->select("SELECT `url` from `todo`");
-                print("[");
-                for ($i=0; $i < count($todos); $i++) { 
-                    print('"'.$todos[$i]["url"] . '"'. ($i + 1 < count($todos) ? ", " : ""));
-                }
-                print("]");
-                break;
-            case "api:all":
-                $filter = generate_filter();
-                $data = $db->select("SELECT * FROM `samples` $filter");
-                print(json_encode($data));
-                break;
-            case "api:equal":
-                $mdata = $db->select("SELECT COUNT(*) AS minimum FROM samples GROUP BY class ORDER BY minimum LIMIT 0, 1");
-                $minimum = $mdata[0]["minimum"];
-                $class_equal_query = "SELECT
-                                      samples.*
-                                    FROM
-                                      samples INNER JOIN (
-                                        SELECT
-                                          class,
-                                          GROUP_CONCAT(id ORDER BY id DESC) grouped_id
-                                        FROM
-                                          samples
-                                        GROUP BY class) group_max
-                                      ON samples.class = group_max.class
-                                         AND FIND_IN_SET(id, grouped_id) BETWEEN 1 AND $minimum
-                                    ORDER BY
-                                      samples.class DESC";
-                $data = $db->select($class_equal_query);
-                print(json_encode($data));
-                break;
-            case "api:class":
-                $class = get_attr("name");
-                $data = $db->select("SELECT * FROM `samples` WHERE `class` = '$class'");
-                print(json_encode($data));
-                break;
-            case "api:count":
-                $filter = generate_filter();
-                $data = $db->select("SELECT COUNT(*) AS count FROM `samples` $filter");
-                print($data[0]["count"]);
-                break;
-            case "api:class-count":
-                $additional = "";
-                if(get_attr("tagger") != "")
-                    $additional .= "WHERE `tagger` = '".get_attr("tagger")."'";
-                $data = $db->select("SELECT class, COUNT(*) AS count FROM `samples` $additional GROUP BY `class`");
-                print(json_encode($data));
-                break;
-            default:
-                print("Nothing in here.");
-                break;
-        }//switch
-    }
+function generateSampleUrl(){
+    global $apihandler;
+    $url = "https://api.github.com/repositories?since=" . rand(0, 5*pow(10, 7)) . "&" . $apihandler->getAPItoken();
+    $repos = $apihandler -> getJSON($url);
+    
+    return $repos[rand(0, count($repos) - 1)]["url"];
 }
 
-function post_attr($name){
-    global $db;
-    if(isset($_POST[$name])){
-        return $db->check($_POST[$name]);
+function generateRepoVector($url){
+    global $apihandler;
+    $repo = $apihandler->getJSON($url);
+    $ref_url_base = explode("{", $repo["git_refs_url"]);
+    $commit_url_base = explode("{", $repo["commits_url"]);
+    $git_refs = $apihandler -> getJSON($ref_url_base[0] . "?" . $apihandler->getAPItoken());
+    $commmit_count = 0; $i = 1;
+    $commits = array(); $commit_page = array(); // page = temporary variable
+    do{
+        $commit_page = $apihandler -> getJSON($commit_url_base[0] . "?page=".$i."&" . $apihandler->getAPItoken());
+        $commit_count += count($commit_page);
+        $commits = array_merge($commits, $commit_page);
+        $i++;
+    }while(count($commit_page)>0 /*&& $i < 5*/);
+
+    $avg_length = 1;
+    $date_tuple = array();
+    $commit_intervals = array();
+    foreach ($commits as $c) {
+        $avg_length += strlen($c["commit"]["message"]);
+        $date_tuple[] = $c["commit"]["committer"]["date"];
+        if(count($date_tuple) == 2){
+            // Compare two commit dates and remove the oldest
+            $d1 = new DateTime(array_shift($date_tuple));
+            $d2 = new DateTime($date_tuple[0]);
+            $commit_intervals[] = intval($d1->diff($d2)->format("%d")); // Subtract older (d1) from newer (d1) commit
+        }
+
+    }
+    $avg_length = round($avg_length / count($commits));
+    $ref_url = "";
+    for($i = 0; $i < count($git_refs); $i++){
+      if(strpos($git_refs[$i]["ref"], $repo["default_branch"]) >= 0){
+        $ref_url = $git_refs[$i]["object"]["url"];
+        break;
+      }
+    }
+    if(trim($ref_url) == "")
+      // Default branch is not available
+      $ref_url = $git_refs[0]["object"]["url"];
+    $branch =  $apihandler -> getJSON($ref_url . "?" . $apihandler->getAPItoken());
+    $treeObj = $apihandler -> getJSON($branch["tree"]["url"] . "?" . $apihandler->getAPItoken());
+    $languages = array_keys($apihandler -> getJSON($repo["languages_url"]. "?" . $apihandler->getAPItoken()));
+    if($languages == null)
+        $languages = array();
+    $readme_exists = false;
+    //$folderstring = ""; $fileString = "";
+    for($i = 0; $i < count($treeObj["tree"]); $i++){
+      $readme_exists = $readme_exists || (strpos(strtolower($treeObj["tree"][$i]["path"]), "readme") >= 0);
+      $tmp = 
+        '<div title="'.$treeObj["tree"][$i]["type"].'" class="col-xs-12 '.$treeObj["tree"][$i]["type"].'">
+            <div class="col-xs-12">'.$treeObj["tree"][$i]["path"].'</div>
+            <div class="col-xs-0"></div>
+            <div class="col-xs-0"></div>
+        </div>';
+        if($treeObj["tree"][$i]["type"] == "blob"){
+          $fileString .= $tmp;
+        }else{ // folder or commit
+          $folderstring .= $tmp;
+        }
+    }
+
+    $treeData = calcTree(isset($treeObj["tree"]) ? $treeObj["tree"] : null , $apihandler->getAPItoken());
+    $readme = array("content"=> "", "encoding" => "none");
+    if($readme_exists)
+      $readme = $apihandler -> getJSON($repo["url"] . "/readme?" . $apihandler->getAPItoken());
+    $contributors = $apihandler -> getJSON($repo["contributors_url"] . "?" . $apihandler->getAPItoken());
+    $vector = array(
+      "api_calls" => $apihandler->getCount(),
+      "api_url" =>  $repo["url"],
+      "author" =>  $repo["owner"]["login"],
+      "avg_commit_length" => $avg_length,
+      "branch_count" =>  count($git_refs),
+      "class" => "UNLABELED",
+      "commit_count" => $commit_count,
+      "commit_interval_avg"  => round(array_sum($commit_intervals) / count($commit_intervals)),
+      "commit_interval_max" => max($commit_intervals),
+      "contributors_count" =>  count($contributors),
+      "description" =>  $repo["description"] != null ? $repo["description"] : "",
+      "file_count" => $treeData["file_count"],
+      "folder_count" => $treeData["folder_count"],
+      "forks" =>  $repo["forks_count"],
+      "hasDownloads" => $repo["has_downloads"],
+      "hasWiki" => $repo["has_wiki"],
+      "isFork" => $repo["fork"],
+      "open_issues_count" => $repo["open_issues_count"],
+      "language_main" => $repo["language"] != null ? $repo["language"] : (count($languages) == 0 ? "" : $languages[0]),
+      "language_array" =>  join(" ", $languages),
+      "name" =>  $repo["name"],
+      "readme" =>  $readme["content"],
+      "stars" =>  $repo["watchers_count"],
+      "treeArray" =>  join(" ", $treeData["array"]), // String representation
+      "treeDepth" =>  $treeData["depth"],
+      "url" =>  $repo["html_url"],
+      "watches" =>  $repo["subscribers_count"]
+
+      // avg wortunterschied 
+    );
+    return $vector;
+}
+// calcTree return object
+function calcTree($tree){
+  global $apihandler;
+  $tree_result = array("depth" =>  0, "array" => array(), "file_count" => 0, "folder_count" => 0);
+  if($tree != null)
+      recTree($tree, $tree_result, "", 0, $apihandler->getAPItoken());
+  return $tree_result;
+}
+// Use every node as root, save paths (without filenames) in array
+// r: return object
+function recTree($node, &$tree_result, $path, $depth){
+  global $apihandler;
+  $tree_result["array"][] = $path;
+  $tree_result["depth"] = $depth > $tree_result["depth"] ? $depth : $tree_result["depth"];
+  for($i = 0; $i < count($node); $i++){
+    // Accumulate nodeArray + set depth
+    if ($node[$i]["type"] != "blob"){
+      $tree_result["folder_count"]++;
+      if($tree_result["folder_count"] < 50){
+          // don't exceed API limit
+          $subtree = $apihandler -> getJSON($node[$i]["url"]  . "?" . $apihandler->getAPItoken());
+          if(isset($subtree["tree"]))
+            recTree($subtree["tree"],$tree_result, $path . '\\'. $node[$i]["path"], $depth + 1, $apihandler->getAPItoken());
+        }
     }else{
-        return "";
+      $tree_result["file_count"]++;
     }
+  }
 }
 
-if(isset($_POST['key'])){
-    $postkey = post_attr('key');
-    if($postkey != ""){
-        switch ($postkey) {
-            case "unclassified":
-                // Add repo link only, to be classified
-                $iid = $db -> insert("INSERT INTO `todo` (url) VALUES ('".post_attr('api_url')."')");
-                print(is_numeric($iid) ? "success" : "error");
-                break;
-            case "skip":
-                // Remove repo link
-                $db->query("DELETE FROM `todo` WHERE `url` = '".post_attr('api_url')."'");
-                break;
-            case "classify":
-                // Add repo to list
-                if(count($db->select("SELECT * FROM `samples` WHERE `url` = '".post_attr('url')."'")) == 0){
-                    $query = "INSERT INTO `samples` ( class, author, name, description,
-                                                        url, watches, stars, forks, languages,
-                                                        readme, tree, tagger) VALUES
-                                ('".post_attr('class')."', '".post_attr('author')."', '".post_attr('name')."', '".post_attr('description')."',
-                                '".post_attr('url')."', '".post_attr('watches')."', '".post_attr('stars')."', '".post_attr('forks')."', '".post_attr('languages')."',
-                                '".post_attr('readme')."', '".post_attr('tree')."', '".post_attr('tagger')."')";
-                    $iid = $db->insert($query);
-                    $db->query("DELETE FROM `todo` WHERE `url` = '".post_attr('api_url')."'");
-                    print(is_numeric($iid) ? "success" : "error");
-                }else{
-                    print("error: duplicate");
-                }
-                break;
-            default:
-                print("Nothing in here.");
-                break;
-        }//switch
+function saveVector(&$vector){
+    global $db;
+    if(count($db->select("SELECT * FROM `repositories` WHERE `url` = '".$vector['url']."'")) == 0){
+        $keys =  "`" . join("`, `", array_keys($vector)) . "`";
+        $values = "'" . join("', '", $vector) . "'";
+        $query = "INSERT INTO `repositories` ( $keys ) VALUES ( $values )";
+        //print $query;
+        $iid = $db->insert($query);
+        return $iid;
+        //print(is_numeric($iid) ? "success" : "error");
+    }else{
+        print("error: duplicate");
     }
 }
-header($header);
-ob_end_flush();
 
 ?>

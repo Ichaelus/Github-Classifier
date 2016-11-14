@@ -121,45 +121,56 @@ function tryNextIteration(){
             else // folder or commit
               folderstring += tmp;
         }
-        let readme = "";
+        treeData = yield* calcTree(treeObj.tree);
+
+        let readme = {content: "", encoding : "none"};
         if(readme_exists)
           readme = yield jQGetPromise(repo.url + "/readme?" + oAuth);
+
+        let contributors = yield jQGetPromise(repo.contributors_url + "?" + oAuth, "json"),
+            contributors_count = contributors.length;
+
         // Update Page
         repoData = {
-            author: repo.owner.login,
-            user_url: repo.html_url.split(repo.name)[0],
-            name: repo.name,
-            url: repo.html_url,
-            stars: repo.watchers_count,
-            watchers: repo.subscribers_count,
-            forks: repo.forks_count,
-            language: repo.language,
-            description: repo.description,
-            commit_author: commit.committer.name,
-            commit_msg: commit.message,
-            files: folderstring + fileString,
-            readme: readme.encoding == "base64" ?  converter.makeHtml(atob(readme.content)) : readme.content,
+          author: repo.owner.login,
+          user_url: repo.html_url.split(repo.name)[0],
+          name: repo.name,
+          url: repo.html_url,
+          stars: repo.watchers_count,
+          watchers: repo.subscribers_count,
+          forks: repo.forks_count,
+          language: repo.language,
+          description: repo.description,
+          commit_author: commit.committer.name,
+          commit_msg: commit.message,
+          files: folderstring + fileString,
+          readme: readme.encoding == "base64" ?  converter.makeHtml(atob(readme.content)) : readme.content,
           tagger: repoData.tagger
         };
         postData = {
-          author: repoData.author,
-          name: repoData.name,
-          description: repoData.description,
-          url: repoData.url,
           api_url: repo.url,
-          watches: repoData.watchers,
-          stars: repoData.stars,
+          author: repoData.author,
+          commit_count: git_refs.length,
+          contributors_count: contributors_count,
+          description: repoData.description,
           forks: repoData.forks,
           languages: repoData.language,
+          name: repoData.name,
           readme: readme.content,
-          tree: JSON.stringify(treeObj.tree),
-          tagger: repoData.tagger
+          stars: repoData.stars,
+          tagger: repoData.tagger,
+          //tree: JSON.stringify(treeObj.tree),
+          treeArray: treeData.array.join(" "), // String representation
+          treeDepth: treeData.depth,
+          url: repoData.url,
+          watches: repoData.watchers
         }
+
         updateVue();
       }catch(ex){
         // Error while fetching url
-        skipRepo(repo.url);
-        setTimeout(tryNextIteration, 50);
+       /* skipRepo(repo.url);
+        setTimeout(tryNextIteration, 50);*/
         console.log("iteration halted:" + ex);
       }
     });
@@ -168,6 +179,31 @@ function tryNextIteration(){
     setTimeout(tryNextIteration, 50);
   }
 }
+
+function* calcTree(tree){
+  console.log("Calculating file tree");
+  let r = { depth: 0, array: []}
+  yield* recTree(tree, r, "", 0);
+  console.log("File tree result");
+  console.log(r);
+  return r;
+}
+// Use every node as root, save paths (without filenames) in array
+// r: return object
+function* recTree(node, r, path, depth){
+  r.array.push(path);
+  r.depth = Math.max(r.depth, depth);
+  for(let i = 0; i < node.length; i++){
+    // Accumulate nodeArray + set depth
+    if (node[i].type != "blob"){
+      let subtree = yield jQGetPromise(node[i].url  + "?" + oAuth, "json");
+      if(typeof subtree.tree != "undefined")
+        yield* recTree(subtree.tree, r, path + "\\"+ node[i].path, depth + 1);
+    }
+  }
+}
+
+
 function initVue(){
   initButtons();
   liveView = new Vue({
