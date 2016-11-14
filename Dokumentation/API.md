@@ -62,57 +62,150 @@ Mögliche Filterattribute:
 	<thead>
 		<tr>
 			<th>Name</th>
-			<th>Operatoren</th>
+			<th>Typ</th>
+			<th>Beschreibung</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td>author</td>
-			<td>=</td>
-		</tr>
-		<tr>
-			<td>class</td>
-			<td>=</td>
-		</tr>
-		<tr>
-			<td>description</td>
-			<td>=</td>
-		</tr>
-		<tr>
-			<td>forks</td>
-			<td><,<=,=,>=,></td>
-		</tr>
-		<tr>
-			<td>id</td>
-			<td><,<=,=,>=,></td>
-		</tr>
-		<tr>
-			<td>languages</td>
-			<td>=</td>
-		</tr>
-		<tr>
-			<td>name</td>
-			<td>=</td>
-		</tr>
-		<tr>
-			<td>readme</td>
-			<td>=</td>
-		</tr>
-		<tr>
-			<td>stars</td>
-			<td><,<=,=,>=,></td>
-		</tr>
-		<tr>
-			<td>tree</td>
-			<td>=</td>
-		</tr>
-		<tr>
-			<td>url</td>
-			<td>=</td>
-		</tr>
-		<tr>
-			<td>watches</td>
-			<td><,<=,=,>=,></td>
-		</tr>
+	<td>api_calls</td>
+	<td>Integer</td>
+	<td>Number of calls needed to gather the data</td>
+</tr>
+<tr>
+	<td>api_url</td>
+	<td>String</td>
+	<td>The Git-API url for this repo</td>
+</tr>
+<tr>
+	<td>author</td>
+	<td>String</td>
+	<td>Repository author name</td>
+</tr>
+<tr>
+	<td>avg_commit_length</td>
+	<td>Integer</td>
+	<td>Average commit message length</td>
+</tr>
+<tr>
+	<td>branch_count</td>
+	<td>Integer</td>
+	<td></td>
+</tr>
+<tr>
+	<td>class</td>
+	<td>String</td>
+	<td>The label given by our classifier</td>
+</tr>
+<tr>
+	<td>commit_count</td>
+	<td>Integer</td>
+	<td></td>
+</tr>
+<tr>
+	<td>commit_interval_avg</td>
+	<td>Integer</td>
+	<td>Average #days between two commits</td>
+</tr>
+<tr>
+	<td>commit_interval_max</td>
+	<td>Integer</td>
+	<td>Maximum #days between two commits</td>
+</tr>
+<tr>
+	<td>contributors_count</td>
+	<td>Integer</td>
+	<td></td>
+</tr>
+<tr>
+	<td>description</td>
+	<td>String</td>
+	<td></td>
+</tr>
+<tr>
+	<td>file_count</td>
+	<td>Integer</td>
+	<td></td>
+</tr>
+<tr>
+	<td>folder_count</td>
+	<td>Integer</td>
+	<td></td>
+</tr>
+<tr>
+	<td>forks</td>
+	<td>Integer</td>
+	<td></td>
+</tr>
+<tr>
+	<td>hasDownloads</td>
+	<td>Boolean</td>
+	<td>Is the repo downloadable?</td>
+</tr>
+<tr>
+	<td>hasWiki</td>
+	<td>Boolean</td>
+	<td></td>
+</tr>
+<tr>
+	<td>id</td>
+	<td>Integer</td>
+	<td>Internal ID</td>
+</tr>
+<tr>
+	<td>isFork</td>
+	<td>Boolean</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open_issues_count</td>
+	<td>Integer</td>
+	<td></td>
+</tr>
+<tr>
+	<td>language_main</td>
+	<td>String</td>
+	<td>The most used language</td>
+</tr>
+<tr>
+	<td>language_array</td>
+	<td>String Array, separator ' '</td>
+	<td>A list of used languages</td>
+</tr>
+<tr>
+	<td>name</td>
+	<td>String</td>
+	<td>The repository title</td>
+</tr>
+<tr>
+	<td>readme</td>
+	<td>String</td>
+	<td></td>
+</tr>
+<tr>
+	<td>stars</td>
+	<td>Integer</td>
+	<td></td>
+</tr>
+<tr>
+	<td>treeArray</td>
+	<td>Sring Array, separator ' '</td>
+	<td>A list of folder paths present in this repository</td>
+</tr>
+<tr>
+	<td>treeDepth</td>
+	<td>Integer</td>
+	<td>Maximum folder depth</td>
+</tr>
+<tr>
+	<td>url</td>
+	<td>String</td>
+	<td></td>
+</tr>
+<tr>
+	<td>watches</td>
+	<td>Integer</td>
+	<td></td>
+</tr>
 	</tbody>
 </table>
