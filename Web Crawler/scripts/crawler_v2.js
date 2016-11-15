@@ -30,6 +30,26 @@ console.log("Repocrawler started");
 initButtons();
 initVue();
 getRepos();
+updateClassifications();
+
+function updateClassifications(){
+  let iv = setInterval(function(){
+      $.get("ajax.php?key=api:to-reclassify").then(function(result){
+        result = JSON.parse(result);
+        if(typeof(result.Error) != "undefined"){
+          // Maybe out of old classifications
+          console.log(result.Error);
+          clearInterval(iv);
+        }else{
+          console.log(result);
+          $.get("ajax.php?key=api:generate_sample&class="+result.class+"&api-url=" + result.url.replace("https://github.com/", "https://api.github.com/repos/"), function(res2){
+            res2 = JSON.parse(res2);
+            console.log(res2);
+          });
+        }
+      });
+  }, 10000);
+}
 
 function getRepos(){
   // Goes through a random list of repos and, if it fits our needs, adds them to a list
@@ -44,7 +64,7 @@ function getRepos(){
       initialized = true;
     }else{
       notify(repo.Error, "New samples are being generated..", 4000);
-      yield $.get("ajax.php?key=api:generate_sample");
+      yield jQGetPromise("ajax.php?key=api:generate_sample", "json");
       getRepos();
     }
     console.log("UNLABELED repos: ");
@@ -134,13 +154,14 @@ function handleButton(btn) {
     notify("Status", "No repository is selected.")
   }
 }
-function classify(label){
+function classify(label, data = {}){
+
     postData.key = "classify";
     postData.class = label;
     console.log(postData);
     $.post("/ajax.php", postData).then(
       function(result){
-        if(result.indexOf("success") >= 0){
+        if(result.indexOf("Repository classified") >= 0){
           notify("Status", "Classification submitted.");
         }else{
           notify("Status", "There was an error while trying to submit ("+result+").");

@@ -38,8 +38,13 @@ try{
                     $data = $db->select("SELECT * FROM `samples` $filter");
                     print(json_encode($data));
                     break;
+                case "api:unlabeled":
+                    $filter = generate_filter();
+                    $data = $db->select("SELECT * FROM `repositories` WHERE `class` = 'UNLABELED'");
+                    print(json_encode($data));
+                    break;
                 case "api:single":
-                    $data = $db->select("SELECT * FROM `repositories` WHERE class != 'UNLABELED' AND class != 'SKIPPED'  ORDER BY RAND() LIMIT 0, 1");
+                    $data = $db->select("SELECT * FROM `repositories` WHERE class != 'UNLABELED' AND class != 'SKIPPED'  AND class != 'UNSURE'  ORDER BY RAND() LIMIT 0, 1");
                     if(count($data) == 0)
                         throw new Exception("There is no classified sample.");
                     print(json_encode($data[0]));
@@ -51,41 +56,48 @@ try{
                         throw new Exception("There is no unclassified sample.");
                     print(json_encode($data[0]));
                     break;
+                case "api:to-reclassify":
+                    // Single classified repo, that is present in `samples` but not in `repositories`
+                    $data = $db->select("SELECT s.url, s.class FROM `samples` s LEFT JOIN `repositories` r ON s.url = r.url WHERE r.id IS NULL AND s.class != 'UNLABELED' AND s.class != 'SKIPPED'  AND s.class != 'UNSURE' AND s.tagger != ''  ORDER BY s.id DESC LIMIT 0, 1");
+                    if(count($data) == 0)
+                        throw new Exception("There is no old classified sample.");
+                    print(json_encode($data[0]));
+                    break;
                 case "api:equal":
-                    $mdata = $db->select("SELECT COUNT(*) AS minimum FROM samples GROUP BY class ORDER BY minimum LIMIT 0, 1");
+                    $mdata = $db->select("SELECT COUNT(*) AS minimum FROM repositories GROUP BY class ORDER BY minimum LIMIT 0, 1");
                     $minimum = $mdata[0]["minimum"];
                     $class_equal_query = "SELECT
-                                          samples.*
+                                          repositories.*
                                         FROM
-                                          samples INNER JOIN (
+                                          repositories INNER JOIN (
                                             SELECT
                                               class,
                                               GROUP_CONCAT(id ORDER BY id DESC) grouped_id
                                             FROM
-                                              samples
+                                              repositories
                                             GROUP BY class) group_max
-                                          ON samples.class = group_max.class
+                                          ON repositories.class = group_max.class
                                              AND FIND_IN_SET(id, grouped_id) BETWEEN 1 AND $minimum
                                         ORDER BY
-                                          samples.class DESC";
+                                          repositories.class DESC";
                     $data = $db->select($class_equal_query);
                     print(json_encode($data));
                     break;
                 case "api:class":
                     $class = get_attr("name");
-                    $data = $db->select("SELECT * FROM `samples` WHERE `class` = '$class'");
+                    $data = $db->select("SELECT * FROM `repositories` WHERE `class` = '$class'");
                     print(json_encode($data));
                     break;
                 case "api:count":
                     $filter = generate_filter();
-                    $data = $db->select("SELECT COUNT(*) AS count FROM `samples` $filter");
+                    $data = $db->select("SELECT COUNT(*) AS count FROM `repositories` $filter");
                     print($data[0]["count"]);
                     break;
                 case "api:class-count":
                     $additional = "";
                     if(get_attr("tagger") != "")
                         $additional .= "WHERE `tagger` = '".get_attr("tagger")."'";
-                    $data = $db->select("SELECT class, COUNT(*) AS count FROM `samples` $additional GROUP BY `class`");
+                    $data = $db->select("SELECT class, COUNT(*) AS count FROM `repositories` $additional GROUP BY `class`");
                     print(json_encode($data));
                     break;
                 case "api:generate_sample_url":
@@ -107,6 +119,9 @@ try{
                         // Generate new sample url
                         $url .= "?" . $credentials;
                         $vector = generateRepoVector($url);
+                        if(trim(get_attr("class")) != ""){
+                            $vector["class"] = strtoupper(trim(get_attr("class")));
+                        }
                         saveVector($vector);
                         print(json_encode($vector));
                     }
@@ -149,7 +164,7 @@ if(isset($_POST['key'])){
                 if(count($qID) != 0){
                     $query = "UPDATE `repositories` SET `class` = '".post_attr('class')."', `tagger` = '".post_attr('tagger')."' WHERE `id` = '".post_attr('id')."'";
                     $db->query($query);
-                    print $query; //"Repository classified.";;
+                    print "Repository classified.";
                 }else{
                     print("error: sample not generated");
                 }
