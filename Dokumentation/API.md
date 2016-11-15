@@ -9,9 +9,33 @@ Alle Abfragen werden via `GET` an den host `http://classifier.leimstaedtner.it/a
 
 ## Key Attribute
 
+case "todolist":
+case "api:all":
+case "api:old":
+case "api:unlabeled":
+case "api:single":
+case "api:single-unlabeled":
+case "api:single-unclassified":
+case "api:to-reclassify":
+case "api:equal":
+case "api:class":
+case "api:count":
+case "api:class-count":
+case "api:tagger-class-count":
+case "api:generate_sample_url":
+case "api:generate_sample":
+
 ### api:all
 
 Gibt ungefiltert alle Datensätze aus.
+
+### api:old
+
+Gibt ungefiltert alle **alten** Datensätze aus, d.h. jene mit beschränkt vielen Features.
+
+## api:unlabeled
+
+Shortcut für api:class mit `class` = UNLABELED
 
 ### api:single
 
@@ -21,6 +45,10 @@ Gibt einen zufälligen klassifizierten Datensatz zurück.
 ### api:single-unclassified
 
 Gibt den nächsten unklassifizierten Datensatz zurück.
+
+### api:to-reclassify
+
+Gibt einen Datensatz zurück, der in der alten Datenmenge vorhanden ist, aber noch nicht in der neuen.
 
 ### api:equal
 
@@ -39,6 +67,10 @@ Ein Shortcut for api:all mit entsprechenden Class Filter. Anwendung:
 
 Kombination der obigen. Liefert die Anzahl der Samples pro Klasse zurück.
 
+### api:tagger-class-count
+
+Liefert die Anzahl der Samples pro Klasse zurück, beschränkt auf einen angegebenen `tagger`.
+
 ### api:generate_sample_url
 
 Gibt die API-Url eines **zufälligen** Github repositorys  zurück.
@@ -47,7 +79,7 @@ Gibt die API-Url eines **zufälligen** Github repositorys  zurück.
 
 ### api:generate_sample
 
-Diese Funktion ist vom Parameter `api-url` abhängig. Für das angegebene repository wird damit ein ungelabelter Datenbankeitnrag bzw. Klassifikationsvektor generiert und im JSON Format ausgegeben. Ist `api-url` leer oder nicht gesetzt, wird ein zufälliges sample generiert.
+Diese Funktion ist vom Parameter `api-url` abhängig. Für das angegebene repository wird damit ein ungelabelter Datenbankeitnrag bzw. Klassifikationsvektor generiert und im JSON Format ausgegeben. Ist `api-url` leer oder nicht gesetzt, wird ein zufälliges sample generiert. Wird ein zweiter, auch optionaler, Paramter `class` übergeben, wird das sample direkt klassifiziert, ansonsten erhält es die Klasse `UNLABELED`.
 
 `client_id` und `client_secret` können übergeben werden, ansonsten werden gespeicherte credentials verwendet.
 
