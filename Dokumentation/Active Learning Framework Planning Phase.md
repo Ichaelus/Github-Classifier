@@ -16,6 +16,8 @@
     der Daten werden zum Trainieren der Klassifikatoren verwendet und die letzten 10% für das Trainieren der Gewichtungen
     der unterschiedlichen Klassifikatoren
     Andi: Sicher? Wieso nicht seperates Trainieren und Lernen von Gewichtungen einzelner Classifier mit gleichen Trainingsdaten?
+    Stefan: Kann man ja trotzdem machen, aber vlt will man diese ja dann irgendwann zusammengesteckt trainieren und trotzdem
+            nur jedes 10. sample oder so zum trainieren der Gewichtigungen verwenden, war jetzt mein Gedanke
 
 ## Functions User Can Call Manually
 
@@ -49,15 +51,25 @@
 * train-all-classificators(data):
     klassiches Trainieren aller Klassifikatoren
 
+
 ## Classificator collection
 
 * Andi: So wie ich das verstehe, wird hier das Ensemble-Learning vollzogen.
         Deshalb würde ich vorschlagen, fast ausschließlich alle Funktionen im vorherigen Absatz hier als Methoden aufzunehmen.
+* Stefan: Hatte das jetzt nicht als Ensemble-learning geplant, sondern nur als Sammlung mehrerer Klassifikations-Module damit man die 
+        nicht immer alle einzeln laden und speichern muss, weiß aber nicht wie sinnvoll das ist. Können auch durchaus nochmal 
+        fürs Ensemble-Learning eine eigene Klasse verwenden (oder ist die classificator collection überflüssig und wir wollen sie hierfür verwenden?)
+        Wichtig hierbei wäre, das man relativ bequem die vorherigen Klassifikatoren als Bausteine verwenden kann die bereits vorher vortrainiert wurden,
+        aber vlt will man trotzdem beim Ensemble-Learning die einzelnen verwenden Klassifikatoren nachtrainieren.
 * consists of several Classificator Moduls to train them at the same time with active learning 
 * Is responsible to coordinate each round and to forward function calls to each classificator
     and to check if a classificator is unsure about something
 * Es wäre sinnvoll wenn wir in jeder Session immer sehen welches Klassifizierungsmodul für wieviele 
     Nachfragen beim Benutzer verantwortlich ist
+* Fürs Semi-Supervised Learning wäre es vlt sinnvoll dass man auch festlegen kann dass nur dann Samples zum Trainieren verwendet werden wenn eine 
+    bestimmte Anzahl, zum Bsp alle Klassifikatoren sich sicher sind mit der Kategorie (evtl könnte man das muten auch hier reinspielen lassen)
+* Wollen wir Kontrollen einfügen, wo wir ab und zu Samples die bereits klassifiziert wurden zum Supervised Learning verwendet werden
+    und wir einen Alarm bekommen wenn er jetzt damit Schmarrn gemacht hätte (also falsche Klasse und zum Trainieren verwenden)?
 
 
 
@@ -76,6 +88,15 @@
     Trainiere mit Liste von Daten. Evtl weitere Paramter nötig (nb_epoch, learning_rate, ...)
 * predict-class(sample):
     Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde
+* detailled-prediction(sample):
+    So etwas würden wir brauchen wenn wir später einzelne Klassifikatoren als Bausteine in Ensemble-Learning verwenden wollen, aber 
+    wahrscheinlich ist es unmöglich hier einen gemeinsamen Standard festzulegen oder? Intuitiv würde sich hier die Wahrscheinlichkeit
+    dass etwas in einer gegeben Klasse ist anbieten, aber wahrscheinlich bekommt man die nicht von jedem Lern-Algorithmus
+    Außerdem ist hier zu beachten (und auch bei der predict-classe Methode 1 weiter oben), dass nicht alle die Klasse vorhersagen sollen,
+    sondern manche nur z.b. DEV oder NICHT DEV. Mit Wahrscheinlichkeiten würde sich das hier so lösen lassen dass man sagt
+    man hat nur die DEV-Wahrscheinlichkeit zwischen 0 und 100% und die anderen Wahrscheinlichkeiten sind immer 0% oder sowas
+    Aber wahrscheinlich sind nicht alle fälle so schön zu lösen und wir müssen uns hier nochmal was überlegen
+    (Z.B. wenn wir einen Klassifikator haben der sagt ob etwas in "HW oder EDU" oder nicht ist)
 * get-name():
     Gibt den Namen des Klassifikators zurück
 * get-description():
@@ -83,6 +104,8 @@
 * format-input-data():
     Wird nur intern verwendet, hier wäre es eventuell sinnvoll ein kleines Libary File mit unterschiedlichen Formatierungen aufzubaun
     (alles in einem Vektor, nur die Readme, nur die Metadaten usw.)
+* mute-classificator(classificator):
+    Der Klassifikator verursacht keine Nachfragen beim Nutzer mehr
 
 ## Classifier State Module sinnvoll?
 * Attribute:
@@ -95,6 +118,10 @@
     * get-Classifier
     * get-notes
     * get-timestamp
+    * get-description():
+        Immer gut wenn man sich nicht mehr daran erinnert was man sich zu einem einzelnem Klassifizierer gedacht hat
+
+* Stefan: Ja ist wahrscheinlich die beste Möglichkeit das immer auf diese Art und Weise abzuspeichern
 
 ## Utility Libary
 
