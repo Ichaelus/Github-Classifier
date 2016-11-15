@@ -9,22 +9,6 @@ Alle Abfragen werden via `GET` an den host `http://classifier.leimstaedtner.it/a
 
 ## Key Attribute
 
-case "todolist":
-case "api:all":
-case "api:old":
-case "api:unlabeled":
-case "api:single":
-case "api:single-unlabeled":
-case "api:single-unclassified":
-case "api:to-reclassify":
-case "api:equal":
-case "api:class":
-case "api:count":
-case "api:class-count":
-case "api:tagger-class-count":
-case "api:generate_sample_url":
-case "api:generate_sample":
-
 ### api:all
 
 Gibt ungefiltert alle Datensätze aus.
