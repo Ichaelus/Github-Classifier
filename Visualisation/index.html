@@ -2,75 +2,51 @@
 <html>
   <head>
     <!--
-      Copyright 2016
-      Code by Michael Leimstädtner 
+    Copyright 2016
+    Code by Michael Leimstädtner
     -->
     <meta charset="utf-8"/>
     <title>Classification Visualisation</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="shortcut icon" href="favicon.ico"/> 
+    <link rel="shortcut icon" href="favicon.ico"/>
     <link rel="icon" href="favicon.png" type="image/png"/>
     <meta Name="description" content=""/>
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css"/>
   </head>
+  <style>
+  .input::after {
+    content: "}";
+    color: black;
+    font-size: 100px;
+    transform: rotate( 90deg ) scaleY( 4 ) scaleX(2);
+    display: inline-block;
+    margin-left: calc(50% - 0px);
+    font-weight: light;
+    font-family: Colibri;
+  }
+  </style>
   <body>
-    <div id="main">
-      <div id="githubContent">
-        <!--ROW-->
-        <div class="row">
-          <div class="col-xs-7" id="repoLink">
-            <div>
-              <a :href="user_url">{{author}}</a> / <strong><a :href="url">{{name}}</a></strong>
-            </div>
-          </div>
-          <div class="col-xs-5">
-            <ul class="list-group" id ="stats">
-              <li class="list-group-item">
-                <span class="glyphicon glyphicon-eye-open"></span> 
-                <span class="badge watch">{{watchers}}</span>
-                Watch
-              </li>
-              <li class="list-group-item">
-                <span class="glyphicon glyphicon-star"></span> 
-                <span class="badge star">{{stars}}</span>
-                Star
-              </li>
-              <li class="list-group-item">
-                <span class="badge fork">{{forks}}</span>
-                Fork
-              </li>
-            </ul>
-          </div>
+    <div class="container">
+      <div class="row" id="workflow" style="margin-top: 50px;">
+        <h1 style="text-align:center; margin-bottom: 50px;">Classification Insights</h1>
+        <div class="input">
+          <div class="left" style="width: 40%;float: left;text-align: right;"><h4>http://localhost:8080/</h4><span>Sample Generator</span></div>
+          <div class="right" style="width: 40%;float: left;text-align: left;margin-left: 20%;"><h4>http://localhost:8080/</h4><span>Input URL</span></div>
         </div>
-        <!--ROW-->
-        <div class="row">
-           <p id="short">{{description}}</p>
+        <div class="module" id="wheels">
+          <div style="text-align: center;"><img src="http://bestanimations.com/Science/Gears/loadinggears/gear-animation-5.gif"><img src="https://darkiemindyou.files.wordpress.com/2015/04/loading6_230x230-cooler.gif?w=682" style="position: absolute;margin-left: -89px;width: 60px;margin-top: 115px;"></div>
+          
         </div>
-        <!--ROW-->
-        <h3 id="file_header">{{commit_author}} <small>{{commit_msg}}</small></h3>
-        <div class="row" v-html="files" id="file_wrapper">
-          <!--<div v-for="" class="col-xs-12 tree">
-              <div class="col-xs-2"> Homeworkds</div>
-              <div class="col-xs-8">Changed HW5.tex</div>
-              <div class="col-xs-2">11 months ago</div>
-          </div>-->
-        </div>
-        <!--ROW-->
-        <h3 id="readme_header">Readme.md</h3>
-        <div id="readme_wrapper" class="row">
-           <div id="readme" v-html="readme"></div>
-        </div>
-
       </div>
     </div>
     <script type="text/javascript" src="https://unpkg.com/vue@2.0.3/dist/vue.js"></script>
     <script
-        src="https://code.jquery.com/jquery-3.1.1.min.js"
-        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-        crossorigin="anonymous"></script>
+    src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    crossorigin="anonymous"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="scripts/frontend.js"></script>
   </body>

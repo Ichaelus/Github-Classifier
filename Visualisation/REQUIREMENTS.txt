@@ -1,0 +1,4 @@
+* Python manager 'pip'
+* Python module 'bottle': pip install bottle
+
+To run, execute the run.bat file.

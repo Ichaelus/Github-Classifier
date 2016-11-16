@@ -1,4 +1,5 @@
 from bottle import route, run, static_file
+import webbrowser
 
 @route('/')
 def home():
@@ -54,4 +55,8 @@ def api(key):
 	else:
 		return "API call for: " + key
 
+
+webbrowser.open("http://localhost:8080/")
+
 run(host='localhost', port=8080, debug=True)
+
