@@ -1,5 +1,18 @@
 # Active Learning Framework Planning Phase
 
+## Libaries we´re using
+* threading for Threads
+* pickle for serialization
+* bottle for communication with GUI
+
+# Saving System 
+* We have one Folder for saving stuff
+* in this folder there´s going to be one file for the classifier collection:
+    what classifiers are currently loaded etc.
+* Each classifier modul has it´s own subfolder there. We have one file with the information what´s the 
+    version that got used last and all other information we may need to safe seperate, then all the safefiles
+    of the different versions of the same classifier
+
 ## Important Points
 
 * Evtl. ist es sinnvoll bei jeder Speicherung einen TimeStamp mitzuspeichern
@@ -31,9 +44,12 @@
 * remove/add-classificator():
     Dies ist auch vor allem nützlich weil man eventuell unterschiedliche Versionen desselben Classificators hat die zu unterschiedlichen
     Zeitpunkten unterschiedlich trainiert wurden
-* start-live-training(bool: unsupervisedlearningmode):
+* start-live-training(bool: unsupervisedlearningmode) (): aka play button
     unsupervisedlearningmode: wenn sich alle Klassifikatoren sicher sind, dann könnten wir vor dem nächstem Schritt das jeweilige Sample
     noch zum trainieren verwenden
+* do live-training-step():
+    classifiy/train/calculate uncertainty for the next (1) repo 
+* Funktion um nur einzelne Klassifizierungsmodule mit bestimmten Samples zu trainieren
 * pause-live-training():
     bringt noch die akutelle Runde zu Ende? und wartet dann auf weitere Befehle
 * resume-live-learning():
@@ -50,6 +66,7 @@
 * safe-classificator-status(classificator)
 * train-all-classificators(data):
     klassiches Trainieren aller Klassifikatoren
+
 
 
 ## Classificator collection
@@ -140,6 +157,8 @@
 * verschiedene Datenformatierungsmethoden
 * verschiedene Methoden um Daten aus unserer DB zu holen
 
+## API-Funktionen die wir eventuell noch brauchen
+* Funktion die eine bestimmte Anzahl an zufällig ausgewählten Repos zurückgibt
 
 
 
