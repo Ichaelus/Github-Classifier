@@ -6,6 +6,7 @@
   width: 100%;
   position: absolute;
   background: #ffff0080;
+  cursor: default;
   }
   #workflow{
   margin-top: 50px;
@@ -22,6 +23,11 @@
     width: 2700px;
     position: relative;
     margin-left: calc( (100% - 900px) / 2 - 1 * 900px);
+    -moz-transition: margin 0.5s ease-out;  /* FF4+ */
+    -o-transition: margin 0.5s ease-out;  /* Opera 10.5+ */
+    -webkit-transition: margin 0.5s ease-out;  /* Saf3.2+, Chrome */
+    -ms-transition: margin 0.5s ease-out;  /* IE10 */
+    transition: margin 0.5s ease-out;  
   }
   .module{
   float: left;
@@ -33,6 +39,12 @@
   background: white;
   margin-right: 100px;
   opacity: .25;
+    -moz-transition: opacity 0.5s ease-out;  /* FF4+ */
+    -o-transition: opacity 0.5s ease-out;  /* Opera 10.5+ */
+    -webkit-transition: opacity 0.5s ease-out;  /* Saf3.2+, Chrome */
+    -ms-transition: opacity 0.5s ease-out;  /* IE10 */
+    transition: opacity 0.5s ease-out;  
+    cursor: pointer;
   }
   .module.active{
     opacity: 1;
@@ -62,4 +74,5 @@
     margin-left: calc(100% + 50px);
     margin-top: 100px;
     font-family: Colibri;
+    cursor: default;
   }

@@ -22,11 +22,12 @@
         <h1>Classification Insights</h1>
         <div id="module_wrapper">
           <div id="modules">
-            <div class="module input">
-              <h2 class="module_header">Input handler</h2>
+            <div v-for="(m, index) in modules" v-on:click="setFocus(index)" v-bind:data-id="index" v-bind:class="'module' + ' ' + m.classes + ' ' + m.isActive">
+              <h2 class="module_header">{{m.title}}</h2>
               <div class="left"><h4>http://localhost:8080/</h4><span>Sample Generator</span></div>
               <div class="right"><h4>http://localhost:8080/</h4><span>Input URL</span></div>
             </div>
+            <!--
             <div class="module input active">
               <h2 class="module_header">Input handler</h2>
               <div class="left"><h4>http://localhost:8080/</h4><span>Sample Generator</span></div>
@@ -34,7 +35,7 @@
             </div>
             <div class="module" id="wheels">
               <div style="text-align: center;"><img src="http://bestanimations.com/Science/Gears/loadinggears/gear-animation-5.gif"><img src="https://darkiemindyou.files.wordpress.com/2015/04/loading6_230x230-cooler.gif?w=682" style="position: absolute;margin-left: -89px;width: 60px;margin-top: 115px;"></div>
-            </div>
+            </div>-->
           </div>
         </div>
             
