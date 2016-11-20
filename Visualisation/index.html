@@ -24,8 +24,7 @@
           <div id="modules">
             <div v-for="(m, index) in modules" v-on:click="setFocus(index)" v-bind:data-id="index" v-bind:class="'module' + ' ' + m.classes + ' ' + m.isActive">
               <h2 class="module_header">{{m.title}}</h2>
-              <div class="left"><h4>http://localhost:8080/</h4><span>Sample Generator</span></div>
-              <div class="right"><h4>http://localhost:8080/</h4><span>Input URL</span></div>
+              <div v-html="m.html"></div>
             </div>
             <!--
             <div class="module input active">

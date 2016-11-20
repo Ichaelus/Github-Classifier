@@ -5,7 +5,7 @@
   height: 100%;
   width: 100%;
   position: absolute;
-  background: #ffff0080;
+  background: #FEDB3E;
   cursor: default;
   }
   #workflow{
@@ -36,7 +36,7 @@
   border: 5px black solid;
   padding: 20px;
   border-radius: 5px;
-  background: white;
+  background: #F8FEDC;
   margin-right: 100px;
   opacity: .25;
     -moz-transition: opacity 0.5s ease-out;  /* FF4+ */
@@ -54,18 +54,31 @@
   padding-bottom: 5px;
   margin-top: 0;
   }
+  .module .left, .module .right{
+    width: 40%;
+    float: left;
+    text-align: center;
+    min-height: 500px;
+    border-radius: 5px;
+  }
   .module .left{
-  width: 40%;
-  float: left;
-  text-align: right;
+    margin-left: 5%;
   }
   .module .right{
-  width: 40%;
-  float: left;
-  text-align: left;
-  margin-left: 20%;
+    margin-left: 10%;
+  }
+  .chosen, .right:hover, .left:hover, .left.chosen, .right.chosen{
+    border: 2.5px solid gray;
+    background: #00B1AC;
+    color: #F8FEDC;
+  }
+  .notchosen{
+    border: 2.5px solid transparent;
+    background: #4b4b4b;
+    color: white;
   }
   .input::after {
+    /*
     content: "}";
     color: black;
     font-size: 100px;
@@ -74,5 +87,40 @@
     margin-left: calc(100% + 50px);
     margin-top: 100px;
     font-family: Colibri;
+    cursor: default;*/
+    content: "}";
+    color: black;
+    font-size: 100px;
+    transform: scaleY( 4 ) scaleX(2);
+    display: inline-block;
+    margin-left: calc(700px + 25px);
+    top: 100px;
+    font-family: Colibri;
     cursor: default;
+    position: absolute;
+    left: 100px;
+    top: 200px;
+  }
+  .al_list{
+
+  }
+  .al_list li{
+    list-style: decimal;
+    font-size: 20px;
+    margin: 15px 0;
+    padding: 5px;
+    color: black;
+  }
+  .al_list li span:first-child{
+    color: white;
+  }
+  .al_list li span:last-child{
+    float: right;
+    color: #FEDB3E;
+  }
+  .max100{
+    height: 500px;
+    overflow-y: scroll;
+    position: relative;
+    padding-right: 10px;
   }

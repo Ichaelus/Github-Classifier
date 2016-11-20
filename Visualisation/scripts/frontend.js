@@ -15,24 +15,65 @@ let stateData = {
 initVue();
 updateVue({modules: [
 		{
-			title: "Input handler",
+			title: "Chose sample source",
 			classes: "input",
-			isActive: ""
+			isActive: "active",
+			html: '<div class="left notchosen"><h4>Sample Generator</h4><span>With Active Learning</span></div>\
+              <div class="right notchosen"><h4>User Input</h4><span>Specific Repository</span></div>'
 		},
 		{
-			title: "Input handler2",
+			title: "Active Learning",
 			classes: "input",
-			isActive: "active"
+			isActive: "",
+			html: '<div class="max100">\
+			<ol class="al_list">\
+  <li class="notchosen">\
+    <span>Ruby Koans</span> ... <span>DATA</span>\
+  </li>\
+  <li class="notchosen">\
+    <span>TSMessages</span> ... <span>DEV</span>\
+  </li>\
+  <li class="chosen">\
+    <span>Ionic</span> ... <span>?</span>\
+  </li>\
+  </ul>\
+  </div>'
 		},
 		{
-			title: "Input handler3",
+			title: "Sample Extractor",
 			classes: "input",
-			isActive: ""
+			isActive: "",
+			html: ''
 		},
 		{
-			title: "Input handler4",
+			title: "Feature Vector",
 			classes: "input",
-			isActive: ""
+			isActive: "",
+			html: ''
+		},
+		{
+			title: "Ensemble Learner",
+			classes: "input",
+			isActive: "",
+			html: ''
+		},
+		{
+			title: "Probability Diagram",
+			classes: "input",
+			isActive: "",
+			html: ''
+		},
+		{
+			title: "Result",
+			classes: "input",
+			isActive: "",
+			html: ''
+		},
+		{
+			title: "New sample pool",
+			classes: "input",
+			isActive: "",
+			html: ''
 		}
 	]});
 
