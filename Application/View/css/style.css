@@ -124,3 +124,34 @@
     position: relative;
     padding-right: 10px;
   }
+  .highlighted{
+    color: #FEDB3E;
+  }
+  .center{
+    text-align: center;
+  }
+  .general_desc{
+    font-size: 20px;
+    font-style: italic;
+    color: gray;
+    margin: 50px 0;
+  }
+  .gitprev{
+    text-align: left;
+    border: 1px solid black;
+    background: white;
+    border-radius: 2.5px;
+    font-size: 1.1em;
+  }
+  .gitprev span{
+    display: block;
+    background: #efecec;
+    padding: 5px;
+  }
+  .gitcontent{
+    margin: 10px;
+  }
+
+  .vector{
+    font-size: 14px;width: 500px;margin: 0px auto;overflow-y: scroll;overflow-x: hidden;max-height: 360px;
+  }

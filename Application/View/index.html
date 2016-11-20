@@ -24,7 +24,7 @@
           <div id="modules">
             <div v-for="(m, index) in modules" v-on:click="setFocus(index)" v-bind:data-id="index" v-bind:class="'module' + ' ' + m.classes + ' ' + m.isActive">
               <h2 class="module_header">{{m.title}}</h2>
-              <div v-html="m.html"></div>
+              <div v-html="m.handleData()"></div>
             </div>
           </div>
         </div>
