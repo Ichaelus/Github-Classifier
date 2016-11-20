@@ -2,53 +2,58 @@
 # -*- coding: utf-8 -*-
 
 from bottle import Bottle, route, run, static_file
+import os
 
+
+abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../View')
 
 homebottle = Bottle()
 
+
 @homebottle.get('/')
 def home():
-    return static_file("index.html", root="View", mimetype='text/html')
+    return static_file("index.html", root = abspath, mimetype='text/html')
 
 @homebottle.get('/bootstrap/js/<filename:re:.*\.js>')
 def getBS(filename):
-    return static_file(filename, root="View/bootstrap/js", mimetype='text/javascript')
+    return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "js"), mimetype='text/javascript')
 
 @homebottle.get('/scripts/<filename:re:.*\.js>')
 def getScript(filename):
-	return static_file(filename, root="View/scripts", mimetype='text/javascript')
+	return static_file(filename, root=os.path.join(abspath, "scripts"), mimetype='text/javascript')
 
 @homebottle.get('/bootstrap/css/<filename:re:.*\.css>')
 def getBSC(filename):
-	return static_file(filename, root="View/bootstrap/css", mimetype='text/css')
+	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "js"), mimetype='text/css')
 
 @homebottle.get('/css/<filename:re:.*\.css>')
 def getCSS(filename):
-	return static_file(filename, root="View/css", mimetype='text/css')
+	return static_file(filename, root = os.path.join(abspath, "css/"), mimetype='text/css')
 
 @homebottle.get('/fonts/<filename:re:.*\.woff>')
 def getf(filename):
-	return static_file(filename, root="View/fonts", mimetype='application/x-font-woff')
+	return static_file(filename, root = os.path.join(abspath, "fonts"), mimetype='application/x-font-woff')
 
 @homebottle.get('/fonts/<filename:re:.*\.woff2>')
 def getf2(filename):
-	return static_file(filename, root="View/fonts", mimetype='application/x-font-woff2')
+	return static_file(filename, root = os.path.join(abspath, "fonts"), mimetype='application/x-font-woff2')
 
 @homebottle.get('/fonts/<filename:re:.*\.ttf>')
 def getf3(filename):
-	return static_file(filename, root="View/fonts", mimetype='application/x-font-ttf')
+	return static_file(filename, root = os.path.join(abspath, "fonts"), mimetype='application/x-font-ttf')
 
 @homebottle.get('/bootstrap/fonts/<filename:re:.*\.woff>')
 def getBSf(filename):
-	return static_file(filename, root="View/bootstrap/fonts", mimetype='application/x-font-woff')
+	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "fonts"), mimetype='application/x-font-woff')
 
 @homebottle.get('/bootstrap/fonts/<filename:re:.*\.woff2>')
 def getBSf2(filename):
-	return static_file(filename, root="View/bootstrap/fonts", mimetype='application/x-font-woff2')
+	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "js"), mimetype='application/x-font-woff2')
 
 @homebottle.get('/bootstrap/fonts/<filename:re:.*\.ttf>')
 def getBSf3(filename):
-	return static_file(filename, root="View/bootstrap/fonts", mimetype='application/x-font-ttf')
+	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "js"), mimetype='application/x-font-ttf')
+
 
 @homebottle.get('/post/<key>')
 def api(key):
