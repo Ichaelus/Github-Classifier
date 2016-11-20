@@ -17,7 +17,7 @@ updateVue({modules: [
 		{
 			title: "Chose sample source",
 			classes: "input",
-			isActive: "active",
+			isActive: "",
 			html: '<div class="left notchosen"><h4>Sample Generator</h4><span>With Active Learning</span></div>\
               <div class="right notchosen"><h4>User Input</h4><span>Specific Repository</span></div>'
 		},
@@ -42,8 +42,11 @@ updateVue({modules: [
 		{
 			title: "Sample Extractor",
 			classes: "input",
-			isActive: "",
-			html: ''
+			isActive: "active",
+			html: '<div style="text-align: center;">\
+			<img src="http://bestanimations.com/Science/Gears/loadinggears/gear-animation-5.gif">\
+			<!--<img src="https://darkiemindyou.files.wordpress.com/2015/04/loading6_230x230-cooler.gif?w=682" style="position: absolute;margin-left: -89px;width: 60px;margin-top: 115px;">\
+			</div>'
 		},
 		{
 			title: "Feature Vector",
