@@ -5,7 +5,7 @@ from bottle import Bottle, route, run, static_file
 import os
 
 
-abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../View')
+abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Views')
 
 homebottle = Bottle()
 

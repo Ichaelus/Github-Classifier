@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from Models.ClassificationModule import ClassificationModule
 
-from ClassificationModule import ClassificationModule
+
 
 class basicneuralnetwork(ClassificationModule):
     """A basic feedforward neural network"""

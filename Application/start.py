@@ -3,9 +3,9 @@
 
 from bottle import Bottle
 import webbrowser
-from Controller.HomeController import homebottle
-from Model.ClassifierCollection import ClassifierCollection
-from Model.basicneuralnetwork import basicneuralnetwork
+from Controllers.HomeController import homebottle
+from Models.ClassifierCollection import ClassifierCollection
+from Models.ClassificationModules.basicneuralnetwork import basicneuralnetwork
 
 rootApp = Bottle()
 
@@ -14,10 +14,10 @@ rootApp = Bottle()
 classifiercollection = ClassifierCollection()
 
 #testing stuff
-bnn = basicneuralnetwork()
-classifiercollection.addClassificationModule(bnn)
-print bnn.getdescription()
-print classifiercollection.getClassificationModulesJSON()
+#bnn = basicneuralnetwork()
+#classifiercollection.addClassificationModule(bnn)
+#print bnn.getdescription()
+#print classifiercollection.getClassificationModules()
 
 
 if __name__ == '__main__':
