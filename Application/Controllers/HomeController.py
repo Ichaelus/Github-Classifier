@@ -24,11 +24,11 @@ def getScript(filename):
 
 @homebottle.get('/bootstrap/css/<filename:re:.*\.css>')
 def getBSC(filename):
-	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "js"), mimetype='text/css')
+	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "css"), mimetype='text/css')
 
 @homebottle.get('/css/<filename:re:.*\.css>')
 def getCSS(filename):
-	return static_file(filename, root = os.path.join(abspath, "css/"), mimetype='text/css')
+	return static_file(filename, root = os.path.join(abspath, "css"), mimetype='text/css')
 
 @homebottle.get('/fonts/<filename:re:.*\.woff>')
 def getf(filename):
