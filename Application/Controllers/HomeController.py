@@ -14,17 +14,10 @@ homebottle = Bottle()
 def home():
     return static_file("index.html", root = abspath, mimetype='text/html')
 
-@homebottle.get('/bootstrap/js/<filename:re:.*\.js>')
-def getBS(filename):
-    return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "js"), mimetype='text/javascript')
-
 @homebottle.get('/scripts/<filename:re:.*\.js>')
 def getScript(filename):
 	return static_file(filename, root=os.path.join(abspath, "scripts"), mimetype='text/javascript')
 
-@homebottle.get('/bootstrap/css/<filename:re:.*\.css>')
-def getBSC(filename):
-	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "css"), mimetype='text/css')
 
 @homebottle.get('/css/<filename:re:.*\.css>')
 def getCSS(filename):
@@ -42,6 +35,14 @@ def getf2(filename):
 def getf3(filename):
 	return static_file(filename, root = os.path.join(abspath, "fonts"), mimetype='application/x-font-ttf')
 
+@homebottle.get('/bootstrap/js/<filename:re:.*\.js>')
+def getBS(filename):
+    return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "js"), mimetype='text/javascript')
+
+@homebottle.get('/bootstrap/css/<filename:re:.*\.css>')
+def getBSC(filename):
+	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "css"), mimetype='text/css')
+	
 @homebottle.get('/bootstrap/fonts/<filename:re:.*\.woff>')
 def getBSf(filename):
 	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "fonts"), mimetype='application/x-font-woff')

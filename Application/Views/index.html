@@ -6,7 +6,7 @@
     Code by Michael Leimstädtner
     -->
     <meta charset="utf-8"/>
-    <title>Classification Visualisation</title>
+    <title>Classification Overview</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="shortcut icon" href="favicon.ico"/>
@@ -14,30 +14,85 @@
     <meta Name="description" content=""/>
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/overview.css"/>
   </head>
   <body>
     <div class="container-fluid">
-      <div class="row" id="workflow">
-        <h1>Classification Insights</h1>
-        <div id="module_wrapper">
-          <div id="modules">
-            <div v-for="(m, index) in modules" v-on:click="setFocus(index)" v-bind:data-id="index" v-bind:class="'module' + ' ' + m.classes + ' ' + m.isActive">
-              <h2 class="module_header">{{m.title}}</h2>
-              <div v-html="m.handleData()"></div>
+      <div class="row" id="header">
+        <div class="container">
+          <div class="col-xs-4"><h1>Classification Overview</h1></div>
+          <div class="col-xs-8 controls">
+            <div class="col-xs-4">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input name="stream_ai" type="radio">
+                </span>
+                <label class="form-control">Stream Based AL</label>
+              </div><!-- /input-group -->
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input name="stream_ai" type="radio">
+                </span>
+                <label class="form-control">Pool Based AL</label>
+              </div><!-- /input-group -->
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input name="stream_ai" type="radio">
+                </span>
+                <label class="form-control">Test all Classifiers</label>
+              </div><!-- /input-group -->
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input name="stream_ai" type="radio">
+                </span>
+                <label class="form-control">Predict single samples</label>
+              </div>   <!-- /input-group -->  
             </div>
-          </div>
-        </div>
-            
-          </div>
-        </div>
-        <script type="text/javascript" src="https://unpkg.com/vue@2.0.3/dist/vue.js"></script>
-        <script
-        src="https://code.jquery.com/jquery-3.1.1.min.js"
-        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-        crossorigin="anonymous"></script>
-        <script src="bootstrap/js/bootstrap.min.js"></script>
-        <script src="//d3js.org/d3.v3.min.js"></script>
-        <script type="text/javascript" src="scripts/frontend.js"></script>
-      </body>
-    </html>
+            <div class="col-xs-4">
+
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input name="stream_ai" type="checkbox">
+                </span>
+                <label class="form-control">Semi-Supervised</label>
+              </div>   <!-- /input-group -->  
+
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input name="stream_ai" type="checkbox">
+                </span>
+                <label class="form-control">Train instantly</label>
+              </div>   <!-- /input-group -->  
+
+            </div>
+            <div class="col-xs-4">
+              <div class="input-group">
+                <label id="formula" class="form-control">e=mc²</label>
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Uncertainty formula <span class="caret"></span></button>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="#">Formula 1</a></li>
+                    <li><a href="#">e=me²</a></li>
+                  </ul>
+                </div><!-- /btn-group -->
+              </div><!-- /input-group -->
+              <div class="control_buttons">
+                <span class="glyphicon glyphicon-play" title="Train until paused"></span>
+                <span class="glyphicon glyphicon-pause active" title="Stop training"></span>
+                <span class="glyphicon glyphicon-step-forward" title="Train a single sample"></span>
+              </div>
+            </div><!-- /control-subgroup -->
+          </div><!-- /controls -->
+        </div><!-- /container -->
+      </div><!-- /header -->
+    </div><!-- /container-fluid -->
+    <script type="text/javascript" src="https://unpkg.com/vue@2.0.3/dist/vue.js"></script>
+    <script
+    src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    crossorigin="anonymous"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="scripts/frontend.js"></script>
+  </body>
+</html>
