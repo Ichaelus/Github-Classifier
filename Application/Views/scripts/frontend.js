@@ -44,7 +44,7 @@ updateVue({modules: [
 		{
 			title: "Sample Extractor",
 			classes: "input",
-			isActive: "active",
+			isActive: "",
 			html: '<div class="center">	<p class="general_desc">Fetching data for <span class="highlighted">Ionic</span>...</p>		<div class="row"><div class="col-xs-4 col-xs-offset-1">\
   <div class="gitprev">\
     <span>github.com/SeraphimSerapis/Ionic/</span>\
@@ -65,7 +65,7 @@ handleData: function() { return this.html}
 				if(this.html == ""){
 					vstring = "";
 					for (let key in this.data) {
-						vstring +="<div class='row'><div class='col-xs-6'>"+key+"</div><div class='col-xs-6'>"+this.data[key]+"</div></div>"	
+						vstring +="<div class='row'><div class='col-xs-4' style='font-weight:bold;'>"+key+"</div><div class='content col-xs-8'>"+this.data[key]+"</div></div>"	
 					};
 					this.html = '<p class="general_desc center">Following data has been extracted from <span class="highlighted">Ionic</span>:</p><div class="vector">'+vstring+'</div>';
 				}
@@ -82,9 +82,28 @@ handleData: function() { return this.html}
 		{
 			title: "Probability Diagram",
 			classes: "input",
-			isActive: "",
+			isActive: "active",
 			html: '',
-			handleData: function() { return this.html}
+			data: [
+
+				{ class: "DEV",		probability: .18167},
+				{ class: "HW",		probability: .01492},
+				{ class: "EDU",		probability: .22780},
+				{ class: "DOCS",	probability: .04253},
+				{ class: "WEB",		probability: .12702},
+				{ class: "DATA",	probability: .05288},
+				{ class: "OTHER",	probability: .02022}
+			],
+			handleData: function() { 
+				// http://bl.ocks.org/mbostock/3885705
+				if(this.html == ""){
+					var d = this.data;
+					this.html = "<div id='chart'></div>";
+					setTimeout(function(){this.html = drawChart(d)}, 100);
+				}
+				return this.html
+			}
+
 		},
 		{
 			title: "Result",
@@ -137,4 +156,95 @@ function updateFocus(){
   for(let i = 0; i < stateData.modules.length; i++)
 	if(stateData.modules[i].isActive == "active")
   		document.getElementById("modules").style.margin = "0 0 0 calc( (100% - 900px) / 2 - "+i+" * 900px)";
+}
+
+function drawChart(data){
+	var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 800 - margin.left - margin.right,
+    height = 450 - margin.top - margin.bottom;
+
+	var formatPercent = d3.format(".0%");
+
+	var x = d3.scale.ordinal()
+	    .rangeRoundBands([0, width], .1, 1);
+
+	var y = d3.scale.linear()
+	    .range([0, height]);
+
+	var xAxis = d3.svg.axis()
+	    .scale(x)
+	    .orient("bottom");
+
+	var yAxis = d3.svg.axis()
+	    .scale(y)
+	    .orient("left")
+	    .tickFormat(formatPercent);
+
+	var svg = d3.select("#chart").append("svg")
+	    .attr("width", width + margin.left + margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+	  .append("g")
+	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	  x.domain(data.map(function(d) { return d.class; }));
+	  y.domain(data.map(function(d)  { return d.probability; }));
+
+	  svg.append("g")
+	      .attr("class", "x axis")
+	      .attr("transform", "translate(0," + height + ")")
+	      .call(xAxis);
+
+	  svg.append("g")
+	      .attr("class", "y axis")
+	      .call(yAxis)
+	    .append("text")
+	      .attr("transform", "rotate(-90)")
+	      .attr("y", 6)
+	      .attr("dy", ".71em")
+	      .style("text-anchor", "end")
+	      .text("Probability");
+
+	  svg.selectAll(".bar")
+	      .data(data)
+	    .enter().append("rect")
+	      .attr("class", "bar")
+	      .attr("x", function(d) { return x(d.class); })
+	      .attr("width", x.rangeBand())
+	      .attr("y", function(d) { return y(d.probability); })
+	      .attr("height", function(d) { return height - y(d.probability); });
+
+	  var sortTimeout = setTimeout(function() {
+	    change(x, data, svg, xAxis);
+	  }, 1000);
+
+	  return document.querySelector("#chart").innerHTML;
+}
+
+
+function change(x, data, svg, xAxis) {
+	// Copy-on-write since tweens are evaluated after a delay.
+	var x0 = x.domain(data.sort(function(a, b) { return b.probability - a.probability; })
+	    .map(function(d) { return d.class; }))
+	    .copy();
+
+	svg.selectAll(".bar")
+	    .sort(function(a, b) { return x0(a.class) - x0(b.class); });
+
+	var transition = svg.transition().duration(750),
+	    delay = function(d, i) { return i * 50; };
+
+	transition.selectAll(".bar")
+	    .delay(delay)
+	    .attr("x", function(d) { return x0(d.class); });
+
+	transition.select(".x.axis")
+	    .call(xAxis)
+	  .selectAll("g")
+      .delay(delay);
+
+     setTimeout(function(){
+	    svg.select(".bar")
+	    	.attr("class", "bar chosen")
+	    	delay(delay);      	
+      }, 600);
 }
