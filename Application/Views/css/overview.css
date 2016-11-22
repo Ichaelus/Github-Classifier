@@ -89,10 +89,37 @@ h1{
   box-shadow: 0 0 1px rgba(0,0,0,0.25);
   margin-top: 20px;
   border-radius: 5px;
+  border-left: 3px solid black;
+  border-right: 3px solid black;
+}
+.classificators::after {
+    content: "►";
+    position: absolute;
+    top: calc(50% - 12.5px);
+    right: -6px;
+    font-size: 25px;
 }
 .classificator_row{
   margin-bottom: 50px;
   position: relative;
+}
+.classificator_row.inactive{
+  opacity: .5;
+}
+.glyphicon-ok-circle{
+  display: inline-block;
+}
+.glyphicon-ban-circle{
+  display: none;
+}
+.inactive .arrow, .inactive .result_vector, .inactive .classificator:before, .inactive .glyphicon-ok-circle{
+  display: none;
+}
+.inactive .glyphicon-ban-circle{
+  display: inline-block;
+}
+.wrapper .glyphicon:hover {
+    color: #719EED;
 }
 .classificator{
   display: inline-block;
@@ -111,6 +138,9 @@ h1{
   color: white;
   padding: 5px 0;
   letter-spacing: 2px;
+}
+.inactive .name{
+  background: black;
 }
 .wrapper{
   font-weight: bold;
@@ -136,7 +166,7 @@ h1{
 }
 .result_vector{
   display: inline-block;
-  width: 400px;
+  width: 398px;
   line-height: 80px;
   position: relative;
 }
@@ -157,7 +187,7 @@ h1{
   margin: 0 -10px 0 0;
 }
 .v {
-  width: 57px;
+  width: 56.6px;
   float: left;
   height: 80px;
 }
@@ -173,4 +203,45 @@ h1{
   color: #719EED;
   font-size: 1.05em;
   font-weight: bold;
+}
+.overlay_blur{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: #ffffffe6;
+  top: 0;
+  left: 0;
+  z-index: 3;
+}
+.overlay_wrapper{
+  position: absolute;
+  width: 100%;
+  top: 0;
+  height: 100%;
+}
+.classifier_details{
+  width: 800px;
+  border: 1px solid;
+  border-radius: 2.5px;
+  position: relative;
+  margin: 100px auto;
+  z-index: 5;
+  background: white;
+  padding: 20px;
+}
+.classifier_details .attribute div:first-child{
+  font-weight: bold;
+  text-align: right;
+}
+.classifier_details .attribute div:last-child{
+  font-style: italic;
+}
+.action{
+  width: 300px;
+  display: block;
+  text-align: center;
+  margin: 0px auto 10px;
+}
+.titles{
+  text-align: center;
 }
