@@ -42,6 +42,9 @@ h1{
   color: #555;
   border: 1px solid #ccc;
   border-radius: 4px;
+  position: absolute;
+  bottom: 0;
+  left: calc(50% - 37.5px);
 }
 .active, .control_buttons span:hover{
   color: #719eec;
@@ -84,7 +87,7 @@ h1{
   font-size: 25px;
 }
 
-.classificators{
+#classificators{
   padding: 50px 20px 20px 20px;
   box-shadow: 0 0 1px rgba(0,0,0,0.25);
   margin-top: 20px;
@@ -92,7 +95,7 @@ h1{
   border-left: 3px solid black;
   border-right: 3px solid black;
 }
-.classificators::after {
+#classificators::after {
     content: "►";
     position: absolute;
     top: calc(50% - 12.5px);

@@ -25,15 +25,15 @@ def getCSS(filename):
 
 @homebottle.get('/fonts/<filename:re:.*\.woff>')
 def getf(filename):
-	return static_file(filename, root = os.path.join(os.path.join(abspath, "fonts"), "woff"), mimetype='application/x-font-woff')
+	return static_file(filename, root = os.path.join(abspath, "fonts"), mimetype='application/x-font-woff')
 
 @homebottle.get('/fonts/<filename:re:.*\.woff2>')
 def getf2(filename):
-	return static_file(filename, root = os.path.join(os.path.join(abspath, "fonts"), "woff2"), mimetype='application/x-font-woff2')
+	return static_file(filename, root = os.path.join(abspath, "fonts"), mimetype='application/x-font-woff2')
 
 @homebottle.get('/fonts/<filename:re:.*\.ttf>')
 def getf3(filename):
-	return static_file(filename, root = os.path.join(os.path.join(abspath, "fonts"), "ttf"), mimetype='application/x-font-ttf')
+	return static_file(filename, root = os.path.join(abspath, "fonts"), mimetype='application/x-font-ttf')
 
 @homebottle.get('/bootstrap/js/<filename:re:.*\.js>')
 def getBS(filename):
@@ -45,18 +45,28 @@ def getBSC(filename):
 	
 @homebottle.get('/bootstrap/fonts/<filename:re:.*\.woff>')
 def getBSf(filename):
-	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "woff"), mimetype='application/x-font-woff')
+	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "fonts"), mimetype='application/x-font-woff')
 
 @homebottle.get('/bootstrap/fonts/<filename:re:.*\.woff2>')
 def getBSf2(filename):
-	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "woff2"), mimetype='application/x-font-woff2')
+	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "fonts"), mimetype='application/x-font-woff2')
 
 @homebottle.get('/bootstrap/fonts/<filename:re:.*\.ttf>')
 def getBSf3(filename):
-	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "ttf"), mimetype='application/x-font-ttf')
+	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "fonts"), mimetype='application/x-font-ttf')
 
 
-@homebottle.get('/post/<key>')
+@homebottle.get('/get/<key>')
+def api(key):
+	if (key == "formulas"):
+		return '["e=mc²", "Abra kadabra"]'
+	elif(key == "test"):
+		return "backend connected!"
+	else:
+		return "API call for: " + key
+
+
+@homebottle.post('/post/<key>')
 def api(key):
 	if (key == "click"):
 		return "Click event called"
@@ -64,8 +74,6 @@ def api(key):
 		return "backend connected!"
 	else:
 		return "API call for: " + key
-
-
 
 
 

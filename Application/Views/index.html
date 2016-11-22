@@ -48,68 +48,70 @@
     <div class="container-fluid">
       <div id="header">
         <div class="container">
-          <div class="col-xs-4"><h1>Classification Overview</h1></div>
-          <div class="col-xs-8 controls">
-            <div class="col-xs-4">
+          <div class="col-xs-4">
+            <h1>Classification Overview</h1>
+
+              <div class="control_buttons"><!--control-subgroup-->
+                <span class="glyphicon glyphicon-play" v-on:click="singleStep()" title="Train until paused"></span>
+                <span class="glyphicon glyphicon-pause active" v-on:click="halt()" title="Stop training"></span>
+                <span class="glyphicon glyphicon-step-forward" v-on:click="loop()" title="Train a single sample"></span>
+              </div><!-- /control-subgroup -->
+
+          </div>
+          <div class="col-xs-8">
+            <div class="col-xs-6">
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input id="stream_ai_1" name="stream_ai" type="radio">
+                  <input id="mode_1" value="stream" v-model="mode" name="mode" type="radio">
                 </span>
-                <label for="stream_ai_1" class="form-control">Stream Based AL</label>
+                <label for="mode_1" class="form-control">Stream Based AL</label>
               </div><!-- /input-group -->
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input id="stream_ai_2" name="stream_ai" type="radio">
+                  <input id="mode_2"  value="pool" v-model="mode" name="mode" type="radio">
                 </span>
-                <label for="stream_ai_2" class="form-control">Pool Based AL</label>
+                <label for="mode_2" class="form-control">Pool Based AL</label>
               </div><!-- /input-group -->
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input id="stream_ai_3" name="stream_ai" type="radio">
+                  <input id="mode_3"  value="test" v-model="mode" name="mode" type="radio">
                 </span>
-                <label for="stream_ai_3" class="form-control">Test all Classifiers</label>
+                <label for="mode_3" class="form-control">Test all Classifiers</label>
               </div><!-- /input-group -->
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input id="stream_ai_4" name="stream_ai" type="radio">
+                  <input id="mode_4"  value="single" v-model="mode" name="mode" type="radio">
                 </span>
                 <label for="stream_ai_4" class="form-control">Predict single samples</label>
               </div>   <!-- /input-group -->  
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-6">
 
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input id="semi_supervised" name="semi_supervised" type="checkbox">
+                  <input id="semi_supervised" v-model="isSemiSupervised" name="semi_supervised" type="checkbox">
                 </span>
                 <label for="semi_supervised" class="form-control">Semi-Supervised</label>
               </div>   <!-- /input-group -->  
 
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input id="instant_train" name="instant_train" type="checkbox">
+                  <input id="instant_train" v-model="trainInstantly" name="instant_train" type="checkbox">
                 </span>
                 <label for="instant_train" class="form-control">Train instantly</label>
               </div>   <!-- /input-group -->  
 
-            </div>
-            <div class="col-xs-4">
               <div class="input-group">
-                <label id="formula" class="form-control">e=mc²</label>
+                <label id="formula" class="form-control">{{formula}}</label>
                 <div class="input-group-btn">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Uncertainty formula <span class="caret"></span></button>
                   <ul class="dropdown-menu dropdown-menu-right">
-                    <li><a href="#">Formula 1</a></li>
-                    <li><a href="#">e=me²</a></li>
+                    <li v-for="f in formulas"><a v-on:click="setFormula(f)" href="#">{{f}}</a></li>
                   </ul>
                 </div><!-- /btn-group -->
               </div><!-- /input-group -->
-              <div class="control_buttons">
-                <span class="glyphicon glyphicon-play" title="Train until paused"></span>
-                <span class="glyphicon glyphicon-pause active" title="Stop training"></span>
-                <span class="glyphicon glyphicon-step-forward" title="Train a single sample"></span>
-              </div>
-            </div><!-- /control-subgroup -->
+
+            </div>
           </div><!-- /controls -->
         </div><!-- /container -->
       </div><!-- /header -->
@@ -122,7 +124,7 @@
         </div><!-- /titles -->
 
         <div class="row main"><!-- main -->
-          <div class="col-xs-2"><!-- input -->
+          <div id="input" class="col-xs-2"><!-- input -->
             <div class="input_pool">
               <span>875</span>
               <div title="Sample pool size">
@@ -132,7 +134,7 @@
           </div><!-- /input -->
 
           <div class="col-xs-8">
-            <div class="classificators">
+            <div id="classificators">
               <div class="classificator_row">
                 <div class="classificator">
                   <span class="name">Neural network</span>
@@ -202,7 +204,7 @@
             </div><!-- /classificators -->
           </div>
 
-          <div class="col-xs-2"><!-- output -->
+          <div class="col-xs-2" id="output"><!-- output -->
 
           </div><!-- /output -->
 
