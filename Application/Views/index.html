@@ -18,50 +18,50 @@
   </head>
   <body>
     <div class="container-fluid">
-      <div class="row" id="header">
+      <div id="header">
         <div class="container">
           <div class="col-xs-4"><h1>Classification Overview</h1></div>
           <div class="col-xs-8 controls">
             <div class="col-xs-4">
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input name="stream_ai" type="radio">
+                  <input id="stream_ai_1" name="stream_ai" type="radio">
                 </span>
-                <label class="form-control">Stream Based AL</label>
+                <label for="stream_ai_1" class="form-control">Stream Based AL</label>
               </div><!-- /input-group -->
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input name="stream_ai" type="radio">
+                  <input id="stream_ai_2" name="stream_ai" type="radio">
                 </span>
-                <label class="form-control">Pool Based AL</label>
+                <label for="stream_ai_2" class="form-control">Pool Based AL</label>
               </div><!-- /input-group -->
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input name="stream_ai" type="radio">
+                  <input id="stream_ai_3" name="stream_ai" type="radio">
                 </span>
-                <label class="form-control">Test all Classifiers</label>
+                <label for="stream_ai_3" class="form-control">Test all Classifiers</label>
               </div><!-- /input-group -->
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input name="stream_ai" type="radio">
+                  <input id="stream_ai_4" name="stream_ai" type="radio">
                 </span>
-                <label class="form-control">Predict single samples</label>
+                <label for="stream_ai_4" class="form-control">Predict single samples</label>
               </div>   <!-- /input-group -->  
             </div>
             <div class="col-xs-4">
 
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input name="stream_ai" type="checkbox">
+                  <input id="semi_supervised" name="semi_supervised" type="checkbox">
                 </span>
-                <label class="form-control">Semi-Supervised</label>
+                <label for="semi_supervised" class="form-control">Semi-Supervised</label>
               </div>   <!-- /input-group -->  
 
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input name="stream_ai" type="checkbox">
+                  <input id="instant_train" name="instant_train" type="checkbox">
                 </span>
-                <label class="form-control">Train instantly</label>
+                <label for="instant_train" class="form-control">Train instantly</label>
               </div>   <!-- /input-group -->  
 
             </div>
@@ -85,6 +85,71 @@
           </div><!-- /controls -->
         </div><!-- /container -->
       </div><!-- /header -->
+      <div class="container">
+        <div class="row main">
+          <div class="col-xs-2">
+            <div class="input_pool">
+              <span>875</span>
+              <div title="Sample pool size">
+                <span title="Repository name">Github/Ionic</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xs-8">
+            <div class="classificators">
+              <div class="classificator_row">
+                <div class="classificator">
+                  <span class="name">Neural network</span>
+                  <div class="wrapper">
+                    <span title="Current accuracy" class="stats">81% <span title="Accuracy of previous version" class="old">/ 79%</span></span>
+                    <span title="Show classifier details" class="glyphicon glyphicon-info-sign"></span>
+                    <span title="Enable classifier" class="hidden glyphicon glyphicon-ban-circle"></span>
+                    <span title="Disable classifier" class="glyphicon glyphicon-ok-circle"></span>
+                  </div>
+                </div>
+                <div class="arrow">=&gt;</div>
+                <div class="result_vector">
+                    <div class="v"><span>DEV</span><span>0.04</span></div>
+                    <div class="v"><span>HW</span><span>0.13</span></div>
+                    <div class=" v"><span>EDU</span><span>0.11</span></div>
+                    <div class="v"><span>DOCS</span><span>0.24</span></div>
+                    <div class="max  v"><span>WEB</span><span>0.59</span></div>
+                    <div class="v"><span>DATA</span><span>0.02</span></div>
+                    <div class="v"><span>OTHER</span><span>0.04</span></div>
+                </div>
+              </div>
+
+              <div class="classificator_row">
+                <div class="classificator">
+                  <span class="name">Neural network</span>
+                  <div class="wrapper">
+                    <span title="Current accuracy" class="stats">81% <span title="Accuracy of previous version" class="old">/ 79%</span></span>
+                    <span title="Show classifier details" class="glyphicon glyphicon-info-sign"></span>
+                    <span title="Enable classifier" class="hidden glyphicon glyphicon-ban-circle"></span>
+                    <span title="Disable classifier" class="glyphicon glyphicon-ok-circle"></span>
+                  </div>
+                </div>
+                <div class="arrow">=&gt;</div>
+                <div class="result_vector">
+                    <div class="max  v"><span>DEV</span><span>0.94</span></div>
+                    <div class="v"><span>HW</span><span>0.03</span></div>
+                    <div class="v"><span>EDU</span><span>0.01</span></div>
+                    <div class="v"><span>DOCS</span><span>0.04</span></div>
+                    <div class="v"><span>WEB</span><span>0.09</span></div>
+                    <div class="v"><span>DATA</span><span>0.02</span></div>
+                    <div class="v"><span>OTHER</span><span>0.04</span></div>
+                </div>
+              </div>
+
+            </div><!-- /classificators -->
+          </div>
+
+          <div class="col-xs-2">
+          </div>
+
+        </div><!-- /main -->
+      </div><!-- /container -->
     </div><!-- /container-fluid -->
     <script type="text/javascript" src="https://unpkg.com/vue@2.0.3/dist/vue.js"></script>
     <script

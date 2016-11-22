@@ -11,18 +11,20 @@ html, body{
   font-size: 15px;
   color: #34495e;
 }
+.container-fluid{
+  padding: 0;
+}
 h1{
   line-height: 152px;
   margin: 0;  
 }
 #header{
-  position: fixed;
+  position: relative;
   width: 100%;
   top: 0;
-  background-color: rgba(255,255,255,0.4);
+  background-color: rgba(233, 233, 233, 0.4);
   box-shadow: 0 0 1px rgba(0,0,0,0.25);
   transition: background-color 0.3s ease-in-out;
-  height: $heading-inner-height;
   padding: 10px 60px;
   z-index: 2;
 }
@@ -40,6 +42,135 @@ h1{
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-.active{
+.active, .control_buttons span:hover{
   color: #719eec;
+}
+.main{
+  min-height: 600px;
+}
+.input_pool{
+  border-radius: 50%;
+  background: #719EED;
+  height: 165px;
+  top: 150px;
+  position: relative;
+}
+.input_pool > span{
+  position: absolute;
+  text-align: center;
+  width: 165px;
+  top: 30px;
+  color: white;
+}
+.input_pool > div{
+  text-align: center;
+  line-height: 165px;
+  position: relative;
+}
+.input_pool > div span{
+  background: white;
+  border-radius: 2.5px;
+  padding: 5px 10px;
+  border: 1px solid;
+  font-weight: bold;
+  cursor: default;
+}
+.input_pool:before, .classificator:before{
+  content: "►";
+  position: absolute;
+  top: 64px;
+  left: -25px;
+  font-size: 25px;
+}
+
+.classificators{
+  min-height: 600px;
+  padding: 20px;
+  box-shadow: 0 0 1px rgba(0,0,0,0.25);
+  margin-top: 20px;
+  border-radius: 5px;
+}
+.classificator_row{
+  margin-bottom: 50px;
+  position: relative;
+}
+.classificator{
+  display: inline-block;
+  width: 200px;
+  text-align: center;
+  border: 1px solid black;
+  border-radius: 2.5px;
+}
+.classificator:before{
+  top: 35px;
+}
+.classificator .name{
+  display: block;
+  border-bottom: 1px solid black;
+  background: #008000cc;
+  color: white;
+  padding: 5px 0;
+  letter-spacing: 2px;
+}
+.wrapper{
+  font-weight: bold;
+  padding: 10px 0;
+  word-spacing: 10px;
+}
+.stats{
+  font-weight: bold;
+}
+.wrapper .glyphicon{
+  cursor: pointer;
+}
+.hidden{
+  display: none;
+}
+.arrow{
+  display: inline-block;
+  line-height: 75px;
+  font-size: 50px;
+  position: relative;
+  margin-left: 50px;
+  top: -3px;
+}
+.result_vector{
+  display: inline-block;
+  width: 400px;
+  line-height: 80px;
+  position: relative;
+}
+.result_vector::before, .result_vector::after {
+  content: "[";
+  position: absolute;
+  left: 0;
+  font-size: 80px;
+  top: 13px;
+  margin-left: -5px;
+  color: #0000004d;
+  font-weight: 100;
+}
+.result_vector::after{
+  content: "]";
+  right: 0;
+  left: initial;
+  margin: 0 -10px 0 0;
+}
+.v {
+  width: 57px;
+  float: left;
+  height: 80px;
+}
+.v span:first-child {
+  font-weight: bold;
+}
+.v span {
+  display: block;
+  height: 40px;
+  text-align: center;
+}
+.v.max{
+  color: #719EED;
+  font-size: 1.05em;
+  font-weight: bold;
 }
