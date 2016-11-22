@@ -9,11 +9,6 @@ class ClassificationModule:
     description = "Doesnt have a description yet"
     muted = False
     
-
-    @abstractmethod
-    def foo(self):
-        pass
-
     @classmethod
     def getDescription(self):
         return self.description

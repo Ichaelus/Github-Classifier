@@ -18,10 +18,10 @@ updateVue({modules: [
 			title: "Chose sample source",
 			classes: "input",
 			isActive: "",
-			html: '<div class="left notchosen"><h4>Sample Generator</h4><span>With Active Learning</span></div>\
-              <div class="right notchosen"><h4>User Input</h4><span>Specific Repository</span></div>',
+			html: '<div class="left notchosen"><h4>Use own input</h4><span>Specific Repository</span></div>\
+              <div class="right notchosen"><h4>Generate sample</h4><span>With Active Learning</span></div>',
               handleData: function() { return this.html}
-		},
+		},/*
 		{
 			title: "Active Learning",
 			classes: "input",
@@ -40,7 +40,7 @@ updateVue({modules: [
   </ul>\
   </div>',
   handleData: function() { return this.html}
-		},
+		},*/
 		{
 			title: "Sample Extractor",
 			classes: "input",
@@ -80,6 +80,7 @@ handleData: function() { return this.html}
 			handleData: function() { return this.html}
 		},
 		{
+			key: "PD",
 			title: "Probability Diagram",
 			classes: "input",
 			isActive: "active",
@@ -99,7 +100,7 @@ handleData: function() { return this.html}
 				if(this.html == ""){
 					var d = this.data;
 					this.html = "<div id='chart'></div>";
-					setTimeout(function(){this.html = drawChart(d)}, 100);
+					setTimeout(function(){drawChart(d)}, 100);
 				}
 				return this.html
 			}
@@ -150,12 +151,22 @@ function updateVue(data){
   });*/
 }
 
+function updateByKey(key, attr, val){
+	// Set focus to selected module
+  for(let i = 0; i < stateData.modules.length; i++)
+	if(typeof(stateData.modules[i].key) != "undefined")
+		if(stateData.modules[i].key.toLowerCase() == key.toLowerCase()){
+			console.log("updated.");
+	  		stateData.modules[i][attr] = val;
+	  	}
+}
 
 function updateFocus(){
 	// Set focus to selected module
   for(let i = 0; i < stateData.modules.length; i++)
-	if(stateData.modules[i].isActive == "active")
+	if(stateData.modules[i].isActive == "active"){
   		document.getElementById("modules").style.margin = "0 0 0 calc( (100% - 900px) / 2 - "+i+" * 900px)";
+	}
 }
 
 function drawChart(data){
@@ -217,7 +228,7 @@ function drawChart(data){
 	    change(x, data, svg, xAxis);
 	  }, 1000);
 
-	  return document.querySelector("#chart").innerHTML;
+	  //updateByKey("pd", "html", "<div id='chart'>"+ document.querySelector("#chart").innerHTML + "</div>");
 }
 
 
@@ -244,7 +255,7 @@ function change(x, data, svg, xAxis) {
 
      setTimeout(function(){
 	    svg.select(".bar")
-	    	.attr("class", "bar chosen")
-	    	delay(delay);      	
-      }, 600);
+	    	.attr("class", "bar chosen");
+	  	updateByKey("pd", "html", "<div id='chart'>"+ document.querySelector("#chart").innerHTML + "</div>");
+      }, 800);
 }

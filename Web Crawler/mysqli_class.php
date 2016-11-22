@@ -1,8 +1,8 @@
 <?php
 class MYSQL{
 	var $CONN = "";
-	var $USER = "u51019db1";
-	var $PASS = "c99t6%3NSjte7eaub8iw7y1a!";
+	var $USER = "HIDDEN";
+	var $PASS = "HIDDEN";
 	var $SERVER = "localhost";
 	
 	var $TRAIL = array();
@@ -15,7 +15,7 @@ class MYSQL{
 		echo "[$text] ( $no : $msg )</br>\n";
 		exit;
 	}
-	function init($dbase="u51019db1"){
+	function init($dbase="HIDDEN"){
 		$user= $this->USER;
 		$pass = $this->PASS;
 		$server = $this->SERVER;

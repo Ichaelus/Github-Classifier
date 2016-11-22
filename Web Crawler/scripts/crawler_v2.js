@@ -2,7 +2,6 @@
   Author: Michael Leimstädtner
   JQuery has to be accessible
   */
-console.log("Repocrawler started");
  
  // Global variables
  var qS = (query) => document.querySelector(query),
@@ -27,28 +26,57 @@ console.log("Repocrawler started");
       tagger: get_name_tag()
     };
 
-initButtons();
-initVue();
-getRepos();
-updateClassifications();
+// Startup
+try {
+  console.log("Repocrawler started");
+  initButtons();
+  initVue();
+  getRepos();
+  updateClassifications();
+  sampleMining();
+}catch(ex){
+  console.log(ex);
+}
 
 function updateClassifications(){
-  let iv = setInterval(function(){
-      $.get("ajax.php?key=api:to-reclassify").then(function(result){
-        result = JSON.parse(result);
-        if(typeof(result.Error) != "undefined"){
+  // Ask the server if there are old samples that need to be reclassified
+  $.get("ajax.php?key=api:to-reclassify").then(function(result){
+    result = JSON.parse(result);
+    if(typeof(result.Error) != "undefined"){
+      // Maybe out of old classifications
+      console.log(result.Error);
+    }else{
+      console.log(result);
+      $.get("ajax.php?key=api:generate_sample&class="+result.class+"&api-url=" + result.url.replace("https://github.com/", "https://api.github.com/repos/"), function(res2){
+        if(res2 != "")
+          res2 = JSON.parse(res2);
+        console.log(res2);
+        if(res2 != "" && typeof(res2.Error) != "undefined"){
           // Maybe out of old classifications
-          console.log(result.Error);
-          clearInterval(iv);
+          console.log(res2.Error);
         }else{
-          console.log(result);
-          $.get("ajax.php?key=api:generate_sample&class="+result.class+"&api-url=" + result.url.replace("https://github.com/", "https://api.github.com/repos/"), function(res2){
-            res2 = JSON.parse(res2);
-            console.log(res2);
-          });
+          setTimeout(updateClassifications, 10000);
         }
       });
-  }, 10000);
+    }
+  });
+}
+
+function sampleMining(){
+  // Requests the server to generate a random unlabeled sample. Once finished, request the next until no more API calls are available
+  console.log("Mining unlabeled sample");
+  $.get("ajax.php?key=api:generate_sample").then(function(result){
+    if( result != ""){
+      result = JSON.parse(result);
+      // Maybe out of old classifications
+      if(typeof(result.Error) != "undefined")
+        console.log(result.Error);
+      else
+        setTimeout(sampleMining, 1000);
+    }else{
+      setTimeout(sampleMining, 1000);
+    }
+  });
 }
 
 function getRepos(){
@@ -72,6 +100,7 @@ function getRepos(){
   });
 }
 function tryNextIteration(){
+  // Display current repository
   // If a preloaded repo is ready, remove it from the list and visualize it
   if(allRepos.length > 0){
     runGenerator(function *main(){
@@ -115,6 +144,8 @@ function tryNextIteration(){
   }
 }
 function getTree(type, fileNames){
+  // Returns a html string containing a file and folder representation
+  assert(isNotEmpty(type), "Type missing");
   let r = "";
   for(let i = 0; i < fileNames.length; i++)
     if(String.trim(fileNames[i]) != "")
@@ -126,6 +157,8 @@ function getTree(type, fileNames){
   return r;
 }
 function initVue(){
+  // Init Buttons and Git preview
+  assert(typeof(Vue) != 'undefined', "Vue library not found");
   initButtons();
   liveView = new Vue({
     el: '#githubContent',
@@ -142,6 +175,7 @@ function updateVue(){
 }
 /* Following: Button handling functions */
 function handleButton(btn) {
+  // Handle clicks on the buttons to the right. Either classify or skip repository
   if(Object.keys(repoData).length > 0){
     $("#githubContent").fadeOut('fast', function() {
       $("#loading").fadeIn('fast');
@@ -155,30 +189,36 @@ function handleButton(btn) {
   }
 }
 function classify(label, data = {}){
+  // Save current visible repository with the selected CLASS label
+  assert(isNotEmpty(label), "Invalid label");
 
-    postData.key = "classify";
-    postData.class = label;
-    console.log(postData);
-    $.post("/ajax.php", postData).then(
-      function(result){
-        if(result.indexOf("Repository classified") >= 0){
-          notify("Status", "Classification submitted.");
-        }else{
-          notify("Status", "There was an error while trying to submit ("+result+").");
-        }
-        // Keep at least three repos buffered + get next liveView
-        getRepos();
-    });
+  postData.key = "classify";
+  postData.class = label;
+  console.log(postData);
+  $.post("/ajax.php", postData).then(
+    function(result){
+      if(result.indexOf("Repository classified") >= 0){
+        notify("Status", "Classification submitted.");
+      }else{
+        notify("Status", "There was an error while trying to submit ("+result+").");
+      }
+      // Keep at least three repos buffered + get next liveView
+      getRepos();
+  });
 }
 function skipRepo(){
-    $.post("/ajax.php", {key: "skip", id: postData.id}).then(
-      function(result){
-        notify("Status", "Classification skipped.");
-        // Keep at least three repos buffered + get next liveView
-        getRepos();
-    });
+  // Skip current visible repository and fetch next one
+  assert(isNotEmpty(postData.id), "Invalid repository ID");
+  $.post("/ajax.php", {key: "skip", id: postData.id}).then(
+    function(result){
+      notify("Status", "Classification skipped.");
+      // Keep at least three repos buffered + get next liveView
+      getRepos();
+  });
 }
 function initButtons(){
+  // Display the classification buttons on the right side of the screen
+  assert(typeof(Vue) != 'undefined', "Vue library not found");
    buttons = new Vue({
     el: '#buttons',
     components: {
@@ -198,6 +238,8 @@ function initButtons(){
 }
 
 function getCount(className){
+  // Returns the amount of existing samples for a given class
+  assert(isNotEmpty(className), "Classname missing");
   if(className.toLowerCase() == "skip")
     return "";
   let timestamp = localStorage.getItem("count_timestamp"),
@@ -218,17 +260,18 @@ function getCount(className){
 }
 
 function get_name_tag(){
+  // Requires a name tag from every user
   let name_tag = localStorage.getItem("name_tag");
   if(name_tag == null){
     name_tag = String.trim(prompt("Please insert your name tag")).toLowerCase();
+    assert(isNotEmpty(name_tag), "Invalid name tag");
     localStorage.setItem("name_tag", name_tag);
   }
   return name_tag;
 }
-/*
-  Prompts a browser notification and/or requests permission to do
- */
+
 function notify(title, note, duration = 1000){
+  //Prompts a browser notification and/or requests permission to do
   var got_permission = false;
   if ("Notification" in window) {
     if (Notification.permission === "granted") {
@@ -250,10 +293,9 @@ function notify(title, note, duration = 1000){
       setTimeout(notification.close.bind(notification), duration); 
   }
 }
-/*
-  A simple ES6 runGenerator, handling tasks
- */
+
 function runGenerator(g) {
+  //A simple ES6 runGenerator, handling tasks
   var it = g(), ret;
   var result = it.next();
   // asynchronously iterate over generator
@@ -283,10 +325,8 @@ function runGenerator(g) {
   })();
 }
 
-/*
-    Converts a function into a simple Promise
-   */
 function generalPromise(f, ...params){
+  // Converts a function into a simple Promise
   return new Promise( function(resolve, reject){
     let fnc = params.length > 0 ? f.bind(f, params, resolve) : f.bind(f, resolve);
     fnc();
@@ -295,11 +335,9 @@ function generalPromise(f, ...params){
   });
 }
   
-
-/*
-    $.get Promise
-   */
 function jQGetPromise(url, datatype = ""){
+  // Promise for $.get 
+  assert(isNotEmpty(url), "URL missing");
   return new Promise(function(resolve, reject){
     $.get(url, function(data){resolve(data)},datatype)
     .fail(function(data){
@@ -308,4 +346,25 @@ function jQGetPromise(url, datatype = ""){
   }).then(function(data){
     return data;
   });
+}
+
+function assert(condition, message) {
+  // Throw error if condition is not true  
+  if (!condition) {
+      message = message || "Assertion failed";
+      if (typeof Error !== "undefined") {
+          throw new Error(message);
+      }
+      throw message; // Fallback
+  }
+}
+
+function isNotEmpty(str){
+  // Checks if str is not empty and not null
+  return !isEmpty(str);
+}
+
+function isEmpty(str) {
+  // Checks if str is empty or null
+  return (!str || 0 === str.length);
 }
