@@ -7,8 +7,57 @@ let stateView, inputView, classificatorView, outputView,
 		formula: "",
 		formulas: []
 	},
-	inputData = {},
-	classificatorData = {},
+	inputData = {
+		type: stateData.mode,
+		repoName: "Repository Name",
+		poolSize: 0
+	},
+	classificatorData = {
+		classificators: [
+			{
+				name: "Neural network",
+				accuracy: "81",
+				active: true,
+				result: [
+					{class: "DEV", val : 0.04},
+					{class: "HW", val : 0.13},
+					{class: "EDU", val : 0.11},
+					{class: "DOCS", val : 0.24},
+					{class: "WEB", val : 0.59},
+					{class: "DATA", val : 0.02},
+					{class: "OTHER", val : 0.04}
+				]
+			},
+			{
+				name: "Neural network",
+				accuracy: "55",
+				active: false,
+				result: [
+					{class: "DEV", val : 0.94},
+					{class: "HW", val : 0.03},
+					{class: "EDU", val : 0.01},
+					{class: "DOCS", val : 0.04},
+					{class: "WEB", val : 0.09},
+					{class: "DATA", val : 0.02},
+					{class: "OTHER", val : 0.04}
+				]
+			},
+			{
+				name: "Neural network",
+				accuracy: "90",
+				active: true,
+				result: [
+					{class: "DEV", val : 0.94},
+					{class: "HW", val : 0.03},
+					{class: "EDU", val : 0.01},
+					{class: "DOCS", val : 0.04},
+					{class: "WEB", val : 0.09},
+					{class: "DATA", val : 0.02},
+					{class: "OTHER", val : 0.04}
+				]
+			}
+		]
+	},
 	outputData = {};
 
 try{
@@ -58,19 +107,36 @@ function initVue(){
     methods:{
     	switchMode: function(type){
 
+    	},
+    	getPoolsize: function(){
+    		$.get("/get/poolSize", function(result){
+    			if(isNaN(result))
+    				throw new Error("Invalid server response");
+    			inputData.poolSize = result;
+    		});
     	}
     }
   });
+  inputView.getPoolsize();
+
 
   classificatorView = new Vue({
     el: '#classificators',
     data: classificatorData,
     methods:{
     	showInfo: function(id){
-
+    		$('.overlay_blur').fadeIn();
+    		$('.overlay_wrapper').fadeIn();
     	},
     	switchState: function(id){
-
+    		classificatorData.classificators[id].active = !classificatorData.classificators[id].active;
+    	},
+    	getMax: function(id){
+    		let max = 0;
+    		for(let i = 0; i < classificatorData.classificators[id].result.length; i ++){
+    			max = Math.max(max, classificatorData.classificators[id].result[i].val);
+    		}
+    		return max;
     	}
     }
   });
@@ -84,6 +150,12 @@ function initVue(){
 		}
     }
   });
+}
+
+function hideInfo(){
+	// Hide any visible popup
+	$('.overlay_wrapper').fadeOut();
+	$('.overlay_blur').fadeOut();
 }
 
 function assert(condition, message) {

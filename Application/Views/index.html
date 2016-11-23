@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="css/overview.css"/>
   </head>
   <body>
-    <div style="display:none;" class="overlay_blur"></div>
+    <div style="display:none;"  onclick="hideInfo()" class="overlay_blur"></div>
     <div style="display:none;" class="overlay_wrapper"> <!-- Overlay -->
       <div class="container classifier_details">
         <h2>Classifier Module</h2>
@@ -126,81 +126,32 @@
         <div class="row main"><!-- main -->
           <div id="input" class="col-xs-2"><!-- input -->
             <div class="input_pool">
-              <span>875</span>
+              <span>{{poolSize}}</span>
               <div title="Sample pool size">
-                <span title="Repository name">Github/Ionic</span>
+                <span title="Repository name">{{repoName}}</span>
               </div>
             </div>
           </div><!-- /input -->
 
           <div class="col-xs-8">
             <div id="classificators">
-              <div class="classificator_row">
+              <div v-for="(c, index) in classificators" :class="'classificator_row' + (c.active ? '' : ' inactive') ">
                 <div class="classificator">
-                  <span class="name">Neural network</span>
+                  <span class="name">{{c.name}}</span>
                   <div class="wrapper">
-                    <span title="Current accuracy" class="stats">81% <span title="Accuracy of previous version" class="old">/ 79%</span></span>
-                    <span title="Show classifier details" class="glyphicon glyphicon-info-sign"></span>
-                    <span title="Enable classifier" class="glyphicon glyphicon-ban-circle"></span>
-                    <span title="Disable classifier" class="glyphicon glyphicon-ok-circle"></span>
+                    <span title="Current accuracy" class="stats">{{c.accuracy}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
+                    <span title="Show classifier details" v-on:click="showInfo(index)" class="glyphicon glyphicon-info-sign"></span>
+                    <span title="Enable classifier" v-on:click="switchState(index)" class="glyphicon glyphicon-ban-circle"></span>
+                    <span title="Disable classifier" v-on:click="switchState(index)" class="glyphicon glyphicon-ok-circle"></span>
                   </div>
                 </div>
                 <div class="arrow">=&gt;</div>
                 <div class="result_vector">
-                    <div class="v"><span>DEV</span><span>0.04</span></div>
-                    <div class="v"><span>HW</span><span>0.13</span></div>
-                    <div class=" v"><span>EDU</span><span>0.11</span></div>
-                    <div class="v"><span>DOCS</span><span>0.24</span></div>
-                    <div class="max  v"><span>WEB</span><span>0.59</span></div>
-                    <div class="v"><span>DATA</span><span>0.02</span></div>
-                    <div class="v"><span>OTHER</span><span>0.04</span></div>
+                    <div v-for="(r, i) in c.result" :class="'v ' + (getMax(index)  == r.val ? 'max' : '')">
+                      <span>{{r.class}}</span><span>{{r.val}}</span>
+                    </div>
                 </div>
               </div>
-
-              <div class="inactive classificator_row">
-                <div class="classificator">
-                  <span class="name">Neural network</span>
-                  <div class="wrapper">
-                    <span title="Current accuracy" class="stats">81% <span title="Accuracy of previous version" class="old">/ 79%</span></span>
-                    <span title="Show classifier details" class="glyphicon glyphicon-info-sign"></span>
-                    <span title="Enable classifier" class="glyphicon glyphicon-ban-circle"></span>
-                    <span title="Disable classifier" class="glyphicon glyphicon-ok-circle"></span>
-                  </div>
-                </div>
-                <div class="arrow">=&gt;</div>
-                <div class="result_vector">
-                    <div class="max  v"><span>DEV</span><span>0.94</span></div>
-                    <div class="v"><span>HW</span><span>0.03</span></div>
-                    <div class="v"><span>EDU</span><span>0.01</span></div>
-                    <div class="v"><span>DOCS</span><span>0.04</span></div>
-                    <div class="v"><span>WEB</span><span>0.09</span></div>
-                    <div class="v"><span>DATA</span><span>0.02</span></div>
-                    <div class="v"><span>OTHER</span><span>0.04</span></div>
-                </div>
-              </div>
-
-              <div class="classificator_row">
-                <div class="classificator">
-                  <span class="name">Neural network</span>
-                  <div class="wrapper">
-                    <span title="Current accuracy" class="stats">81% <span title="Accuracy of previous version" class="old">/ 79%</span></span>
-                    <span title="Show classifier details" class="glyphicon glyphicon-info-sign"></span>
-                    <span title="Enable classifier" class="glyphicon glyphicon-ban-circle"></span>
-                    <span title="Disable classifier" class="glyphicon glyphicon-ok-circle"></span>
-                  </div>
-                </div>
-                <div class="arrow">=&gt;</div>
-                <div class="result_vector">
-                    <div class="max  v"><span>DEV</span><span>0.94</span></div>
-                    <div class="v"><span>HW</span><span>0.03</span></div>
-                    <div class="v"><span>EDU</span><span>0.01</span></div>
-                    <div class="v"><span>DOCS</span><span>0.04</span></div>
-                    <div class="v"><span>WEB</span><span>0.09</span></div>
-                    <div class="v"><span>DATA</span><span>0.02</span></div>
-                    <div class="v"><span>OTHER</span><span>0.04</span></div>
-                </div>
-              </div>
-
             </div><!-- /classificators -->
           </div>
 

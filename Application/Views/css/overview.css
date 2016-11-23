@@ -115,7 +115,10 @@ h1{
 .glyphicon-ban-circle{
   display: none;
 }
-.inactive .arrow, .inactive .result_vector, .inactive .classificator:before, .inactive .glyphicon-ok-circle{
+.inactive .arrow, .inactive .result_vector{
+  visibility: hidden;
+}
+.inactive .glyphicon-ok-circle,  .inactive .classificator:before{
   display: none;
 }
 .inactive .glyphicon-ban-circle{
@@ -161,6 +164,7 @@ h1{
 }
 .arrow{
   display: inline-block;
+  visibility: visible;
   line-height: 75px;
   font-size: 50px;
   position: relative;
@@ -169,6 +173,7 @@ h1{
 }
 .result_vector{
   display: inline-block;
+  visibility: visible;
   width: 398px;
   line-height: 80px;
   position: relative;

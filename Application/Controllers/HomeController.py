@@ -60,8 +60,8 @@ def getBSf3(filename):
 def api(key):
 	if (key == "formulas"):
 		return '["e=mc²", "Abra kadabra"]'
-	elif(key == "test"):
-		return "backend connected!"
+	elif(key == "poolSize"):
+		return "875"
 	else:
 		return "API call for: " + key
 
