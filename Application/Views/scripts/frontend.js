@@ -32,6 +32,16 @@ try{
 	console.log(ex);
 }
 
+function getStateQuery(){
+	let query = "?";
+	var keys = Object.keys(stateData);
+	for(var i = 0; i < keys.length; i++){
+	  if(typeof(stateData[keys[i]]) == "string" || typeof(stateData[keys[i]]) == "boolean")
+	  	query += keys[i] + "=" + encodeURIComponent(stateData[keys[i]]) + "&";
+	}
+	return query;
+}
+
 function initVue(){
   // Init Vue components (state, input, classificators, output)
   assert(typeof(Vue) != "undefined", "Vue script missing");
@@ -56,6 +66,7 @@ function initVue(){
 		singleStep: function(){
 			stateData.action = "singleStep";
 			console.log("Single step");
+
 		},
 		halt: function(){
 			stateData.action = "halt";
@@ -64,6 +75,22 @@ function initVue(){
 		loop: function(){
 			stateData.action = "loop";
 			console.log("Looping");
+			runGenerator(function *main(){
+				// Fetch sample, display then repeat until stateData has changed
+				while(stateData.action == "loop"){
+					results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
+					stateView.updateResults(results);
+					// To remove
+					stateData.action = "halt";
+				}
+			});
+		},
+		updateResults: function(results){
+			for(let cid in results){
+				for(let c in classificatorData.classificators)
+					if(classificatorData.classificators[c].id == cid)
+						classificatorData.classificators[c].result = results[cid];
+			}
 		}
     }
   });
