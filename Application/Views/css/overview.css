@@ -221,7 +221,7 @@ h1{
   left: 0;
   z-index: 3;
 }
-.overlay_wrapper{
+#overlay_wrapper{
   position: absolute;
   width: 100%;
   top: 0;

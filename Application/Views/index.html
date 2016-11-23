@@ -18,24 +18,24 @@
   </head>
   <body>
     <div style="display:none;"  onclick="hideInfo()" class="overlay_blur"></div>
-    <div style="display:none;" class="overlay_wrapper"> <!-- Overlay -->
+    <div style="display:none;" id="overlay_wrapper"> <!-- Overlay -->
       <div class="container classifier_details">
         <h2>Classifier Module</h2>
         <hr>
         <div class="row attribute">
           <div class="col-xs-3">Name</div>
-          <div class="col-xs-9">Neural Metwork</div>
+          <div class="col-xs-9">{{name}}</div>
         </div>
         <div class="row attribute">
           <div class="col-xs-3">Description</div>
-          <div class="col-xs-9">A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.</div>
+          <div class="col-xs-9">{{description}}</div>
         </div>
         <h3>Actions</h3>
         <hr>
-        <span class="action btn btn-default">Retrain from scratch</span>
-        <span class="action btn btn-default">Retrain with semi-supervised data</span>
-        <span class="action btn btn-default">Save current image</span>
-        <span class="action btn btn-default">Load old version</span>
+        <span class="action btn btn-default" v-on:click="retrain()">Retrain from scratch</span>
+        <span class="action btn btn-default" v-on:click="retrain_semi()">Retrain with semi-supervised data</span>
+        <span class="action btn btn-default" v-on:click="save()">Save current image</span>
+        <span class="action btn btn-default" v-on:click="load()">Load old version</span>
         <h3>Performance Graph</h3>
         <hr>
         <div class="graph">
@@ -52,9 +52,9 @@
             <h1>Classification Overview</h1>
 
               <div class="control_buttons"><!--control-subgroup-->
-                <span class="glyphicon glyphicon-play" v-on:click="singleStep()" title="Train until paused"></span>
-                <span class="glyphicon glyphicon-pause active" v-on:click="halt()" title="Stop training"></span>
-                <span class="glyphicon glyphicon-step-forward" v-on:click="loop()" title="Train a single sample"></span>
+                <span :class="(action == 'loop' ? 'active ' : '') + 'glyphicon glyphicon-play'" v-on:click="loop()" title="Train until paused"></span>
+                <span :class="(action == 'halt' ? 'active ' : '') + 'glyphicon glyphicon-pause'" v-on:click="halt()" title="Stop training"></span>
+                <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" title="Train a single sample"></span>
               </div><!-- /control-subgroup -->
 
           </div>

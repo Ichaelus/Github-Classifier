@@ -1,6 +1,7 @@
 console.log("Frontend started..");
-let stateView, inputView, classificatorView, outputView,
+let stateView, inputView, classificatorView, outputView, wrapperView,
 	stateData = {
+		action: "halt",
 		mode: "stream",
 		isSemiSupervised: false,
 		trainInstantly: false,
@@ -13,55 +14,20 @@ let stateView, inputView, classificatorView, outputView,
 		poolSize: 0
 	},
 	classificatorData = {
-		classificators: [
-			{
-				name: "Neural network",
-				accuracy: "81",
-				active: true,
-				result: [
-					{class: "DEV", val : 0.04},
-					{class: "HW", val : 0.13},
-					{class: "EDU", val : 0.11},
-					{class: "DOCS", val : 0.24},
-					{class: "WEB", val : 0.59},
-					{class: "DATA", val : 0.02},
-					{class: "OTHER", val : 0.04}
-				]
-			},
-			{
-				name: "Neural network",
-				accuracy: "55",
-				active: false,
-				result: [
-					{class: "DEV", val : 0.94},
-					{class: "HW", val : 0.03},
-					{class: "EDU", val : 0.01},
-					{class: "DOCS", val : 0.04},
-					{class: "WEB", val : 0.09},
-					{class: "DATA", val : 0.02},
-					{class: "OTHER", val : 0.04}
-				]
-			},
-			{
-				name: "Neural network",
-				accuracy: "90",
-				active: true,
-				result: [
-					{class: "DEV", val : 0.94},
-					{class: "HW", val : 0.03},
-					{class: "EDU", val : 0.01},
-					{class: "DOCS", val : 0.04},
-					{class: "WEB", val : 0.09},
-					{class: "DATA", val : 0.02},
-					{class: "OTHER", val : 0.04}
-				]
-			}
-		]
+		classificators: []
 	},
-	outputData = {};
+	outputData = {},
+	wrapperData = {
+		name: "",
+		description: "",
+		id: 0
+	};
 
 try{
-	initVue();
+	runGenerator(function *main(){
+		classificatorData.classificators = yield jQGetPromise("/get/classificators", "json");
+		initVue();
+	});
 }catch(ex){
 	console.log(ex);
 }
@@ -88,12 +54,15 @@ function initVue(){
     		stateData.formula = f;
     	},
 		singleStep: function(){
+			stateData.action = "singleStep";
 			console.log("Single step");
 		},
 		halt: function(){
+			stateData.action = "halt";
 			console.log("Halting");
 		},
 		loop: function(){
+			stateData.action = "loop";
 			console.log("Looping");
 		}
     }
@@ -125,8 +94,9 @@ function initVue(){
     data: classificatorData,
     methods:{
     	showInfo: function(id){
+    		wrapperView.setData(id);
     		$('.overlay_blur').fadeIn();
-    		$('.overlay_wrapper').fadeIn();
+    		$('#overlay_wrapper').fadeIn();
     	},
     	switchState: function(id){
     		classificatorData.classificators[id].active = !classificatorData.classificators[id].active;
@@ -150,12 +120,80 @@ function initVue(){
 		}
     }
   });
+
+  wrapperView = new Vue({
+    el: '#overlay_wrapper',
+    data: wrapperData,
+    methods:{
+    	setData: function(i){
+    		wrapperData.id = classificatorData.classificators[i].id;
+    		wrapperData.name = classificatorData.classificators[i].name;
+    		wrapperData.description = classificatorData.classificators[i].description;
+    	},
+		retrain: function(){
+			console.log("Wrapper: retraining.");
+		},
+		retrain_semi: function(){
+			console.log("Wrapper: semi retraining.");
+		},
+		save: function(){
+			console.log("Wrapper: saving.");
+		},
+		load: function(){
+			console.log("Wrapper: loading.");
+		},
+    }
+  });
 }
 
 function hideInfo(){
 	// Hide any visible popup
-	$('.overlay_wrapper').fadeOut();
+	$('#overlay_wrapper').fadeOut();
 	$('.overlay_blur').fadeOut();
+}
+
+function jQGetPromise(url, datatype = ""){
+  // Promise for $.get 
+  assert(isNotEmpty(url), "URL missing");
+  return new Promise(function(resolve, reject){
+    $.get(url, function(data){resolve(data)},datatype)
+    .fail(function(data){
+      reject("Error getting data from url " + url);
+    });
+  }).then(function(data){
+    return data;
+  });
+}
+
+function runGenerator(g) {
+  //A simple ES6 runGenerator, handling tasks
+  var it = g(), ret;
+  var result = it.next();
+  // asynchronously iterate over generator
+  (function iterate(val){
+    if (!result.done) {
+      // poor man's "is it a promise?" test
+      if ("then" in result.value) {                
+        // resolve to a promise to make it easy
+        let promise = Promise.resolve(result.value);
+        promise.then(function(value) {
+          result = it.next(value);
+          iterate();
+        }).catch(function(error) {
+          console.log("Generator caught an error: " + error);
+          result = it.next(null);//it.throw("Generator caught an error: " + error);
+          iterate();
+        });
+      }
+      // immediate value: just send right back in
+      else {
+        // avoid synchronous recursion
+        setTimeout( function(){
+          iterate( result.value );
+        }, 0 );
+      }
+    }
+  })();
 }
 
 function assert(condition, message) {
