@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import base64
 from urllib2 import Request, urlopen, URLError
 import json
@@ -26,6 +29,7 @@ def api_call(requ_url=None):
         print 'Error with api call', e
     return data
 
+#besser: evtl in getunlabeleddata und getlabeleddata und gettrainingsdata aufspalten?
 def get_data(binary = False, no_dev=False):
     """Get list of dicts which contain all feature-vectors"""
 
@@ -96,4 +100,14 @@ def text_from_base64(text):
     except TypeError:
         print "Error decoding readme"
     return text
+
+def moveRepoToLabeled(dbidofrepooAe):
+    return 
+
+def moveRepoToLabeled(dbidofrepooAe):
+    pass
+
+def getFeatureVectorForRepo(repolink):
+    pass
+
 

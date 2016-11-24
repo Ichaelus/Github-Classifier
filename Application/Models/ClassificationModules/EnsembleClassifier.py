@@ -1,5 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from abc import ABCMeta, abstractmethod
-from Models.ClassificationModule import ClassificationModule
+from ClassificationModule import ClassificationModule
 
 class EnsembleClassifier(ClassificationModule):
 
