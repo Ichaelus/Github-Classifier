@@ -16,6 +16,9 @@ class ClassifierCollection:
     @classmethod
     def getClassificationModule(self):
         return 'NotImplemented'
+
+    @classmethod
+    def getSafePointsForClassificationModule(self, classificator, data)
         
     @classmethod
     def addClassificationModule(self, module):
@@ -28,17 +31,17 @@ class ClassifierCollection:
         self.classificationmodules.remove(module)
 
     @classmethod
-    def doLiveClassificationStep(self, sample):
+    def doLiveClassificationRound(self, sample):
         """Returns the sample with the label each classification module would assign """
         return 'NotImplemented'
     
     @classmethod
-    def doLiveClassificationStepDetailled(self, sample):
+    def doLiveClassificationRoundDetailled(self, sample):
         """Returns the sample with the probability each classification module would give each class"""
         return 'NotImplemented'
     
     @classmethod
-    def StartLiveClassification(self, samples):
+    def DoSteam(self, samples):
         """Each classification module starts labeling until finished or paused"""
         #da pauseable brauchen wir an der Stelle hier Threads
         return 'NotImplemented'
