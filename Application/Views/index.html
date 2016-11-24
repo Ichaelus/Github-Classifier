@@ -36,12 +36,15 @@
         <span class="action btn btn-default" v-on:click="retrain_semi()">Retrain with semi-supervised data</span>
         <span class="action btn btn-default" v-on:click="save()">Save current image</span>
         <span class="action btn btn-default" v-on:click="load()">Load old version</span>
-        <h3>Performance Graph</h3>
-        <hr>
+        <h3>Performance Graphs</h3>
         <div class="graph">
-          <div class="graph" style="text-align: center;align-content: ;">
+        <hr>
+          <h4><strong>Per class accuracy</strong></h4>
           <img src="http://www.visualcinnamon.com/wp-content/uploads/2015/09/D3-radar-chart-New-version-Hover.png">
-          </div>
+        </div>
+        <div class="graph">
+          <h4><strong>Overall accuracy per version</strong></h4>
+          <img src="http://www.visualcinnamon.com/wp-content/uploads/2015/09/D3-radar-chart-New-version-Hover.png">
         </div>
       </div>
     </div> <!-- /Overlay -->
