@@ -116,6 +116,9 @@ def getLabeledData():
 def getUnlabeledData():
     return 'NotImplemented'
 
+def getUnlabeledSingleSample():
+    return 'NotImplemented'
+
 def getTestData():
     return 'NotImplemented'
 

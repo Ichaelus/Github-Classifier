@@ -30,7 +30,7 @@ def ConvertClassifierCollectionToJSON(ClassifierCollection):
 			#}]
 
 def getFormulas():
-	return '["e=mc²", "Abra kadabra", "Entropy-Based"]'
+	return '["Entropy-Based", "Least Confident", "Margin-Sampling"]'
 
 
 # Response: a result vector for every classificator. Format:
@@ -38,3 +38,6 @@ def getFormulas():
 		# [{class: className, val: classificationResult}, ... ]
 def formatStreamBasedALRound():
 	return '{"0":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"2":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}'
+
+def formatPoolBasedALRound():
+	return 'NotImplemented'
