@@ -41,12 +41,12 @@ class ClassificationModule:
         pass
 
     @abstractmethod
-    def predictLabel(self, sample):
+    def predict(self, sample):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""
         pass
     
     @abstractmethod
-    def detailledPrediction(self, sample):
+    def predictProbability(self, sample):
         """Return the probability the module assignes each label"""
         pass
 

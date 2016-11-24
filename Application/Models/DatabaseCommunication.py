@@ -101,13 +101,22 @@ def text_from_base64(text):
         print "Error decoding readme"
     return text
 
-def moveRepoToLabeled(dbidofrepooAe):
-    return 
+def moveRepoToLabeled(repoDbId):
+    return 'NotImplemented' 
 
-def moveRepoToLabeled(dbidofrepooAe):
-    pass
+def moveRepoToTOClassify(repoDbId):
+    return 'NotImplemented'
 
 def getFeatureVectorForRepo(repolink):
-    pass
+    return 'NotImplemented'
+
+def getLabeledData():
+    return 'NotImplemented'
+
+def getUnlabeledData():
+    return 'NotImplemented'
+
+def getTestData():
+    return 'NotImplemented'
 
 

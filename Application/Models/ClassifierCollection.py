@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import ClassificationModules.ClassificationModule
+import DatabaseCommunication as DC
 
 class ClassifierCollection:
     """A class to deal with multiple Classification Modules"""
@@ -61,17 +62,28 @@ class ClassifierCollection:
     @classmethod
     def TestAllClassificationModules(self):
         """Tests all classification modules, these do that by themselfes and return results to this function"""
-        return 'NotImplemented'
+        data = DC.getTestData()
+        results = []
+        for c in self.classificationmodules:
+            results.append(c.test(data))
+        return results
 
     @classmethod
     def PredictSingleSample(self, repolink):
         """Returns the sample with the probability and label each classification module would assign"""
-        return 'NotImplemented'
+        data = DC.getFeatureVectorForRepo(repolink)
+        results = []
+        for c in self.classificationmodules:
+            results.append(c.predictProbability(data))
+        return results
 
     @classmethod
-    def TrainAllClassificationModules(self, stillundefined):
+    def TrainAllClassificationModules(self, repo):
         """Trains all classification modules with the data, e.g. the newly labeled sample"""
-        return 'NotImplemented'
+        results = []
+        for c in self.classificationmodules:
+            results.append(c.train(repo))
+        return results
     
 
     
