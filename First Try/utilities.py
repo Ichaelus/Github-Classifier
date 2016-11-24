@@ -13,9 +13,19 @@ import string
 import sklearn
 
 # Constants
-max_stars = 60000 # Max found in data was 52762
-max_forks =  10000 # Max found in data was 9287
-max_watches = 4000 # Max found in data was 3709
+max_stars = 1000 # Max found in data was 52762
+max_forks =  100 # Max found in data was 9287
+max_watches = 10 # Max found in data was 3709
+max_folder_count = 100 # To be improved
+max_treeDepth = 100
+max_branch_count = 10
+max_forks = 100
+max_commit_interval_avg = 10
+max_contributors_count = 100
+max_open_issues_count = 10
+max_avg_commit_length = 100
+max_file_count = 100
+max_commit_interval_max = 10
 
 stemmer = PorterStemmer()
 
@@ -96,11 +106,11 @@ def shuffle_data(a, b):
     return sklearn.utils.shuffle(a, b)
 
 
-def get_data(whatIWant='description', binary = False, equal=False, no_dev=False):
+def get_data(whatIWant='description', binary = False, equal=False, no_dev=False, old_data=False):
     # Standardmäßig wird NUR die description verwendet, nicht die readme
 
     #hole data als dict
-    data = api_call(equal=equal)
+    data = api_call(equal=equal, old=old_data)
     #liste mit strings von den feature texten
     features = []
     #die namen der klassen
@@ -111,29 +121,34 @@ def get_data(whatIWant='description', binary = False, equal=False, no_dev=False)
     # vectorizer braucht liste von strings, hier wirds umgewandelt
     for i in xrange(len(data)):
         feature = None
-        if whatIWant == 'readme':
+        if whatIWant.lower() == 'readme':
             #nur die readme ist anscheinend decoded
             try:
                 feature = base64.b64decode(data[i][whatIWant])
             except TypeError:
                 continue
             feature = feature.decode('utf-8')
-        elif whatIWant == 'meta':
-            """ 
-            Availible metadata: description, author, url, tree, watches, 
-                                class, languages, tagger, stars, readme, 
-                                forks, id, name
-            """
+        elif whatIWant.lower() == 'meta':
             feature = []
             sample = data[i]
+            feature.append(float(sample['hasDownloads']))
             feature.append(float(sample['watches']) / max_watches)
+            feature.append(float(sample['folder_count']) / max_folder_count)
+            feature.append(float(sample['treeDepth']) / max_treeDepth)
             feature.append(float(sample['stars']) / max_stars)
+            feature.append(float(sample['branch_count']) / max_branch_count)
             feature.append(float(sample['forks']) / max_forks)
-            features.append(feature)
+            feature.append(float(sample['commit_interval_avg']) / max_commit_interval_avg)
+            feature.append(float(sample['contributors_count']) / max_contributors_count)
+            feature.append(float(sample['open_issues_count']) / max_open_issues_count)
+            feature.append(float(sample['avg_commit_length']) / max_avg_commit_length)
+            feature.append(float(sample['hasWiki']))
+            feature.append(float(sample['file_count']) / max_file_count)
+            feature.append(float(sample['commit_interval_max']) / max_commit_interval_max)
+            feature.append(float(sample['isFork']))
         else:
             feature = data[i][whatIWant]
-
-        if whatIWant != 'meta':
+        if whatIWant.lower() != 'meta':
             feature = process_text(feature)
         if binary:
             if data[i]['class'] == 'DEV':
@@ -158,11 +173,13 @@ def get_batch(features, labels, nb_batch):
     return (x[:nb_batch], y[:nb_batch])
 
 
-def api_call(equal=False):
+def api_call(equal=False, old=False):
     filter = base64.b64encode(b'id>0')
     url = None
     if equal:
         url = 'http://classifier.leimstaedtner.it/ajax.php?key=api:equal&filter='+filter.decode("utf-8")
+    if old:
+        url = 'http://classifier.leimstaedtner.it/ajax.php?key=api:old&filter='+filter.decode("utf-8")
     else:
         url = 'http://classifier.leimstaedtner.it/ajax.php?key=api:all&filter='+filter.decode("utf-8")
     request = Request(url)

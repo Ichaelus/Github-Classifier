@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from Model.ClassificationModule import ClassificationModule
+from Models.ClassificationModule import ClassificationModule
 
 class EnsembleClassifier(ClassificationModule):
 
