@@ -6,7 +6,7 @@
     Code by Michael Leimstädtner
     -->
     <meta charset="utf-8"/>
-    <title>Classification Visualisation</title>
+    <title>Classification Overview</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="shortcut icon" href="favicon.ico"/>
@@ -14,29 +14,164 @@
     <meta Name="description" content=""/>
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/overview.css"/>
   </head>
   <body>
+    <div style="display:none;"  onclick="hideInfo()" class="overlay_blur"></div>
+    <div style="display:none;" id="overlay_wrapper"> <!-- Overlay -->
+      <div class="container classifier_details">
+        <h2>Classifier Module</h2>
+        <hr>
+        <div class="row attribute">
+          <div class="col-xs-3">Name</div>
+          <div class="col-xs-9">{{name}}</div>
+        </div>
+        <div class="row attribute">
+          <div class="col-xs-3">Description</div>
+          <div class="col-xs-9">{{description}}</div>
+        </div>
+        <h3>Actions</h3>
+        <hr>
+        <span class="action btn btn-default" v-on:click="retrain()">Retrain from scratch</span>
+        <span class="action btn btn-default" v-on:click="retrain_semi()">Retrain with semi-supervised data</span>
+        <span class="action btn btn-default" v-on:click="save()">Save current image</span>
+        <span class="action btn btn-default" v-on:click="load()">Load old version</span>
+        <h3>Performance Graphs</h3>
+        <div class="graph">
+        <hr>
+          <h4><strong>Per class accuracy</strong></h4>
+          <img src="http://www.visualcinnamon.com/wp-content/uploads/2015/09/D3-radar-chart-New-version-Hover.png">
+        </div>
+        <div class="graph">
+          <h4><strong>Overall accuracy per version</strong></h4>
+          <img src="http://www.visualcinnamon.com/wp-content/uploads/2015/09/D3-radar-chart-New-version-Hover.png">
+        </div>
+      </div>
+    </div> <!-- /Overlay -->
     <div class="container-fluid">
-      <div class="row" id="workflow">
-        <h1>Classification Insights</h1>
-        <div id="module_wrapper">
-          <div id="modules">
-            <div v-for="(m, index) in modules" v-on:click="setFocus(index)" v-bind:data-id="index" v-bind:class="'module' + ' ' + m.classes + ' ' + m.isActive">
-              <h2 class="module_header">{{m.title}}</h2>
-              <div v-html="m.handleData()"></div>
+      <div id="header">
+        <div class="container">
+          <div class="col-xs-4">
+            <h1>Classification Overview</h1>
+
+              <div class="control_buttons"><!--control-subgroup-->
+                <span :class="(action == 'loop' ? 'active ' : '') + 'glyphicon glyphicon-play'" v-on:click="loop()" title="Train until paused"></span>
+                <span :class="(action == 'halt' ? 'active ' : '') + 'glyphicon glyphicon-pause'" v-on:click="halt()" title="Stop training"></span>
+                <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" title="Train a single sample"></span>
+              </div><!-- /control-subgroup -->
+
+          </div>
+          <div class="col-xs-8">
+            <div class="col-xs-6">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input id="mode_1" value="stream" v-model="mode" name="mode" type="radio">
+                </span>
+                <label for="mode_1" class="form-control">Stream Based AL</label>
+              </div><!-- /input-group -->
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input id="mode_2"  value="pool" v-model="mode" name="mode" type="radio">
+                </span>
+                <label for="mode_2" class="form-control">Pool Based AL</label>
+              </div><!-- /input-group -->
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input id="mode_3"  value="test" v-model="mode" name="mode" type="radio">
+                </span>
+                <label for="mode_3" class="form-control">Test all Classifiers</label>
+              </div><!-- /input-group -->
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input id="mode_4"  value="single" v-model="mode" name="mode" type="radio">
+                </span>
+                <label for="stream_ai_4" class="form-control">Predict single samples</label>
+              </div>   <!-- /input-group -->  
             </div>
+            <div class="col-xs-6">
+
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input id="semi_supervised" v-model="isSemiSupervised" name="semi_supervised" type="checkbox">
+                </span>
+                <label for="semi_supervised" class="form-control">Semi-Supervised</label>
+              </div>   <!-- /input-group -->  
+
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input id="instant_train" v-model="trainInstantly" name="instant_train" type="checkbox">
+                </span>
+                <label for="instant_train" class="form-control">Train instantly</label>
+              </div>   <!-- /input-group -->  
+
+              <div class="input-group">
+                <label id="formula" class="form-control">{{formula}}</label>
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Uncertainty formula <span class="caret"></span></button>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                    <li v-for="f in formulas"><a v-on:click="setFormula(f)" href="#">{{f}}</a></li>
+                  </ul>
+                </div><!-- /btn-group -->
+              </div><!-- /input-group -->
+
+            </div>
+          </div><!-- /controls -->
+        </div><!-- /container -->
+      </div><!-- /header -->
+      <div class="container">
+
+        <div class="row titles"><!-- titles -->
+          <div class="col-xs-2"><h3>Input</h3></div>
+          <div class="col-xs-8"><h3>Classificators</h3></div>
+          <div class="col-xs-2"><h3>Output</h3></div>
+        </div><!-- /titles -->
+
+        <div class="row main"><!-- main -->
+          <div id="input" class="col-xs-2"><!-- input -->
+            <div class="input_pool">
+              <span>{{poolSize}}</span>
+              <div title="Sample pool size">
+                <span title="Repository name">{{repoName}}</span>
+              </div>
+            </div>
+          </div><!-- /input -->
+
+          <div class="col-xs-8">
+            <div id="classificators">
+              <div v-for="(c, index) in classificators" :class="'classificator_row' + (c.active ? '' : ' inactive') ">
+                <div class="classificator">
+                  <span class="name">{{c.name}}</span>
+                  <div class="wrapper">
+                    <span title="Current accuracy" class="stats">{{c.accuracy}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
+                    <span title="Show classifier details" v-on:click="showInfo(index)" class="glyphicon glyphicon-info-sign"></span>
+                    <span title="Enable classifier" v-on:click="switchState(index)" class="glyphicon glyphicon-ban-circle"></span>
+                    <span title="Disable classifier" v-on:click="switchState(index)" class="glyphicon glyphicon-ok-circle"></span>
+                  </div>
+                </div>
+                <div class="arrow">=&gt;</div>
+                <div class="result_vector">
+                    <div v-for="(r, i) in c.result" :class="'v ' + (getMax(index)  == r.val ? 'max' : '')">
+                      <span>{{r.class}}</span><span>{{r.val}}</span>
+                    </div>
+                </div>
+              </div>
+            </div><!-- /classificators -->
           </div>
-        </div>
-            
-          </div>
-        </div>
-        <script type="text/javascript" src="https://unpkg.com/vue@2.0.3/dist/vue.js"></script>
-        <script
-        src="https://code.jquery.com/jquery-3.1.1.min.js"
-        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-        crossorigin="anonymous"></script>
-        <script src="bootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="scripts/frontend.js"></script>
-      </body>
-    </html>
+
+          <div class="col-xs-2" id="output"><!-- output -->
+
+          </div><!-- /output -->
+
+        </div><!-- /main -->
+      </div><!-- /container -->
+    </div><!-- /container-fluid -->
+    <script type="text/javascript" src="https://unpkg.com/vue@2.0.3/dist/vue.js"></script>
+    <script
+    src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    crossorigin="anonymous"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="scripts/frontend.js"></script>
+  </body>
+</html>

@@ -153,5 +153,45 @@
   }
 
   .vector{
-    font-size: 14px;width: 500px;margin: 0px auto;overflow-y: scroll;overflow-x: hidden;max-height: 360px;
+    font-size: 14px;
+    width: 500px;
+    margin: 0px auto;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 360px;
   }
+  .vector .content{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 1.3em;
+    overflow: hidden;
+  }
+
+  /* Chart css */
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.bar {
+  fill: #4b4b4b;
+}
+.bar.chosen{
+  fill: #00B1AC;
+}
+.x.axis path {
+  display: none;
+}
+
+label {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}

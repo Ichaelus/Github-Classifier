@@ -12,6 +12,7 @@ session_start();
 ob_start();
 
 function get_attr($name){
+    // Returns an escaped GET attribute, if present
     global $db;
     if(isset($_GET[$name])){
         return $db->check($_GET[$name]);
@@ -20,7 +21,17 @@ function get_attr($name){
     }
 }
 
+function post_attr($name){
+    // Returns an escaped POST attribute, if present
+    global $db;
+    if(isset($_POST[$name])){
+        return $db->check($_POST[$name]);
+    }else{
+        return "";
+    }
+}
 try{
+    // Handle GET Requests based on the `key` value
     if(isset($_GET['key'])){
         $getkey = $db->check($_GET['key']);
         if($getkey != ""){
@@ -34,6 +45,11 @@ try{
                     print("]");
                     break;
                 case "api:all":
+                    $filter = generate_filter();
+                    $data = $db->select("SELECT * FROM `repositories` $filter");
+                    print(json_encode($data));
+                    break;
+                case "api:old":
                     $filter = generate_filter();
                     $data = $db->select("SELECT * FROM `samples` $filter");
                     print(json_encode($data));
@@ -94,6 +110,10 @@ try{
                     print($data[0]["count"]);
                     break;
                 case "api:class-count":
+                    $data = $db->select("SELECT class, COUNT(*) AS count FROM `repositories` GROUP BY `class`");
+                    print(json_encode($data));
+                    break;
+                case "api:tagger-class-count":
                     $additional = "";
                     if(get_attr("tagger") != "")
                         $additional .= "WHERE `tagger` = '".get_attr("tagger")."'";
@@ -117,13 +137,22 @@ try{
                     }else{
                         $url = trim(get_attr("api-url")) == "" ?  generateSampleUrl() : get_attr("api-url");
                         // Generate new sample url
-                        $url .= "?" . $credentials;
                         $vector = generateRepoVector($url);
                         if(trim(get_attr("class")) != ""){
                             $vector["class"] = strtoupper(trim(get_attr("class")));
                         }
+                        if($vector["url"] == ""){
+                            throw new Exception("Something went wrong");
+                        }
                         saveVector($vector);
-                        print(json_encode($vector));
+                        $enc = json_encode($vector);
+                        if($enc == false){
+                            var_dump($vector);
+                            throw new Exception("JSON could not be generated.");
+                        }else{
+                            print($enc);
+                        }
+
                     }
                     break;
                 default:
@@ -133,48 +162,41 @@ try{
         }
     }
 
+    if(isset($_POST['key'])){
+        // Handle POST Requests based on the `key` value
+        $postkey = post_attr('key');
+        if($postkey != ""){
+            switch ($postkey) {
+                case "unclassified":
+                    // Add repo link only, to be classified
+                    $iid = $db -> insert("INSERT INTO `todo` (url) VALUES ('".post_attr('api_url')."')");
+                    print(is_numeric($iid) ? "success" : "error");
+                    break;
+                case "skip":
+                    // Remove repo link
+                    $db->query("UPDATE `repositories` SET `class` = 'SKIPPED' WHERE `id` = '".post_attr('id')."'");
+                    break;
+                case "classify":
+                    // Classify a generated repo
+                    $qID = $db->select("SELECT id FROM `repositories` WHERE `id` = '".post_attr('id')."'");
+                    if(count($qID) != 0){
+                        $query = "UPDATE `repositories` SET `class` = '".post_attr('class')."', `tagger` = '".post_attr('tagger')."' WHERE `id` = '".post_attr('id')."'";
+                        $db->query($query);
+                        print "Repository classified.";
+                    }else{
+                        print("error: sample not generated");
+                    }
+                    break;
+                default:
+                    print("Nothing in here.");
+                    break;
+            }//switch
+        }
+    }
 }catch(Exception $e){
     print(json_encode(array("Error" => $e->getMessage())));
 }
-function post_attr($name){
-    global $db;
-    if(isset($_POST[$name])){
-        return $db->check($_POST[$name]);
-    }else{
-        return "";
-    }
-}
 
-if(isset($_POST['key'])){
-    $postkey = post_attr('key');
-    if($postkey != ""){
-        switch ($postkey) {
-            case "unclassified":
-                // Add repo link only, to be classified
-                $iid = $db -> insert("INSERT INTO `todo` (url) VALUES ('".post_attr('api_url')."')");
-                print(is_numeric($iid) ? "success" : "error");
-                break;
-            case "skip":
-                // Remove repo link
-                $db->query("UPDATE `repositories` SET `class` = 'SKIPPED' WHERE `id` = '".post_attr('id')."'");
-                break;
-            case "classify":
-                // Classify a generated repo
-                $qID = $db->select("SELECT id FROM `repositories` WHERE `id` = '".post_attr('id')."'");
-                if(count($qID) != 0){
-                    $query = "UPDATE `repositories` SET `class` = '".post_attr('class')."', `tagger` = '".post_attr('tagger')."' WHERE `id` = '".post_attr('id')."'";
-                    $db->query($query);
-                    print "Repository classified.";
-                }else{
-                    print("error: sample not generated");
-                }
-                break;
-            default:
-                print("Nothing in here.");
-                break;
-        }//switch
-    }
-}
 header($header);
 ob_end_flush();
 
@@ -227,7 +249,8 @@ function generate_filter(){
 }
 
 function generateSampleUrl(){
-    global $apihandler;
+    // Get the API Url for a random Github repository
+    global $apihandler, $db;
     $url = "https://api.github.com/repositories?since=" . rand(0, 5*pow(10, 7)) . "&" . $apihandler->getAPItoken();
     $repos = $apihandler -> getJSON($url);
     
@@ -235,8 +258,9 @@ function generateSampleUrl(){
 }
 
 function generateRepoVector($url){
-    global $apihandler;
-    $repo = $apihandler->getJSON($url);
+    // Use the input-(api)-URL to generate a feature vector for the selected repository
+    global $apihandler, $db;
+    $repo = $apihandler->getJSON($url . "?" . $apihandler->getAPItoken());
     $ref_url_base = explode("{", $repo["git_refs_url"]);
     $commit_url_base = explode("{", $repo["commits_url"]);
     $git_refs = $apihandler -> getJSON($ref_url_base[0] . "?" . $apihandler->getAPItoken());
@@ -247,11 +271,11 @@ function generateRepoVector($url){
         $commit_count += count($commit_page);
         $commits = array_merge($commits, $commit_page);
         $i++;
-    }while(count($commit_page)>0 /*&& $i < 5*/);
+    }while(count($commit_page)>0  && $i < 50);
 
     $avg_length = 1;
     $date_tuple = array();
-    $commit_intervals = array();
+    $commit_intervals = array(0);
     foreach ($commits as $c) {
         $avg_length += strlen($c["commit"]["message"]);
         $date_tuple[] = $c["commit"]["committer"]["date"];
@@ -284,9 +308,9 @@ function generateRepoVector($url){
     for($i = 0; $i < count($treeObj["tree"]); $i++){
         $readme_exists = $readme_exists || (strpos(strtolower($treeObj["tree"][$i]["path"]), "readme") >= 0);
         if($treeObj["tree"][$i]["type"] == "blob"){
-            $files[] = $treeObj["tree"][$i]["path"];
+            $files[] = $db->check($treeObj["tree"][$i]["path"]);
         }else{ // folder or commit
-            $folders[] = $treeObj["tree"][$i]["path"];
+            $folders[] = $db->check(treeObj["tree"][$i]["path"]);
         }
     }
 
@@ -298,7 +322,7 @@ function generateRepoVector($url){
     $vector = array(
       "api_calls" => $apihandler->getCount(),
       "api_url" =>  $repo["url"],
-      "author" =>  $repo["owner"]["login"],
+      "author" =>  $db->check($repo["owner"]["login"]),
       "avg_commit_length" => $avg_length,
       "branch_count" =>  count($git_refs),
       "class" => "UNLABELED",
@@ -306,7 +330,7 @@ function generateRepoVector($url){
       "commit_interval_avg"  => round(array_sum($commit_intervals) / count($commit_intervals)),
       "commit_interval_max" => max($commit_intervals),
       "contributors_count" =>  count($contributors),
-      "description" =>  $repo["description"] != null ? $repo["description"] : "",
+      "description" =>  $repo["description"] != null ? $db->check($repo["description"]) : "",
       "files" => join(" ", $files),
       "file_count" => $treeData["file_count"],
       "folders" => join(" ", $folders),
@@ -316,10 +340,10 @@ function generateRepoVector($url){
       "hasWiki" => $repo["has_wiki"],
       "isFork" => $repo["fork"],
       "open_issues_count" => $repo["open_issues_count"],
-      "language_main" => $repo["language"] != null ? $repo["language"] : (count($languages) == 0 ? "" : $languages[0]),
+      "language_main" => $repo["language"] != null ? $db->check(repo["language"]) : (count($languages) == 0 ? "" : $db->check($languages[0])),
       "language_array" =>  join(" ", $languages),
-      "name" =>  $repo["name"],
-      "readme" =>  $readme["content"],
+      "name" =>  $db->check($repo["name"]),
+      "readme" =>  $db->check($readme["content"]),
       "stars" =>  $repo["watchers_count"],
       "treeArray" =>  join(" ", $treeData["array"]), // String representation
       "treeDepth" =>  $treeData["depth"],
@@ -330,19 +354,19 @@ function generateRepoVector($url){
     );
     return $vector;
 }
-// calcTree return object
+
 function calcTree($tree){
-  global $apihandler;
+  // Get relevant information out of a tree of file and folder nodes
+  global $apihandler, $db;
   $tree_result = array("depth" =>  0, "array" => array(), "file_count" => 0, "folder_count" => 0);
   if($tree != null)
       recTree($tree, $tree_result, "", 0, $apihandler->getAPItoken());
   return $tree_result;
 }
-// Use every node as root, save paths (without filenames) in array
-// r: return object
 function recTree($node, &$tree_result, $path, $depth){
-  global $apihandler;
-  $tree_result["array"][] = $path;
+  // Use every node as root, save paths (without filenames) in array
+  global $apihandler, $db;
+  $tree_result["array"][] = $db->check($path);
   $tree_result["depth"] = $depth > $tree_result["depth"] ? $depth : $tree_result["depth"];
   for($i = 0; $i < count($node); $i++){
     // Accumulate nodeArray + set depth
@@ -361,6 +385,7 @@ function recTree($node, &$tree_result, $path, $depth){
 }
 
 function saveVector(&$vector){
+    // Save the feature vector as a new repository in the database
     global $db;
     if(count($db->select("SELECT * FROM `repositories` WHERE `url` = '".$vector['url']."'")) == 0){
         $keys =  "`" . join("`, `", array_keys($vector)) . "`";
@@ -371,7 +396,7 @@ function saveVector(&$vector){
         return $iid;
         //print(is_numeric($iid) ? "success" : "error");
     }else{
-        print("error: duplicate");
+        throw new Exception("error: duplicate");
     }
 }
 

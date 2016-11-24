@@ -10,7 +10,10 @@ class ClassificationModule:
     muted = False
     binary = False
     
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
     @classmethod
     def getDescription(self):
         return self.description
