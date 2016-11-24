@@ -3,7 +3,7 @@
 
 from bottle import Bottle
 import webbrowser
-from Controllers.HomeController import homebottle
+from Controllers.HomeController import homebottle, homesetclassifiercollection
 from Models.ClassifierCollection import ClassifierCollection
 from Models.ClassificationModules.basicneuralnetwork import basicneuralnetwork
 
@@ -12,6 +12,7 @@ rootApp = Bottle()
 # Should we create the ClassifierCollection here once and then pass it to the other controllers?
 # Have no idea at the moment if that´s the best way to do it in our case
 classifiercollection = ClassifierCollection()
+homesetclassifiercollection(classifiercollection)
 
 #testing stuff
 #bnn = basicneuralnetwork()
