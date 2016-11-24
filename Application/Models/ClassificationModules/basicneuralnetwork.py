@@ -56,7 +56,7 @@ class basicneuralnetwork(ClassificationModule):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""
         return np.argmax(self.model.predict(sample))
     
-    def detailledPrediction(self, sample):
+    def predictLabelAndProbability(self, sample):
         """Return the probability the module assignes each label"""
         return self.model.predict(sample) # First element as keras returns list of detailed predictions
 
@@ -76,6 +76,6 @@ y = np.asanyarray(y)
 
 print clf.train(x, y, nb_epoch=100, shuffle=True, verbose=False)
 x = [1, 1]
-print clf.detailledPrediction(np.expand_dims(x, axis=0))
+print clf.predictLabelAndProbability(np.expand_dims(x, axis=0))
 print clf.predictLabel(np.expand_dims(x, axis=0))
 

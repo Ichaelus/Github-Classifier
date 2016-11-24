@@ -69,7 +69,7 @@ def api(key):
 
 	if (key == "formulas"):
 		# Return a string list of available uncertainty formulas
-		return JSONCommunication.getFormulas()
+		return Models.JSONCommunication.getFormulas()
 
 	elif(key == "poolSize"):
 		# Return the amount of unlabeled samples

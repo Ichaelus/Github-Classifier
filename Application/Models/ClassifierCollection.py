@@ -78,11 +78,11 @@ class ClassifierCollection:
         return results
 
     @classmethod
-    def TrainAllClassificationModules(self, repo):
+    def TrainAllClassificationModulesOnSample(self, repo):
         """Trains all classification modules with the data, e.g. the newly labeled sample"""
         results = []
         for c in self.classificationmodules:
-            results.append(c.train(repo))
+            results.append(c.trainOnSample(repo))
         return results
     
 
