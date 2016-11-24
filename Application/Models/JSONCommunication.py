@@ -27,3 +27,6 @@ def ConvertClassifierCollectionToJSON(ClassifierCollection):
 			#		{class: "OTHER", val : 0.04}
 			#	]
 			#}]
+
+def getFormulas():
+	return '["e=mc²", "Abra kadabra"]'

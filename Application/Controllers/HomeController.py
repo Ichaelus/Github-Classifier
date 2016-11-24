@@ -4,7 +4,7 @@
 from bottle import Bottle, route, run, static_file, request
 import os
 import Models.ClassifierCollection
-import Models.JSONConversion
+import Models.JSONCommunication
 
 
 abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Views')
@@ -69,7 +69,7 @@ def api(key):
 
 	if (key == "formulas"):
 		# Return a string list of available uncertainty formulas
-		return '["e=mc²", "Abra kadabra"]'
+		return JSONCommunication.getFormulas()
 
 	elif(key == "poolSize"):
 		# Return the amount of unlabeled samples
@@ -78,7 +78,7 @@ def api(key):
 	elif(key == "classificators"):
 		# get classificators
 		classificators = homeclassifiercollection.getAllClassificationModules()
-		return Models.JSONConversion.ConvertClassifierCollectionToJSON(classificators)
+		return Models.JSONCommunication.ConvertClassifierCollectionToJSON(classificators)
 	elif(key == "doSingleStep"):
 		# Perform a single step based on the current stateData
 		# if(queries["mode"] == "stream"):
