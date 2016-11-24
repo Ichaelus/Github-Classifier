@@ -119,4 +119,17 @@ def getUnlabeledData():
 def getTestData():
     return 'NotImplemented'
 
+def getLabeledCount():
+    return 'NotImplemented'
+
+def getUnlabeledCount():
+    return "875"
+
+def getTestCount():
+    return 'NotImplemented'
+
+def getToClassifyCount():
+    return 'NotImplemented'
+
+
 

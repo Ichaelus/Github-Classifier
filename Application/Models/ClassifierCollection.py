@@ -48,13 +48,13 @@ class ClassifierCollection:
         self.classificationmodules.remove(self.getClassificationModule(classifiername))
     
     @classmethod
-    def DoStreamBasedALRound(self, formula, semisupervised=False, traininstantly=False):
+    def doStreamBasedALRound(self, formula, semisupervised=False, traininstantly=False):
         """Ein zufälliges unlabeled Sample wird genommen, von jedem klassifiziert, und wenn sich 
         mindestens 1er unsicher ist, wird beim Benutzer nachgefragt"""
         return 'NotImplemented'
     
     @classmethod
-    def PoolBasedALRound(self, formula, semisupervised=False, traininstantly=False):
+    def poolBasedALRound(self, formula, semisupervised=False, traininstantly=False):
         """Calculates the best query to be answered by user. First unmuted classifier 1
         gets to ask a question the next time this function is run, then unmuted classifier 2 etc."""
         return 'NotImplemented'
