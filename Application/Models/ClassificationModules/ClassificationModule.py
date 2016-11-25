@@ -85,6 +85,11 @@ class ClassificationModule:
         """Module tests itself, refreshes yield and accuracy and returns data about these thests to the ClassifierCollection"""
         return "NotImplemented"
 
+    @classmethod
+    def calculatePoolBasedQuery(self, data):
+        """Module goes trough each sample, calculates the uncertainty for it and returns the sample with the highest uncertainty"""
+        return "NotImplemented"
+
 	
     @classmethod
     def saveModule(self):

@@ -9,6 +9,8 @@ class ClassifierCollection:
     """A class to deal with multiple Classification Modules"""
     
     classificationmodules = []
+    poolbasedalclassifierturn = 0
+
 
     def __init__(self):
         # Manually add each classification module we´re currently using
@@ -36,7 +38,8 @@ class ClassifierCollection:
         
     @classmethod
     def addClassificationModule(self, classificationmoduleobject):
-        """Add a classification module to the collection. Der Name davon muss unique sein."""
+        """Add a classification module to the collection. Der Name davon muss unique sein.
+        Sollte nur am Anfang vom Programm verwendet werden"""
         #classificationModule-Namen müssen unique sein
         if any([c for c in self.classificationmodules if c.getName() == classificationmoduleobject.getName()]):
             self.classificationmodules.append(classificationmoduleobject)
@@ -75,8 +78,17 @@ class ClassifierCollection:
         """Calculates the best query to be answered by user. First unmuted classifier 1
         gets to ask a question the next time this function is run, then unmuted classifier 2 etc."""
         data = DC.getUnlabeledData()
-        #...
-        return 'NotImplemented'
+        #calculate which classifiers arent muted and which turn it is
+        i = 0
+        gesamtzahlunmuted = 0
+        for c in self.classificationmodules:
+            if not c.isMuteClassificationModule():        
+                if(self.poolbasedalclassifierturn == i):
+                    userquery =c.calculatePoolBasedQuery(data)
+                i = i + 1
+                gesamtzahlunmuted = gesamtzahlunmuted + 1
+        self.poolbasedalclassifierturn = (self.poolbasedalclassifierturn + 1 ) % gesamtzahlunmuted
+        return userquery
 
     @classmethod
     def TestAllClassificationModules(self):

@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from math import log
+
 def calculateUncertaintyEntropyBased(classiefierlabelandprobability):
     prob = classiefierlabelandprobability[1:]
+    sum = 0
     for classprobability in prob:
-        pass
-    return '0'
+        sum -= classprobability * log(classprobability, 2)
+    return sum
 
 def calculateUncertaintyLeastConfident(classiefierlabelandprobability):
     return '0'
