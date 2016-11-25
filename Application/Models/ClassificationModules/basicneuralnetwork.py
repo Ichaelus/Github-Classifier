@@ -62,20 +62,3 @@ class basicneuralnetwork(ClassificationModule):
 
     def formatInputData(self):
         pass
-
-
-
-
-clf = basicneuralnetwork(2, 2, 3)
-
-x = [[1, 0], [0, 1], [0, 0], [1, 1]]
-y = [[0, 1], [0, 1], [1, 0], [1, 0]]
-x = np.asanyarray(x)
-print x
-y = np.asanyarray(y)
-
-print clf.train(x, y, nb_epoch=100, shuffle=True, verbose=False)
-x = [1, 1]
-print clf.predictLabelAndProbability(np.expand_dims(x, axis=0))
-print clf.predictLabel(np.expand_dims(x, axis=0))
-
