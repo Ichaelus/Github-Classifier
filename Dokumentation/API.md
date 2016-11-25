@@ -7,65 +7,73 @@ Alle Abfragen werden via `GET` an den host `http://classifier.leimstaedtner.it/a
 **Beispiel-Url:**
 `http://classifier.leimstaedtner.it/ajax.php?key=api:all&filter=Y2xhc3M9REVWfEhXLHN0YXJzPjM=`
 
-## Key Attribute
+### ?key=api:train
 
-### api:all
+Gibt alle Datensätze der Tabelle train aus.
 
-Gibt ungefiltert alle Datensätze aus.
+### ?key=api:test
 
-### api:old
+Gibt alle Datensätze der Tabelle test aus.
 
-Gibt ungefiltert alle **alten** Datensätze aus, d.h. jene mit beschränkt vielen Features.
+### ?key=api:unlabeled
 
-## api:unlabeled
+Gibt alle Datensätze der Tabelle unlabeled aus.
 
-Shortcut für api:class mit `class` = UNLABELED
+### ?key=api:to_classify
 
-### api:single
+Gibt alle Datensätze der Tabelle train aus.
 
-Gibt einen zufälligen klassifizierten Datensatz zurück.
+## Weitere Funktionen
 
-### api:single-unlabeled
-### api:single-unclassified
+_Für viele der folgenden Funktionen kann ein Attribut `table` {train, test, unlabeled, to_classify} bzw. das unten erläuterte `filter` Attribut gesetzt werden.
 
-Gibt den nächsten unklassifizierten Datensatz zurück.
+### ?key=api:single
 
-### api:to-reclassify
+Gibt einen zufälligen klassifizierten Datensatz zurück. (Attribute: `table`)
 
-Gibt einen Datensatz zurück, der in der alten Datenmenge vorhanden ist, aber noch nicht in der neuen.
+### ?key=api:equal
 
-### api:equal
+Gibt je Klasse gleich viele Datensätze zurück. (Attribute: `table`)
 
-Gibt je Klasse gleich viele Datensätze zurück.
+### ?key=api:class
 
-### api:count
-
-Liefert die Anzahl der betroffenen Datensätzen.
-
-### api:class
-
-Ein Shortcut for api:all mit entsprechenden Class Filter. Anwendung:
+Ein Shortcut for api:all mit entsprechenden Class Filter. (Attribute: `table`, `name`). Anwendung:
 `/?key=api:class&name=CLASSNAME`
 
-### api:class-count
+### ?key=api:count
 
-Kombination der obigen. Liefert die Anzahl der Samples pro Klasse zurück.
+Liefert die Anzahl der betroffenen Datensätzen.(Attribute: `table`, `filter`)
 
-### api:tagger-class-count
+### ?key=api:class-count
 
-Liefert die Anzahl der Samples pro Klasse zurück, beschränkt auf einen angegebenen `tagger`.
+Kombination der obigen. Liefert die Anzahl der Samples pro Klasse zurück.(Attribute: `table`, `filter`)
 
-### api:generate_sample_url
+### ?key=api:tagger-class-count
+
+Liefert die Anzahl der Samples pro Klasse zurück, beschränkt auf einen angegebenen `tagger`. (Attribute: `table`, `tagger`)
+
+### ?key=api:generate_sample_url
 
 Gibt die API-Url eines **zufälligen** Github repositorys  zurück.
 
 `client_id` und `client_secret` können übergeben werden, ansonsten werden gespeicherte credentials verwendet.
 
-### api:generate_sample
+### ?key=api:generate_sample
 
 Diese Funktion ist vom Parameter `api-url` abhängig. Für das angegebene repository wird damit ein ungelabelter Datenbankeitnrag bzw. Klassifikationsvektor generiert und im JSON Format ausgegeben. Ist `api-url` leer oder nicht gesetzt, wird ein zufälliges sample generiert. Wird ein zweiter, auch optionaler, Paramter `class` übergeben, wird das sample direkt klassifiziert, ansonsten erhält es die Klasse `UNLABELED`.
 
 `client_id` und `client_secret` können übergeben werden, ansonsten werden gespeicherte credentials verwendet.
+
+## Deprecated
+
+### ?key=api:old
+
+Gibt alle **alten** Datensätze aus, d.h. jene mit beschränkt vielen Features.
+
+### ?key=api:to-reclassify
+
+Gibt einen Datensatz zurück, der in der alten Datenmenge vorhanden ist, aber noch nicht in der neuen.
+
 
 ## Filtern
 
