@@ -12,12 +12,12 @@ max_stars = 60000 # Max found in data was 52762
 max_forks =  10000 # Max found in data was 9287
 max_watches = 4000 # Max found in data was 3709
 
-def api_call(key, filterstring):
+def api_call(keyString, filterString, tableString):
     """Get list of Repos-Data in json-format"""
-    filterstring = base64.b64encode(b'' + filterstring)
+    filterString = base64.b64encode(b'' + filterString)
     url = None
     data = None
-    url = 'http://classifier.leimstaedtner.it/ajax.php?key=api:' + key.decode("utf-8") + '&filter=' + filterstring.decode("utf-8")
+    url = 'http://classifier.leimstaedtner.it/ajax.php?key=api:' + keyString.decode("utf-8") + '&filter=' + filterString.decode("utf-8") + '&table=' + tableString.decode("utf-8")
     request = Request(url)
     print url
     try:
