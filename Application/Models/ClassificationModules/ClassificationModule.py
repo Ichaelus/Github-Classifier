@@ -4,6 +4,7 @@
 from abc import ABCMeta, abstractmethod
 import cPickle as pickle
 from datetime import datetime, date, time
+import ActiveLearningSpecific as AL
 
 class ClassificationModule:
     __metaclass__ = ABCMeta
@@ -86,8 +87,15 @@ class ClassificationModule:
         return "NotImplemented"
 
     @classmethod
-    def calculatePoolBasedQuery(self, data):
+    def calculatePoolBasedQuery(self,formula, data):
         """Module goes trough each sample, calculates the uncertainty for it and returns the sample with the highest uncertainty"""
+        resultc = NotImplemented
+        if(formula == 'Entropy-Based'):
+            uncertainty = AL.calculateUncertaintyEntropyBased(resultc)
+        elif(formula == "Least Confident"):
+            uncertainty = AL.calculateUncertaintyLeastConfident(resultc)
+        elif(formula == "Margin-Sampling"):
+            uncertainty = AL.calculateUncertaintyMarginSampling(resultc)
         return "NotImplemented"
 
 	

@@ -3,7 +3,7 @@
 
 import ClassificationModules.ClassificationModule
 import DatabaseCommunication as DC
-import ActiveLearningSpecific as AL
+import ClassificationModules.ActiveLearningSpecific as AL
 
 class ClassifierCollection:
     """A class to deal with multiple Classification Modules"""
@@ -84,7 +84,7 @@ class ClassifierCollection:
         for c in self.classificationmodules:
             if not c.isMuteClassificationModule():        
                 if(self.poolbasedalclassifierturn == i):
-                    userquery =c.calculatePoolBasedQuery(data)
+                    userquery =c.calculatePoolBasedQuery(formula, data)
                 i = i + 1
                 gesamtzahlunmuted = gesamtzahlunmuted + 1
         self.poolbasedalclassifierturn = (self.poolbasedalclassifierturn + 1 ) % gesamtzahlunmuted
