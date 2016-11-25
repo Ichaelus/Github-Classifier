@@ -89,13 +89,21 @@ class ClassificationModule:
     @classmethod
     def calculatePoolBasedQuery(self,formula, data):
         """Module goes trough each sample, calculates the uncertainty for it and returns the sample with the highest uncertainty"""
-        resultc = NotImplemented
-        if(formula == 'Entropy-Based'):
-            uncertainty = AL.calculateUncertaintyEntropyBased(resultc)
-        elif(formula == "Least Confident"):
-            uncertainty = AL.calculateUncertaintyLeastConfident(resultc)
-        elif(formula == "Margin-Sampling"):
-            uncertainty = AL.calculateUncertaintyMarginSampling(resultc)
+        uncertainties = []
+        for sample in data:
+            resultc = NotImplemented
+            if(formula == 'Entropy-Based'):
+                uncertainty = AL.calculateUncertaintyEntropyBased(resultc)
+            elif(formula == "Least Confident"):
+                uncertainty = AL.calculateUncertaintyLeastConfident(resultc)
+            elif(formula == "Margin-Sampling"):
+                uncertainty = AL.calculateUncertaintyMarginSampling(resultc)
+            uncertainties.append(uncertainty)
+        max = 0
+        for uncertainty in uncertainties:
+            if uncertainty > max:
+                max = uncertainty
+        sampleindex = uncertainties.index(uncertainty)
         return "NotImplemented"
 
 	
