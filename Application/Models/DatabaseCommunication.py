@@ -12,16 +12,14 @@ max_stars = 60000 # Max found in data was 52762
 max_forks =  10000 # Max found in data was 9287
 max_watches = 4000 # Max found in data was 3709
 
-def api_call(requ_url=None):
+def api_call(key, filterstring):
     """Get list of Repos-Data in json-format"""
-    filter = base64.b64encode(b'id>0')
+    filterstring = base64.b64encode(b'' + filterstring)
     url = None
     data = None
-    if requ_url is None:
-        url = 'http://classifier.leimstaedtner.it/ajax.php?key=api:all&filter='+filter.decode("utf-8")
-    else:
-        url = requ_url
+    url = 'http://classifier.leimstaedtner.it/ajax.php?key=api:' + key.decode("utf-8") + '&filter=' + filterstring.decode("utf-8")
     request = Request(url)
+    print url
     try:
         response = urlopen(request)
         data = json.load(response)
@@ -126,7 +124,7 @@ def getLabeledCount():
     return 'NotImplemented'
 
 def getUnlabeledCount():
-    return "875"
+    return api_call('count', "class=UNLABELED")
 
 def getTestCount():
     return 'NotImplemented'

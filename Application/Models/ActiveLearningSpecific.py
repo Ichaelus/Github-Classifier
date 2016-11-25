@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 
 def calculateUncertaintyEntropyBased(classiefierlabelandprobability):
+    prob = classiefierlabelandprobability[1:]
+    for classprobability in prob:
+        pass
     return '0'
 
 def calculateUncertaintyLeastConfident(classiefierlabelandprobability):
