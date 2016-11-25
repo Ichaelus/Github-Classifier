@@ -2,7 +2,7 @@
 
 ## Base url
 
-Alle Abfragen werden via `GET` an den host `http://classifier.leimstaedtner.it/ajax.php` gesendet. Das Attribut `key` unterscheidet dann die gewünschte Grundmenge, `filter` dient zur Verfeinerung der Resultate.
+_Alle Abfragen werden via `GET` an den host `http://classifier.leimstaedtner.it/ajax.php` gesendet. Das Attribut `key` unterscheidet dann die gewünschte Grundmenge, `filter` und `table` dienen zur Verfeinerung der Resultate._
 
 **Beispiel-Url:**
 `http://classifier.leimstaedtner.it/ajax.php?key=api:all&filter=Y2xhc3M9REVWfEhXLHN0YXJzPjM=`
@@ -25,7 +25,7 @@ Gibt alle Datensätze der Tabelle train aus.
 
 ## Weitere Funktionen
 
-_Für viele der folgenden Funktionen kann ein Attribut `table` {train, test, unlabeled, to_classify} bzw. das unten erläuterte `filter` Attribut gesetzt werden.
+_Für viele der folgenden Funktionen kann ein Attribut `table` {train, test, unlabeled, to_classify} bzw. das unten erläuterte `filter` Attribut gesetzt werden._
 
 ### ?key=api:single
 
