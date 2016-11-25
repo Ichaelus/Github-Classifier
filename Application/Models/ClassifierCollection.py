@@ -56,17 +56,18 @@ class ClassifierCollection:
         results = []
         unsure = False
         for c in self.classificationmodules:
-            resultc = c.predictLabelAndProbability(sample)
-            uncertainty = 0.0
-            if(formula == 'Entropy-Based'):
-                uncertainty = AL.calculateUncertaintyEntropyBased(resultc)
-            elif(formula == "Least Confident"):
-                uncertainty = AL.calculateUncertaintyLeastConfident(resultc)
-            elif(formula == "Margin-Sampling"):
-                uncertainty = AL.calculateUncertaintyMarginSampling(resultc)
-            if(uncertainty > threshold):
-                unsure = True
-            results.append(resultc, uncertainty)
+            if not c.isMuteClassificationModule():
+                resultc = c.predictLabelAndProbability(sample)
+                uncertainty = 0.0
+                if(formula == 'Entropy-Based'):
+                    uncertainty = AL.calculateUncertaintyEntropyBased(resultc)
+                elif(formula == "Least Confident"):
+                    uncertainty = AL.calculateUncertaintyLeastConfident(resultc)
+                elif(formula == "Margin-Sampling"):
+                    uncertainty = AL.calculateUncertaintyMarginSampling(resultc)
+                if(uncertainty > threshold):
+                    unsure = True
+                results.append(resultc, uncertainty)
         return (unsure, results)
     
     @classmethod
