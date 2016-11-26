@@ -41,16 +41,16 @@ def getTestData():
     return api_call('all', tableString="test")
 
 def getLabeledCount():
-    return api_call('count', tableString="labeled")
+    return str(api_call('count', tableString="labeled"))
 
 def getUnlabeledCount():
-    return "5" #api_call('count', tableString="unlabeled")
+    return  str(api_call('count', tableString="unlabeled"))
 
 def getTestCount():
-    return api_call('count', tableString="test")
+    return str(api_call('count', tableString="test"))
 
 def getToClassifyCount():
-    return api_call('all', tableString="to_classify")
+    return str(api_call('all', tableString="to_classify"))
 
 def getAllDescriptions():
     tables = ['test', 'train', 'to_classify']
