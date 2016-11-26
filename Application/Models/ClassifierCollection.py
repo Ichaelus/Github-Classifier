@@ -42,9 +42,9 @@ class ClassifierCollection:
         Sollte nur am Anfang vom Programm verwendet werden"""
         #classificationModule-Namen müssen unique sein
         if any([c for c in self.classificationmodules if c.getName() == classificationmoduleobject.getName()]):
-            self.classificationmodules.append(classificationmoduleobject)
-        else :
             raise NameError('Name must be unique')
+        else :
+            self.classificationmodules.append(classificationmoduleobject)
 
     @classmethod
     def removeClassificationModule(self, classifiername):
@@ -92,7 +92,7 @@ class ClassifierCollection:
 
     @classmethod
     def TestAllClassificationModules(self):
-        """Tests all classification modules, these do that by themselfes and return results to this function"""
+        """Tests all classification modules, these do that by themselves and return results to this function"""
         data = DC.getTestData()
         results = []
         for c in self.classificationmodules:

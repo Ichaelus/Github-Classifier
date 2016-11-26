@@ -44,13 +44,23 @@ def getLabeledCount():
     return api_call('count', tableString="labeled")
 
 def getUnlabeledCount():
-    return api_call('count', tableString="unlabeled")
+    return "5" #api_call('count', tableString="unlabeled")
 
 def getTestCount():
     return api_call('count', tableString="test")
 
 def getToClassifyCount():
     return api_call('all', tableString="to_classify")
+
+def getAllDescriptions():
+    tables = ['test', 'train', 'to_classify']
+    corpus = []
+
+    for table in tables:
+        data = api_call("all", tableString=table)
+        for sample in data:
+            corpus.append(sample['description'])
+    return corpus
 
 
 

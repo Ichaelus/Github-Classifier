@@ -7,23 +7,26 @@ import base64
 from sklearn.feature_extraction.text import TfidfVectorizer
 import re
 from nltk.stem import PorterStemmer
+import numpy as np
 
 # Constants
-max_stars = 60000 # Max found in data was 52762
-max_forks =  10000 # Max found in data was 9287
-max_watches = 4000 # Max found in data was 3709
-max_folder_count = 1
-max_treeDepth = 1
-max_branch_count = 1
-max_forks = 1
-max_commit_interval_avg = 1
-max_contributors_count = 1
-max_open_issues_count = 1
-max_avg_commit_length = 1
-max_file_count = 1
-max_commit_interval_max = 1
+max_stars = 1000
+max_forks =  100
+max_watches = 10
+max_folder_count = 100
+max_treeDepth = 10
+max_branch_count = 10
+max_forks = 100
+max_commit_interval_avg = 10
+max_contributors_count = 10
+max_open_issues_count = 10
+max_avg_commit_length = 100
+max_file_count = 100
+max_commit_interval_max = 10
 
 max_vectorizer_word_count = 3000
+
+label_dict = {'DEV':0, 'HW':1, 'EDU':2, 'DOCS':3, 'WEB':4, 'DATA':5, 'OTHER':6}
 
 # Save vectorizer so it doesnt have to be loaded from serialised file each time
 global_vectorizer = None
@@ -37,22 +40,21 @@ def getVectorsFromData(data, processText=True):
     label_names = []
     # Classes
     labels = []
-
     for i in xrange(len(data)):
         sample = data[i]
         feature = {'readme':None, 'description':None, 'meta':None}
         feature['readme'] = getReadme(sample)
         feature['meta'] = getMetadataVector(sample)
-        feature['description'] = getShortDescription(sample)
+        feature['description'] = getDescription(sample)
         if processText:
             feature['readme'] = process_text(feature['readme'])
             feature['description'] = process_text(feature['description'])
-        label = data[i]['class']
-        if label not in label_names:
-            label_names.append(label)
         features.append(feature)
-        labels.append(label_names.index(label))
+        labels.append(getLabelIndex(sample[i]))
     return (features, labels, label_names)
+
+def getLabelIndex(sample):
+    return label_dict[sample['class']]
     
 def text_from_base64(text):
     """Convert text back from base64"""
@@ -70,33 +72,33 @@ def text_from_base64(text):
 def getReadme(data):
     return base64.b64decode(data['readme'])
 
-def getShortDescription(data):
+def getDescription(data):
     return data['description']
 
 def getMetadataVector(sample):
     # Get metadata
     vec = []
-    vec.append(float(sample['hasDownloads']))
-    vec.append(float(sample['watches']) / max_watches)
-    vec.append(float(sample['folder_count']) / max_folder_count)
-    vec.append(float(sample['treeDepth']) / max_treeDepth)
-    vec.append(float(sample['stars']) / max_stars)
-    vec.append(float(sample['branch_count']) / max_branch_count)
-    vec.append(float(sample['forks']) / max_forks)
-    vec.append(float(sample['commit_interval_avg']) / max_commit_interval_avg)
-    vec.append(float(sample['contributors_count']) / max_contributors_count)
-    vec.append(float(sample['open_issues_count']) / max_open_issues_count)
-    vec.append(float(sample['avg_commit_length']) / max_avg_commit_length)
-    vec.append(float(sample['hasWiki']))
-    vec.append(float(sample['file_count']) / max_file_count)
-    vec.append(float(sample['commit_interval_max']) / max_commit_interval_max)
-    vec.append(float(sample['isFork']))
+    vec.append(min(1., (float(sample['hasDownloads']))))
+    vec.append(min(1., float(sample['watches']) / max_watches))
+    vec.append((min(1., float(sample['folder_count']) / max_folder_count)))
+    vec.append((min(1., float(sample['treeDepth']) / max_treeDepth)))
+    vec.append((min(1., float(sample['stars']) / max_stars)))
+    vec.append((min(1., float(sample['branch_count']) / max_branch_count)))
+    vec.append((min(1., float(sample['forks']) / max_forks)))
+    vec.append((min(1., float(sample['commit_interval_avg']) / max_commit_interval_avg)))
+    vec.append((min(1., float(sample['contributors_count']) / max_contributors_count)))
+    vec.append((min(1., float(sample['open_issues_count']) / max_open_issues_count)))
+    vec.append((min(1., float(sample['avg_commit_length']) / max_avg_commit_length)))
+    vec.append((min(1., float(sample['hasWiki']))))
+    vec.append((min(1., float(sample['file_count']) / max_file_count)))
+    vec.append((min(1., float(sample['commit_interval_max']) / max_commit_interval_max)))
+    vec.append((min(1., float(sample['isFork']))))
     return vec
 
 def getFileNameAndAuthorString(sample):
     return (sample['files'], sample['author'])
 
-def getTextVectorizer(vectorizer_name="vectorizer.bin"):
+def getTextVectorizer(max_features, vectorizer_name="vectorizer.bin"):
     """Creates new TfIdfVectorizer"""
     vectorizer = TfidfVectorizer(
                             sublinear_tf=True,  # Reason: 'It seems unlikely that twenty occurrences of a 
@@ -106,7 +108,7 @@ def getTextVectorizer(vectorizer_name="vectorizer.bin"):
                             decode_error='ignore', # Ignore if character couldnt be read
                             analyzer='word',    # Scan words, not characters
                             ngram_range=(1, 2), # Try different ngrams, possibly useful with more training data
-                            max_features=max_vectorizer_word_count
+                            max_features=max_features
                             #max_df=0.5 # Verwendet im ML-Kurs unter Preprocessing                   
                 )
     return vectorizer
@@ -142,3 +144,23 @@ def process_text(text, remove_url=True, remove_code=True, remove_punctuation=Tru
         else:
             final_words = words
     return final_words
+
+def getMetaAttMax(data):
+    max_dict = dict()
+    for c in data[0]:
+        max_dict[c] = data[0][c]
+    for sample in data:
+        for c in sample:
+            if sample[c] > max_dict[c]:
+                max_dict[c] = sample[c]
+    for c in max_dict:
+        try:
+            k = int(max_dict[c])
+            print c, k
+        except ValueError:
+            continue
+    
+def oneHot(index):
+    arr = np.zeros(7)
+    arr[index] = 1
+    return arr

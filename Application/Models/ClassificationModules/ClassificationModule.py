@@ -22,6 +22,11 @@ class ClassificationModule:
         return self.description
 
     @classmethod
+    def setName(self, name):
+        """Set name"""
+        self.name = name
+
+    @classmethod
     def getName(self):
         """Return the name"""
         return self.name

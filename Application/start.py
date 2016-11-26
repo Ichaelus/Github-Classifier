@@ -14,6 +14,9 @@ rootApp = Bottle()
 classifiercollection = ClassifierCollection()
 homesetclassifiercollection(classifiercollection)
 
+bnn = basicneuralnetwork(10, 2)
+classifiercollection.addClassificationModule(bnn)
+
 #testing stuff
 #bnn = basicneuralnetwork()
 #classifiercollection.addClassificationModule(bnn)
