@@ -5,10 +5,15 @@ from abc import ABCMeta, abstractmethod
 import cPickle as pickle
 from datetime import datetime, date, time
 import ActiveLearningSpecific as AL
+<<<<<<< HEAD
 import xml.etree.ElementTree as ET
 import os.path
 
 
+=======
+from FeatureProcessing import getLabelIndex
+import numpy as np
+>>>>>>> origin/master
 
 class ClassificationModule:
     __metaclass__ = ABCMeta
@@ -25,6 +30,11 @@ class ClassificationModule:
     def getDescription(self):
         """Return the description"""
         return self.description
+
+    @classmethod
+    def setName(self, name):
+        """Set name"""
+        self.name = name
 
     @classmethod
     def getName(self):
@@ -52,7 +62,7 @@ class ClassificationModule:
         pass
     
     @abstractmethod
-    def predictLabelAndProbability(self, sample):
+    def predictLabelAndProbability(self, sample): # According to docstring - Shouldnt this be called predictProbabilities?
         """Return the probability the module assignes each label"""
         pass
 
@@ -89,14 +99,31 @@ class ClassificationModule:
     @classmethod
     def testModule(self, data):
         """Module tests itself, refreshes yield and accuracy and returns data about these thests to the ClassifierCollection"""
-        return "NotImplemented"
+        nb_right_pred = 0 # Number of right predictions
+        class_count = np.zeros(7) # Number each class was found in data
+        class_right_pred_count = np.zeros(7)
+
+        for sample in data:
+            pred_out = self.predictLabelAndProbability(self, data)
+            # Check if prediction was right
+            true_label_index = getLabelIndex(data)
+            if (np.argmax(pred_out) == true_label_index):
+                nb_right_pred += 1
+                class_right_pred_count[true_label_index] += 1
+            class_count[true_label_index] += 1
+           
+        global Yield, Accuracy
+        Yield = nb_right_pred / len(data)
+
+        class_acc = class_right_pred_count / class_count
+        return [Yield] + class_acc.tolist()
 
     @classmethod
     def calculatePoolBasedQuery(self,formula, data):
         """Module goes trough each sample, calculates the uncertainty for it and returns the sample with the highest uncertainty"""
         uncertainties = []
         for sample in data:
-            resultc = NotImplemented
+            resultc = self.predictLabelAndProbability(self, sample)
             if(formula == 'Entropy-Based'):
                 uncertainty = AL.calculateUncertaintyEntropyBased(resultc)
             elif(formula == "Least Confident"):
@@ -104,12 +131,13 @@ class ClassificationModule:
             elif(formula == "Margin-Sampling"):
                 uncertainty = AL.calculateUncertaintyMarginSampling(resultc)
             uncertainties.append(uncertainty)
-        max = 0
+        maxuncertainty = 0
+        sampleindex = 0
         for uncertainty in uncertainties:
-            if uncertainty > max:
-                max = uncertainty
-        sampleindex = uncertainties.index(uncertainty)
-        return "NotImplemented"
+            if uncertainty > maxuncertainty:
+                maxuncertainty = uncertainty
+                sampleindex = uncertainties.index(uncertainty)
+        return data[sampleindex]
 
 	
     @classmethod

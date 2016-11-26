@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from FeatureProcessing import *
 from ClassificationModule import ClassificationModule
 from keras.models import Sequential
 from keras.layers import Activation, Dense
 from keras.optimizers import Adam
-
 import numpy as np
 
 
@@ -14,19 +14,32 @@ class basicneuralnetwork(ClassificationModule):
 
     description = "A basic feedforward neural network"
     
-    def __init__(self, input_size, output_size, num_hidden_layers=3):
+    def __init__(self, output_size, text_corpus, num_hidden_layers=3):
+
+        # Create vectorizer and fit on all available Descriptions
+        self.vectorizer = getTextVectorizer(3000) # Maximum of different columns
+        corpus = []
+        for description in text_corpus:
+            corpus.append(process_text(description))
+        self.vectorizer.fit(corpus)
+
+        # Set input-size and output_size
+        self.input_size = len(self.vectorizer.get_feature_names())
+        self.output_size = output_size
+
+        # Create model
         model = Sequential()
         # Add input-layer
-        model.add(Dense(input_size, input_dim=input_size, init='uniform'))
+        model.add(Dense(self.input_size, input_dim=self.input_size, init='uniform'))
         model.add(Activation('relu'))
-        
+
         # Add hidden layers
         for _ in xrange(num_hidden_layers):
-            model.add(Dense(input_size, init='uniform'))
+            model.add(Dense(self.input_size, init='uniform'))
             model.add(Activation('relu'))
         
         # Add output layer and normalize probablities with softmax
-        model.add(Dense(output_size, init='uniform'))
+        model.add(Dense(self.output_size, init='uniform'))
         model.add(Activation('softmax'))
 
         # Compile model and use Adam as optimizer
@@ -34,48 +47,40 @@ class basicneuralnetwork(ClassificationModule):
         model.compile(metrics=['accuracy'], loss='categorical_crossentropy', optimizer=adam)
 
         self.model = model
-
         print('Model build and ready')
 
-    
+
     def resetAllTraining(self):
         """Reset classification module to status before training"""
-        pass
+        self.model.compile(metrics=['accuracy'], loss='categorical_crossentropy', optimizer=Adam())
 
     def trainOnSample(self, sample, nb_epoch=10, shuffle=True, verbose=True):
         """Trainiere (inkrementell) mit Sample. Evtl zusätzlich mit best. Menge alter Daten, damit overfitten auf neue Daten verhindert wird."""
-        x = np.expand_dims(sample, axis=0)
-        self.model.fit(x, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose) # TODO: think about nb_epoch-value
+        description_vec = self.formatInputData(sample)
+        label_index = getLabelIndex(sample)
+        label_one_hot = oneHot(label_index)
+        description_vec = np.expand_dims(description_vec, axis=0)
+        self.model.fit(description_vec, label_one_hot, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose) # TODO: think about nb_epoch-value
 
-
-    def train(self, samples, classes, nb_epoch=10, shuffle=True, verbose=True):
+    def train(self, samples, lables, nb_epoch=10, shuffle=True, verbose=True):
         """Trainiere mit Liste von Daten. Evtl weitere Paramter nötig (nb_epoch, learning_rate, ...)"""
-        self.model.fit(samples, classes, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose)
+        assert(len(samples) == len(lables))
+        train_samples = []
+        train_lables = []
+        for i in xrange(len(samples)):
+            samples.append(np.asanyarray(self.formatInputData(samples[i])))
+            train_lables.append(oneHot(lables[i]))
+        self.model.fit(train_samples, lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose)
 
     def predictLabel(self, sample):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""
-        return np.argmax(self.model.predict(sample))
+        return np.argmax(self.model.predict(np.expand_dims(self.formatInputData(sample), axis=0)))
     
     def predictLabelAndProbability(self, sample):
         """Return the probability the module assignes each label"""
-        return self.model.predict(sample) # First element as keras returns list of detailed predictions
+        sample = self.formatInputData(sample)
+        return self.model.predict(sample)
 
-    def formatInputData(self):
-        pass
-
-
-
-
-clf = basicneuralnetwork(2, 2, 3)
-
-x = [[1, 0], [0, 1], [0, 0], [1, 1]]
-y = [[0, 1], [0, 1], [1, 0], [1, 0]]
-x = np.asanyarray(x)
-print x
-y = np.asanyarray(y)
-
-print clf.train(x, y, nb_epoch=100, shuffle=True, verbose=False)
-x = [1, 1]
-print clf.predictLabelAndProbability(np.expand_dims(x, axis=0))
-print clf.predictLabel(np.expand_dims(x, axis=0))
-
+    def formatInputData(self, data):
+        sd = getDescription(data)
+        return self.vectorizer.transform(sd)

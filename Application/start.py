@@ -6,6 +6,7 @@ import webbrowser
 from Controllers.HomeController import homebottle, homesetclassifiercollection
 from Models.ClassifierCollection import ClassifierCollection
 from Models.ClassificationModules.basicneuralnetwork import basicneuralnetwork
+import Models.DatabaseCommunication as DC
 
 rootApp = Bottle()
 
@@ -13,6 +14,10 @@ rootApp = Bottle()
 # Have no idea at the moment if that´s the best way to do it in our case
 classifiercollection = ClassifierCollection()
 homesetclassifiercollection(classifiercollection)
+
+descriptionCorcus = DC.getAllDescriptions()
+bnn = basicneuralnetwork(7, descriptionCorcus)
+classifiercollection.addClassificationModule(bnn)
 
 #testing stuff
 #bnn = basicneuralnetwork()

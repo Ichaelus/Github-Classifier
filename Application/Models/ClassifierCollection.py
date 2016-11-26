@@ -42,14 +42,18 @@ class ClassifierCollection:
         Sollte nur am Anfang vom Programm verwendet werden"""
         #classificationModule-Namen müssen unique sein
         if any([c for c in self.classificationmodules if c.getName() == classificationmoduleobject.getName()]):
-            self.classificationmodules.append(classificationmoduleobject)
-        else :
             raise NameError('Name must be unique')
+        else :
+            self.classificationmodules.append(classificationmoduleobject)
 
-    @classmethod
-    def removeClassificationModule(self, classifiername):
-        """Remove a classification module from the collection."""
-        self.classificationmodules.remove(self.getClassificationModule(classifiername))
+    #sollten wir nicht brauchen, da keine Funktion zum Entfernen von Classifiern aus der ClassifierCollection
+    #von der GUI bereitgestellt wird, alle die in start hinzugefügt werden sind bis zum Ende dabei
+    #eine Verwendung hiervon kann zu unvorhergesehenen Fehlern beim PoolBasedAL sorgen (auch wenn dies fixbar ist,
+    #macht nur manches ein wenig umständlicher ohne dass wir dafür was nützliches bekommen)
+    #@classmethod
+    #def removeClassificationModule(self, classifiername):
+    #    """Remove a classification module from the collection."""
+    #    self.classificationmodules.remove(self.getClassificationModule(classifiername))
     
     @classmethod
     def doStreamBasedALRound(self, formula, semisupervised=False, traininstantly=False, threshold = 0.5):
@@ -80,19 +84,26 @@ class ClassifierCollection:
         data = DC.getUnlabeledData()
         #calculate which classifiers arent muted and which turn it is
         i = 0
-        gesamtzahlunmuted = 0
-        for c in self.classificationmodules:
-            if not c.isMuteClassificationModule():        
-                if(self.poolbasedalclassifierturn == i):
-                    userquery =c.calculatePoolBasedQuery(formula, data)
-                i = i + 1
-                gesamtzahlunmuted = gesamtzahlunmuted + 1
-        self.poolbasedalclassifierturn = (self.poolbasedalclassifierturn + 1 ) % gesamtzahlunmuted
+        userquery = None
+        for j in xrange(0, len(self.classificationmodules)):
+            if(j == self.poolbasedalclassifierturn + i):
+                c = self.classificationmodules[j]
+                if not c.isMuteClassificationModule(): 
+                    userquery = c.calculatePoolBasedQuery(formula, data)
+                else:
+                    i = i + 1
+                    if (j == (len(self.classificationmodules) - 1) and userquery == None):
+                    # bevor er wenn gar kein Classifier nicht gemutet ist in endlosschleife hängen bleibt
+                    # nochmal kontrollieren vorm zurückspringen zum anfang
+                        if any([c for c in self.classificationmodules if not c.isMuteClassificationModule()]):
+                            self.poolbasedalclassifierturn = 0
+                            return self.poolBasedALRound(formula, semisupervised, traininstantly)
+                        else: raise Exception('Error, trying to do poolBasedALRound without a non-muted classifier')
         return userquery
 
     @classmethod
     def TestAllClassificationModules(self):
-        """Tests all classification modules, these do that by themselfes and return results to this function"""
+        """Tests all classification modules, these do that by themselves and return results to this function"""
         data = DC.getTestData()
         results = []
         for c in self.classificationmodules:
