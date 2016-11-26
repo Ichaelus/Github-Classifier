@@ -80,14 +80,21 @@ class ClassifierCollection:
         data = DC.getUnlabeledData()
         #calculate which classifiers arent muted and which turn it is
         i = 0
-        gesamtzahlunmuted = 0
-        for c in self.classificationmodules:
-            if not c.isMuteClassificationModule():        
-                if(self.poolbasedalclassifierturn == i):
-                    userquery =c.calculatePoolBasedQuery(formula, data)
-                i = i + 1
-                gesamtzahlunmuted = gesamtzahlunmuted + 1
-        self.poolbasedalclassifierturn = (self.poolbasedalclassifierturn + 1 ) % gesamtzahlunmuted
+        userquery = None
+        for j in xrange(0, len(self.classificationmodules)):
+            if(j == self.poolbasedalclassifierturn + i):
+                c = self.classificationmodules[j]
+                if not c.isMuteClassificationModule(): 
+                    userquery = c.calculatePoolBasedQuery(formula, data)
+                else:
+                    i = i + 1
+                    if (j == len(self.classificationmodules) and userquery == None):
+                    # bevor er wenn gar kein Classifier nicht gemutet ist in endlosschleife hängen bleibt
+                    # nochmal kontrollieren vorm zurückspringen zum anfang
+                        if any([c for c in self.classificationmodules if not c.isMuteClassificationModule()]):
+                            self.poolbasedalclassifierturn = 0
+                            return self.poolBasedALRound(formula, semisupervised, traininstantly)
+                        else: raise Exception('Error, trying to do poolBasedALRound without a non-muted classifier')
         return userquery
 
     @classmethod
