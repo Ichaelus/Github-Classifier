@@ -5,6 +5,8 @@ from abc import ABCMeta, abstractmethod
 import cPickle as pickle
 from datetime import datetime, date, time
 import ActiveLearningSpecific as AL
+from FeatureProcessing import getLabelIndex
+import numpy as np
 
 class ClassificationModule:
     __metaclass__ = ABCMeta
@@ -52,7 +54,7 @@ class ClassificationModule:
         pass
     
     @abstractmethod
-    def predictLabelAndProbability(self, sample):
+    def predictLabelAndProbability(self, sample): # According to docstring - Shouldnt this be called predictProbabilities?
         """Return the probability the module assignes each label"""
         pass
 
@@ -89,7 +91,24 @@ class ClassificationModule:
     @classmethod
     def testModule(self, data):
         """Module tests itself, refreshes yield and accuracy and returns data about these thests to the ClassifierCollection"""
-        return "NotImplemented"
+        nb_right_pred = 0 # Number of right predictions
+        class_count = np.zeros(7) # Number each class was found in data
+        class_right_pred_count = np.zeros(7)
+
+        for sample in data:
+            pred_out = self.predictLabelAndProbability(self, data)
+            # Check if prediction was right
+            true_label_index = getLabelIndex(data)
+            if (np.argmax(pred_out) == true_label_index):
+                nb_right_pred += 1
+                class_right_pred_count[true_label_index] += 1
+            class_count[true_label_index] += 1
+           
+        global Yield, Accuracy
+        Yield = nb_right_pred / len(data)
+
+        class_acc = class_right_pred_count / class_count
+        return [Yield] + class_acc.tolist()
 
     @classmethod
     def calculatePoolBasedQuery(self,formula, data):

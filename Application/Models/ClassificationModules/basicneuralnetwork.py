@@ -59,15 +59,22 @@ class basicneuralnetwork(ClassificationModule):
         description_vec = self.formatInputData(sample)
         label_index = getLabelIndex(sample)
         label_one_hot = oneHot(label_index)
+        description_vec = np.expand_dims(description_vec, axis=0)
         self.model.fit(description_vec, label_one_hot, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose) # TODO: think about nb_epoch-value
 
     def train(self, samples, lables, nb_epoch=10, shuffle=True, verbose=True):
         """Trainiere mit Liste von Daten. Evtl weitere Paramter nötig (nb_epoch, learning_rate, ...)"""
-        self.model.fit(samples, lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose)
+        assert(len(samples) == len(lables))
+        train_samples = []
+        train_lables = []
+        for i in xrange(len(samples)):
+            samples.append(np.asanyarray(self.formatInputData(samples[i])))
+            train_lables.append(oneHot(lables[i]))
+        self.model.fit(train_samples, lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose)
 
     def predictLabel(self, sample):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""
-        return np.argmax(self.model.predict(self.formatInputData(sample)))
+        return np.argmax(self.model.predict(np.expand_dims(self.formatInputData(sample), axis=0)))
     
     def predictLabelAndProbability(self, sample):
         """Return the probability the module assignes each label"""

@@ -55,6 +55,12 @@ def getVectorsFromData(data, processText=True):
 
 def getLabelIndex(sample):
     return label_dict[sample['class']]
+
+def getLabelName(index):
+    for label in label_dict:
+        if label_dict[label] == index:
+            return label
+
     
 def text_from_base64(text):
     """Convert text back from base64"""
