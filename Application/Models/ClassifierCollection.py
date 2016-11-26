@@ -25,7 +25,7 @@ class ClassifierCollection:
     def SaveAllClassificationModules(self, stillundefined):
         """Saves all classification modules"""
         for classifier in self.classificationmodules:
-		    classifier.SaveModule()
+		    classifier.saveModule()
 
     @classmethod
     def getClassificationModule(self, classifiername):

@@ -5,12 +5,17 @@ from abc import ABCMeta, abstractmethod
 import cPickle as pickle
 from datetime import datetime, date, time
 import ActiveLearningSpecific as AL
+import xml.etree.ElementTree as ET
+import os.path
+
+
 
 class ClassificationModule:
     __metaclass__ = ABCMeta
 
     description = "Doesnt have a description yet"
     name = ""
+	path = "" 	#must be relative to start.py
     muted = False
     binary = False
     Yield = 0.0
@@ -109,29 +114,86 @@ class ClassificationModule:
 	
     @classmethod
     def saveModule(self):
-		""""""
+		"""serializes modul and add a savepoint to XML-File"""
+		### require a xml-file which contains <data></data>
+		###	at directory path
 		#Serialization
 		filename = datetime.now().isoformat() + '.pkl'
-		output = open(filename, 'w')
+		tmpPath = os.path.abspath(".")
+		tmpPath = os.path.join(tmpPath, path, filename)
+		output = open(tmpPath, 'w')
 		pickle.dump(ClassificationModule, output, 2)
 		output.close()
+		
 		#XML-file
-		### filestruktur einbauen! es gibt einen Ordner für alle Module
-		### im Ordner steckt ein XML file
+		tmpPath = os.path.abspath(".") 
+		tmpPath = os.path.join(tmpPath, path, name + '.xml')
+		tree = ET.parse(tmpPath)		
+		root = tree.getroot()
+	
+		today = date.today()
+		entry = ET.SubElement(root, 'version', {'name':filename})
+		day = ET.SubElement(entry, 'day')
+		day.text = str(today.day)
+		month = ET.SubElement(entry, 'month')
+		month.text = str(today.month)
+		year = ET.SubElement(entry, 'year')
+		year.text = str(today.year)
+		#SubElement nimmt nur dicts aus strings
+		stringDict = {}
+		for key, value in Accuracy.iteritems():
+			stringDict[str(key)] = str(value)
+		ET.SubElement(entry, 'accuracy', stringDict)
+	
+		tree.write(tmpPath)
 		return None
 		
     @classmethod
-    def GetSavePointsForClassificationModules(self):
+    def getSavePointsForClassificationModules(self):
+		### require a xml-file which contains <data></data>
+		###	at directory path
 		"""holt aus dem XML File die möglichen SaveZustände"""
-		pass
-		#returned irgendwas mit filename mit zugehöriger Erkennungsgenauigkeit
+		tmpPath = os.path.abspath(".") 
+		tmpPath = os.path.join(tmpPath, path, name + '.xml')
+		tree = ET.parse(tmpPath)
+		root = tree.getroot()
+		savePoints = []
+		for child in root:
+			tmp = {}
+			for i in xrange(0, len(child.find('accuracy').attrib.keys()-1)):
+				tmp[child.find('accuracy').attrib.keys()[i]] = child.find('accuracy').attrib.values()[i]
+			savePoints.append([child.attrib.values()[0], tmp) 
+		#returned a list of tuples with filename and Accuracy
+		return savePoints
+		
+		
     @classmethod
-    def LoadClassificationModuleSavePoint(self, filename="lastused"):
-        #wenn lastused, dann wird aus dem XML-File der Name vom zuletzt benutzten SavePoint rausgesucht
+    def loadClassificationModuleSavePoint(self, filename="lastused"):
+        ### require a xml-file which contains <data></data>
+		###	at directory path
+		#wenn lastused, dann wird aus dem XML-File der Name vom zuletzt benutzten SavePoint rausgesucht
 		"""loads another SafePoint with filename of the current ClassificationModule"""
-		pass
+		if (filename is "lastused"):
+			tmpPath = os.path.abspath(".") 
+			tmpPath = os.path.join(tmpPath, path, name + '.xml')
+			tree = ET.parse(tmpPath)
+			root = tree.getroot()
+			lastmodified = 'zzzzzzzzzzzzzzzzzzzzzz'  #Lexikographisch sehr schlechtes wort
+													#quasi wie -unendlich bei Zahlensortierverfahren
+			for child in root:
+				tmp = child.attrib.values()[0]
+				if (lastmodified > tmp):
+					lastmodified = tmp
+			if (lastmodified is "zzzzzzzzzzzzzzzzzzzzzz")
+				#there is no savepoint
+				return None
+			filename = lastmodified
+		tmpPath = os.path.abspath(".")
+		tmpPath = os.path.join(tmpPath, path, filename)
+		f = open(tmpPath)
+		data = pickle.load(f)
 		#returned ein ClassificationModule
-
+		return data
 
 
     
