@@ -46,10 +46,14 @@ class ClassifierCollection:
         else :
             self.classificationmodules.append(classificationmoduleobject)
 
-    @classmethod
-    def removeClassificationModule(self, classifiername):
-        """Remove a classification module from the collection."""
-        self.classificationmodules.remove(self.getClassificationModule(classifiername))
+    #sollten wir nicht brauchen, da keine Funktion zum Entfernen von Classifiern aus der ClassifierCollection
+    #von der GUI bereitgestellt wird, alle die in start hinzugefügt werden sind bis zum Ende dabei
+    #eine Verwendung hiervon kann zu unvorhergesehenen Fehlern beim PoolBasedAL sorgen (auch wenn dies fixbar ist,
+    #macht nur manches ein wenig umständlicher ohne dass wir dafür was nützliches bekommen)
+    #@classmethod
+    #def removeClassificationModule(self, classifiername):
+    #    """Remove a classification module from the collection."""
+    #    self.classificationmodules.remove(self.getClassificationModule(classifiername))
     
     @classmethod
     def doStreamBasedALRound(self, formula, semisupervised=False, traininstantly=False, threshold = 0.5):
@@ -88,7 +92,7 @@ class ClassifierCollection:
                     userquery = c.calculatePoolBasedQuery(formula, data)
                 else:
                     i = i + 1
-                    if (j == len(self.classificationmodules) and userquery == None):
+                    if (j == (len(self.classificationmodules) - 1) and userquery == None):
                     # bevor er wenn gar kein Classifier nicht gemutet ist in endlosschleife hängen bleibt
                     # nochmal kontrollieren vorm zurückspringen zum anfang
                         if any([c for c in self.classificationmodules if not c.isMuteClassificationModule()]):

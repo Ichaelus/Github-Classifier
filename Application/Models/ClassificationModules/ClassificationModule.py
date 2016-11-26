@@ -96,7 +96,7 @@ class ClassificationModule:
         """Module goes trough each sample, calculates the uncertainty for it and returns the sample with the highest uncertainty"""
         uncertainties = []
         for sample in data:
-            resultc = NotImplemented
+            resultc = self.predictLabelAndProbability(self, sample)
             if(formula == 'Entropy-Based'):
                 uncertainty = AL.calculateUncertaintyEntropyBased(resultc)
             elif(formula == "Least Confident"):
@@ -104,12 +104,13 @@ class ClassificationModule:
             elif(formula == "Margin-Sampling"):
                 uncertainty = AL.calculateUncertaintyMarginSampling(resultc)
             uncertainties.append(uncertainty)
-        max = 0
+        maxuncertainty = 0
+        sampleindex = 0
         for uncertainty in uncertainties:
-            if uncertainty > max:
-                max = uncertainty
-        sampleindex = uncertainties.index(uncertainty)
-        return "NotImplemented"
+            if uncertainty > maxuncertainty:
+                maxuncertainty = uncertainty
+                sampleindex = uncertainties.index(uncertainty)
+        return data[sampleindex]
 
 	
     @classmethod
