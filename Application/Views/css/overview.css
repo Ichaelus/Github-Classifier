@@ -261,12 +261,12 @@ button.control {
   margin: 0px auto;
 }
 .version_wrapper .select{
-  width: 73px;
+  width: 70px;
   display: inline-block;
 }
 .version_wrapper .action{
   display: inline-block;
-  width: 227px;
+  width: 226px;
   margin: 0;
 }
 #titles{

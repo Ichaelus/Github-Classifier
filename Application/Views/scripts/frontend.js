@@ -190,18 +190,20 @@ function initVue(){
     el: '#overlay_wrapper',
     data: wrapperData,
     methods:{
-      getSavePoints: function(){
-        $.get("/get/savePoints", function(result){
-          result = JSON.parse(result);
-          if(result === false)
-            throw new Error("Invalid server response");
-          wrapperData.savePoints = result;
-        });
-      },
     	setData: function(i){
     		wrapperData.name = classificatorData.classificators[i].name;
     		wrapperData.description = classificatorData.classificators[i].description;
     	},
+      getSavePoints: function(){
+        $.get("/get/savePoints?name="+wrapperData.name, function(result){
+          if(result != ""){
+            result = JSON.parse(result);
+            if(result === false)
+              throw new Error("Invalid server response");
+            wrapperData.savePoints = result;
+          }
+        });
+      },
   		retrain: function(){
   			console.log("Wrapper: "+wrapperData.name+" retraining.");
         runGenerator(function *main(){

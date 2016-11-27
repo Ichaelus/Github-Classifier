@@ -102,9 +102,9 @@
             </div>
             <div :class="'col-xs-6 ' + ((mode != 'stream' && mode != 'pool') ? 'hidden' : '') ">
 
-              <div class="input-group">
+              <div  :class="'input-group ' + (mode != 'stream' ? 'hidden' : '') ">
                 <span class="input-group-addon">
-                  <input id="semi_supervised" v-model="isSemiSupervised" name="semi_supervised" type="checkbox">
+                  <input disabled="disabled" id="semi_supervised" v-model="isSemiSupervised" name="semi_supervised" type="checkbox">
                 </span>
                 <label for="semi_supervised" class="form-control">Semi-Supervised</label>
               </div>   <!-- /input-group -->  

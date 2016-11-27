@@ -125,7 +125,11 @@ def api(key):
 
 	elif(key == "load"):
 		ClassifierName = getQueryValue("name")
-		return "NotImplemented"
+		try:
+			newModule = homeclassifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint(getQueryValue("savepoint"))
+			newModule.testModule()
+		except NameError as err:
+			print('Name error', err)
 
 	elif(key == "savePoints"):
 		ClassifierName = getQueryValue("name")
