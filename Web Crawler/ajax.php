@@ -35,89 +35,99 @@ try{
     if(isset($_GET['key'])){
         $getkey = $db->check($_GET['key']);
         if($getkey != ""){
+            $table = get_attr("table") != "" ? get_attr("table") : "train";
+
             switch ($getkey) {
-                case "todolist":
-                    $todos = $db->select("SELECT `url` from `todo`");
-                    print("[");
-                    for ($i=0; $i < count($todos); $i++) { 
-                        print('"'.$todos[$i]["url"] . '"'. ($i + 1 < count($todos) ? ", " : ""));
-                    }
-                    print("]");
-                    break;
-                case "api:all":
-                    $filter = generate_filter();
-                    $data = $db->select("SELECT * FROM `repositories` $filter");
-                    print(json_encode($data));
-                    break;
                 case "api:old":
                     $filter = generate_filter();
-                    $data = $db->select("SELECT * FROM `samples` $filter");
+                    $data = $db->select("SELECT * FROM `_depr_samples` $filter");
+                    print(json_encode($data));
+                    break;
+
+                case "api:all":
+                case "api:train":
+                    // Returns a list of train samples
+                    $filter = generate_filter();
+                    $data = $db->select("SELECT * FROM `train` $filter");
+                    print(json_encode($data));
+                    break;
+                case "api:test":
+                    // Returns a list of test samples
+                    $filter = generate_filter();
+                    $data = $db->select("SELECT * FROM `unlabeled`");
                     print(json_encode($data));
                     break;
                 case "api:unlabeled":
+                    // Returns a list of unlabeled samples
                     $filter = generate_filter();
-                    $data = $db->select("SELECT * FROM `repositories` WHERE `class` = 'UNLABELED'");
+                    $data = $db->select("SELECT * FROM `unlabeled`");
                     print(json_encode($data));
                     break;
+                case "api:to_classify":
+                    // Returns a list of samples that should be classified
+                    $filter = generate_filter();
+                    $data = $db->select("SELECT * FROM `unlabeled`");
+                    print(json_encode($data));
+                    break;
+                case "api:semi_supervised":
+                    // Returns t of samples that should be classified
+                    $filter = generate_filter();
+                    $data = $db->select("SELECT * FROM `semi_supervised`");
+                    print(json_encode($data));
+                    break;
+
                 case "api:single":
-                    $data = $db->select("SELECT * FROM `repositories` WHERE class != 'UNLABELED' AND class != 'SKIPPED'  AND class != 'UNSURE'  ORDER BY RAND() LIMIT 0, 1");
+                    // Returns a random sample of the given <table>
+                    $data = $db->select("SELECT * FROM `$table` WHERE class != 'SKIPPED'  AND class != 'UNSURE'  ORDER BY RAND() LIMIT 0, 1");
                     if(count($data) == 0)
                         throw new Exception("There is no classified sample.");
                     print(json_encode($data[0]));
                     break;
-                case "api:single-unlabeled":
-                case "api:single-unclassified":
-                    $data = $db->select("SELECT * FROM `repositories` WHERE class = 'UNLABELED' LIMIT 0, 1");
-                    if(count($data) == 0)
-                        throw new Exception("There is no unclassified sample.");
-                    print(json_encode($data[0]));
-                    break;
-                case "api:to-reclassify":
-                    // Single classified repo, that is present in `samples` but not in `repositories`
-                    $data = $db->select("SELECT s.url, s.class FROM `samples` s LEFT JOIN `repositories` r ON s.url = r.url WHERE r.id IS NULL AND s.class != 'UNLABELED' AND s.class != 'SKIPPED'  AND s.class != 'UNSURE' AND s.tagger != ''  ORDER BY s.id DESC LIMIT 0, 1");
-                    if(count($data) == 0)
-                        throw new Exception("There is no old classified sample.");
-                    print(json_encode($data[0]));
-                    break;
                 case "api:equal":
-                    $mdata = $db->select("SELECT COUNT(*) AS minimum FROM repositories GROUP BY class ORDER BY minimum LIMIT 0, 1");
+                    // Returns an equal amount of samples based on the class count of the given <table>
+                    $mdata = $db->select("SELECT COUNT(*) AS minimum FROM `$table` GROUP BY class ORDER BY minimum LIMIT 0, 1");
                     $minimum = $mdata[0]["minimum"];
                     $class_equal_query = "SELECT
-                                          repositories.*
+                                          `$table`.*
                                         FROM
-                                          repositories INNER JOIN (
+                                          `$table` INNER JOIN (
                                             SELECT
                                               class,
                                               GROUP_CONCAT(id ORDER BY id DESC) grouped_id
                                             FROM
-                                              repositories
+                                              `$table`
                                             GROUP BY class) group_max
-                                          ON repositories.class = group_max.class
+                                          ON `$table`.class = group_max.class
                                              AND FIND_IN_SET(id, grouped_id) BETWEEN 1 AND $minimum
                                         ORDER BY
-                                          repositories.class DESC";
+                                          `$table`.class DESC";
                     $data = $db->select($class_equal_query);
                     print(json_encode($data));
                     break;
                 case "api:class":
+                    // Returns all samples of the given class <name>
                     $class = get_attr("name");
-                    $data = $db->select("SELECT * FROM `repositories` WHERE `class` = '$class'");
+                    $data = $db->select("SELECT * FROM `$table` WHERE `class` = '$class'");
                     print(json_encode($data));
                     break;
                 case "api:count":
+                    // Returns the amount of data affected by <table> and <filter>
                     $filter = generate_filter();
-                    $data = $db->select("SELECT COUNT(*) AS count FROM `repositories` $filter");
+                    $data = $db->select("SELECT COUNT(*) AS count FROM `$table` $filter");
                     print($data[0]["count"]);
                     break;
                 case "api:class-count":
-                    $data = $db->select("SELECT class, COUNT(*) AS count FROM `repositories` GROUP BY `class`");
+                    // Returns the a class-based count
+                    $filter = generate_filter();
+                    $data = $db->select("SELECT class, COUNT(*) AS count FROM `$table` $filter GROUP BY `class`");
                     print(json_encode($data));
                     break;
                 case "api:tagger-class-count":
+                    // Returns the a class-based count based on the <tagger> attribute
                     $additional = "";
                     if(get_attr("tagger") != "")
                         $additional .= "WHERE `tagger` = '".get_attr("tagger")."'";
-                    $data = $db->select("SELECT class, COUNT(*) AS count FROM `repositories` $additional GROUP BY `class`");
+                    $data = $db->select("SELECT class, COUNT(*) AS count FROM `$table` $additional GROUP BY `class`");
                     print(json_encode($data));
                     break;
                 case "api:generate_sample_url":
@@ -155,6 +165,72 @@ try{
 
                     }
                     break;
+                case "api:move-unlabeled-toclassify":
+                    // Move sample from unlabeled -> to_classify
+                    $api_url = get_attr("api-url");
+                    if($api_url != ""){
+                        $data = $db->select("SELECT * FROM `unlabeled` WHERE `api_url` = '$api_url'");
+                        if(count($data) == 1){
+                            $db->query("INSERT INTO `to_classify` SELECT * FROM `unlabeled` WHERE `api_url` = '$api_url'");
+                            $db->query("DELETE FROM `unlabeled` WHERE `api_url` = '$api_url'");
+                            print("Sample moved to the active learning pool.");
+                        }else
+                            throw new Exception("There is no sample with the given api_url");
+                    }else
+                        throw new Exception("No api_url specified");
+                    break;
+                case "api:move-toclassify-train":
+                    // Move sample from toclassify -> train
+                    $api_url = get_attr("api-url");
+                    if($api_url != ""){
+                        $data = $db->select("SELECT * FROM `to_classify` WHERE `api_url` = '$api_url'");
+                        if(count($data) == 1){
+                            $db->query("INSERT INTO `train` SELECT * FROM `to_classify` WHERE `api_url` = '$api_url'");
+                            $db->query("DELETE FROM `to_classify` WHERE `api_url` = '$api_url'");
+                            print("Sample moved to the training pool.");
+                        }else
+                            throw new Exception("There is no sample with the given api_url");
+                    }else
+                        throw new Exception("No api_url specified");
+                    break;
+                case "api:move-unlabeled-semisupervised":
+                    // Move sample from unlabeled -> semi_supervised
+                    $api_url = get_attr("api-url");
+                    if($api_url != ""){
+                        $data = $db->select("SELECT * FROM `unlabeled` WHERE `api_url` = '$api_url'");
+                        if(count($data) == 1){
+                            $db->query("INSERT INTO `semi_supervised` SELECT * FROM `unlabeled` WHERE `api_url` = '$api_url'");
+                            $db->query("DELETE FROM `unlabeled` WHERE `api_url` = '$api_url'");
+                            print("Sample moved to the semi_supervised pool.");
+                        }else
+                            throw new Exception("There is no sample with the given api_url");
+                    }else
+                        throw new Exception("No api_url specified");
+                    break;
+                /*
+                case "todolist":
+                    $todos = $db->select("SELECT `url` from `todo`");
+                    print("[");
+                    for ($i=0; $i < count($todos); $i++) { 
+                        print('"'.$todos[$i]["url"] . '"'. ($i + 1 < count($todos) ? ", " : ""));
+                    }
+                    print("]");
+                    break;*/
+                    /*
+                case "api:single-unlabeled":
+                case "api:single-unclassified":
+                    $data = $db->select("SELECT * FROM `unlabeled` LIMIT 0, 1");
+                    if(count($data) == 0)
+                        throw new Exception("There is no unclassified sample.");
+                    print(json_encode($data[0]));
+                    break;*/
+                case "api:to-reclassify":
+                    // Single classified repo, that is present in `_depr_samples` but not in `train`
+                    $data = $db->select("SELECT s.url, s.class FROM `_depr_samples` s LEFT JOIN `train` r ON s.url = r.url WHERE r.id IS NULL AND s.class != 'UNLABELED' AND s.class != 'SKIPPED'  AND s.class != 'UNSURE' AND s.tagger != ''  ORDER BY s.id DESC LIMIT 0, 1");
+                    if(count($data) == 0)
+                        throw new Exception("There is no old classified sample.");
+                    print(json_encode($data[0]));
+                    break;
                 default:
                     throw new Exception("Nothing in here.");
                     break;
@@ -174,13 +250,13 @@ try{
                     break;
                 case "skip":
                     // Remove repo link
-                    $db->query("UPDATE `repositories` SET `class` = 'SKIPPED' WHERE `id` = '".post_attr('id')."'");
+                    $db->query("UPDATE `train` SET `class` = 'SKIPPED' WHERE `id` = '".post_attr('id')."'");
                     break;
                 case "classify":
                     // Classify a generated repo
-                    $qID = $db->select("SELECT id FROM `repositories` WHERE `id` = '".post_attr('id')."'");
+                    $qID = $db->select("SELECT id FROM `train` WHERE `id` = '".post_attr('id')."'");
                     if(count($qID) != 0){
-                        $query = "UPDATE `repositories` SET `class` = '".post_attr('class')."', `tagger` = '".post_attr('tagger')."' WHERE `id` = '".post_attr('id')."'";
+                        $query = "UPDATE `train` SET `class` = '".post_attr('class')."', `tagger` = '".post_attr('tagger')."' WHERE `id` = '".post_attr('id')."'";
                         $db->query($query);
                         print "Repository classified.";
                     }else{
@@ -254,6 +330,7 @@ function generateSampleUrl(){
     $url = "https://api.github.com/repositories?since=" . rand(0, 5*pow(10, 7)) . "&" . $apihandler->getAPItoken();
     $repos = $apihandler -> getJSON($url);
     
+    //var_dump($repos);
     return $repos[rand(0, count($repos) - 1)]["url"];
 }
 
@@ -387,10 +464,11 @@ function recTree($node, &$tree_result, $path, $depth){
 function saveVector(&$vector){
     // Save the feature vector as a new repository in the database
     global $db;
-    if(count($db->select("SELECT * FROM `repositories` WHERE `url` = '".$vector['url']."'")) == 0){
+    if(count($db->select("SELECT * FROM `train` WHERE `url` = '".$vector['url']."'")) == 0){
         $keys =  "`" . join("`, `", array_keys($vector)) . "`";
         $values = "'" . join("', '", $vector) . "'";
-        $query = "INSERT INTO `repositories` ( $keys ) VALUES ( $values )";
+        $table = strtolower($vector['class']) != 'unlabeled' ? 'train' : 'unlabeled';
+        $query = "INSERT INTO `$table` ( $keys ) VALUES ( $values )";
         //print $query;
         $iid = $db->insert($query);
         return $iid;

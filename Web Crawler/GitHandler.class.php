@@ -81,6 +81,8 @@
 		    // Execute
 		    $result=curl_exec($this->ch);
 		    
+		    //isset($result["message"]);
+
 		    return json_decode($result, true);
 		}
 

@@ -69,9 +69,11 @@ function sampleMining(){
     if( result != ""){
       result = JSON.parse(result);
       // Maybe out of old classifications
-      if(typeof(result.Error) != "undefined")
+      if(typeof(result.Error) != "undefined"){
         console.log(result.Error);
-      else
+        // Keep mining, but wait 5 minutes (API calls may be over)
+        setTimeout(sampleMining, 300000);
+      }else
         setTimeout(sampleMining, 1000);
     }else{
       setTimeout(sampleMining, 1000);
@@ -86,14 +88,14 @@ function getRepos(){
 
   runGenerator(function *main(){
     // Add pending repos to list
-    let repo = yield jQGetPromise('ajax.php?key=api:single-unclassified', "json");
+    let repo = yield jQGetPromise('ajax.php?key=api:single&table=to_classify', "json");
     if(typeof(repo.Error) == "undefined"){
       allRepos.push(repo);
       initialized = true;
     }else{
-      notify(repo.Error, "New samples are being generated..", 4000);
-      yield jQGetPromise("ajax.php?key=api:generate_sample", "json");
-      getRepos();
+      notify(repo.Error, "There is no sample that needs to be classified.", 4000);
+      //yield jQGetPromise("ajax.php?key=api:generate_sample", "json");
+      //setTimeout(getRepos, 5000);
     }
     console.log("UNLABELED repos: ");
     console.log(allRepos);
