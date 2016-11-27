@@ -84,10 +84,14 @@ def api(key):
 	elif(key == "doSingleStep"):
 		# Perform a single step based on the current stateData
 		if(queries["mode"] == "stream"):
-			result = homeclassifiercollection.doStreamBasedALRound(queries["formula"], queries["isSemiSupervised"], queries["trainInstantly"])
+			result = homeclassifiercollection.doStreamBasedALRound(queries["formula"], queries["isSemiSupervised"] == 'true')
+			if(queries["trainInstantly"] == 'true'):
+				homeclassifiercollection.ALTrainInstantlyAllClassificationModules(result)
 			return Models.JSONCommunication.formatSinglePrediction(result)
 		elif(queries["mode"] == "pool"):
-			result = homeclassifiercollection.doPoolBasedALRound(queries["formula"], queries["isSemiSupervised"], queries["trainInstantly"])
+			result = homeclassifiercollection.doPoolBasedALRound(queries["formula"], queries["isSemiSupervised"] == 'true')
+			if(queries["trainInstantly"] == 'true'):
+				homeclassifiercollection.ALTrainInstantlyAllClassificationModules(result)
 			return Models.JSONCommunication.formatPoolBasedALRound(result)
 		else:
 			return "Invalid arguments"
