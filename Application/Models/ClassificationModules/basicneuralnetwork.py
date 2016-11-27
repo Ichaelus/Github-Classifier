@@ -14,7 +14,7 @@ class basicneuralnetwork(ClassificationModule):
 
     description = "A basic feedforward neural network"
     
-    def __init__(self, output_size, text_corpus, num_hidden_layers=3):
+    def __init__(self, text_corpus, num_hidden_layers=3):
 
         # Create vectorizer and fit on all available Descriptions
         self.vectorizer = getTextVectorizer(3000) # Maximum of different columns
@@ -25,7 +25,7 @@ class basicneuralnetwork(ClassificationModule):
 
         # Set input-size and output_size
         self.input_size = len(self.vectorizer.get_feature_names())
-        self.output_size = output_size
+        self.output_size = 7 # Hardcoded for 6 classes
 
         # Create model
         model = Sequential()
@@ -58,29 +58,32 @@ class basicneuralnetwork(ClassificationModule):
         """Trainiere (inkrementell) mit Sample. Evtl zusätzlich mit best. Menge alter Daten, damit overfitten auf neue Daten verhindert wird."""
         description_vec = self.formatInputData(sample)
         label_index = getLabelIndex(sample)
-        label_one_hot = oneHot(label_index)
-        description_vec = np.expand_dims(description_vec, axis=0)
+        label_one_hot = np.expand_dims(oneHot(label_index), axis=0) # [1, 0, 0, ..] -> [[1, 0, 0, ..]] Necessary for keras
         self.model.fit(description_vec, label_one_hot, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose) # TODO: think about nb_epoch-value
 
-    def train(self, samples, lables, nb_epoch=10, shuffle=True, verbose=True):
+    def train(self, samples, nb_epoch=10, shuffle=True, verbose=True):
         """Trainiere mit Liste von Daten. Evtl weitere Paramter nötig (nb_epoch, learning_rate, ...)"""
-        assert(len(samples) == len(lables))
         train_samples = []
         train_lables = []
-        for i in xrange(len(samples)):
-            samples.append(np.asanyarray(self.formatInputData(samples[i])))
-            train_lables.append(oneHot(lables[i]))
-        self.model.fit(train_samples, lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose)
+        for sample in samples:
+            formatted_sample = self.formatInputData(sample)[0].tolist()
+            train_samples.append(formatted_sample)
+            train_lables.append(oneHot(getLabelIndex(sample)))
+        train_lables = np.asarray(train_lables)
+        return self.model.fit(train_samples, train_lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose)
 
     def predictLabel(self, sample):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""
-        return np.argmax(self.model.predict(np.expand_dims(self.formatInputData(sample), axis=0)))
+        sample = self.formatInputData(sample)
+        return np.argmax(self.model.predict(sample))
     
     def predictLabelAndProbability(self, sample):
         """Return the probability the module assignes each label"""
         sample = self.formatInputData(sample)
-        return self.model.predict(sample)
+        return self.model.predict(sample)[0] # [0] So 1-D array is returned
 
     def formatInputData(self, data):
+        """Extract description and transform to vector"""
         sd = getDescription(data)
-        return self.vectorizer.transform(sd)
+        # Returns numpy array which contains 1 array with features
+        return self.vectorizer.transform([sd]).toarray()
