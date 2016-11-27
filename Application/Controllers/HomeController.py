@@ -106,6 +106,22 @@ def api(key):
 		result = homeclassifiercollection.TestAllClassificationModules()
 		return Models.JSONCommunication.formatClassificationTest(result)
 
+	elif(key == "retrain"):
+		ClassifierName = queries["name"]
+		return "NotImplemented"
+
+	elif(key == "retrainSemiSupervised"):
+		ClassifierName = queries["name"]
+		return "NotImplemented"
+
+	elif(key == "save"):
+		ClassifierName = queries["name"]
+		return "NotImplemented"
+
+	elif(key == "load"):
+		ClassifierName = queries["name"]
+		return "NotImplemented"
+		
 	else :
 		return "API call for: " + key
 

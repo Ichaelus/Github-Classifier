@@ -69,25 +69,25 @@
             <div class="col-xs-6">
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input id="mode_1" value="stream" v-model="mode" name="mode" type="radio">
+                  <input id="mode_1" v-on:change="switchMode()" value="stream" v-model="mode" name="mode" type="radio">
                 </span>
                 <label for="mode_1" class="form-control">Stream Based AL</label>
               </div><!-- /input-group -->
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input id="mode_2"  value="pool" v-model="mode" name="mode" type="radio">
+                  <input id="mode_2" v-on:change="switchMode()" value="pool" v-model="mode" name="mode" type="radio">
                 </span>
                 <label for="mode_2" class="form-control">Pool Based AL</label>
               </div><!-- /input-group -->
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input id="mode_3"  value="test" v-model="mode" name="mode" type="radio">
+                  <input id="mode_3" v-on:change="switchMode()" value="test" v-model="mode" name="mode" type="radio">
                 </span>
                 <label for="mode_3" class="form-control">Test all Classifiers</label>
               </div><!-- /input-group -->
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input id="mode_4"  value="single" v-model="mode" name="mode" type="radio">
+                  <input id="mode_4" v-on:change="switchMode()" value="single" v-model="mode" name="mode" type="radio">
                 </span>
                 <label for="stream_ai_4" class="form-control">Predict single samples</label>
               </div>   <!-- /input-group -->  
@@ -124,9 +124,12 @@
       </div><!-- /header -->
       <div class="container">
 
-        <div class="row titles"><!-- titles -->
+        <div id="titles" class="row"><!-- titles -->
           <div class="col-xs-2"><h3>Input</h3></div>
-          <div class="col-xs-8"><h3>Classificators</h3></div>
+          <div class="col-xs-8">
+            <div class="col-xs-4"><h3>Classificators</h3></div>
+            <div class="col-xs-7 col-xs-offset-1"><h3>{{(mode != 'test' ? 'Classification results' : 'Accuracy per class')}}</h3></div>
+          </div>
           <div class="col-xs-2"><h3>Output</h3></div>
         </div><!-- /titles -->
 

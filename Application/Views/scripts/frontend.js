@@ -14,6 +14,7 @@ let stateView, inputView, classificatorView, outputView, wrapperView,
 		poolSize: 0
 	},
 	classificatorData = {
+    isPrediction: true,
 		classificators: []
 	},
 	outputData = {},
@@ -65,14 +66,18 @@ function initVue(){
     		assert(isNotEmpty(f), "Formula should not be empty");
     		stateData.formula = f;
     	},
+      switchMode: function(){
+        classificatorData.isPrediction = stateData.mode == 'test';
+      },
 		  singleStep: function(){
   			stateData.action = "singleStep";
   			console.log("Single step");
         runGenerator(function *main(){
-            // Fetch sample, display
-            results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
-            stateView.updateResults(results);
-          });
+          // Fetch sample, display
+          inputData.repoName = "Searching..";
+          results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
+          stateView.updateResults(results);
+        });
   		},
   		halt: function(){
   			stateData.action = "halt";
@@ -85,6 +90,7 @@ function initVue(){
   			runGenerator(function *main(){
   				// Fetch sample, display then repeat until stateData has changed
   				while(stateData.action == "loop"){
+            inputData.repoName = "Searching..";
   					results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
   					stateView.updateResults(results);
   					// To remove
@@ -122,21 +128,25 @@ function initVue(){
   });
   stateView.getFormulas();
 
+  titleView = new Vue({
+    el: '#titles',
+    data: stateData
+  });
 
   inputView = new Vue({
     el: '#input',
     data: inputData,
     methods:{
-    	switchMode: function(type){
+      switchMode: function(type){
 
-    	},
-    	getPoolsize: function(){
-    		$.get("/get/poolSize", function(result){
-    			if(isNaN(result))
-    				throw new Error("Invalid server response");
-    			inputData.poolSize = parseInt(result);
-    		});
-    	}
+      },
+      getPoolsize: function(){
+        $.get("/get/poolSize", function(result){
+          if(isNaN(result))
+            throw new Error("Invalid server response");
+          inputData.poolSize = parseInt(result);
+        });
+      }
     }
   });
   inputView.getPoolsize();
@@ -168,9 +178,9 @@ function initVue(){
     el: '#output',
     data: outputData,
     methods:{
-		switchMode: function(type){
+  		switchMode: function(type){
 
-		}
+  		}
     }
   });
 
@@ -182,19 +192,30 @@ function initVue(){
     		wrapperData.name = classificatorData.classificators[i].name;
     		wrapperData.description = classificatorData.classificators[i].description;
     	},
-		retrain: function(name){
-			console.log("Wrapper: "+name+" retraining.");
-
-		},
-		retrain_semi: function(name){
-			console.log("Wrapper: "+name+" semi retraining.");
-		},
-		save: function(name){
-			console.log("Wrapper: "+name+" saving.");
-		},
-		load: function(name){
-			console.log("Wrapper: "+name+" loading.");
-		},
+  		retrain: function(){
+  			console.log("Wrapper: "+wrapperData.name+" retraining.");
+        runGenerator(function *main(){
+          results = yield jQGetPromise("/get/retrain?name="+wrapperData.name, "json");
+        });
+  		},
+  		retrain_semi: function(){
+  			console.log("Wrapper: "+wrapperData.name+" semi retraining.");
+        runGenerator(function *main(){
+          results = yield jQGetPromise("/get/retrainSemiSupervised?name="+wrapperData.name, "json");
+        });
+  		},
+  		save: function(){
+  			console.log("Wrapper: "+wrapperData.name+" saving.");
+        runGenerator(function *main(){
+          results = yield jQGetPromise("/get/save?name="+wrapperData.name, "json");
+        });
+  		},
+  		load: function(){
+  			console.log("Wrapper: "+wrapperData.name+" loading.");
+        runGenerator(function *main(){
+          results = yield jQGetPromise("/get/load?name="+wrapperData.name, "json");
+        });
+  		}
     }
   });
 }
