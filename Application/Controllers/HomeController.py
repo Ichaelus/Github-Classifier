@@ -74,7 +74,6 @@ def getBSf3(filename):
 @homebottle.get('/get/<key>')
 def api(key):
 	# Handle frontend to backend requests
-	queries = request.query.decode()
 
 	if (key == "formulas"):
 		# Return a string list of available uncertainty formulas
@@ -91,19 +90,19 @@ def api(key):
 
 	elif(key == "doSingleStep"):
 		# Perform a single step based on the current stateData
-		if(queries["mode"] == "stream"):
-			sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results = homeclassifiercollection.doStreamBasedALRound(queries["formula"], queries["isSemiSupervised"] == 'true')
+		if(getQueryValue("mode") == "stream"):
+			sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results = homeclassifiercollection.doStreamBasedALRound(getQueryValue("formula"), getQueryValue("isSemiSupervised") == 'true')
 			return Models.JSONCommunication.formatSinglePrediction(result)
 
-		elif(queries["mode"] == "pool"):
-			result = homeclassifiercollection.doPoolBasedALRound(queries["formula"], queries["isSemiSupervised"] == 'true')
+		elif(getQueryValue("mode") == "pool"):
+			result = homeclassifiercollection.doPoolBasedALRound(getQueryValue("formula"), getQueryValue("isSemiSupervised") == 'true')
 			return Models.JSONCommunication.formatPoolBasedALRound(result)
 		else:
 			return "Invalid arguments"
 
 	elif(key == "PredictSingleSample"):
 		# Returns classifier prediction for a given `repoLink`
-		result = homeclassifiercollection.PredictSingleSample(queries["repoLink"])
+		result = homeclassifiercollection.PredictSingleSample(getQueryValue("repoLink"))
 		return Models.JSONCommunication.formatSinglePrediction(result)
 
 	elif(key == "startTest"):
@@ -112,24 +111,31 @@ def api(key):
 		return Models.JSONCommunication.formatClassificationTest(result)
 
 	elif(key == "retrain"):
-		ClassifierName = queries["name"]
+		ClassifierName = getQueryValue("name")
 		return "NotImplemented"
 
 	elif(key == "retrainSemiSupervised"):
-		ClassifierName = queries["name"]
+		ClassifierName = getQueryValue("name")
 		return "NotImplemented"
 
 	elif(key == "save"):
-		ClassifierName = queries["name"]
-		return "NotImplemented"
+		ClassifierName = getQueryValue("name")
+		homeclassifiercollection.getClassificationModule(ClassifierName).saveModule()
+		return "Module saved"
 
 	elif(key == "load"):
-		ClassifierName = queries["name"]
+		ClassifierName = getQueryValue("name")
 		return "NotImplemented"
 
+	elif(key == "savePoints"):
+		ClassifierName = getQueryValue("name")
+		try:
+			savePoints = homeclassifiercollection.getClassificationModule(ClassifierName).getSavePointsForClassificationModules()
+			return Models.JSONCommunication().formatSavePoints(savePoints)
+		except NameError as err:
+			print('Name error', err)
 	else :
 		return "API call for: " + key
-
 
 @homebottle.post('/post/<key>')
 def api(key):
@@ -140,6 +146,9 @@ def api(key):
 	else:
 		return "API call for: " + key
 
-
-
-
+def getQueryValue(q):
+	queries = request.query.decode()
+	if(q in queries):
+		return queries[q]
+	else:
+		raise NameError('Query not set')

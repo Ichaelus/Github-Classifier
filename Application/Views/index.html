@@ -35,7 +35,15 @@
         <span class="action btn btn-default" v-on:click="retrain()">Retrain from scratch</span>
         <span class="action btn btn-default" v-on:click="retrain_semi()">Retrain with semi-supervised data</span>
         <span class="action btn btn-default" v-on:click="save()">Save current image</span>
-        <span class="action btn btn-default" v-on:click="load()">Load old version</span>
+        <div class="version_wrapper">
+          <div class="input-group-btn select">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Version <span class="caret"></span></button>
+                <ul class="dropdown-menu" style="margin: 0px auto;">
+                  <li v-for="sp in savePoints"><a v-on:click="setSavePoint(sp)" href="#">{{sp}}</a></li>
+                </ul>
+          </div>
+          <span class="action btn btn-default" v-on:click="load()">Load version</span>
+        </div>
         <h3>Performance Graphs</h3>
         <div class="graph">
         <hr>

@@ -21,6 +21,7 @@ let stateView, inputView, classificatorView, outputView, wrapperView,
 	wrapperData = {
 		name: "",
 		description: "",
+    savePoints: [],
 		id: 0
 	};
 
@@ -158,6 +159,7 @@ function initVue(){
     methods:{
     	showInfo: function(id){
     		wrapperView.setData(id);
+        wrapperView.getSavePoints();
     		$('.overlay_blur').fadeIn();
     		$('#overlay_wrapper').fadeIn();
     	},
@@ -188,6 +190,14 @@ function initVue(){
     el: '#overlay_wrapper',
     data: wrapperData,
     methods:{
+      getSavePoints: function(){
+        $.get("/get/savePoints", function(result){
+          result = JSON.parse(result);
+          if(result === false)
+            throw new Error("Invalid server response");
+          wrapperData.savePoints = result;
+        });
+      },
     	setData: function(i){
     		wrapperData.name = classificatorData.classificators[i].name;
     		wrapperData.description = classificatorData.classificators[i].description;

@@ -34,6 +34,7 @@ class ClassifierCollection:
                 return c
             else:
                 raise NameError('No classifier with this name')
+        raise NameError('Module list empty')
         
     @classmethod
     def addClassificationModule(self, classificationmoduleobject):
