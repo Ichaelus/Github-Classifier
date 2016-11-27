@@ -21,6 +21,10 @@ def homesetclassifiercollection(classifiercollection):
 def home():
     return static_file("index.html", root = abspath, mimetype='text/html')
 
+@homebottle.get('/user_classification.html')
+def home():
+    return static_file("user_classification.html", root = abspath, mimetype='text/html')
+
 @homebottle.get('/favicon.ico')
 def home():
     return static_file("favicon.ico", root = abspath, mimetype='image/x-icon')
@@ -28,6 +32,10 @@ def home():
 @homebottle.get('/favicon.png')
 def home():
     return static_file("favicon.png", root = abspath, mimetype='image/png')
+
+@homebottle.get('/loading.gif')
+def home():
+    return static_file("loading.gif", root = abspath, mimetype='image/gif')
 
 @homebottle.get('/scripts/<filename:re:.*\.js>')
 def getScript(filename):
