@@ -13,15 +13,20 @@ def ConvertClassifierCollectionToJSON(ClassifierCollection):
 		# result: []
 		classificators = []
 		for c in ClassifierCollection:
-			#accuracy = c.getAccuracy()
-			#result = []
-			#result.append({'class':'DEV', 'val':accuracy['DEV']})
-			result = c.getAccuracy()
-			c = {'name':c.getName(), 'description':c.getDescription(), 'yield':c.getYield(), 'active':c.isMuteClassificationModule(), 'result':result}
+			accuracy = c.getAccuracy()
+			result = []
+			result.append({'class':'DEV', 'val':accuracy['DEV']})
+			result.append({'class':'HW', 'val':accuracy['HW']})
+			result.append({'class':'EDU', 'val':accuracy['EDU']})
+			result.append({'class':'DOCS', 'val':accuracy['DOCS']})
+			result.append({'class':'WEB', 'val':accuracy['WEB']})
+			result.append({'class':'DATA', 'val':accuracy['DATA']})
+			result.append({'class':'OTHER', 'val':accuracy['OTHER']})
+			c = {'name':c.getName(), 'description':c.getDescription(), 'accuracy':c.getYield(), 'active':c.isMuteClassificationModule(), 'result':result}
 			classificators.append(c)
 		returndata = {'classificators': classificators}
-		return demjson.encode(returndata)
-		#return '{"classificators": [{"name":"Neural network","description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","accuracy":"81","active":true,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]},{"name":"Neural network","description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","accuracy":"55","active":false,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]},{"name":"Neural network","description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","accuracy":"90","active":true,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]}]}'
+		#return demjson.encode(returndata)
+		return '{"classificators": [{"name":"Neural network","description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","accuracy":"81","active":true,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]},{"name":"Neural network","description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","accuracy":"55","active":false,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]},{"name":"Neural network","description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","accuracy":"90","active":true,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]}]}'
 			# EXAMPLE
 			# {
 			#	classificators: [{
@@ -39,8 +44,7 @@ def ConvertClassifierCollectionToJSON(ClassifierCollection):
 			#		{class: "OTHER", val : 0.04}
 			#	]
 			#}]
-			#}
-
+#}
 def getFormulas():
 	return '["Entropy-Based", "Least Confident", "Margin-Sampling"]'
 

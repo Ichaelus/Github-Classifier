@@ -33,6 +33,14 @@ class ClassifierCollection:
             if c.getName() == classifiername:
                 return c
         raise NameError('No classifier with this name')
+
+    @classmethod
+    def setClassificationModule(self, classifiername, otherVersionOfClassifier):
+        """Set a Classification Module object to a new value for loading."""
+        for i in xrange(0, len(self.classificationmodules)):
+            if self.classificationmodules[i].getName() == classifiername:
+                 self.classificationmodules[i] = otherVersionOfClassifier
+
         
     @classmethod
     def addClassificationModule(self, classificationmoduleobject):

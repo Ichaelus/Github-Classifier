@@ -13,6 +13,7 @@ class basicneuralnetwork(ClassificationModule):
     """A basic feedforward neural network"""
 
     description = "A basic feedforward neural network"
+    name = "Basic Neural Network"
     
     def __init__(self, text_corpus, num_hidden_layers=3):
 
