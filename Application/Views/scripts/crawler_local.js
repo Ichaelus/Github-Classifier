@@ -19,7 +19,7 @@
       language: "",
       description: "",
       commit_author: "",
-      tagger: get_name_tag(),
+      tagger: getParameterByName("popup") == "true" ? "" : get_name_tag(),
       commit_msg: "",
       files: "",
       readme: "",
@@ -223,29 +223,29 @@ function classify(label, data = {}){
   // Save current visible repository with the selected CLASS label
   assert(isNotEmpty(label), "Invalid label");
 
-  postData.key = "classify";
-  postData.class = label;
-  postData.table = getParameterByName("popup") == "true" ? "unlabeled" : "to_classify";
-  console.log(postData);
-  $.post(server+"ajax.php", postData).then(
-    function(result){
-      if(result.indexOf("Repository classified") >= 0){
-        notify("Status", "Classification submitted.");
-      }else{
-        notify("Status", "There was an error while trying to submit ("+result+").");
-      }
-      if(getParameterByName("popup") == "true"){
-        // Close windows with response
-        try {
-            window.opener.HandlePopupResult(label);
-        }catch (err) {}
-        window.close();
-        return false;
-      }else{
-        // Keep at least three repos buffered + get next liveView
-        getRepos();
-      }
-  });
+  if(getParameterByName("popup") == "true"){
+    // Close windows with response
+    try {
+        window.opener.HandlePopupResult({"api-url" : getParameterByName("api-url"), "label" : label});
+    }catch (err) {}
+    window.close();
+    return false;
+  }else{
+    postData.key = "classify";
+    postData.class = label;
+    postData.table = "to_classify";
+    console.log(postData);
+    $.post(server+"ajax.php", postData).then(
+      function(result){
+        if(result.indexOf("Repository classified") >= 0){
+          notify("Status", "Classification submitted.");
+        }else{
+          notify("Status", "There was an error while trying to submit ("+result+").");
+        }
+          // Keep at least three repos buffered + get next liveView
+          getRepos();
+    });
+  }
 }
 function skipRepo(){
   // Skip current visible repository and fetch next one
