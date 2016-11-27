@@ -107,6 +107,7 @@ class ClassifierCollection:
         i = 0
         userquery = None
         classifierasking = 0
+        propabilitiesForUserQuery = []
         for j in xrange(0, len(self.classificationmodules)):
             if(j == self.poolbasedalclassifierturn + i):
                 c = self.classificationmodules[j]
@@ -122,7 +123,9 @@ class ClassifierCollection:
                             self.poolbasedalclassifierturn = 0
                             return self.doPoolBasedALRound(formula, semisupervised, traininstantly)
                         else: raise Exception('Error, trying to do doPoolBasedALRound without a non-muted classifier')
-        return userquery, classifierasking
+        for c in self.classificationmodules:
+            propabilitiesForUserQuery = propabilitiesForUserQuery.append(c.predictLabelAndProbability(userquery))
+        return userquery, classifierasking, propabilitiesForUserQuery
 
     @classmethod
     def TestAllClassificationModules(self):
