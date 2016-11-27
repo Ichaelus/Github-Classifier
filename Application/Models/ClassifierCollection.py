@@ -106,11 +106,13 @@ class ClassifierCollection:
         #calculate which classifiers arent muted and which turn it is
         i = 0
         userquery = None
+        classifierasking = 0
         for j in xrange(0, len(self.classificationmodules)):
             if(j == self.poolbasedalclassifierturn + i):
                 c = self.classificationmodules[j]
                 if not c.isMuteClassificationModule(): 
                     userquery = c.calculatePoolBasedQuery(formula, data)
+                    classifierasking = j 
                 else:
                     i = i + 1
                     if (j == (len(self.classificationmodules) - 1) and userquery == None):
@@ -120,7 +122,7 @@ class ClassifierCollection:
                             self.poolbasedalclassifierturn = 0
                             return self.doPoolBasedALRound(formula, semisupervised, traininstantly)
                         else: raise Exception('Error, trying to do doPoolBasedALRound without a non-muted classifier')
-        return userquery
+        return [userquery, classifierasking]
 
     @classmethod
     def TestAllClassificationModules(self):
