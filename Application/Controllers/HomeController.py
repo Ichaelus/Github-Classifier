@@ -92,7 +92,7 @@ def api(key):
 		# Perform a single step based on the current stateData
 		if(getQueryValue("mode") == "stream"):
 			sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results = homeclassifiercollection.doStreamBasedALRound(getQueryValue("formula"), getQueryValue("isSemiSupervised") == 'true')
-			return Models.JSONCommunication.formatSinglePrediction(result)
+			return Models.JSONCommunication.formatStreamBasedALRound(results)
 
 		elif(getQueryValue("mode") == "pool"):
 			result = homeclassifiercollection.doPoolBasedALRound(getQueryValue("formula"), getQueryValue("isSemiSupervised") == 'true')
@@ -164,6 +164,9 @@ def api(key):
 	else:
 		return "API call for: " + key
 
-
-
-
+def getQueryValue(q):
+	queries = request.query.decode()
+	if(q in queries):
+		return queries[q]
+	else:
+		raise NameError('Query not set')

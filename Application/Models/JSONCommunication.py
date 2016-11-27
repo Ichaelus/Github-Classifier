@@ -17,7 +17,7 @@ def ConvertClassifierCollectionToJSON(ClassifierCollection):
 			#result = []
 			#result.append({'class':'DEV', 'val':accuracy['DEV']})
 			result = c.getAccuracy()
-			c = {'name':c.getName(), 'description':c.getDescription(), 'accuracy':int(c.getYield()*100), 'active':c.isMuteClassificationModule(), 'result':result}
+			c = {'name':c.getName(), 'description':c.getDescription(), 'yield':c.getYield(), 'active':c.isMuteClassificationModule(), 'result':result}
 			classificators.append(c)
 		returndata = {'classificators': classificators}
 		return demjson.encode(returndata)
@@ -61,23 +61,9 @@ def formatSinglePrediction(result):
 	# 	}
 	# 
 
-def formatPoolBasedALRound(result):
-	#result = userquery, classifierasking, propabilitiesForUserQuery
-	return '{{"repoName": "rName", "repoAPILink":""}, "classifierAsking":"NeuralNetwork","classificatorResults" : {"0":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"2":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
-	# {
-	# 	"repo":{repoName: "repoName","repoAPILink":""},
-	#	"classifierAsking":"NeuralNetwork",
-	# 	"classificatorResults":[{
-	#		{class: "DEV", val : 0.04},
-	#		{class: "HW", val : 0.13},
-	#		...
-	# 	}]
-	# 	}
-	# 
-
 def formatStreamBasedALRound(result):
 	#result = (sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results)
-	return '{{"repoName": "rName", "repoAPILink":""}, "classifiersUnsure":"true","semisupervised":{"SemiSupervisedSureEnough":"false","SemiSupervisedLabel":"None"} ,"classificatorResults" : {"0":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"2":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
+	return '{"repo": {"repoName": "rName", "repoAPILink":""}, "classifiersUnsure":"true","semisupervised":{"SemiSupervisedSureEnough":"false","SemiSupervisedLabel":"None"} ,"classificatorResults" : {"0":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"2":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
 	# {
 	# 	"repo":{repoName: "repoName","repoAPILink":""},
 	#	"classifiersUnsure":"true",
@@ -90,9 +76,23 @@ def formatStreamBasedALRound(result):
 	# 	}
 	# 
 
+def formatPoolBasedALRound(result):
+	#result = userquery, classifierasking, propabilitiesForUserQuery
+	return '{"repo":{"repoName": "rName", "repoAPILink":""}, "classifierAsking":"NeuralNetwork","classificatorResults" : {"0":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"2":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
+	# {
+	# 	"repo":{repoName: "repoName","repoAPILink":""},
+	#	"classifierAsking":"NeuralNetwork",
+	# 	"classificatorResults":[{
+	#		{class: "DEV", val : 0.04},
+	#		{class: "HW", val : 0.13},
+	#		...
+	# 	}]
+	# 	}
+	# 
+
 
 def formatMultipleClassificationTests(result):
-	'[ { "name" : "blub", "yield" : 0.84, "accuracy" : [{class: "DEV", val : 0.04},{class: "HW", val : 0.13}, {class: "EDU", val : 0.11},{class: "DOCS", val : 0.24}, {class: "WEB", val : 0.59},{class: "DATA", val : 0.02},{class: "OTHER", val : 0.04}]}, { "name" : "blub2", "yield" : 0.84, "accuracy" : [{class: "DEV", val : 0.04},{class: "HW", val : 0.13}, {class: "EDU", val : 0.11},{class: "DOCS", val : 0.24}, {class: "WEB", val : 0.59},{class: "DATA", val : 0.02},{class: "OTHER", val : 0.04}]}, { "name" : "blub3", "yield" : 0.84, "accuracy" : [{class: "DEV", val : 0.04},{class: "HW", val : 0.13}, {class: "EDU", val : 0.11},{class: "DOCS", val : 0.24}, {class: "WEB", val : 0.59},{class: "DATA", val : 0.02},{class: "OTHER", val : 0.04}]}]'
+	'[ { "name" : "blub", "yield" : 0.84, "accuracy" : [{"class": "DEV", "val" : 0.04},{"class": "HW", "val" : 0.13}, {"class": "EDU", "val" : 0.11},{"class": "DOCS", "val" : 0.24}, {"class": "WEB", "val" : 0.59},{"class": "DATA", "val" : 0.02},{"class": "OTHER", "val" : 0.04}]}, { "name" : "blub2", "yield" : 0.84, "accuracy" : [{"class": "DEV", "val" : 0.04},{"class": "HW", "val" : 0.13}, {"class": "EDU", "val" : 0.11},{"class": "DOCS", "val" : 0.24}, {"class": "WEB", "val" : 0.59},{"class": "DATA", "val" : 0.02},{"class": "OTHER", "val" : 0.04}]}, { "name" : "blub3", "yield" : 0.84, "accuracy" : [{"class": "DEV", "val" : 0.04},{"class": "HW", "val" : 0.13}, {"class": "EDU", "val" : 0.11},{"class": "DOCS", "val" : 0.24}, {"class": "WEB", "val" : 0.59},{"class": "DATA", "val" : 0.02},{"class": "OTHER", "val" : 0.04}]}]'
 
 #'[ 
 	#{ 
@@ -100,8 +100,8 @@ def formatMultipleClassificationTests(result):
 		#"yield" : 0.84, 
 		#"accuracy" : 
 		#[
-		#	{class: "DEV", val : 0.04},
-		#	{class: "HW", val : 0.13}, 
+		#	{"class": "DEV", "val" : 0.04},
+		#	{"class": "HW", val : 0.13}, 
 		#	{class: "EDU", val : 0.11},
 		#	{class: "DOCS", val : 0.24}, 
 		#	{class: "WEB", val : 0.59},
@@ -126,25 +126,25 @@ def formatMultipleClassificationTests(result):
 #]'
 
 def formatSingleClassificationTest(result):
-		return '[ { "name" : "blub", "yield" : 0.84, "accuracy" : [{class: "DEV", val : 0.04},{class: "HW", val : 0.13}, {class: "EDU", val : 0.11},{class: "DOCS", val : 0.24}, {class: "WEB", val : 0.59},{class: "DATA", val : 0.02},{class: "OTHER", val : 0.04}]}]'
+		return '[ { "name" : "blub", "yield" : 0.84, "accuracy" : [{"class": "DEV", "val" : 0.04},{"class": "HW", "val" : 0.13}, {"class": "EDU", "val" : 0.11},{"class": "DOCS", "val" : 0.24}, {"class": "WEB", "val" : 0.59},{"class": "DATA", "val" : 0.02},{"class": "OTHER", "val" : 0.04}]}]'
 
 #{ 
 	#"name" : "neuralnetwork", 
 	#"yield" : 0.84, 
 	#"accuracy" : 
 	#[
-	#	{class: "DEV", val : 0.04},
-	#	{class: "HW", val : 0.13}, 
-	#	{class: "EDU", val : 0.11},
-	#	{class: "DOCS", val : 0.24}, 
-	#	{class: "WEB", val : 0.59},
-	#	{class: "DATA", val : 0.02},
-	#	{class: "OTHER", val : 0.04}
+	#	{"class": "DEV", "val" : 0.04},
+	#	{"class": "HW", "val" : 0.13}, 
+	#	{"class": "EDU", "val" : 0.11},
+	#	{"class": "DOCS", "val" : 0.24}, 
+	#	{"class": "WEB", "val" : 0.59},
+	#	{"class": "DATA", "val" : 0.02},
+	#	{"class": "OTHER", "val" : 0.04}
 	#]
 #}
 def formatSavePoints(savePointNames):
 	#example: 1 safepoint only
-	return '[ { "name" : "blub", "yield" : 0.84, "accuracy" : [{class: "DEV", val : 0.04},{class: "HW", val : 0.13}, {class: "EDU", val : 0.11},{class: "DOCS", val : 0.24}, {class: "WEB", val : 0.59},{class: "DATA", val : 0.02},{class: "OTHER", val : 0.04}]}, { "name" : "blub2", "yield" : 0.84, "accuracy" : [{class: "DEV", val : 0.04},{class: "HW", val : 0.13}, {class: "EDU", val : 0.11},{class: "DOCS", val : 0.24}, {class: "WEB", val : 0.59},{class: "DATA", val : 0.02},{class: "OTHER", val : 0.04}]}, { "name" : "blub3", "yield" : 0.84, "accuracy" : [{class: "DEV", val : 0.04},{class: "HW", val : 0.13}, {class: "EDU", val : 0.11},{class: "DOCS", val : 0.24}, {class: "WEB", val : 0.59},{class: "DATA", val : 0.02},{class: "OTHER", val : 0.04}]}]'
+	return '[ { "name" : "blub", "yield" : 0.84, "accuracy" : [{"class": "DEV", "val" : 0.04},{"class": "HW", "val" : 0.13}, {"class": "EDU", "val" : 0.11},{"class": "DOCS", "val" : 0.24}, {"class": "WEB", "val" : 0.59},{"class": "DATA", "val" : 0.02},{"class": "OTHER", "val" : 0.04}]}, { "name" : "blub2", "yield" : 0.84, "accuracy" : [{"class": "DEV", "val" : 0.04},{"class": "HW", "val" : 0.13}, {"class": "EDU", "val" : 0.11},{"class": "DOCS", "val" : 0.24}, {"class": "WEB", "val" : 0.59},{"class": "DATA", "val" : 0.02},{"class": "OTHER", "val" : 0.04}]}, { "name" : "blub3", "yield" : 0.84, "accuracy" : [{"class": "DEV", "val" : 0.04},{"class": "HW", "val" : 0.13}, {"class": "EDU", "val" : 0.11},{"class": "DOCS", "val" : 0.24}, {"class": "WEB", "val" : 0.59},{"class": "DATA", "val" : 0.02},{"class": "OTHER", "val" : 0.04}]}]'
 
 #'[ 
 	#{ 
@@ -152,8 +152,8 @@ def formatSavePoints(savePointNames):
 		#"yield" : 0.84, 
 		#"accuracy" : 
 		#[
-		#	{class: "DEV", val : 0.04},
-		#	{class: "HW", val : 0.13}, 
+		#	{"class": "DEV", "val" : 0.04},
+		#	{class: "HW", "val" : 0.13}, 
 		#	{class: "EDU", val : 0.11},
 		#	{class: "DOCS", val : 0.24}, 
 		#	{class: "WEB", val : 0.59},

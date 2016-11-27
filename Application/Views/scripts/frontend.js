@@ -11,11 +11,15 @@ let stateView, inputView, classificatorView, outputView, wrapperView,
 	inputData = {
 		type: stateData.mode,
 		repoName: "Repository Name",
+    repoAPILink: "",
+    classifiersUnsure: false,
+    semisupervised: {"SemiSupervisedSureEnough" : true, "SemiSupervisedLabel": "None"},
+    classifierAsking: "",
 		poolSize: 0
 	},
 	classificatorData = {
     isPrediction: true,
-		classificators: []
+		classificators: [] // {name, description, yield, active, result}
 	},
 	outputData = {},
 	wrapperData = {
@@ -29,7 +33,6 @@ try{
 	runGenerator(function *main(){
 		let initData = yield jQGetPromise("/get/classificators", "json");
     classificatorData.classificators = initData.classificators;
-    inputData.repoName = initData.repoName;
 		initVue();
 	});
 }catch(ex){
@@ -64,7 +67,7 @@ function initVue(){
     		});
     	},
     	setFormula: function(f){
-    		assert(isNotEmpty(f), "Formula should not be empty");
+    		assert(isNotEmpty(f) && stateData.formulas.indexOf(f) >= 0, "Formula should not be empty");
     		stateData.formula = f;
     	},
       switchMode: function(){
@@ -72,7 +75,7 @@ function initVue(){
       },
 		  singleStep: function(){
   			stateData.action = "singleStep";
-  			console.log("Single step");
+  			console.log("Proceeding single step");
         runGenerator(function *main(){
           // Fetch sample, display
           inputData.repoName = "Searching..";
@@ -100,8 +103,16 @@ function initVue(){
   			});
   		},
   		updateResults: function(results){
-        assert(results != null && typeof(results.repoName) != "undefined" && typeof(results.classificatorResults) != "undefined", "Result is not well-formatted.");
-        inputData.repoName = results.repoName;
+        // Apply returned changes to the internal GUI state
+        assert(results != null && typeof(results.repo) != "undefined" && typeof(results.classificatorResults) != "undefined", "Result is not well-formatted.");
+        inputData.repoName = results.repo.repoName;
+        inputData.repoAPILink = results.repo.repoAPILink;
+        if(stateData.mode == "stream"){
+          inputData.classifiersUnsure = results.classifiersUnsure;
+          inputData.semisupervised = results.semisupervised;
+        }else if(stateData.mode = "pool"){
+          inputData.classifierAsking = results.classifierAsking;
+        }
   			for(let cid in results.classificatorResults){
   				for(let c in classificatorData.classificators)
   					if(classificatorData.classificators[c].id == cid)

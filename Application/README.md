@@ -21,6 +21,7 @@ _Installed with the command `pip install xxx`_
 3. keras
 4. sklearn
 5. nltk
+6. demjson
 
 ## Other
 
