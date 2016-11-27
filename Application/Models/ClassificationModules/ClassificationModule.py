@@ -5,22 +5,18 @@ from abc import ABCMeta, abstractmethod
 import cPickle as pickle
 from datetime import datetime, date, time
 import ActiveLearningSpecific as AL
-<<<<<<< HEAD
-import xml.etree.ElementTree as ET
-import os.path
-
-
-=======
 from FeatureProcessing import getLabelIndex
 import numpy as np
->>>>>>> origin/master
+
+import xml.etree.ElementTree as ET
+import os.path
 
 class ClassificationModule:
     __metaclass__ = ABCMeta
 
     description = "Doesnt have a description yet"
     name = ""
-	path = "" 	#must be relative to start.py
+    path = "" 	#must be relative to start.py
     muted = False
     binary = False
     Yield = 0.0
@@ -178,21 +174,21 @@ class ClassificationModule:
 		
     @classmethod
     def getSavePointsForClassificationModules(self):
-		### require a xml-file which contains <data></data>
-		###	at directory path
-		"""holt aus dem XML File die möglichen SaveZustände"""
-		tmpPath = os.path.abspath(".") 
-		tmpPath = os.path.join(tmpPath, path, name + '.xml')
-		tree = ET.parse(tmpPath)
-		root = tree.getroot()
-		savePoints = []
-		for child in root:
-			tmp = {}
-			for i in xrange(0, len(child.find('accuracy').attrib.keys()-1)):
-				tmp[child.find('accuracy').attrib.keys()[i]] = child.find('accuracy').attrib.values()[i]
-			savePoints.append([child.attrib.values()[0], tmp) 
-		#returned a list of tuples with filename and Accuracy
-		return savePoints
+        ### require a xml-file which contains <data></data>
+        ###	at directory path
+        """holt aus dem XML File die möglichen SaveZustände"""
+        tmpPath = os.path.abspath(".") 
+        tmpPath = os.path.join(tmpPath, path, name + '.xml')
+        tree = ET.parse(tmpPath)
+        root = tree.getroot()
+        savePoints = []
+        for child in root:
+            tmp = {}
+            for i in xrange(0, len(child.find('accuracy').attrib.keys()-1)):
+                tmp[child.find('accuracy').attrib.keys()[i]] = child.find('accuracy').attrib.values()[i]
+            savePoints.append([child.attrib.values()[0], tmp])
+            #returns a list of tuples with filename and Accuracy
+        return savePoints
 		
 		
     @classmethod
@@ -212,7 +208,7 @@ class ClassificationModule:
 				tmp = child.attrib.values()[0]
 				if (lastmodified > tmp):
 					lastmodified = tmp
-			if (lastmodified is "zzzzzzzzzzzzzzzzzzzzzz")
+			if (lastmodified is "zzzzzzzzzzzzzzzzzzzzzz"):
 				#there is no savepoint
 				return None
 			filename = lastmodified
