@@ -256,6 +256,19 @@ button.control {
   text-align: center;
   margin: 0px auto 10px;
 }
+.version_wrapper{
+  width: 300px;
+  margin: 0px auto;
+}
+.version_wrapper .select{
+  width: 73px;
+  display: inline-block;
+}
+.version_wrapper .action{
+  display: inline-block;
+  width: 227px;
+  margin: 0;
+}
 #titles{
   text-align: center;
 }

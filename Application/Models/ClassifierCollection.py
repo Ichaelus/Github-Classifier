@@ -32,7 +32,13 @@ class ClassifierCollection:
         for c in self.classificationmodules:
             if c.getName() == classifiername:
                 return c
+<<<<<<< HEAD
         raise NameError('No classifier with this name')
+=======
+            else:
+                raise NameError('No classifier with this name')
+        raise NameError('Module list empty')
+>>>>>>> origin/master
         
     @classmethod
     def addClassificationModule(self, classificationmoduleobject):
