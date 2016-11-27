@@ -100,10 +100,10 @@ class ClassificationModule:
         class_right_pred_count = np.zeros(7)
 
         for sample in data:
-            pred_out = self.predictLabelAndProbability(self, data)
+            pred_label = self.predictLabelAndProbability(self, data)[0]
             # Check if prediction was right
             true_label_index = getLabelIndex(data)
-            if (np.argmax(pred_out) == true_label_index):
+            if (pred_label == true_label_index):
                 nb_right_pred += 1
                 class_right_pred_count[true_label_index] += 1
             class_count[true_label_index] += 1
