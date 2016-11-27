@@ -32,8 +32,7 @@ class ClassifierCollection:
         for c in self.classificationmodules:
             if c.getName() == classifiername:
                 return c
-            else:
-                raise NameError('No classifier with this name')
+        raise NameError('No classifier with this name')
         
     @classmethod
     def addClassificationModule(self, classificationmoduleobject):
@@ -82,11 +81,14 @@ class ClassifierCollection:
                     #Hier müssen wir uns noch Gedanken machen, vlt kontrollieren
                     #wir hier nochmal ob auch wirklich alle Classifier das selbe sagen und dann
                     #nehmen wir diese Vorhersage von allen als Label nur dann?
+                    """
                     Label = NotImplemented
                     sampleNowWithLabel = NotImplemented
                     DC.moveRepoFromUnlabeledToSemiSupervised(sampleNowWithLabel)
                     SemiSupervisedLabel = Label
                     SemiSupervisedL = True
+                    """
+                    pass
                 results.append([resultc, uncertainty])
         return (sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results)
     
@@ -131,7 +133,7 @@ class ClassifierCollection:
         data = DC.getTestData()
         results = []
         for c in self.classificationmodules:
-            results.append(c.test(data))
+            results.append(c.testModule(data))
         return results
 
     @classmethod
