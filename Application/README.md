@@ -17,9 +17,10 @@ _Installed with the command `pip install path/to/file.whl`_
 _Installed with the command `pip install xxx`_
 
 1. bottle
-2. keras
-3. sklearn
-4. nltk
+2. demjson
+3. keras
+4. sklearn
+5. nltk
 
 ## Other
 
