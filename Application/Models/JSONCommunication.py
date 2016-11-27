@@ -190,8 +190,7 @@ def formatSavePoints(savePointNames):
 #Hilfsunktionen für oben
 def formatClassificatorResults(results):
 	classificatorResults = []
-	if len(results) == 0: return []
-	for cresult in result:
+	for cresult in results:
 		cname = cresult[0]
 		cprobabilities = []
 		cprobabilities.append({'class':'DEV', 'val':cresult[1]})
