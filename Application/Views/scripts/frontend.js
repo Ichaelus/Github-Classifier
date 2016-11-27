@@ -110,7 +110,7 @@ function initVue(){
           inputData.classifiersUnsure = results.classifiersUnsure;
           inputData.semisupervised = results.semisupervised;
           if(results.classifiersUnsure)
-            window.open("/user_classification.html?popup=true&api-url=https://api.github.com/repos/robertoles/spree_carousels", "User decision", "channelmode=yes");
+            window.open("/user_classification.html?popup=true&api-url="+results.repo.repoAPILink, "User decision", "channelmode=yes");
         }else if(stateData.mode = "pool"){
           inputData.classifierAsking = results.classifierAsking;
         }
@@ -271,6 +271,9 @@ function hideInfo(){
 function HandlePopupResult(result) {
   // If the sample has been labeled, update view
   console.log("result of popup is: " + result);
+  $.get("/get/ALclassification?api-url="+result.api-url+"&label="+result.label, function(result){
+
+  });
 }
 
 function jQGetPromise(url, datatype = ""){

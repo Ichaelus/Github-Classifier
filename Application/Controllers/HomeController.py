@@ -166,6 +166,10 @@ def api(key):
 			return Models.JSONCommunication().formatSavePoints(savePoints)
 		except NameError as err:
 			print('Name error', err)
+
+	elif(key == "ALclassification"):
+		# Save user classification
+		ALTrainInstantlyAllClassificationModules(getQueryValue("api-url"), getQueryValue("label")):
 	else :
 		return "API call for: " + key
 

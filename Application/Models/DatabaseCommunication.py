@@ -24,9 +24,10 @@ def moveRepoFromUnlabeledToToClassify(sample):
     #...
     return 'NotImplemented' 
 
-def moveRepoFromToClassifyToTrain(sample):
+def moveRepoFromToClassifyToTrain(api_url, label):
+    # moves <api_url> to train and assigns the given label
     repoDBID = NotImplemented
-    #...
+    #...returns the feature vector
     return 'NotImplemented'
 
 def moveRepoFromUnlabeledToSemiSupervised(sample):

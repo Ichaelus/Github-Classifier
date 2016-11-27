@@ -101,9 +101,9 @@ class ClassifierCollection:
         return (sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results)
     
     @classmethod
-    def ALTrainInstantlyAllClassificationModules(self, sample):
+    def ALTrainInstantlyAllClassificationModules(self, api_url, label):
         """Train all ClassificationModules with the user query result"""
-        DC.moveRepoFromToClassifyToTrain(sample)
+        sample DC.moveRepoFromToClassifyToTrain(api_url, label)
         for c in self.classificationmodules:
             c.trainOnSample(sample)
     
