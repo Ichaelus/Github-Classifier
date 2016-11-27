@@ -122,7 +122,7 @@ class ClassifierCollection:
                 c = self.classificationmodules[j]
                 if not c.isMuteClassificationModule():
                     userquery = c.calculatePoolBasedQuery(formula, data)
-                    classifierasking = j
+                    classifierasking = c
                 else:
                     i = i + 1
                     if (j == (len(self.classificationmodules) - 1) and userquery == None):
@@ -153,8 +153,8 @@ class ClassifierCollection:
         data = DC.getInformationsForRepo(repolink)
         results = []
         for c in self.classificationmodules:
-            results.append(c.predictProbability(data))
-        return results
+            results.append([c.getName(), c.predictProbability(data)])
+        return data, results
 
     @classmethod
     def TrainAllClassificationModulesOnSample(self, repo):

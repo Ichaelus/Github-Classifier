@@ -92,18 +92,18 @@ def api(key):
 		# Perform a single step based on the current stateData
 		if(getQueryValue("mode") == "stream"):
 			sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results = homeclassifiercollection.doStreamBasedALRound(getQueryValue("formula"), getQueryValue("isSemiSupervised") == 'true')
-			return Models.JSONCommunication.formatStreamBasedALRound(results)
+			return Models.JSONCommunication.formatStreamBasedALRound(sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results)
 
 		elif(getQueryValue("mode") == "pool"):
-			result = homeclassifiercollection.doPoolBasedALRound(getQueryValue("formula"), getQueryValue("isSemiSupervised") == 'true')
-			return Models.JSONCommunication.formatPoolBasedALRound(result)
+			userquery, classifierasking, propabilitiesForUserQuery = homeclassifiercollection.doPoolBasedALRound(getQueryValue("formula"), getQueryValue("isSemiSupervised") == 'true')
+			return Models.JSONCommunication.formatPoolBasedALRound(userquery, classifierasking, propabilitiesForUserQuery)
 		else:
 			return "Invalid arguments"
 
 	elif(key == "PredictSingleSample"):
 		# Returns classifier prediction for a given `repoLink`
-		result = homeclassifiercollection.PredictSingleSample(getQueryValue("repoLink"))
-		return Models.JSONCommunication.formatSinglePrediction(result)
+		data, result = homeclassifiercollection.PredictSingleSample(getQueryValue("repoLink"))
+		return Models.JSONCommunication.formatSinglePrediction(data, result)
 
 	elif(key == "startTest"):
 		# Runs the classifiers agains a predefined testset
