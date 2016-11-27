@@ -80,7 +80,8 @@ class basicneuralnetwork(ClassificationModule):
     def predictLabelAndProbability(self, sample):
         """Return the probability the module assignes each label"""
         sample = self.formatInputData(sample)
-        return self.model.predict(sample)[0] # [0] So 1-D array is returned
+        prediction = self.model.predict(sample)[0]
+        return [np.argmax(prediction)] + prediction # [0] So 1-D array is returned
 
     def formatInputData(self, data):
         """Extract description and transform to vector"""
