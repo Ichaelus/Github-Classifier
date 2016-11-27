@@ -122,7 +122,7 @@ class ClassifierCollection:
                             self.poolbasedalclassifierturn = 0
                             return self.doPoolBasedALRound(formula, semisupervised, traininstantly)
                         else: raise Exception('Error, trying to do doPoolBasedALRound without a non-muted classifier')
-        return [userquery, classifierasking]
+        return userquery, classifierasking
 
     @classmethod
     def TestAllClassificationModules(self):
