@@ -72,7 +72,7 @@ def formatSinglePrediction(data, result):
 	# 
 
 def formatStreamBasedALRound(sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results):
-	repo = {'repoName':sample['name'], 'repoAPILink':sample[api_url]}
+	repo = {'repoName':sample['name'], 'repoAPILink':sample['api_url']}
 	semisupervised = {'SemiSupervisedSureEnough': SemiSupervisedL, 'SemiSupervisedLabel': SemiSupervisedLabel}
 	classificatorResults = formatClassificatorResults(results)
 	returndata = {'repo':repo, 'classifiersUnsure':unsure, 'semisupervised':semisupervised, 'classificatorResults':classificatorResults
@@ -190,6 +190,7 @@ def formatSavePoints(savePointNames):
 #Hilfsunktionen für oben
 def formatClassificatorResults(results):
 	classificatorResults = []
+	if len(results) == 0: return []
 	for cresult in result:
 		cname = cresult[0]
 		cprobabilities = []
