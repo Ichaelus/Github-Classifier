@@ -80,12 +80,27 @@ def api(key):
 		# get classificators
 		classificators = homeclassifiercollection.getAllClassificationModules()
 		return Models.JSONCommunication.ConvertClassifierCollectionToJSON(classificators)
+
 	elif(key == "doSingleStep"):
 		# Perform a single step based on the current stateData
-		# if(queries["mode"] == "stream"):
-		result = homeclassifiercollection.doStreamBasedALRound('Entropy-Based')
-		return Model.JSONCommunication.formatStreamBasedALRound(result)
-		
+		if(queries["mode"] == "stream"):
+			result = homeclassifiercollection.doStreamBasedALRound(queries["formula"], queries["isSemiSupervised"], queries["trainInstantly"])
+			return Models.JSONCommunication.formatSinglePrediction(result)
+		elif(queries["mode"] == "pool"):
+			result = homeclassifiercollection.doPoolBasedALRound(queries["formula"], queries["isSemiSupervised"], queries["trainInstantly"])
+			return Models.JSONCommunication.formatPoolBasedALRound(result)
+		else:
+			return "Invalid arguments"
+
+	elif(key == "PredictSingleSample"):
+		# Returns classifier prediction for a given `repoLink`
+		result = homeclassifiercollection.PredictSingleSample(queries["repoLink"])
+		return Models.JSONCommunication.formatSinglePrediction(result)
+
+	elif(key == "startTest"):
+		# Runs the classifiers agains a predefined testset
+		result = homeclassifiercollection.TestAllClassificationModules()
+		return Models.JSONCommunication.formatClassificationTest(result)
 
 	else :
 		return "API call for: " + key

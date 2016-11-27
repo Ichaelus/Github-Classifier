@@ -49,6 +49,12 @@ h1{
 .active, .control_buttons span:hover{
   color: #719eec;
 }
+button.control {
+    position: absolute;
+    bottom: 0;
+    left: calc(50% - 50px);
+    width: 100px;
+}
 .main{
   min-height: 600px;
 }

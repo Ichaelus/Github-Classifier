@@ -26,6 +26,7 @@ def moveRepoToTOClassify(repoDbId):
     return 'NotImplemented'
 
 def getFeatureVectorForRepo(repolink):
+    # Maybe check if it's an api link or repo link
     return 'NotImplemented'
 
 def getLabeledData():
