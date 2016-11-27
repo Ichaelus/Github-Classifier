@@ -1,0 +1,19 @@
+diff a/Application/Controllers/HomeController.py b/Application/Controllers/HomeController.py	(rejected hunks)
+@@ -150,16 +150,10 @@
+ 		except NameError as err:
+ 			print('Name error', err)
+ 
+-	elif(key == "savePoints"):
+-		ClassifierName = getQueryValue("name")
+-		try:
+-			savePoints = homeclassifiercollection.getClassificationModule(ClassifierName).getSavePointsForClassificationModules()
+-			return Models.JSONCommunication().formatSavePoints(savePoints)
+-		except NameError as err:
+-			print('Name error', err)
+ 	else :
+ 		return "API call for: " + key
+ 
++
+ @homebottle.post('/post/<key>')
+ def api(key):
+ 	if (key == "click"):

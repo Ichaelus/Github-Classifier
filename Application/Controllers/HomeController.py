@@ -151,9 +151,15 @@ def api(key):
 		except NameError as err:
 			print('Name error', err)
 
+	elif(key == "savePoints"):
+		ClassifierName = getQueryValue("name")
+		try:
+			savePoints = homeclassifiercollection.getClassificationModule(ClassifierName).getSavePointsForClassificationModules()
+			return Models.JSONCommunication().formatSavePoints(savePoints)
+		except NameError as err:
+			print('Name error', err)
 	else :
 		return "API call for: " + key
-
 
 @homebottle.post('/post/<key>')
 def api(key):
