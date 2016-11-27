@@ -110,7 +110,7 @@ function initVue(){
           inputData.classifiersUnsure = results.classifiersUnsure;
           inputData.semisupervised = results.semisupervised;
           if(results.classifiersUnsure)
-            window.open("http://classifier.leimstaedtner.it/?popup=true&api_url=https://github.com/Ichaelus/PHP-MySQL-Class", "User decision", "channelmode=yes,menubar=no,status=no,toolbar=no");
+            window.open("/user_classification.html?popup=true&api-url=https://api.github.com/repos/robertoles/spree_carousels", "User decision", "channelmode=yes");
         }else if(stateData.mode = "pool"){
           inputData.classifierAsking = results.classifierAsking;
         }
@@ -266,6 +266,11 @@ function hideInfo(){
 	// Hide any visible popup
 	$('#overlay_wrapper').fadeOut();
 	$('.overlay_blur').fadeOut();
+}
+
+function HandlePopupResult(result) {
+  // If the sample has been labeled, update view
+  console.log("result of popup is: " + result);
 }
 
 function jQGetPromise(url, datatype = ""){
