@@ -26,6 +26,15 @@ class ClassificationModule:
     def getDescription(self):
         """Return the description"""
         return self.description
+    @classmethod
+    def getYield(self):
+        """Return the Yield"""
+        return self.Yield
+    
+    @classmethod
+    def getAccuracy(self):
+        """Return the Accuracy"""
+        return self.Accuracy
 
     @classmethod
     def setName(self, name):
