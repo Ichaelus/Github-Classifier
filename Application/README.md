@@ -1,7 +1,11 @@
 # Requirements
 
-* python 2.7 (coding language)
+* python 2.7 (coding language) 64bit
 * pip (module manager)
+
+## Notes
+
+The working / installation directory of python and the g++ compiler must not contain special character such as umlauts.
 
 ## Modules
 
@@ -19,5 +23,5 @@ _Installed with the command `pip install xxx`_
 
 ## Other
 
-* (Microsoft Visual Studio C++ 9.0)[https://www.microsoft.com/en-us/download/details.aspx?id=44266]
-* (g++ compiler)[http://www1.cmc.edu/pages/faculty/alee/g++/g++.html]
+* (Microsoft Visual C++ Compiler for Python 2.7)[https://www.microsoft.com/en-us/download/details.aspx?id=44266]
+* (64bit g++ compiler)[http://deeplearning.net/software/theano/install_windows.html#gcc]

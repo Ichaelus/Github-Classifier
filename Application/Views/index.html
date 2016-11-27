@@ -54,11 +54,15 @@
           <div class="col-xs-4">
             <h1>Classification Overview</h1>
 
-              <div class="control_buttons"><!--control-subgroup-->
-                <span :class="(action == 'loop' ? 'active ' : '') + 'glyphicon glyphicon-play'" v-on:click="loop()" title="Train until paused"></span>
-                <span :class="(action == 'halt' ? 'active ' : '') + 'glyphicon glyphicon-pause'" v-on:click="halt()" title="Stop training"></span>
-                <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" title="Train a single sample"></span>
+              <div :class="'control_buttons ' + ((mode == 'stream' || mode == 'pool') ? '' : 'hidden')"><!--control-subgroup-->
+                  <span :class="(action == 'loop' ? 'active ' : '') + 'glyphicon glyphicon-play'" v-on:click="loop()" title="Train until paused"></span>
+                  <span :class="(action == 'halt' ? 'active ' : '') + 'glyphicon glyphicon-pause'" v-on:click="halt()" title="Stop training"></span>
+                  <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" title="Train a single sample"></span>
               </div><!-- /control-subgroup -->
+
+              <button  v-on:click="startTest()" :class="'btn btn-default control ' + ((mode == 'test') ? '' : 'hidden')" title="Test all Classifiers">Start testing</button>
+
+              <button  v-on:click="predictSingle()" :class="'btn btn-default control ' + ((mode == 'single') ? '' : 'hidden')" title="Predict single samples">Predict</button>
 
           </div>
           <div class="col-xs-8">
@@ -88,7 +92,7 @@
                 <label for="stream_ai_4" class="form-control">Predict single samples</label>
               </div>   <!-- /input-group -->  
             </div>
-            <div class="col-xs-6">
+            <div :class="'col-xs-6 ' + ((mode != 'stream' && mode != 'pool') ? 'hidden' : '') ">
 
               <div class="input-group">
                 <span class="input-group-addon">

@@ -2,7 +2,7 @@ console.log("Frontend started..");
 let stateView, inputView, classificatorView, outputView, wrapperView,
 	stateData = {
 		action: "halt",
-		mode: "stream",
+		mode: "stream", // pool, test, single
 		isSemiSupervised: false,
 		trainInstantly: false,
 		formula: "",
@@ -25,7 +25,9 @@ let stateView, inputView, classificatorView, outputView, wrapperView,
 
 try{
 	runGenerator(function *main(){
-		classificatorData.classificators = yield jQGetPromise("/get/classificators", "json");
+		let initData = yield jQGetPromise("/get/classificators", "json");
+    classificatorData.classificators = initData.classificators;
+    inputData.repoName = initData.repoName;
 		initVue();
 	});
 }catch(ex){
@@ -63,35 +65,59 @@ function initVue(){
     		assert(isNotEmpty(f), "Formula should not be empty");
     		stateData.formula = f;
     	},
-		singleStep: function(){
-			stateData.action = "singleStep";
-			console.log("Single step");
-
-		},
-		halt: function(){
-			stateData.action = "halt";
-			console.log("Halting");
-		},
-		loop: function(){
-			stateData.action = "loop";
-			console.log("Looping");
-			runGenerator(function *main(){
-				// Fetch sample, display then repeat until stateData has changed
-				while(stateData.action == "loop"){
-					results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
-					stateView.updateResults(results);
-					// To remove
-					stateData.action = "halt";
-				}
-			});
-		},
-		updateResults: function(results){
-			for(let cid in results){
-				for(let c in classificatorData.classificators)
-					if(classificatorData.classificators[c].id == cid)
-						classificatorData.classificators[c].result = results[cid];
-			}
-		}
+		  singleStep: function(){
+  			stateData.action = "singleStep";
+  			console.log("Single step");
+        runGenerator(function *main(){
+            // Fetch sample, display
+            results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
+            stateView.updateResults(results);
+          });
+  		},
+  		halt: function(){
+  			stateData.action = "halt";
+  			console.log("Halting");
+        state.action = "halt";
+  		},
+  		loop: function(){
+  			stateData.action = "loop";
+  			console.log("Looping");
+  			runGenerator(function *main(){
+  				// Fetch sample, display then repeat until stateData has changed
+  				while(stateData.action == "loop"){
+  					results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
+  					stateView.updateResults(results);
+  					// To remove
+  					stateData.action = "halt";
+  				}
+  			});
+  		},
+  		updateResults: function(results){
+        assert(results != null && typeof(results.repoName) != "undefined" && typeof(results.classificatorResults) != "undefined", "Result is not well-formatted.");
+        inputData.repoName = results.repoName;
+  			for(let cid in results.classificatorResults){
+  				for(let c in classificatorData.classificators)
+  					if(classificatorData.classificators[c].id == cid)
+  						classificatorData.classificators[c].result = results.classificatorResults[cid];
+  			}
+  		},
+      predictSingle: function(){
+        let repoLink = prompt("Please insert the link to a repository you wish to classify.");
+        if(repoLink){
+          runGenerator(function *main(){
+            // Fetch sample, display
+            results = yield jQGetPromise("/get/PredictSingleSample?repoLink="+repoLink, "json");
+            stateView.updateResults(results);
+          });
+        }
+      },
+      startTest: function(){
+        runGenerator(function *main(){
+          // Fetch sample, display
+          results = yield jQGetPromise("/get/startTest", "json");
+          stateView.updateResults(results);
+        });
+      }
     }
   });
   stateView.getFormulas();
@@ -108,7 +134,7 @@ function initVue(){
     		$.get("/get/poolSize", function(result){
     			if(isNaN(result))
     				throw new Error("Invalid server response");
-    			inputData.poolSize = result;
+    			inputData.poolSize = parseInt(result);
     		});
     	}
     }
@@ -153,21 +179,21 @@ function initVue(){
     data: wrapperData,
     methods:{
     	setData: function(i){
-    		wrapperData.id = classificatorData.classificators[i].id;
     		wrapperData.name = classificatorData.classificators[i].name;
     		wrapperData.description = classificatorData.classificators[i].description;
     	},
-		retrain: function(){
-			console.log("Wrapper: retraining.");
+		retrain: function(name){
+			console.log("Wrapper: "+name+" retraining.");
+
 		},
-		retrain_semi: function(){
-			console.log("Wrapper: semi retraining.");
+		retrain_semi: function(name){
+			console.log("Wrapper: "+name+" semi retraining.");
 		},
-		save: function(){
-			console.log("Wrapper: saving.");
+		save: function(name){
+			console.log("Wrapper: "+name+" saving.");
 		},
-		load: function(){
-			console.log("Wrapper: loading.");
+		load: function(name){
+			console.log("Wrapper: "+name+" loading.");
 		},
     }
   });

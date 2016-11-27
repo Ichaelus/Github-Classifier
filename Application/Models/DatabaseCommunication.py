@@ -29,9 +29,8 @@ def moveRepoFromToClassifyToTrain(sample):
     #...
     return 'NotImplemented'
 
-def moveRepoFromUnlabeledToSemiSupervised(sample):
-    repoDBID = NotImplemented
-    #...
+def getFeatureVectorForRepo(repolink):
+    # Maybe check if it's an api link or repo link
     return 'NotImplemented'
 
 def getLabeledData():

@@ -23,9 +23,13 @@ Gibt alle Datensätze der Tabelle unlabeled aus.
 
 Gibt alle Datensätze der Tabelle train aus.
 
+### ?key=api:semi_supervised
+
+Gibt alle Datensätze der Tabelle train aus.
+
 ## Weitere Funktionen
 
-_Für viele der folgenden Funktionen kann ein Attribut `table` {train, test, unlabeled, to_classify} bzw. das unten erläuterte `filter` Attribut gesetzt werden._
+_Für viele der folgenden Funktionen kann ein Attribut `table` {train, test, unlabeled, to_classify, semi_supervised} bzw. das unten erläuterte `filter` Attribut gesetzt werden._
 
 ### ?key=api:single
 

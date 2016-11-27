@@ -99,7 +99,7 @@ class ClassifierCollection:
             c.trainOnSample(sample)
     
     @classmethod
-    def poolBasedALRound(self, formula, semisupervised=False, traininstantly=False):
+    def doPoolBasedALRound(self, formula, semisupervised=False, traininstantly=False):
         """Calculates the best query to be answered by user. First unmuted classifier 1
         gets to ask a question the next time this function is run, then unmuted classifier 2 etc."""
         data = DC.getUnlabeledData()
@@ -118,13 +118,13 @@ class ClassifierCollection:
                     # nochmal kontrollieren vorm zurückspringen zum anfang
                         if any([c for c in self.classificationmodules if not c.isMuteClassificationModule()]):
                             self.poolbasedalclassifierturn = 0
-                            return self.poolBasedALRound(formula, semisupervised, traininstantly)
-                        else: raise Exception('Error, trying to do poolBasedALRound without a non-muted classifier')
+                            return self.doPoolBasedALRound(formula, semisupervised, traininstantly)
+                        else: raise Exception('Error, trying to do doPoolBasedALRound without a non-muted classifier')
         return userquery
 
     @classmethod
     def TestAllClassificationModules(self):
-        """Tests all classification modules, these do that by themselves and return results to this function"""
+        """Tests all classification modules, they do that by themselves and return results to this function"""
         data = DC.getTestData()
         results = []
         for c in self.classificationmodules:
@@ -147,6 +147,3 @@ class ClassifierCollection:
         for c in self.classificationmodules:
             results.append(c.trainOnSample(repo))
         return results
-    
-
-    
