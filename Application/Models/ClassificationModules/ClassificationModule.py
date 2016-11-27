@@ -177,8 +177,8 @@ class ClassificationModule:
 		for key, value in self.Accuracy.iteritems():
 			stringDict[str(key)] = str(value)
 		ET.SubElement(entry, 'accuracy', stringDict)
-        ElementYield = ET.SubElement(entry, 'yield')
-        ElementYield.text = str(self.Yield)
+        	ElementYield = ET.SubElement(entry, 'yield')
+        	ElementYield.text = str(self.Yield)
 		tree.write(tmpPath)
 		return None
 		
