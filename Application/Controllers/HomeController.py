@@ -113,10 +113,29 @@ def api(key):
 
 	elif(key == "retrain"):
 		ClassifierName = queries["name"]
-		return "NotImplemented"
+		# Get data to train on
+		train_data = Models.DatabaseCommunication.getTrainData()
+		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
+		classifier.resetAllTraining()
+		classifier.train(train_data)
+
+		# Test classifier
+		test_data = Models.DatabaseCommunication.getTestData()
+		return classifier.testModule(test_data)
 
 	elif(key == "retrainSemiSupervised"):
+		"""
 		ClassifierName = queries["name"]
+		# Get data to train on
+		train_data = Models.DatabaseCommunication.getSemiSupervisedData()
+		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
+		classifier.resetAllTraining()
+		classifier.train(train_data)
+
+		# Test classifier
+		test_data = Models.DatabaseCommunication.getTestData()
+		return classifier.testModule(train_data)
+		"""
 		return "NotImplemented"
 
 	elif(key == "save"):

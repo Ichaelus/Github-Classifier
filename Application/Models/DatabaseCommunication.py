@@ -55,6 +55,9 @@ def getUnlabeledCount():
 def getTestCount():
     return str(api_call('count', tableString="test"))
 
+def getTrainData():
+    return api_call('all', tableString="train")
+
 def getToClassifyCount():
     return str(api_call('all', tableString="to_classify"))
 
