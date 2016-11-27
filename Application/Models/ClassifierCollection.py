@@ -106,6 +106,7 @@ class ClassifierCollection:
         i = 0
         userquery = None
         classifierasking = 0
+        propabilitiesForUserQuery = []
         for j in xrange(0, len(self.classificationmodules)):
             if(j == self.poolbasedalclassifierturn + i):
                 c = self.classificationmodules[j]

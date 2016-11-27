@@ -21,7 +21,7 @@ class ClassificationModule:
     binary = False
     Yield = 0.0
     Accuracy = {"DEV":0.0, "HW":0.0, "EDU":0.0, "DOCS":0.0, "WEB":0.0, "DATA":0.0, "OTHER":0.0}
-  
+    
     @classmethod
     def getDescription(self):
         """Return the description"""
@@ -100,10 +100,10 @@ class ClassificationModule:
         class_right_pred_count = np.zeros(7)
 
         for sample in data:
-            pred_label = self.predictLabelAndProbability(self, data)[0]
+            pred_out = self.predictLabelAndProbability(self, data)
             # Check if prediction was right
             true_label_index = getLabelIndex(data)
-            if (pred_label == true_label_index):
+            if (np.argmax(pred_out) == true_label_index):
                 nb_right_pred += 1
                 class_right_pred_count[true_label_index] += 1
             class_count[true_label_index] += 1
@@ -144,14 +144,14 @@ class ClassificationModule:
 		#Serialization
 		filename = datetime.now().isoformat() + '.pkl'
 		tmpPath = os.path.abspath(".")
-		tmpPath = os.path.join(tmpPath, path, filename)
+		tmpPath = os.path.join(tmpPath, self.path, filename)
 		output = open(tmpPath, 'w')
 		pickle.dump(ClassificationModule, output, 2)
 		output.close()
 		
 		#XML-file
 		tmpPath = os.path.abspath(".") 
-		tmpPath = os.path.join(tmpPath, path, name + '.xml')
+		tmpPath = os.path.join(tmpPath, self.path, self.name + '.xml')
 		tree = ET.parse(tmpPath)		
 		root = tree.getroot()
 	
@@ -178,7 +178,7 @@ class ClassificationModule:
         ###	at directory path
         """holt aus dem XML File die möglichen SaveZustände"""
         tmpPath = os.path.abspath(".") 
-        tmpPath = os.path.join(tmpPath, path, name + '.xml')
+        tmpPath = os.path.join(tmpPath, self.path, self.name + '.xml')
         tree = ET.parse(tmpPath)
         root = tree.getroot()
         savePoints = []
@@ -199,7 +199,7 @@ class ClassificationModule:
 		"""loads another SafePoint with filename of the current ClassificationModule"""
 		if (filename is "lastused"):
 			tmpPath = os.path.abspath(".") 
-			tmpPath = os.path.join(tmpPath, path, name + '.xml')
+			tmpPath = os.path.join(tmpPath, self.path, self.name + '.xml')
 			tree = ET.parse(tmpPath)
 			root = tree.getroot()
 			lastmodified = 'zzzzzzzzzzzzzzzzzzzzzz'  #Lexikographisch sehr schlechtes wort
@@ -213,7 +213,7 @@ class ClassificationModule:
 				return None
 			filename = lastmodified
 		tmpPath = os.path.abspath(".")
-		tmpPath = os.path.join(tmpPath, path, filename)
+		tmpPath = os.path.join(tmpPath, self.path, filename)
 		f = open(tmpPath)
 		data = pickle.load(f)
 		#returned ein ClassificationModule
