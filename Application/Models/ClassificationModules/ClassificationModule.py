@@ -174,10 +174,11 @@ class ClassificationModule:
 		year.text = str(today.year)
 		#SubElement nimmt nur dicts aus strings
 		stringDict = {}
-		for key, value in Accuracy.iteritems():
+		for key, value in self.Accuracy.iteritems():
 			stringDict[str(key)] = str(value)
 		ET.SubElement(entry, 'accuracy', stringDict)
-	
+        ElementYield = ET.SubElement(entry, 'yield')
+        ElementYield.text = str(self.Yield)
 		tree.write(tmpPath)
 		return None
 		
@@ -193,9 +194,9 @@ class ClassificationModule:
         savePoints = []
         for child in root:
             tmp = {}
-            for i in xrange(0, len(child.find('accuracy').attrib.keys()-1)):
+            for i in xrange(0, len(child.find('accuracy').attrib.keys())):
                 tmp[child.find('accuracy').attrib.keys()[i]] = child.find('accuracy').attrib.values()[i]
-            savePoints.append([child.attrib.values()[0], tmp])
+            savePoints.append([child.attrib.values()[0], tmp, float(child.find('yield').text)])
             #returns a list of tuples with filename and Accuracy
         return savePoints
 		
