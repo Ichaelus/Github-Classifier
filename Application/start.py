@@ -16,7 +16,7 @@ classifiercollection = ClassifierCollection()
 homesetclassifiercollection(classifiercollection)
 
 descriptionCorcus = DC.getAllDescriptions()
-bnn = basicneuralnetwork(7, descriptionCorcus)
+bnn = basicneuralnetwork(descriptionCorcus)
 classifiercollection.addClassificationModule(bnn)
 
 #testing stuff
