@@ -122,7 +122,7 @@ function initVue(){
         runGenerator(function *main(){
           // Fetch sample, display
           results = yield jQGetPromise("/get/startTest", "json");
-          stateView.updateResults(results);
+          classificatorView.updateResults(results);
         });
       }
     }
@@ -172,7 +172,16 @@ function initVue(){
     			max = Math.max(max, classificatorData.classificators[id].result[i].val);
     		}
     		return max;
-    	}
+    	},
+      updateSaveState: function(name, yield, accuracy){
+        for(let i in classificatorData.classificators){
+          let c = classificatorData.classificators[i];
+          if(c.name == name){
+            c.yield = yield;
+            c.result = accuracy;
+          }
+        }
+      }
     }
   });
 
@@ -208,24 +217,31 @@ function initVue(){
   			console.log("Wrapper: "+wrapperData.name+" retraining.");
         runGenerator(function *main(){
           results = yield jQGetPromise("/get/retrain?name="+wrapperData.name, "json");
+          notify("Retrained", "The classifier "+wrapperData.name+" has been retrained.", 2500);
         });
   		},
   		retrain_semi: function(){
   			console.log("Wrapper: "+wrapperData.name+" semi retraining.");
         runGenerator(function *main(){
           results = yield jQGetPromise("/get/retrainSemiSupervised?name="+wrapperData.name, "json");
+          notify("Retrained", "The classifier "+wrapperData.name+" has been retrained with semi-supervised data.", 2500);
         });
   		},
   		save: function(){
   			console.log("Wrapper: "+wrapperData.name+" saving.");
         runGenerator(function *main(){
           results = yield jQGetPromise("/get/save?name="+wrapperData.name, "json");
+          wrapperView.getSavePoints();
+          notify("Saved", "The classifier "+wrapperData.name+" has been saved.", 2500);
         });
   		},
   		load: function(){
   			console.log("Wrapper: "+wrapperData.name+" loading.");
         runGenerator(function *main(){
-          results = yield jQGetPromise("/get/load?name="+wrapperData.name, "json");
+          result = yield jQGetPromise("/get/load?name="+wrapperData.name, "json");
+          // result contains a name of the selected classificator and an accuracy array
+          classificatorView.updateSaveState(result.name, result.yield, result.accuracy);
+          notify("Saved", "The classifier "+wrapperData.name+" has been loaded.", 2500);
         });
   		}
     }
@@ -271,7 +287,7 @@ function runGenerator(g) {
           iterate();
         });
       }
-      // immediate value: just send right back in
+      // immediate value: just send right bk in
       else {
         // avoid synchronous recursion
         setTimeout( function(){
@@ -301,4 +317,28 @@ function isNotEmpty(str){
 function isEmpty(str) {
   // Checks if str is empty or null
   return (!str || 0 === str.length);
+}
+
+function notify(title, note, duration = 1000){
+  //Prompts a browser notification and/or requests permission to do
+  var got_permission = false;
+  if ("Notification" in window) {
+    if (Notification.permission === "granted") {
+      got_permission = true;
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission((permission) => {
+        if (permission === "granted")
+          got_permission = true;
+      });
+    }
+  }
+  if(got_permission){
+      title = title === "" ? getString('notif_title') : title;
+      let options = {
+          body: note,
+          icon: '/images/sheep_logo.png',
+      };
+      let notification = new Notification(title, options);
+      setTimeout(notification.close.bind(notification), duration); 
+  }
 }
