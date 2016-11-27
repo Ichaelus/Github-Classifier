@@ -112,10 +112,29 @@ def api(key):
 
 	elif(key == "retrain"):
 		ClassifierName = getQueryValue("name")
-		return "NotImplemented"
+		# Get data to train on
+		train_data = Models.DatabaseCommunication.getTrainData()
+		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
+		classifier.resetAllTraining()
+		classifier.train(train_data)
+
+		# Test classifier
+		test_data = Models.DatabaseCommunication.getTestData()
+		return classifier.testModule(test_data)
 
 	elif(key == "retrainSemiSupervised"):
 		ClassifierName = getQueryValue("name")
+		"""
+		# Get data to train on
+		train_data = Models.DatabaseCommunication.getSemiSupervisedData()
+		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
+		classifier.resetAllTraining()
+		classifier.train(train_data)
+
+		# Test classifier
+		test_data = Models.DatabaseCommunication.getTestData()
+		return classifier.testModule(train_data)
+		"""
 		return "NotImplemented"
 
 	elif(key == "save"):
@@ -131,15 +150,9 @@ def api(key):
 		except NameError as err:
 			print('Name error', err)
 
-	elif(key == "savePoints"):
-		ClassifierName = getQueryValue("name")
-		try:
-			savePoints = homeclassifiercollection.getClassificationModule(ClassifierName).getSavePointsForClassificationModules()
-			return Models.JSONCommunication().formatSavePoints(savePoints)
-		except NameError as err:
-			print('Name error', err)
 	else :
 		return "API call for: " + key
+
 
 @homebottle.post('/post/<key>')
 def api(key):
@@ -150,9 +163,6 @@ def api(key):
 	else:
 		return "API call for: " + key
 
-def getQueryValue(q):
-	queries = request.query.decode()
-	if(q in queries):
-		return queries[q]
-	else:
-		raise NameError('Query not set')
+
+
+
