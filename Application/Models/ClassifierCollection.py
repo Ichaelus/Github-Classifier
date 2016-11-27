@@ -7,7 +7,6 @@ import ClassificationModules.ActiveLearningSpecific as AL
 
 class ClassifierCollection:
     """A class to deal with multiple Classification Modules"""
-    
     classificationmodules = []
     poolbasedalclassifierturn = 0
 
@@ -33,7 +32,7 @@ class ClassifierCollection:
         for c in self.classificationmodules:
             if c.getName() == classifiername:
                 return c
-            else: 
+            else:
                 raise NameError('No classifier with this name')
         
     @classmethod
@@ -60,8 +59,8 @@ class ClassifierCollection:
         """Ein zufälliges unlabeled Sample wird genommen, von jedem klassifiziert, und wenn sich 
         mindestens 1er unsicher ist, wird beim Benutzer nachgefragt,
         ggf. wenn Unsicherheit niedrig genug wird es wenn semisupervised für Semi-Supervised Learning verwendet"""
-        sample = DC.getUnlabeledSingleSample()
-        results = []
+        sample = DC.getUnlabeledSingleSample() # feature vector
+        results = [] # tuples (probabilty_per_class, uncertainty)
         unsure = False
         SemiSupervisedL = False
         SemiSupervisedLabel = None
@@ -76,10 +75,10 @@ class ClassifierCollection:
                 elif(formula == "Margin-Sampling"):
                     uncertainty = AL.calculateUncertaintyMarginSampling(resultc)
                 else: raise Exception("No such formula")
-                if(uncertainty != None and uncertainty > thresholdquery):
+                if(uncertainty is not None and uncertainty > thresholdquery):
                     unsure = True
                     DC.moveRepoFromUnlabeledToToClassify(sample)
-                elif(uncertainty != None and uncertainty < thresholdunsupervisedl ): 
+                elif(uncertainty is not None and uncertainty < thresholdunsupervisedl):
                     #Hier müssen wir uns noch Gedanken machen, vlt kontrollieren
                     #wir hier nochmal ob auch wirklich alle Classifier das selbe sagen und dann
                     #nehmen wir diese Vorhersage von allen als Label nur dann?
@@ -110,9 +109,9 @@ class ClassifierCollection:
         for j in xrange(0, len(self.classificationmodules)):
             if(j == self.poolbasedalclassifierturn + i):
                 c = self.classificationmodules[j]
-                if not c.isMuteClassificationModule(): 
+                if not c.isMuteClassificationModule():
                     userquery = c.calculatePoolBasedQuery(formula, data)
-                    classifierasking = j 
+                    classifierasking = j
                 else:
                     i = i + 1
                     if (j == (len(self.classificationmodules) - 1) and userquery == None):
@@ -121,7 +120,8 @@ class ClassifierCollection:
                         if any([c for c in self.classificationmodules if not c.isMuteClassificationModule()]):
                             self.poolbasedalclassifierturn = 0
                             return self.doPoolBasedALRound(formula, semisupervised, traininstantly)
-                        else: raise Exception('Error, trying to do doPoolBasedALRound without a non-muted classifier')
+                        else:
+                            raise Exception('Error, trying to do doPoolBasedALRound without a non-muted classifier')
         return userquery, classifierasking
 
     @classmethod

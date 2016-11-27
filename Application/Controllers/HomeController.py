@@ -21,6 +21,14 @@ def homesetclassifiercollection(classifiercollection):
 def home():
     return static_file("index.html", root = abspath, mimetype='text/html')
 
+@homebottle.get('/favicon.ico')
+def home():
+    return static_file("favicon.ico", root = abspath, mimetype='image/x-icon')
+
+@homebottle.get('/favicon.png')
+def home():
+    return static_file("favicon.png", root = abspath, mimetype='image/png')
+
 @homebottle.get('/scripts/<filename:re:.*\.js>')
 def getScript(filename):
 	return static_file(filename, root=os.path.join(abspath, "scripts"), mimetype='text/javascript')
@@ -84,14 +92,11 @@ def api(key):
 	elif(key == "doSingleStep"):
 		# Perform a single step based on the current stateData
 		if(queries["mode"] == "stream"):
-			result = homeclassifiercollection.doStreamBasedALRound(queries["formula"], queries["isSemiSupervised"] == 'true')
-			if(queries["trainInstantly"] == 'true'):
-				homeclassifiercollection.ALTrainInstantlyAllClassificationModules(result)
+			sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results = homeclassifiercollection.doStreamBasedALRound(queries["formula"], queries["isSemiSupervised"] == 'true')
 			return Models.JSONCommunication.formatSinglePrediction(result)
+
 		elif(queries["mode"] == "pool"):
 			result = homeclassifiercollection.doPoolBasedALRound(queries["formula"], queries["isSemiSupervised"] == 'true')
-			if(queries["trainInstantly"] == 'true'):
-				homeclassifiercollection.ALTrainInstantlyAllClassificationModules(result)
 			return Models.JSONCommunication.formatPoolBasedALRound(result)
 		else:
 			return "Invalid arguments"
@@ -121,7 +126,7 @@ def api(key):
 	elif(key == "load"):
 		ClassifierName = queries["name"]
 		return "NotImplemented"
-		
+
 	else :
 		return "API call for: " + key
 
