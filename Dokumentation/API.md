@@ -64,6 +64,10 @@ Diese Funktion ist vom Parameter `api-url` abhängig. Für das angegebene reposi
 
 `client_id` und `client_secret` können übergeben werden, ansonsten werden gespeicherte credentials verwendet.
 
+### ?key=api:move-al-sample
+
+Verschiebt ein (durch Active learning als wertvoll befundenes) sample von der `unlabeled` in die `to_classify` Tabelle. Als Identifier muss das Attribut `sample-id` angegeben werden, welches die ID in der `unlabeled` Tabelle bezeichnet. (Attribute: `sample-id`)
+
 ## Deprecated
 
 ### ?key=api:old
