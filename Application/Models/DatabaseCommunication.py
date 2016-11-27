@@ -19,13 +19,19 @@ def api_call(keyString, filterString="", tableString=""):
         print 'Error with api call', e
     return data
 
-def moveRepoToLabeled(repoDbId):
+def moveRepoFromUnlabeledToToClassify(sample):
+    repoDBID = NotImplemented
+    #...
     return 'NotImplemented' 
 
-def moveRepoToTOClassify(repoDbId):
+def moveRepoFromToClassifyToTrain(sample):
+    repoDBID = NotImplemented
+    #...
     return 'NotImplemented'
 
-def getFeatureVectorForRepo(repolink):
+def moveRepoFromUnlabeledToSemiSupervised(sample):
+    repoDBID = NotImplemented
+    #...
     return 'NotImplemented'
 
 def getLabeledData():
@@ -61,6 +67,10 @@ def getAllDescriptions():
         for sample in data:
             corpus.append(sample['description'])
     return corpus
+
+def getInformationsForRepo(repolink):
+    '''Nur dafür da wenn ein bestimmtes Repo klassifiziert werden soll dass noch nicht in DB ist'''
+    return 'NotImplemented'
 
 
 
