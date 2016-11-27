@@ -88,7 +88,7 @@ class ClassifierCollection:
                     DC.moveRepoFromUnlabeledToSemiSupervised(sampleNowWithLabel)
                     SemiSupervisedLabel = Label
                     SemiSupervisedL = True
-                results.append(resultc, uncertainty)
+                results.append([resultc, uncertainty])
         return (sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results)
     
     @classmethod
