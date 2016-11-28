@@ -79,7 +79,6 @@ def getReadme(data):
     return base64.b64decode(data['readme'])
 
 def getDescription(data):
-    print 'data:' + str(data)
     return data['description']
 
 def getMetadataVector(sample):
