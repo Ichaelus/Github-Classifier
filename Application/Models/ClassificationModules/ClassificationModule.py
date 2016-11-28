@@ -180,8 +180,8 @@ class ClassificationModule:
 		for key, value in self.Accuracy.iteritems():
 			stringDict[str(key)] = str(value)
 		ET.SubElement(entry, 'accuracy', stringDict)
-        	ElementYield = ET.SubElement(entry, 'yield')
-        	ElementYield.text = str(self.Yield)
+        ElementYield = ET.SubElement(entry, 'yield')
+        ElementYield.text = str(self.Yield)
         #save XML-File
 		tree.write(tmpPath)
 		return None
@@ -199,7 +199,7 @@ class ClassificationModule:
         root = tree.getroot()
         savePoints = []
         for child in root:
-            moduleAccuracy = {}   
+        	moduleAccuracy = {}   
             for i in xrange(0, len(child.find('accuracy').attrib.keys())):
                 moduleAccuracy[child.find('accuracy').attrib.keys()[i]] = float(child.find('accuracy').attrib.values()[i])
             savePoints.append([child.attrib.values()[0], moduleAccuracy, float(child.find('yield').text)])
@@ -224,7 +224,7 @@ class ClassificationModule:
 			lastmodified = 'zzzzzzzzzzzzzzzzzzzzzz'  #Lexikographisch sehr schlechtes wort
 													#quasi wie -unendlich bei Zahlensortierverfahren
 			#search for last saved file
-            for child in root:
+            	for child in root:
 				tmp = child.attrib.values()[0]
 				if (lastmodified > tmp):
 					lastmodified = tmp
@@ -232,7 +232,7 @@ class ClassificationModule:
 				#there is no savepoint
 				return None
 			filename = lastmodified
-        #generating a path that is indepentent from operating system
+        	#generating a path that is indepentent from operating system
 		tmpPath = os.path.abspath(".")
 		tmpPath = os.path.join(tmpPath, self.path, self.name, filename)
 		#deserialization
