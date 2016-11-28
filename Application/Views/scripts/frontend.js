@@ -133,7 +133,7 @@ function initVue(){
               classificatorData.classificators[c][newkey] = data[c][newkey];
           }
         }
-      }
+      },
       predictSingle: function(){
         let repoLink = prompt("Please insert the link to a repository you wish to classify.");
         if(repoLink){
