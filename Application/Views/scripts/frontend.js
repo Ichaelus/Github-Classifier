@@ -19,11 +19,12 @@ let stateView, inputView, classificatorView, outputView, wrapperView,
 	},
 	classificatorData = {
     isPrediction: true,
-		classificators: [] // {name, description, yield, active, result}
+		classificators: {} // name : {description, yield, active, uncertainty, result : [{class, val},..]}
 	},
 	outputData = {},
 	wrapperData = {
-		current: {name: "", description: "", yield: 0, active: false, result: {}},
+    currentName: "",
+		current: {description: "", yield: 0, active: false, uncertainty: 0, result: {}},
     savePoints: [],
 		id: 0
 	};
@@ -70,6 +71,7 @@ function initVue(){
     		stateData.formula = f;
     	},
       switchMode: function(){
+        // TODO reset
         classificatorData.isPrediction = stateData.mode == 'test';
       },
 		  singleStep: function(){
@@ -103,9 +105,13 @@ function initVue(){
   		},
   		updateResults: function(results){
         // Apply returned changes to the internal GUI state
-        assert(results != null && typeof(results.repo) != "undefined" && typeof(results.classificatorResults) != "undefined", "Result is not well-formatted.");
-        inputData.repoName = results.repo.repoName;
-        inputData.repoAPILink = results.repo.repoAPILink;
+        // classificators: { moduleName => {attr_changed: val_changed,..},...}
+        assert(results != null, "Result is not well-formatted.");
+
+        if(typeof(results.repo) != "undefined"){
+          inputData.repoName = results.repo.repoName;
+          inputData.repoAPILink = results.repo.repoAPILink;
+        }
         if(stateData.mode == "stream"){
           inputData.classifiersUnsure = results.classifiersUnsure;
           inputData.semisupervised = results.semisupervised;
@@ -114,15 +120,20 @@ function initVue(){
         }else if(stateData.mode = "pool"){
           inputData.classifierAsking = results.classifierAsking;
         }
-        let res = results.classificatorResults;
-				for(let c in classificatorData.classificators){
-          let local = classificatorData.classificators[c];
-          if(typeof(res[local.name] != "undefined")){
-            // Classificator is not muted, update it's results
-  						local.result = res[local.name];
-          }
-  			}
+
+        if(typeof(results.classificators != "undefined"))
+          stateView.updateClassificators(results.classificators);
   		},
+      updateClassificators: function(data){
+        // Update data regarding classificators
+        for(let c in classificatorData.classificators){ // c => classificator name
+          if(typeof(data[c] != "undefined")){
+            // Classificator is not muted, update it's results
+            for(let newkey in data[c])
+              classificatorData.classificators[c][newkey] = data[c][newkey];
+          }
+        }
+      }
       predictSingle: function(){
         let repoLink = prompt("Please insert the link to a repository you wish to classify.");
         if(repoLink){
@@ -137,7 +148,7 @@ function initVue(){
         runGenerator(function *main(){
           // Fetch sample, display
           results = yield jQGetPromise("/get/startTest", "json");
-          classificatorView.updateResults(results);
+          stateView.updateResults(results);
         });
       }
     }
@@ -172,21 +183,21 @@ function initVue(){
     el: '#classificators',
     data: classificatorData,
     methods:{
-    	showInfo: function(id){
-    		wrapperView.setData(id);
+    	showInfo: function(name){
+    		wrapperView.setData(name);
         wrapperView.getSavePoints();
     		$('.overlay_blur').fadeIn();
     		$('#overlay_wrapper').fadeIn();
     	},
-    	switchState: function(id){
-        let c= classificatorData.classificators[id];
+    	switchState: function(name){
+        let c= classificatorData.classificators[name];
         if(!c.active){
-          $.get("/get/mute?name="+c.name, function(result){
+          $.get("/get/mute?name="+name, function(result){
             if(result != "success")
                 throw new Error("Invalid server response");
           });
         }else{
-          $.get("/get/unmute?name="+c.name, function(result){
+          $.get("/get/unmute?name="+name, function(result){
             if(result != "success")
                 throw new Error("Invalid server response");
           });
@@ -199,16 +210,16 @@ function initVue(){
     			max = Math.max(max, classificatorData.classificators[id].result[i].val);
     		}
     		return max;
-    	},
+    	}/*,
       updateSaveState: function(name, yield, classificatorResults){
         for(let i in classificatorData.classificators){
-          let c = classificatorData.classificators[i];
-          if(c.name == name){
+          if(i == name){
+            let c = classificatorData.classificators[i];
             c.yield = yield <= 1 ? yield : yield/100;
             c.result = classificatorResults;
           }
         }
-      }
+      }*/
     }
   });
 
@@ -228,46 +239,47 @@ function initVue(){
     methods:{
     	setData: function(i){
     		wrapperData.current = classificatorData.classificators[i];
+        wrapperData.currentName = i;
     	},
       getSavePoints: function(){
-        $.get("/get/savePoints?name="+wrapperData.current.name, function(result){
+        $.get("/get/savePoints?name="+wrapperData.currentName, function(result){
           if(result != ""){
             result = JSON.parse(result);
             if(result === false)
               throw new Error("Invalid server response");
-            wrapperData.savePoints = result;
+            wrapperData.savePoints = result.savePoints;
           }
         });
       },
   		retrain: function(){
-  			console.log("Wrapper: "+wrapperData.current.name+" retraining.");
+  			console.log("Wrapper: "+wrapperData.currentName+" retraining.");
         runGenerator(function *main(){
-          results = yield jQGetPromise("/get/retrain?name="+wrapperData.current.name, "json");
-          notify("Retrained", "The classifier "+wrapperData.current.name+" has been retrained.", 2500);
+          results = yield jQGetPromise("/get/retrain?name="+wrapperData.currentName, "json");
+          notify("Retrained", "The classifier "+wrapperData.currentName+" has been retrained.", 2500);
         });
   		},
   		retrain_semi: function(){
-  			console.log("Wrapper: "+wrapperData.current.name+" semi retraining.");
+  			console.log("Wrapper: "+wrapperData.currentName+" semi retraining.");
         runGenerator(function *main(){
-          results = yield jQGetPromise("/get/retrainSemiSupervised?name="+wrapperData.current.name, "json");
-          notify("Retrained", "The classifier "+wrapperData.current.name+" has been retrained with semi-supervised data.", 2500);
+          results = yield jQGetPromise("/get/retrainSemiSupervised?name="+wrapperData.currentName, "json");
+          notify("Retrained", "The classifier "+wrapperData.currentName+" has been retrained with semi-supervised data.", 2500);
         });
   		},
   		save: function(){
-  			console.log("Wrapper: "+wrapperData.current.name+" saving.");
+  			console.log("Wrapper: "+wrapperData.currentName+" saving.");
         runGenerator(function *main(){
-          results = yield jQGetPromise("/get/save?name="+wrapperData.current.name, "json");
+          results = yield jQGetPromise("/get/save?name="+wrapperData.currentName, "json");
           wrapperView.getSavePoints();
-          notify("Saved", "The classifier "+wrapperData.current.name+" has been saved.", 2500);
+          notify("Saved", "The classifier "+wrapperData.currentName+" has been saved.", 2500);
         });
   		},
   		load: function(){
-  			console.log("Wrapper: "+wrapperData.current.name+" loading.");
+  			console.log("Wrapper: "+wrapperData.currentName+" loading.");
         runGenerator(function *main(){
-          result = yield jQGetPromise("/get/load?name="+wrapperData.current.name, "json");
+          result = yield jQGetPromise("/get/load?name="+wrapperData.currentName, "json");
           // result contains a name of the selected classificator and an accuracy array
-          classificatorView.updateSaveState(result.name, result.yield, result.classificatorResults);
-          notify("Saved", "The classifier "+wrapperData.current.name+" has been loaded.", 2500);
+          stateView.updateClassificators(result.classificators);
+          notify("Saved", "The classifier "+wrapperData.currentName+" has been loaded.", 2500);
         });
   		}
     }
@@ -282,8 +294,9 @@ function hideInfo(){
 
 function HandlePopupResult(result) {
   // If the sample has been labeled, update view
-  console.log("result of popup is: " + result);
-  $.get("/get/ALclassification?api-url="+result.api-url+"&label="+result.label, function(result){
+  console.log("result of popup is: ");
+  console.log(result);
+  $.get("/get/ALclassification?api-url="+result["api-url"]+"&label="+result.label, function(result){
 
   });
 }

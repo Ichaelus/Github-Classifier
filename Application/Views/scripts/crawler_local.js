@@ -22,8 +22,7 @@
       tagger: getParameterByName("popup") == "true" ? "" : get_name_tag(),
       commit_msg: "",
       files: "",
-      readme: "",
-      tagger: get_name_tag()
+      readme: ""
     },
     server = "http://classifier.leimstaedtner.it/";
 
