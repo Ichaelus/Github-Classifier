@@ -203,10 +203,7 @@ def formatClassifierLoaded(classifier):
 	#			{class: "DATA", val : 0.02},
 	#			{class: "OTHER", val : 0.04}
 	#		],
-	#		description: "A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.",
 	#		yield: "81",
-	#		active: true,
-	#		uncertainty: 0.5	
 	#	}}
 	#}
 
