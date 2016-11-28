@@ -189,6 +189,27 @@ def formatSavePoints(savePointNames):
 	#	}}
 	#}
 
+def formatClassifierLoaded(classifier):
+	return 'NotImplemented'
+	# EXAMPLE
+	# {classificators:{
+	# 	"<ModuleName>" : {
+	#		result:[
+	#			{class: "DEV", val : 0.04},
+	#			{class: "HW", val : 0.13},
+	#			{class: "EDU", val : 0.11},
+	#			{class: "DOCS", val : 0.24},
+	#			{class: "WEB", val : 0.59},
+	#			{class: "DATA", val : 0.02},
+	#			{class: "OTHER", val : 0.04}
+	#		],
+	#		description: "A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.",
+	#		yield: "81",
+	#		active: true,
+	#		uncertainty: 0.5	
+	#	}}
+	#}
+
 #Hilfsunktionen für oben
 def formatClassificatorResults(results):
 	classificatorResults = {}
