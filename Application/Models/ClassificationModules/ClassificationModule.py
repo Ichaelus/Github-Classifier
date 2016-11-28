@@ -119,7 +119,7 @@ class ClassificationModule:
            
         global Yield, Accuracy
         Yield = nb_right_pred / len(data)
-
+        #hier muss noch accuracy richtig gesetzt werden, außerdem passt evtl das Rückgabeformat nicht
         class_acc = class_right_pred_count / class_count
         return [Yield] + class_acc.tolist()
 

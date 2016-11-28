@@ -73,8 +73,9 @@ def getAllDescriptions():
     return corpus
 
 def getInformationsForRepo(repolink):
-    '''Nur dafür da wenn ein bestimmtes Repo klassifiziert werden soll dass noch nicht in DB ist'''
-    return 'NotImplemented'
+    '''Nur dafür da wenn ein bestimmtes Repo klassifiziert werden soll dass noch nicht in DB ist,
+    nimmt wirklich die Repo-Url und nicht die API-Url'''
+    return api_call('generate_sample&api-url=' + repolink)
 
 
 
