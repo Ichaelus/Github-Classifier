@@ -9,8 +9,7 @@ from FeatureProcessing import getLabelIndex
 import numpy as np
 
 import xml.etree.ElementTree as ET
-import os.path
-import os.mkdir
+import os
 
 class ClassificationModule:
     __metaclass__ = ABCMeta
@@ -230,20 +229,19 @@ class ClassificationModule:
 		#returned ein ClassificationModule
 		return data
 	
-	"""
-	@classmethod
-	def newDirForModule(self):
-		"""#builds a new directory and xml-file if it doesnt exit
+	
+    @classmethod
+    def newDirForModule(self):
+        """builds a new directory and xml-file if it doesnt exit
 		"""
-  		tmpPath = os.path.abspath(".") 
-  		tmpPath = os.path.join(tmpPath, self.path)
-  		if os.path.exists(tmpPath) == False:
-    			os.mkdir(tmpPath)
-    			# throws a  OSError if path already exits
+        tmpPath = os.path.abspath(".") 
+        tmpPath = os.path.join(tmpPath, self.path)
+        if (os.path.exists(tmpPath) == False):
+            os.mkdir(tmpPath)
+    		# throws a  OSError if path already exits
+            tmpPath = os.path.join(tmpPath, self.name + '.xml')
+            d = open(tmpPath, "w")
+            d.write("<data></data>\n")
+            d.close()
 
-    			tmpPath = os.path.join(tmpPath, self.name + '.xml')
-    			d = open(tmpPath, "w")
-    			d.write("<data></data>\n")
-    			d.close()
-		return None
-    	"""
+    	

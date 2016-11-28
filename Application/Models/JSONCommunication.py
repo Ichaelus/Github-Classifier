@@ -3,7 +3,7 @@
 import demjson
 import ClassificationModules.ClassificationModule
 
-def ConvertClassifierCollectionToJSON(ClassifierCollection):
+def ConvertClassifierCollectionToJSON(classificationModules):
     # Return a list of classificator objects, containing the following attributes:
 		# name: string, 
 		# description:  string, 
@@ -13,10 +13,10 @@ def ConvertClassifierCollectionToJSON(ClassifierCollection):
 		classificators = []
 		classificatornames = []
 		accuracies = []
-		for c in ClassifierCollection:
+		for c in classificationModules:
 			accuracy = c.getAccuracy()
-			accuracies = accuracies.append(accuracy)
-			classificatornames = classificatornames.append(c.getName())
+			accuracies.append(accuracy)
+			classificatornames.append(c.getName())
 			c = {'name':c.getName(), 'description':c.getDescription(), 'yield':c.getYield(), 'active':c.isMuteClassificationModule()}
 			classificators.append(c)
 		classificatorResults = formatClassificatorAccuracyResult(classificatornames, accuracies)
@@ -56,8 +56,8 @@ def formatSinglePrediction(data, result):
 	classificatorResults = formatClassificatorResults(result)
 	returndata = {'repoName':repoName, 'classificatorResults':classificatorResults}
 	returnjson = demjson.encode(returndata)
-	#return returnjson
-	return '{"repoName": "rName", "classificatorResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
+	return returnjson
+	#return '{"repoName": "rName", "classificatorResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
 	# Updated Example
 	# {
 	# 	"repoName": "repoName",
@@ -203,9 +203,9 @@ def formatClassificatorResults(results):
 		classificatorResults.append({cname : cprobabilities})
 	return classificatorResults
 
-def formatClassificatorAccuracyResult(classifiernames, accuracies):
+def formatClassificatorAccuracyResult(classificatornames, accuracies):
 	classificatorResults = []
-	for i in xrange(len(classifiernames)):
+	for i in xrange(len(classificatornames)):
 		result = []
 		result.append({'class':'DEV', 'val':accuracies[i]['DEV']})
 		result.append({'class':'HW', 'val':accuracies[i]['HW']})
@@ -214,7 +214,7 @@ def formatClassificatorAccuracyResult(classifiernames, accuracies):
 		result.append({'class':'WEB', 'val':accuracies[i]['WEB']})
 		result.append({'class':'DATA', 'val':accuracies[i]['DATA']})
 		result.append({'class':'OTHER', 'val':accuracies[i]['OTHER']})
-		classificatorResults.append({classifiernames[i] : result})
+		classificatorResults.append({classificatornames[i] : result})
 	return classificatorResults
 
 def formatRepo(repo):

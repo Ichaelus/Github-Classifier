@@ -19,7 +19,7 @@ def api_call(keyString, filterString="", tableString=""):
         print 'Error with api call', e
     return data
 
-def moveRepoFromUnlabeledToToClassify(sample):
+def moveRepoFromUnlabeledToToClassify(api_url):
     repoDBID = NotImplemented
     #...
     return 'NotImplemented' 
@@ -30,7 +30,7 @@ def moveRepoFromToClassifyToTrain(api_url, label):
     #...returns the feature vector
     return 'NotImplemented'
 
-def moveRepoFromUnlabeledToSemiSupervised(sample):
+def moveRepoFromUnlabeledToSemiSupervised(api_url, label):
     repoDBID = NotImplemented
     #...
     return 'NotImplemented'

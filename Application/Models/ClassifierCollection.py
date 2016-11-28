@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import ClassificationModules.ClassificationModule
+import Models.ClassificationModules.ClassificationModule
 import DatabaseCommunication as DC
 import ClassificationModules.ActiveLearningSpecific as AL
 
@@ -101,9 +101,8 @@ class ClassifierCollection:
         return (sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results)
     
     @classmethod
-    def ALTrainInstantlyAllClassificationModules(self, api_url, label):
+    def ALTrainInstantlyAllClassificationModules(self, sample):
         """Train all ClassificationModules with the user query result"""
-        sample DC.moveRepoFromToClassifyToTrain(api_url, label)
         for c in self.classificationmodules:
             c.trainOnSample(sample)
     

@@ -169,7 +169,8 @@ def api(key):
 
 	elif(key == "ALclassification"):
 		# Save user classification
-		ALTrainInstantlyAllClassificationModules(getQueryValue("api-url"), getQueryValue("label")):
+		sample = DC.moveRepoFromToClassifyToTrain(getQueryValue("api-url"), getQueryValue("label"))
+		ALTrainInstantlyAllClassificationModules(sample)
 	else :
 		return "API call for: " + key
 
