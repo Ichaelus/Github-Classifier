@@ -147,13 +147,15 @@ def api(key):
 
 	elif(key == "save"):
 		ClassifierName = getQueryValue("name")
-		homeclassifiercollection.getClassificationModule(ClassifierName).saveModule()
+		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
+		classifier.saveModule(classifier)
 		return "Module saved"
 
 	elif(key == "load"):
 		ClassifierName = getQueryValue("name")
 		try:
 			newModule = homeclassifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint(getQueryValue("savepoint"))
+			setClassificationModule(ClassifierName, newModule)
 			test_data = Models.DatabaseCommunication.getTestData()
 			return Models.JSONCommunication.formatSingleClassificationTest(newModule, newModule.testModule(test_data, newModule))
 		except NameError as err:

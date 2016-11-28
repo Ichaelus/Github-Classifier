@@ -154,7 +154,7 @@ class ClassificationModule:
 
 	
     @classmethod
-    def saveModule(self):
+    def saveModule(self, classifierself):
         """serializes modul and add a savepoint to XML-File"""
         ###Folder building if necessary
         self.newDirForModule()
@@ -165,7 +165,7 @@ class ClassificationModule:
         tmpPath = os.path.join(tmpPath, self.name, filename)
 		#save module
         output = open(tmpPath, 'w')
-        pickle.dump(ClassificationModule, output, 2)
+        pickle.dump(classifierself, output, 2)
         output.close()
 		
 		###XML-file
@@ -244,7 +244,7 @@ class ClassificationModule:
             filename = lastmodified
         	#generating a path that is indepentent from operating system
         tmpPath = os.path.join(os.path.abspath("."), "../../Classifier_Savepoints")
-        tmpPath = os.path.join(tmpPath, self.path, self.name, filename)
+        tmpPath = os.path.join(tmpPath, self.name, filename)
 		#deserialization
         f = open(tmpPath)
         data = pickle.load(f)

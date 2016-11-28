@@ -20,13 +20,14 @@ homesetclassifiercollection(classifiercollection)
 descriptionCorpus = DC.getAllDescriptions()
 bnn = basicneuralnetwork(descriptionCorpus)
 classifiercollection.addClassificationModule(bnn)
-
-#testing stuff
-#bnn = basicneuralnetwork()
-#classifiercollection.addClassificationModule(bnn)
-#print bnn.getdescription()
-#print classifiercollection.getClassificationModules()
-
+#on startup load last used version. also for testing loading
+#ClassifierName = bnn.getName()
+#try:
+#    newModule = classifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint()
+#    classifiercollection.setClassificationModule(ClassifierName, newModule)
+#    print 'succesfully loaded old bnn-version: ' + str(newModule)
+#except NameError as err:
+#    raise err
 
 if __name__ == '__main__':
     webbrowser.open("http://localhost:8080/")
