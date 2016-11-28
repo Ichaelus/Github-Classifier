@@ -9,8 +9,7 @@ from FeatureProcessing import getLabelIndex
 import numpy as np
 
 import xml.etree.ElementTree as ET
-import os.path
-import os.mkdir
+import os
 
 class ClassificationModule:
     __metaclass__ = ABCMeta
@@ -120,7 +119,7 @@ class ClassificationModule:
            
         global Yield, Accuracy
         Yield = nb_right_pred / len(data)
-
+        #hier muss noch accuracy richtig gesetzt werden, außerdem passt evtl das Rückgabeformat nicht
         class_acc = class_right_pred_count / class_count
         return [Yield] + class_acc.tolist()
 
@@ -230,20 +229,19 @@ class ClassificationModule:
 		#returned ein ClassificationModule
 		return data
 	
-	"""
-	@classmethod
-	def newDirForModule(self):
-		"""#builds a new directory and xml-file if it doesnt exit
+	
+    @classmethod
+    def newDirForModule(self):
+        """builds a new directory and xml-file if it doesnt exit
 		"""
-  		tmpPath = os.path.abspath(".") 
-  		tmpPath = os.path.join(tmpPath, self.path)
-  		if os.path.exists(tmpPath) == False:
-    			os.mkdir(tmpPath)
-    			# throws a  OSError if path already exits
+        tmpPath = os.path.abspath(".") 
+        tmpPath = os.path.join(tmpPath, self.path)
+        if (os.path.exists(tmpPath) == False):
+            os.mkdir(tmpPath)
+    		# throws a  OSError if path already exits
+            tmpPath = os.path.join(tmpPath, self.name + '.xml')
+            d = open(tmpPath, "w")
+            d.write("<data></data>\n")
+            d.close()
 
-    			tmpPath = os.path.join(tmpPath, self.name + '.xml')
-    			d = open(tmpPath, "w")
-    			d.write("<data></data>\n")
-    			d.close()
-		return None
-    	"""
+    	
