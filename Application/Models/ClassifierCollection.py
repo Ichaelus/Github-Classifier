@@ -97,7 +97,7 @@ class ClassifierCollection:
                     SemiSupervisedL = True
                     """
                     pass
-                results.append([resultc, uncertainty])
+                results.append([c.getName(), resultc, uncertainty])
         return (sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results)
     
     @classmethod
