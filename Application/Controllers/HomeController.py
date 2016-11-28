@@ -163,7 +163,7 @@ def api(key):
 		ClassifierName = getQueryValue("name")
 		try:
 			savePoints = homeclassifiercollection.getClassificationModule(ClassifierName).getSavePointsForClassificationModules()
-			return Models.JSONCommunication().formatSavePoints(savePoints)
+			return Models.JSONCommunication.formatSavePoints(savePoints)
 		except NameError as err:
 			return('Name error')
 

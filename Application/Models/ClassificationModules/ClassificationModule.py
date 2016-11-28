@@ -17,7 +17,6 @@ class ClassificationModule:
 
     description = "Doesnt have a description yet"
     name = ""
-    path = "Classifier_Savepoints" 	#must be relative to start.py
     muted = False
     binary = False
     Yield = 0.0
@@ -163,7 +162,7 @@ class ClassificationModule:
         filename = datetime.now().isoformat() + '.pkl'
 		#generating a path that is indepentent from operating system
         tmpPath = os.path.abspath(".")
-        tmpPath = os.path.join(tmpPath, self.path, self.name, filename)
+        tmpPath = os.path.join(tmpPath, self.name, filename)
 		#save module
         output = open(tmpPath, 'w')
         pickle.dump(ClassificationModule, output, 2)
@@ -172,7 +171,7 @@ class ClassificationModule:
 		###XML-file
 		#generating a path that is indepentent from operating system
         tmpPath = os.path.abspath(".") 
-        tmpPath = os.path.join(tmpPath, self.path, self.name, self.name + '.xml')
+        tmpPath = os.path.join(tmpPath, self.name, self.name + '.xml')
         tree = ET.parse(tmpPath)
         root = tree.getroot()
         #write information about module into ElementTree-object
@@ -201,8 +200,9 @@ class ClassificationModule:
         ###	at directory path
         """holt aus dem XML File die möglichen SaveZustände"""
         #generating a path that is indepentent from operating system
+        self.newDirForModule()
         tmpPath = os.path.abspath(".") 
-        tmpPath = os.path.join(tmpPath, self.path, self.name, self.name + '.xml')
+        tmpPath = os.path.join(tmpPath, self.name, self.name + '.xml')
         #open and convert XML-File to ElementTree-object
         tree = ET.parse(tmpPath)
         root = tree.getroot()
@@ -223,10 +223,11 @@ class ClassificationModule:
 		###	at directory path
 		#wenn lastused, dann wird aus dem XML-File der Name vom zuletzt benutzten SavePoint rausgesucht
         """loads another SafePoint with filename of the current ClassificationModule"""
+        self.newDirForModule()
         if (filename is "lastused"):
             #generating a path that is indepentent from operating system
             tmpPath = os.path.abspath(".")
-            tmpPath = os.path.join(tmpPath, self.path, self.name, self.name + '.xml')
+            tmpPath = os.path.join(tmpPath, self.name, self.name + '.xml')
             #open and convert XML-File to ElementTree-data
             tree = ET.parse(tmpPath)
             root = tree.getroot()
@@ -256,7 +257,7 @@ class ClassificationModule:
         """builds a new directory and xml-file if it doesnt exit"""
         #generating a path that is indepentent from operating system
         tmpPath = os.path.abspath(".") 
-        tmpPath = os.path.join(tmpPath, self.path, self.name)
+        tmpPath = os.path.join(tmpPath, self.name)
         if (os.path.exists(tmpPath) == False):
             #building new Folder
             os.mkdir(tmpPath)       # throws a  OSError if path already exits
