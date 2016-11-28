@@ -103,7 +103,7 @@ class ClassifierCollection:
     @classmethod
     def ALTrainInstantlyAllClassificationModules(self, api_url, label):
         """Train all ClassificationModules with the user query result"""
-        sample = DC.moveRepoFromToClassifyToTrain(api_url, label)
+        sample DC.moveRepoFromToClassifyToTrain(api_url, label)
         for c in self.classificationmodules:
             c.trainOnSample(sample)
     

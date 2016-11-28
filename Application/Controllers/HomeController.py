@@ -169,7 +169,7 @@ def api(key):
 
 	elif(key == "ALclassification"):
 		# Save user classification
-		ALTrainInstantlyAllClassificationModules(getQueryValue("api-url"), getQueryValue("label"))
+		ALTrainInstantlyAllClassificationModules(getQueryValue("api-url"), getQueryValue("label")):
 	else :
 		return "API call for: " + key
 
