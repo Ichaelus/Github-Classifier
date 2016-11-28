@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from FeatureProcessing import *
-from ClassificationModule import ClassificationModule
 from keras.models import Sequential
 from keras.layers import Activation, Dense
 from keras.optimizers import Adam
 import numpy as np
+import abc
+from ClassificationModule import ClassificationModule
+
+
 
 
 
@@ -89,3 +92,5 @@ class basicneuralnetwork(ClassificationModule):
         sd = getDescription(data)
         # Returns numpy array which contains 1 array with features
         return self.vectorizer.transform([sd]).toarray()
+
+

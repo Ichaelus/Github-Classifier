@@ -8,6 +8,7 @@ import ActiveLearningSpecific as AL
 from FeatureProcessing import getLabelIndex
 import numpy as np
 
+
 import xml.etree.ElementTree as ET
 import os
 
@@ -102,14 +103,14 @@ class ClassificationModule:
         self.binary = bin
     
     @classmethod
-    def testModule(self, data):
+    def testModule(self, data, classifierself):
         """Module tests itself, refreshes yield and accuracy and returns data about these thests to the ClassifierCollection"""
         nb_right_pred = 0 # Number of right predictions
         class_count = np.zeros(7) # Number each class was found in data
         class_right_pred_count = np.zeros(7)
 
         for sample in data:
-            pred_out = self.predictLabelAndProbability(self, data)
+            pred_out = classifierself.predictLabelAndProbability(data)
             # Check if prediction was right
             true_label_index = getLabelIndex(data)
             if (np.argmax(pred_out) == true_label_index):
@@ -119,16 +120,22 @@ class ClassificationModule:
            
         global Yield, Accuracy
         Yield = nb_right_pred / len(data)
-        #hier muss noch accuracy richtig gesetzt werden, außerdem passt evtl das Rückgabeformat nicht
         class_acc = class_right_pred_count / class_count
-        return [Yield] + class_acc.tolist()
+        Accuracy['DEV'] = class_acc[0]
+        Accuracy['HW'] = class_acc[1]
+        Accuracy['EDU'] = class_acc[2]
+        Accuracy['DOCS'] = class_acc[3]
+        Accuracy['WEB'] = class_acc[4]
+        Accuracy['DATA'] = class_acc[5]
+        Accuracy['OTHER'] = class_acc[6]
+        return [Yield, Accuracy]
 
     @classmethod
-    def calculatePoolBasedQuery(self,formula, data):
+    def calculatePoolBasedQuery(self,formula, data, classifierself):
         """Module goes trough each sample, calculates the uncertainty for it and returns the sample with the highest uncertainty"""
         uncertainties = []
         for sample in data:
-            resultc = self.predictLabelAndProbability(self, sample)
+            resultc = classifierself.predictLabelAndProbability(sample)
             if(formula == 'Entropy-Based'):
                 uncertainty = AL.calculateUncertaintyEntropyBased(resultc)
             elif(formula == "Least Confident"):
@@ -243,4 +250,4 @@ class ClassificationModule:
             d.write("<data></data>\n")
             d.close()
 
-    	
+

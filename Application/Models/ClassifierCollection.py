@@ -89,15 +89,14 @@ class ClassifierCollection:
                     #Hier müssen wir uns noch Gedanken machen, vlt kontrollieren
                     #wir hier nochmal ob auch wirklich alle Classifier das selbe sagen und dann
                     #nehmen wir diese Vorhersage von allen als Label nur dann?
-                    """
-                    Label = NotImplemented
-                    sampleNowWithLabel = NotImplemented
-                    DC.moveRepoFromUnlabeledToSemiSupervised(sampleNowWithLabel)
-                    SemiSupervisedLabel = Label
-                    SemiSupervisedL = True
-                    """
+                    
+                    #Label = NotImplemented
+                    #sampleNowWithLabel = NotImplemented
+                    #DC.moveRepoFromUnlabeledToSemiSupervised(sampleNowWithLabel)
+                    #SemiSupervisedLabel = Label
+                    #SemiSupervisedL = True
                     pass
-                results.append([c.getName(), resultc, uncertainty])
+                results.append([c.getName(), resultc, uncertainty,(uncertainty > thresholdquery)])
         return (sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results)
     
     @classmethod
@@ -115,12 +114,12 @@ class ClassifierCollection:
         i = 0
         userquery = None
         classifierasking = 0
-        propabilitiesForUserQuery = []
+        resultsForUserQuery = []
         for j in xrange(0, len(self.classificationmodules)):
             if(j == self.poolbasedalclassifierturn + i):
                 c = self.classificationmodules[j]
                 if not c.isMuteClassificationModule():
-                    userquery = c.calculatePoolBasedQuery(formula, data)
+                    userquery = c.calculatePoolBasedQuery(formula, data, c)
                     classifierasking = c
                 else:
                     i = i + 1
@@ -133,8 +132,17 @@ class ClassifierCollection:
                         else:
                             raise Exception('Error, trying to do doPoolBasedALRound without a non-muted classifier')
         for c in self.classificationmodules:
-            propabilitiesForUserQuery = propabilitiesForUserQuery.append(c.predictLabelAndProbability(userquery))
-        return userquery, classifierasking, propabilitiesForUserQuery
+            prob = c.predictLabelAndProbability(userquery)
+            uncertainty = None
+            if(formula == 'Entropy-Based'):
+                uncertainty = AL.calculateUncertaintyEntropyBased(prob)
+            elif(formula == "Least Confident"):
+                uncertainty = AL.calculateUncertaintyLeastConfident(prob)
+            elif(formula == "Margin-Sampling"):
+                uncertainty = AL.calculateUncertaintyMarginSampling(prob)
+            else: raise Exception("No such formula")
+            resultsForUserQuery.append([c.getName(),prob,uncertainty])
+        return userquery, classifierasking, resultsForUserQuery
 
 
     @classmethod
@@ -143,7 +151,7 @@ class ClassifierCollection:
         data = DC.getTestData()
         results = []
         for c in self.classificationmodules:
-            results.append(c.testModule(data))
+            results.append([c.getName(), c.testModule(data, c)])
         return results
 
     @classmethod
@@ -152,7 +160,7 @@ class ClassifierCollection:
         data = DC.getInformationsForRepo(repolink)
         results = []
         for c in self.classificationmodules:
-            results.append([c.getName(), c.predictProbability(data)])
+            results.append([c.getName(), c.predictLabelAndProbability(data)])
         return data, results
 
     @classmethod

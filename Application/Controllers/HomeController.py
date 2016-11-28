@@ -128,7 +128,7 @@ def api(key):
 
 		# Test classifier
 		test_data = Models.DatabaseCommunication.getTestData()
-		return classifier.testModule(test_data)
+		return classifier.testModule(test_data, classifier)
 
 	elif(key == "retrainSemiSupervised"):
 		ClassifierName = getQueryValue("name")
@@ -155,7 +155,7 @@ def api(key):
 		try:
 			newModule = homeclassifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint(getQueryValue("savepoint"))
 			test_data = Models.DatabaseCommunication.getTestData()
-			return Models.JSONCommunication.formatSingleClassificationTest(newModule.testModule(test_data))
+			return Models.JSONCommunication.formatSingleClassificationTest(newModule, newModule.testModule(test_data, newModule))
 		except NameError as err:
 			return('Name error')
 
