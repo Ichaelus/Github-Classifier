@@ -118,9 +118,11 @@ class ClassificationModule:
                 class_right_pred_count[true_label_index] += 1
             class_count[true_label_index] += 1
            
-        global Yield, Accuracy
+        global Yield
+        global Accuracy
         Yield = nb_right_pred / len(data)
         class_acc = class_right_pred_count / class_count
+        Accuracy = {}
         Accuracy['DEV'] = class_acc[0]
         Accuracy['HW'] = class_acc[1]
         Accuracy['EDU'] = class_acc[2]
@@ -154,44 +156,44 @@ class ClassificationModule:
 	
     @classmethod
     def saveModule(self):
-		"""serializes modul and add a savepoint to XML-File"""
+        """serializes modul and add a savepoint to XML-File"""
         ###Folder building if necessary
         self.newDirForModule()
-		###Serialization
-		filename = datetime.now().isoformat() + '.pkl'
+        ###Serialization
+        filename = datetime.now().isoformat() + '.pkl'
 		#generating a path that is indepentent from operating system
         tmpPath = os.path.abspath(".")
-		tmpPath = os.path.join(tmpPath, self.path, self.name, filename)
+        tmpPath = os.path.join(tmpPath, self.path, self.name, filename)
 		#save module
         output = open(tmpPath, 'w')
-		pickle.dump(ClassificationModule, output, 2)
-		output.close()
+        pickle.dump(ClassificationModule, output, 2)
+        output.close()
 		
 		###XML-file
 		#generating a path that is indepentent from operating system
         tmpPath = os.path.abspath(".") 
-		tmpPath = os.path.join(tmpPath, self.path, self.name, self.name + '.xml')
-		tree = ET.parse(tmpPath)		
-		root = tree.getroot()
+        tmpPath = os.path.join(tmpPath, self.path, self.name, self.name + '.xml')
+        tree = ET.parse(tmpPath)
+        root = tree.getroot()
         #write information about module into ElementTree-object
-		today = date.today()
-		entry = ET.SubElement(root, 'version', {'name':filename})
-		day = ET.SubElement(entry, 'day')
-		day.text = str(today.day)
-		month = ET.SubElement(entry, 'month')
-		month.text = str(today.month)
-		year = ET.SubElement(entry, 'year')
-		year.text = str(today.year)
+        today = date.today()
+        entry = ET.SubElement(root, 'version', {'name':filename})
+        day = ET.SubElement(entry, 'day')
+        day.text = str(today.day)
+        month = ET.SubElement(entry, 'month')
+        month.text = str(today.month)
+        year = ET.SubElement(entry, 'year')
+        year.text = str(today.year)
 		#SubElement can only handle dicts out of strings => transformation necessary
-		stringDict = {}
-		for key, value in self.Accuracy.iteritems():
+        stringDict = {}
+        for key, value in self.Accuracy.iteritems():
 			stringDict[str(key)] = str(value)
-		ET.SubElement(entry, 'accuracy', stringDict)
+        ET.SubElement(entry, 'accuracy', stringDict)
         ElementYield = ET.SubElement(entry, 'yield')
         ElementYield.text = str(self.Yield)
         #save XML-File
-		tree.write(tmpPath)
-		return None
+        tree.write(tmpPath)
+        return None
 		
     @classmethod
     def getSavePointsForClassificationModules(self):
@@ -206,7 +208,7 @@ class ClassificationModule:
         root = tree.getroot()
         savePoints = []
         for child in root:
-        	moduleAccuracy = {}   
+            moduleAccuracy = {}
             for i in xrange(0, len(child.find('accuracy').attrib.keys())):
                 moduleAccuracy[child.find('accuracy').attrib.keys()[i]] = float(child.find('accuracy').attrib.values()[i])
             savePoints.append([child.attrib.values()[0], moduleAccuracy, float(child.find('yield').text)])
@@ -220,33 +222,33 @@ class ClassificationModule:
         ### require a xml-file which contains <data></data>
 		###	at directory path
 		#wenn lastused, dann wird aus dem XML-File der Name vom zuletzt benutzten SavePoint rausgesucht
-		"""loads another SafePoint with filename of the current ClassificationModule"""
-		if (filename is "lastused"):
-			#generating a path that is indepentent from operating system
-            tmpPath = os.path.abspath(".") 
-			tmpPath = os.path.join(tmpPath, self.path, self.name, self.name + '.xml')
+        """loads another SafePoint with filename of the current ClassificationModule"""
+        if (filename is "lastused"):
+            #generating a path that is indepentent from operating system
+            tmpPath = os.path.abspath(".")
+            tmpPath = os.path.join(tmpPath, self.path, self.name, self.name + '.xml')
             #open and convert XML-File to ElementTree-data
-			tree = ET.parse(tmpPath)
-			root = tree.getroot()
-			lastmodified = 'zzzzzzzzzzzzzzzzzzzzzz'  #Lexikographisch sehr schlechtes wort
+            tree = ET.parse(tmpPath)
+            root = tree.getroot()
+            lastmodified = 'zzzzzzzzzzzzzzzzzzzzzz'  #Lexikographisch sehr schlechtes wort
 													#quasi wie -unendlich bei Zahlensortierverfahren
 			#search for last saved file
-            	for child in root:
+            for child in root:
 				tmp = child.attrib.values()[0]
 				if (lastmodified > tmp):
 					lastmodified = tmp
-			if (lastmodified is "zzzzzzzzzzzzzzzzzzzzzz"):
+            if (lastmodified is "zzzzzzzzzzzzzzzzzzzzzz"):
 				#there is no savepoint
 				return None
-			filename = lastmodified
+            filename = lastmodified
         	#generating a path that is indepentent from operating system
-		tmpPath = os.path.abspath(".")
-		tmpPath = os.path.join(tmpPath, self.path, self.name, filename)
+        tmpPath = os.path.abspath(".")
+        tmpPath = os.path.join(tmpPath, self.path, self.name, filename)
 		#deserialization
         f = open(tmpPath)
-		data = pickle.load(f)
+        data = pickle.load(f)
 		#return: ClassificationModule or None if there isnt one
-		return data
+        return data
 	
 	
     @classmethod
