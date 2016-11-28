@@ -16,7 +16,7 @@ class ClassificationModule:
 
     description = "Doesnt have a description yet"
     name = ""
-    path = "" 	#must be relative to start.py
+    path = "Classifier_Savepoints" 	#must be relative to start.py
     muted = False
     binary = False
     Yield = 0.0
@@ -153,14 +153,14 @@ class ClassificationModule:
 		#Serialization
 		filename = datetime.now().isoformat() + '.pkl'
 		tmpPath = os.path.abspath(".")
-		tmpPath = os.path.join(tmpPath, self.path, filename)
+		tmpPath = os.path.join(tmpPath, self.path, self.name, filename)
 		output = open(tmpPath, 'w')
 		pickle.dump(ClassificationModule, output, 2)
 		output.close()
 		
 		#XML-file
 		tmpPath = os.path.abspath(".") 
-		tmpPath = os.path.join(tmpPath, self.path, self.name + '.xml')
+		tmpPath = os.path.join(tmpPath, self.path, self.name, self.name + '.xml')
 		tree = ET.parse(tmpPath)		
 		root = tree.getroot()
 	
@@ -188,7 +188,7 @@ class ClassificationModule:
         ###	at directory path
         """holt aus dem XML File die möglichen SaveZustände"""
         tmpPath = os.path.abspath(".") 
-        tmpPath = os.path.join(tmpPath, self.path, self.name + '.xml')
+        tmpPath = os.path.join(tmpPath, self.path, self.name, self.name + '.xml')
         tree = ET.parse(tmpPath)
         root = tree.getroot()
         savePoints = []
@@ -209,7 +209,7 @@ class ClassificationModule:
 		"""loads another SafePoint with filename of the current ClassificationModule"""
 		if (filename is "lastused"):
 			tmpPath = os.path.abspath(".") 
-			tmpPath = os.path.join(tmpPath, self.path, self.name + '.xml')
+			tmpPath = os.path.join(tmpPath, self.path, self.name, self.name + '.xml')
 			tree = ET.parse(tmpPath)
 			root = tree.getroot()
 			lastmodified = 'zzzzzzzzzzzzzzzzzzzzzz'  #Lexikographisch sehr schlechtes wort
@@ -223,7 +223,7 @@ class ClassificationModule:
 				return None
 			filename = lastmodified
 		tmpPath = os.path.abspath(".")
-		tmpPath = os.path.join(tmpPath, self.path, filename)
+		tmpPath = os.path.join(tmpPath, self.path, self.name, filename)
 		f = open(tmpPath)
 		data = pickle.load(f)
 		#returned ein ClassificationModule
@@ -232,10 +232,9 @@ class ClassificationModule:
 	
     @classmethod
     def newDirForModule(self):
-        """builds a new directory and xml-file if it doesnt exit
-		"""
+        """builds a new directory and xml-file if it doesnt exit"""
         tmpPath = os.path.abspath(".") 
-        tmpPath = os.path.join(tmpPath, self.path)
+        tmpPath = os.path.join(tmpPath, self.path, self.name)
         if (os.path.exists(tmpPath) == False):
             os.mkdir(tmpPath)
     		# throws a  OSError if path already exits
