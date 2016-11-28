@@ -20,20 +20,18 @@ def api_call(keyString, filterString="", tableString=""):
     return data
 
 def moveRepoFromUnlabeledToToClassify(api_url):
-    repoDBID = NotImplemented
-    #...
-    return 'NotImplemented' 
+    data = api_call('move&from_table=unlabeled&to_tabel=to_classify&api_url=' + api_url)
+    return data
 
 def moveRepoFromToClassifyToTrain(api_url, label):
     # moves <api_url> to train and assigns the given label
-    repoDBID = NotImplemented
-    #...returns the feature vector
-    return 'NotImplemented'
+    data = api_call('move&from_table=to_classify&to_tabel=train&api_url=' + api_url + '&label=' + label)
+    return data
 
 def moveRepoFromUnlabeledToSemiSupervised(api_url, label):
-    repoDBID = NotImplemented
-    #...
-    return 'NotImplemented'
+    #label muss großgeschriebener String sein
+    data = api_call('move&from_table=unlabeled&to_tabel=semisupervised&api_url=' + api_url + '&label=' + label)
+    return data
 
 def getLabeledData():
     return api_call('all', tableString="labeled")
@@ -73,8 +71,7 @@ def getAllDescriptions():
     return corpus
 
 def getInformationsForRepo(repolink):
-    '''Nur dafür da wenn ein bestimmtes Repo klassifiziert werden soll dass noch nicht in DB ist,
-    nimmt wirklich die Repo-Url und nicht die API-Url'''
+    '''Nur dafür da wenn ein bestimmtes Repo klassifiziert werden soll dass noch nicht in DB ist'''
     return api_call('generate_sample&api-url=' + repolink)
 
 
