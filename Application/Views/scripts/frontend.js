@@ -179,7 +179,19 @@ function initVue(){
     		$('#overlay_wrapper').fadeIn();
     	},
     	switchState: function(id){
-    		classificatorData.classificators[id].active = !classificatorData.classificators[id].active;
+        let c= classificatorData.classificators[id];
+        if(!c.active){
+          $.get("/get/mute?name="+c.name, function(result){
+            if(result != "success")
+                throw new Error("Invalid server response");
+          });
+        }else{
+          $.get("/get/unmute?name="+c.name, function(result){
+            if(result != "success")
+                throw new Error("Invalid server response");
+          });
+        }
+    		classificatorData.classificators[id].active = !c.active;
     	},
     	getMax: function(id){
     		let max = 0;

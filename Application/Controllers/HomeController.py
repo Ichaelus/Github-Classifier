@@ -157,7 +157,7 @@ def api(key):
 			test_data = Models.DatabaseCommunication.getTestData()
 			return Models.JSONCommunication.formatSingleClassificationTest(newModule.testModule(test_data))
 		except NameError as err:
-			print('Name error', err)
+			return('Name error')
 
 	elif(key == "savePoints"):
 		ClassifierName = getQueryValue("name")
@@ -165,12 +165,28 @@ def api(key):
 			savePoints = homeclassifiercollection.getClassificationModule(ClassifierName).getSavePointsForClassificationModules()
 			return Models.JSONCommunication().formatSavePoints(savePoints)
 		except NameError as err:
-			print('Name error', err)
+			return('Name error')
 
 	elif(key == "ALclassification"):
 		# Save user classification
 		sample = DC.moveRepoFromToClassifyToTrain(getQueryValue("api-url"), getQueryValue("label"))
 		ALTrainInstantlyAllClassificationModules(sample)
+
+	elif(key == "mute"):
+		try:
+			homeclassifiercollection.getClassificationModule(getQueryValue("name")).muteClassificationModule()
+			return "success"
+		except NameError as err:
+			return('Module not found')
+
+
+	elif(key == "unmute"):
+		try:
+			homeclassifiercollection.getClassificationModule(getQueryValue("name")).unmuteClassificationModule()
+			return "success"
+		except NameError as err:
+			return('Module not found')
+
 	else :
 		return "API call for: " + key
 
