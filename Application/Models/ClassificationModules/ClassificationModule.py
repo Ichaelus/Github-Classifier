@@ -161,7 +161,7 @@ class ClassificationModule:
         ###Serialization
         filename = datetime.now().isoformat() + '.pkl'
 		#generating a path that is indepentent from operating system
-        tmpPath = os.path.abspath(".")
+        tmpPath = os.path.join(os.path.abspath("."), "../../Classifier_SavePoints")
         tmpPath = os.path.join(tmpPath, self.name, filename)
 		#save module
         output = open(tmpPath, 'w')
@@ -170,7 +170,7 @@ class ClassificationModule:
 		
 		###XML-file
 		#generating a path that is indepentent from operating system
-        tmpPath = os.path.abspath(".") 
+        tmpPath = os.path.join(os.path.abspath("."), "../../Classifier_SavePoints")
         tmpPath = os.path.join(tmpPath, self.name, self.name + '.xml')
         tree = ET.parse(tmpPath)
         root = tree.getroot()
@@ -201,7 +201,7 @@ class ClassificationModule:
         """holt aus dem XML File die möglichen SaveZustände"""
         #generating a path that is indepentent from operating system
         self.newDirForModule()
-        tmpPath = os.path.abspath(".") 
+        tmpPath = os.path.join(os.path.abspath("."), "../../Classifier_SavePoints")
         tmpPath = os.path.join(tmpPath, self.name, self.name + '.xml')
         #open and convert XML-File to ElementTree-object
         tree = ET.parse(tmpPath)
@@ -226,7 +226,7 @@ class ClassificationModule:
         self.newDirForModule()
         if (filename is "lastused"):
             #generating a path that is indepentent from operating system
-            tmpPath = os.path.abspath(".")
+            tmpPath = os.path.join(os.path.abspath("."), "../../Classifier_SavePoints")
             tmpPath = os.path.join(tmpPath, self.name, self.name + '.xml')
             #open and convert XML-File to ElementTree-data
             tree = ET.parse(tmpPath)
@@ -243,7 +243,7 @@ class ClassificationModule:
 				return None
             filename = lastmodified
         	#generating a path that is indepentent from operating system
-        tmpPath = os.path.abspath(".")
+        tmpPath = os.path.join(os.path.abspath("."), "../../Classifier_Savepoints")
         tmpPath = os.path.join(tmpPath, self.path, self.name, filename)
 		#deserialization
         f = open(tmpPath)
@@ -256,7 +256,7 @@ class ClassificationModule:
     def newDirForModule(self):
         """builds a new directory and xml-file if it doesnt exit"""
         #generating a path that is indepentent from operating system
-        tmpPath = os.path.abspath(".") 
+        tmpPath = os.path.join(os.path.abspath("."), "../../Classifier_SavePoints")
         tmpPath = os.path.join(tmpPath, self.name)
         if (os.path.exists(tmpPath) == False):
             #building new Folder
