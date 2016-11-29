@@ -110,7 +110,12 @@ def api(key):
 
 	elif(key == "PredictSingleSample"):
 		# Returns classifier prediction for a given `repoLink`
-		data, result = homeclassifiercollection.PredictSingleSample(getQueryValue("repoLink"))
+		data, result = None, None
+		try:
+			data, result = homeclassifiercollection.PredictSingleSample(getQueryValue("repoLink"))
+		except Exception, e:
+			print e
+			return e
 		return Models.JSONCommunication.formatSinglePrediction(data, result)
 
 	elif(key == "startTest"):
