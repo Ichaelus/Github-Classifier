@@ -72,7 +72,7 @@ def getAllDescriptions():
 
 def getInformationsForRepo(repolink):
     '''Nur dafür da wenn ein bestimmtes Repo klassifiziert werden soll dass noch nicht in DB ist'''
-    return api_call('generate_sample&api-url=' + repolink)
-
-
-
+    data = api_call('generate_sample&api-url=' + repolink)
+    if(data == ""):
+        raise Exception("Private Repository")
+    return data

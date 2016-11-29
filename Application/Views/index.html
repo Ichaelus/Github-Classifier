@@ -174,8 +174,11 @@
                 <div class="arrow">=&gt;</div>
                 <div class="result_vector">
                     <div v-for="(r, i) in c.result" :class="'v ' + (getMax(index)  == r.val ? 'max' : '')">
-                      <span>{{r.class}}</span><span>{{r.val}}</span>
+                      <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
                     </div>
+                </div>
+                <div  title="uncertainty" :class="'uncertainty ' + (typeof(c.uncertainty) != 'undefined' ? '' : 'hidden ') + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'red ' : '') : ' ')">
+                  {{parseInt(c.uncertainty * 100)}}%
                 </div>
               </div>
             </div><!-- /classificators -->

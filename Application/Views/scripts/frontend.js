@@ -117,7 +117,7 @@ function initVue(){
           inputData.semisupervised = results.semisupervised;
           if(results.classifiersUnsure)
             window.open("/user_classification.html?popup=true&api-url="+results.repo.repoAPILink, "User decision", "channelmode=yes");
-        }else if(stateData.mode = "pool"){
+        }else if(stateData.mode == "pool"){
           inputData.classifierAsking = results.classifierAsking;
         }
 
@@ -137,11 +137,16 @@ function initVue(){
       predictSingle: function(){
         let repoLink = prompt("Please insert the link to a repository you wish to classify.");
         if(repoLink){
-          runGenerator(function *main(){
-            // Fetch sample, display
-            results = yield jQGetPromise("/get/PredictSingleSample?repoLink="+repoLink, "json");
-            stateView.updateResults(results);
-          });
+          try{
+            repoLink = convertToApiLink(repoLink);
+            runGenerator(function *main(){
+              // Fetch sample, display
+              results = yield jQGetPromise("/get/PredictSingleSample?repoLink="+repoLink, "json");
+              stateView.updateResults(results);
+            });
+          }catch(ex){
+            notify("Error predicting sample", ex, 2500);
+          }
         }
       },
       startTest: function(){
@@ -275,7 +280,7 @@ function initVue(){
         runGenerator(function *main(){
           result = yield jQGetPromise("/get/load?name="+wrapperData.currentName, "json");
           // result contains a name of the selected classificator and an accuracy array
-          if(typeof(result.Error) != "undefined")
+          if(typeof(result.Error) != "undefined"){
             notify("Error", result.Error, 2500);
            }else{ 
             stateView.updateClassificators(result.classificators);
@@ -301,7 +306,14 @@ function HandlePopupResult(result) {
 
   });
 }
-
+function convertToApiLink(repoLink){
+  // Converts a repo link to an api link. E.g. https://github.com/Ichaelus/GithubClassificator/ -> https://api.github.com/repos/Ichaelus/GithubClassificator/
+  if(repoLink.indexOf("https://github.com/") >= 0){
+    return repoLink.replace("https://github.com/", "https://api.github.com/repos/");
+  }else{
+    throw new Error("RepoLink invalid");
+  }
+}
 function jQGetPromise(url, datatype = ""){
   // Promise for $.get 
   assert(isNotEmpty(url), "URL missing");

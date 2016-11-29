@@ -174,7 +174,7 @@ button.control {
   line-height: 75px;
   font-size: 50px;
   position: relative;
-  margin-left: 50px;
+  margin-left: 10px;
   top: -3px;
 }
 .result_vector{
@@ -217,6 +217,19 @@ button.control {
   color: #719EED;
   font-size: 1.05em;
   font-weight: bold;
+}
+.uncertainty{
+  display: inline-block;
+  width: 37px;
+  text-align: right;
+  line-height: 50px;
+  top: -15px;
+  position: relative;
+  font-style: italic;
+  font-weight: bold;
+}
+.uncertainty.red{
+  color:red;
 }
 .overlay_blur{
   position: fixed;

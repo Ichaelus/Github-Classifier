@@ -35,7 +35,7 @@ def getFormulas():
 
 
 def formatSinglePrediction(data, results):
-	repo = {'repoName':data['name'], 'repoAPILink':None}
+	repo = {'repoName':data['name'], 'repoAPILink':data["api_url"]}
 	classificators = {}
 	for cresult in results:
 		classificators[cresult[0]] = {'result':formatProbabilities(cresult[1])}
