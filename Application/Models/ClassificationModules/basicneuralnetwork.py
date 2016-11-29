@@ -47,8 +47,7 @@ class basicneuralnetwork(ClassificationModule):
         model.add(Activation('softmax'))
 
         # Compile model and use Adam as optimizer
-        adam = Adam()
-        model.compile(metrics=['accuracy'], loss='categorical_crossentropy', optimizer=adam)
+        model.compile(metrics=['accuracy'], loss='categorical_crossentropy', optimizer=Adam())
 
         self.model = model
         print('Model build and ready')
