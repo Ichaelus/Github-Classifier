@@ -116,20 +116,18 @@ class ClassificationModule:
                 nb_right_pred += 1
                 class_right_pred_count[true_label_index] += 1
             class_count[true_label_index] += 1
-           
-        global Yield
-        global Accuracy
-        Yield = nb_right_pred / len(data)
-        class_acc = class_right_pred_count / class_count
-        Accuracy = {}
-        Accuracy['DEV'] = class_acc[0]
-        Accuracy['HW'] = class_acc[1]
-        Accuracy['EDU'] = class_acc[2]
-        Accuracy['DOCS'] = class_acc[3]
-        Accuracy['WEB'] = class_acc[4]
-        Accuracy['DATA'] = class_acc[5]
-        Accuracy['OTHER'] = class_acc[6]
-        return [Yield, Accuracy]
+    
+        if len(data) != 0:
+            self.Yield = float(nb_right_pred) / len(data)
+            class_acc = class_right_pred_count / class_count
+            self.Accuracy['DEV'] = class_acc[0]
+            self.Accuracy['HW'] = class_acc[1]
+            self.Accuracy['EDU'] = class_acc[2]
+            self.Accuracy['DOCS'] = class_acc[3]
+            self.Accuracy['WEB'] = class_acc[4]
+            self.Accuracy['DATA'] = class_acc[5]
+            self.Accuracy['OTHER'] = class_acc[6]
+        return [self.Yield, self.Accuracy]
 
     @classmethod
     def calculatePoolBasedQuery(self,formula, data, classifierself):
@@ -157,7 +155,6 @@ class ClassificationModule:
     def saveModule(self, classifierself):
         """serializes modul and add a savepoint to XML-File"""
         ###Folder building if necessary
-        self.newDirForModule()
         ###Serialization
         filename = datetime.now().isoformat().replace(":", "") + '.pkl'
 		#generating a path that is indepentent from operating system
@@ -200,7 +197,6 @@ class ClassificationModule:
         ###	at directory path
         """holt aus dem XML File die möglichen SaveZustände"""
         #generating a path that is indepentent from operating system
-        self.newDirForModule()
         tmpPath = self.getSavePath()
         tmpPath = os.path.join(tmpPath, self.name, self.name + '.xml')
         #open and convert XML-File to ElementTree-object
@@ -223,7 +219,6 @@ class ClassificationModule:
 		###	at directory path
 		#wenn lastused, dann wird aus dem XML-File der Name vom zuletzt benutzten SavePoint rausgesucht
         """loads another SafePoint with filename of the current ClassificationModule"""
-        self.newDirForModule()
         if (filename is "lastused"):
             #generating a path that is indepentent from operating system
             tmpPath = self.getSavePath()
@@ -253,11 +248,10 @@ class ClassificationModule:
 	
 	
     @classmethod
-    def newDirForModule(self):
+    def tryNewDirForModule(self, savepath):
         """builds a new directory and xml-file if it doesnt exit"""
         #generating a path that is indepentent from operating system
-        tmpPath = self.getSavePath()
-        tmpPath = os.path.join(tmpPath, self.name)
+        tmpPath = os.path.join(savepath, self.name)
         if (os.path.exists(tmpPath) == False):
             #building new Folder
             os.mkdir(tmpPath)       # throws a  OSError if path already exits
@@ -270,6 +264,9 @@ class ClassificationModule:
     @classmethod
     def getSavePath(self):
         """Returns the basic path to the save folder"""
-        #return os.path.join(os.path.join(os.path.join(os.path.abspath("."), ".."),".."), "Classifier_SavePoints")
-        return os.path.join(os.path.abspath("."), "Classifier_SavePoints")
+        #ensure savepath exists
+        savepath = os.path.abspath(".")
+        savepath = os.path.abspath(os.path.join(savepath, "Application/Classifier_SavePoints"))
+        self.tryNewDirForModule(savepath)
+        return savepath
 

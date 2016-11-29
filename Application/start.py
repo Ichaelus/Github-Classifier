@@ -16,8 +16,9 @@ rootApp = Bottle()
 # Have no idea at the moment if that´s the best way to do it in our case
 classifiercollection = ClassifierCollection()
 homesetclassifiercollection(classifiercollection)
-
+print 'Getting DB Descriptions to be able to create vectorizer in basicneuralnetwork'
 descriptionCorpus = DC.getAllDescriptions()
+print 'Done getting DB Descriptions'
 bnn = basicneuralnetwork(descriptionCorpus)
 classifiercollection.addClassificationModule(bnn)
 #on startup load last used version. also for testing loading

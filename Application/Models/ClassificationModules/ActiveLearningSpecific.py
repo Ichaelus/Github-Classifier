@@ -7,7 +7,8 @@ def calculateUncertaintyEntropyBased(classiefierlabelandprobability):
     prob = classiefierlabelandprobability[1:]
     sum = 0
     for classprobability in prob:
-        sum -= classprobability * log(2, classprobability)
+        if(classprobability != 0):
+            sum -= classprobability * log(2, classprobability)
     return sum
 
 def calculateUncertaintyLeastConfident(classiefierlabelandprobability):
