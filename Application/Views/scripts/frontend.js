@@ -191,6 +191,9 @@ function initVue(){
             throw new Error("Invalid server response");
           inputData.poolSize = parseInt(result);
         });
+      },
+      getClassifierAmount: function(){
+        return Object.keys(classificatorData.classificators).length;
       }
     }
   });

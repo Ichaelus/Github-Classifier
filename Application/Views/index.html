@@ -151,7 +151,7 @@
 
         <div class="row main"><!-- main -->
           <div id="input" class="col-xs-2"><!-- input -->
-            <div class="input_pool">
+            <div class="input_pool" :style="{top: 'calc( 40px + (-1 + '+getClassifierAmount()+') * 75px)'}">
               <span>{{poolSize}}</span>
               <div title="Sample pool size">
                 <span title="Repository name">{{repoName}}</span>
