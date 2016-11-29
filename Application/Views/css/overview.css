@@ -121,7 +121,7 @@ button.control {
 .glyphicon-ban-circle{
   display: none;
 }
-.inactive .arrow, .inactive .result_vector{
+.inactive .arrow, .inactive .result_vector, .inactive .uncertainty{
   visibility: hidden;
 }
 .inactive .glyphicon-ok-circle,  .inactive .classificator:before{
@@ -223,6 +223,7 @@ button.control {
   font-weight: bold;
 }
 .uncertainty{
+  visibility: visible;
   display: inline-block;
   width: 37px;
   text-align: right;

@@ -294,8 +294,8 @@ function initVue(){
   		save: function(){
   			console.log("Wrapper: "+wrapperData.currentName+" saving.");
         runGenerator(function *main(){
-          wrapperView.getSavePoints();
           notify("Saved", yield jQGetPromise("/get/save?name="+wrapperData.currentName), 2500);
+          wrapperView.getSavePoints();
         });
   		},
   		load: function(){
