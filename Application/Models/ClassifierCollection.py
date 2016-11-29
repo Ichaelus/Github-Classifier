@@ -62,7 +62,7 @@ class ClassifierCollection:
     #    self.classificationmodules.remove(self.getClassificationModule(classifiername))
     
     @classmethod
-    def doStreamBasedALRound(self, formula, semisupervised=False, thresholdunsupervisedl = 0.1, thresholdquery = 0.5):
+    def doStreamBasedALRound(self, formula, semisupervised=False, thresholdunsupervisedl = 0.1, thresholdquery = 0.9):
         """Ein zufälliges unlabeled Sample wird genommen, von jedem klassifiziert, und wenn sich 
         mindestens 1er unsicher ist, wird beim Benutzer nachgefragt,
         ggf. wenn Unsicherheit niedrig genug wird es wenn semisupervised für Semi-Supervised Learning verwendet"""

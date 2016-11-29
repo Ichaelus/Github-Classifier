@@ -1,1 +1,0 @@
-This file is necessary for GitHub otherwise GitHub would delete this folder.
