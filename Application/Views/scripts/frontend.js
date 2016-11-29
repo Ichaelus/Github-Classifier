@@ -191,6 +191,7 @@ function initVue(){
     	},
     	switchState: function(name){
         let c= classificatorData.classificators[name];
+        c.active = !c.active;
         if(!c.active){
           $.get("/get/mute?name="+name, function(result){
             if(result != "success")
@@ -202,7 +203,6 @@ function initVue(){
                 throw new Error("Invalid server response");
           });
         }
-    		classificatorData.classificators[id].active = !c.active;
     	},
     	getMax: function(id){
     		let max = 0;
@@ -254,23 +254,20 @@ function initVue(){
   		retrain: function(){
   			console.log("Wrapper: "+wrapperData.currentName+" retraining.");
         runGenerator(function *main(){
-          results = yield jQGetPromise("/get/retrain?name="+wrapperData.currentName, "json");
-          notify("Retrained", "The classifier "+wrapperData.currentName+" has been retrained.", 2500);
+          notify("Retrained", yield jQGetPromise("/get/retrain?name="+wrapperData.currentName), 2500);
         });
   		},
   		retrain_semi: function(){
   			console.log("Wrapper: "+wrapperData.currentName+" semi retraining.");
         runGenerator(function *main(){
-          results = yield jQGetPromise("/get/retrainSemiSupervised?name="+wrapperData.currentName, "json");
-          notify("Retrained", "The classifier "+wrapperData.currentName+" has been retrained with semi-supervised data.", 2500);
+          notify("Retrained", yield jQGetPromise("/get/retrainSemiSupervised?name="+wrapperData.currentName), 2500);
         });
   		},
   		save: function(){
   			console.log("Wrapper: "+wrapperData.currentName+" saving.");
         runGenerator(function *main(){
-          results = yield jQGetPromise("/get/save?name="+wrapperData.currentName, "json");
           wrapperView.getSavePoints();
-          notify("Saved", "The classifier "+wrapperData.currentName+" has been saved.", 2500);
+          notify("Saved", yield jQGetPromise("/get/save?name="+wrapperData.currentName), 2500);
         });
   		},
   		load: function(){
@@ -278,8 +275,12 @@ function initVue(){
         runGenerator(function *main(){
           result = yield jQGetPromise("/get/load?name="+wrapperData.currentName, "json");
           // result contains a name of the selected classificator and an accuracy array
-          stateView.updateClassificators(result.classificators);
-          notify("Saved", "The classifier "+wrapperData.currentName+" has been loaded.", 2500);
+          if(typeof(result.Error) != "undefined")
+            notify("Error", result.Error, 2500);
+           }else{ 
+            stateView.updateClassificators(result.classificators);
+            notify("Loaded", "The classifier "+wrapperData.currentName+" has been loaded.", 2500);
+          }
         });
   		}
     }

@@ -5,7 +5,7 @@ from bottle import Bottle, route, run, static_file, request
 import os
 import Models.ClassifierCollection
 import Models.JSONCommunication
-import Models.DatabaseCommunication
+import Models.DatabaseCommunication as DC
 
 
 abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Views')
@@ -89,7 +89,7 @@ def api(key):
 
 	elif(key == "poolSize"):
 		# Return the amount of unlabeled samples
-		return Models.DatabaseCommunication.getUnlabeledCount()
+		return DC.getUnlabeledCount()
 
 	elif(key == "classificators"):
 		# get classificators
@@ -119,45 +119,54 @@ def api(key):
 		return Models.JSONCommunication.formatClassificationTest(result)
 
 	elif(key == "retrain"):
-		ClassifierName = getQueryValue("name")
-		# Get data to train on
-		train_data = Models.DatabaseCommunication.getTrainData()
-		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
-		classifier.resetAllTraining()
-		classifier.train(train_data)
+		try:
+			ClassifierName = getQueryValue("name")
+			# Get data to train on
+			train_data = DC.getTrainData()
+			classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
+			classifier.resetAllTraining()
+			classifier.train(train_data)
 
-		# Test classifier
-		test_data = Models.DatabaseCommunication.getTestData()
-		return classifier.testModule(test_data)
+			# Test classifier
+			test_data = DC.getTestData()
+			return classifier.testModule(test_data)
+		except:
+			return "The classifier "+ClassifierName+" has been retrained."
 
 	elif(key == "retrainSemiSupervised"):
 		ClassifierName = getQueryValue("name")
-		"""
-		# Get data to train on
-		train_data = Models.DatabaseCommunication.getSemiSupervisedData()
-		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
-		classifier.resetAllTraining()
-		classifier.train(train_data)
+		try:
+			"""
+			# Get data to train on
+			train_data = DC.getSemiSupervisedData()
+			classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
+			classifier.resetAllTraining()
+			classifier.train(train_data)
 
-		# Test classifier
-		test_data = Models.DatabaseCommunication.getTestData()
-		return classifier.testModule(train_data)
-		"""
-		return "NotImplemented"
+			# Test classifier
+			test_data = DC.getTestData()
+			return classifier.testModule(train_data)
+			"""
+			return "NotImplemented"
+		except:
+			return "The classifier "+ClassifierName+" has been retrained with semi-supervised data."
 
 	elif(key == "save"):
 		ClassifierName = getQueryValue("name")
-		homeclassifiercollection.getClassificationModule(ClassifierName).saveModule()
-		return "Module saved"
+		try:
+			homeclassifiercollection.getClassificationModule(ClassifierName).saveModule()
+			return "The classifier "+ClassifierName+" has been saved."
+		except:
+			return "Error while saving classifier."
 
 	elif(key == "load"):
 		ClassifierName = getQueryValue("name")
 		try:
 			newModule = homeclassifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint(getQueryValue("savepoint"))
-			test_data = Models.DatabaseCommunication.getTestData()
+			test_data = DC.getTestData()
 			return Models.JSONCommunication.formatSingleClassificationTest(newModule.testModule(test_data))
 		except NameError as err:
-			return('Name error')
+			return('{"Error": "Error loading classifier"}')
 
 	elif(key == "savePoints"):
 		ClassifierName = getQueryValue("name")
@@ -169,6 +178,8 @@ def api(key):
 
 	elif(key == "ALclassification"):
 		# Save user classification
+		if("api-url" == ""):
+			return "API url is empty"
 		sample = DC.moveRepoFromToClassifyToTrain(getQueryValue("api-url"), getQueryValue("label"))
 		ALTrainInstantlyAllClassificationModules(sample)
 
