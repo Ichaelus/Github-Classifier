@@ -45,9 +45,9 @@
         <span class="action btn btn-default" v-on:click="save()">Save current image</span>
         <div class="version_wrapper">
           <div class="input-group-btn select">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Version <span class="caret"></span></button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b>{{selectedPoint == '' ? 'Version' : selectedPoint}}</b> <span class="caret"></span></button>
                 <ul class="dropdown-menu" style="margin: 0px auto;">
-                  <li v-for="sp in savePoints"><a v-on:click="setSavePoint(sp)" href="#">{{sp}}</a></li>
+                  <li v-for="(sp, fileName) in savePoints"><a v-on:click="setSavePoint(fileName)" href="#">{{fileName}} <b>({{parseInt(sp.yield * 100)+'%'}}</b>)</a></li>
                 </ul>
           </div>
           <span class="action btn btn-default" v-on:click="load()">Load version</span>

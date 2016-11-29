@@ -274,12 +274,18 @@ button.control {
   margin: 0px auto;
 }
 .version_wrapper .select{
-  width: 70px;
+  width: 140px;
   display: inline-block;
+}
+.version_wrapper .select button{
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 150px;
+  overflow: hidden;
 }
 .version_wrapper .action{
   display: inline-block;
-  width: 226px;
+  width: 156px;
   margin: 0;
 }
 #titles{

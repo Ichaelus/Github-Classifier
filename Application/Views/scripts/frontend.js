@@ -25,7 +25,8 @@ let stateView, inputView, classificatorView, outputView, wrapperView,
 	wrapperData = {
     currentName: "",
 		current: {description: "", yield: 0, active: false, uncertainty: 0, result: {}},
-    savePoints: [],
+    savePoints: {}, // fileName: {yield, result: [{class, val}, ..]}
+    selectedPoint: "",
 		id: 0
 	};
 
@@ -252,9 +253,12 @@ function initVue(){
             result = JSON.parse(result);
             if(result === false)
               throw new Error("Invalid server response");
-            wrapperData.savePoints = result.savePoints;
+            wrapperData.savePoints = result.savepoints;
           }
         });
+      },
+      setSavePoint: function(fileName){
+        wrapperData.selectedPoint = fileName;
       },
   		retrain: function(){
   			console.log("Wrapper: "+wrapperData.currentName+" retraining.");
