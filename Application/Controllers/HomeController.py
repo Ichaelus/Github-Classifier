@@ -119,6 +119,7 @@ def api(key):
 		return Models.JSONCommunication.formatClassificationTest(result)
 
 	elif(key == "retrain"):
+<<<<<<< HEAD
 		try:
 			ClassifierName = getQueryValue("name")
 			# Get data to train on
@@ -132,6 +133,18 @@ def api(key):
 			return classifier.testModule(test_data)
 		except:
 			return "The classifier "+ClassifierName+" has been retrained."
+=======
+		ClassifierName = getQueryValue("name")
+		# Get data to train on
+		train_data = Models.DatabaseCommunication.getTrainData()
+		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
+		classifier.resetAllTraining()
+		classifier.train(train_data)
+
+		# Test classifier
+		test_data = Models.DatabaseCommunication.getTestData()
+		return classifier.testModule(test_data, classifier)
+>>>>>>> 4d5176c7d8545598eeca58ada05a2c6d86e23197
 
 	elif(key == "retrainSemiSupervised"):
 		ClassifierName = getQueryValue("name")
@@ -153,18 +166,30 @@ def api(key):
 
 	elif(key == "save"):
 		ClassifierName = getQueryValue("name")
+<<<<<<< HEAD
 		try:
 			homeclassifiercollection.getClassificationModule(ClassifierName).saveModule()
 			return "The classifier "+ClassifierName+" has been saved."
 		except:
 			return "Error while saving classifier."
+=======
+		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
+		classifier.saveModule(classifier)
+		return "Module saved"
+>>>>>>> 4d5176c7d8545598eeca58ada05a2c6d86e23197
 
 	elif(key == "load"):
 		ClassifierName = getQueryValue("name")
 		try:
 			newModule = homeclassifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint(getQueryValue("savepoint"))
+<<<<<<< HEAD
 			test_data = DC.getTestData()
 			return Models.JSONCommunication.formatSingleClassificationTest(newModule.testModule(test_data))
+=======
+			setClassificationModule(ClassifierName, newModule)
+			test_data = Models.DatabaseCommunication.getTestData()
+			return Models.JSONCommunication.formatSingleClassificationTest(newModule, newModule.testModule(test_data, newModule))
+>>>>>>> 4d5176c7d8545598eeca58ada05a2c6d86e23197
 		except NameError as err:
 			return('{"Error": "Error loading classifier"}')
 
@@ -172,7 +197,7 @@ def api(key):
 		ClassifierName = getQueryValue("name")
 		try:
 			savePoints = homeclassifiercollection.getClassificationModule(ClassifierName).getSavePointsForClassificationModules()
-			return Models.JSONCommunication().formatSavePoints(savePoints)
+			return Models.JSONCommunication.formatSavePoints(savePoints)
 		except NameError as err:
 			return('Name error')
 
