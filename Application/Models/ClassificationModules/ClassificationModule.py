@@ -266,7 +266,6 @@ class ClassificationModule:
         """Returns the basic path to the save folder"""
         #ensure savepath exists
         savepath = os.path.abspath(".")
-        savepath = os.path.abspath(os.path.join(savepath, "Application/Classifier_SavePoints"))
+        savepath = os.path.abspath(os.path.join(savepath, "Classifier_SavePoints"))
         self.tryNewDirForModule(savepath)
         return savepath
-
