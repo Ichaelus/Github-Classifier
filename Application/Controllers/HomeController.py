@@ -116,22 +116,22 @@ def api(key):
 	elif(key == "startTest"):
 		# Runs the classifiers agains a predefined testset
 		result = homeclassifiercollection.TestAllClassificationModules()
-		return Models.JSONCommunication.formatClassificationTest(result)
+		return Models.JSONCommunication.formatMultipleClassificationTests(result)
 
 	elif(key == "retrain"):
 		ClassifierName = getQueryValue("name")
-		try:
+		#try:
 			# Get data to train on
-			train_data = Models.DatabaseCommunication.getTrainData()
-			classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
-			classifier.resetAllTraining()
-			classifier.train(train_data)
+		train_data = Models.DatabaseCommunication.getTrainData()
+		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
+		classifier.resetAllTraining()
+		classifier.train(train_data)
 
-			# Test classifier
-			test_data = Models.DatabaseCommunication.getTestData()
-			return classifier.testModule(test_data, classifier)
-		except:
-			return "The classifier "+ClassifierName+" has been retrained."
+		# Test classifier
+		test_data = Models.DatabaseCommunication.getTestData()
+		return Models.JSONCommunication.formatSingleClassificationTest(classifier, classifier.testModule(test_data, classifier))
+		#except:
+		#	return "The classifier "+ClassifierName+" has been retrained."
 
 	elif(key == "retrainSemiSupervised"):
 		ClassifierName = getQueryValue("name")
