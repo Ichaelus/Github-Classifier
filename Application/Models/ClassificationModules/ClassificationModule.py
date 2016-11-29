@@ -259,7 +259,8 @@ class ClassificationModule:
             #building new Folder
             os.mkdir(tmpPath)       # throws a  OSError if path already exits
             #building XML-SaveInfoFile
-            tmpPath = os.path.join(tmpPath, self.name + '.xml')
+        tmpPath = os.path.join(tmpPath, self.name + '.xml')
+        if  os.path.exists(tmpPath) == False:
             d = open(tmpPath, "w")
             d.write("<data></data>\n")
             d.close()
