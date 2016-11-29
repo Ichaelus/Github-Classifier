@@ -162,7 +162,7 @@
           <div class="col-xs-8">
             <div id="classificators">
               <div v-for="(c, index) in classificators" :class="'classificator_row' + (c.active ? '' : ' inactive') ">
-                <div class="classificator">
+                <div :class="'classificator ' + (isAsking(index) ? 'asking' : '')">
                   <span class="name">{{index}}</span>
                   <div class="wrapper">
                     <span title="Current yield" class="stats">{{parseInt(c.yield * 100)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>

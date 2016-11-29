@@ -231,7 +231,11 @@ function initVue(){
     			max = Math.max(max, classificatorData.classificators[id].result[i].val);
     		}
     		return max;
-    	}/*,
+    	},
+      isAsking: function(name){
+        return stateData.mode == "pool" && inputData.classifierAsking == name;
+      }
+      /*,
       updateSaveState: function(name, yield, classificatorResults){
         for(let i in classificatorData.classificators){
           if(i == name){

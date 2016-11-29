@@ -143,6 +143,10 @@ button.control {
 .classificator:before{
   top: 35px;
 }
+.classificator.asking{
+  background: #719EED;
+  color: black;
+}
 .classificator .name{
   display: block;
   border-bottom: 1px solid black;
