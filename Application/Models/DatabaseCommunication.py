@@ -75,4 +75,7 @@ def getInformationsForRepo(repolink):
     data = api_call('generate_sample&api-url=' + repolink)
     if(data == ""):
         raise Exception("Private Repository")
+    # Check if api_call returned Error
+    if(data.has_key('Error')):
+        raise Exception(data['Error'])
     return data

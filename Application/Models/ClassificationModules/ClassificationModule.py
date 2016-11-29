@@ -161,7 +161,7 @@ class ClassificationModule:
         tmpPath = self.getSavePath()
         tmpPath = os.path.join(tmpPath, self.name, filename)
 		#save module
-        output = open(tmpPath, 'w')
+        output = open(tmpPath, 'wb')
         pickle.dump(classifierself, output, 2)
         output.close()
 		
@@ -241,7 +241,7 @@ class ClassificationModule:
         tmpPath = self.getSavePath()
         tmpPath = os.path.join(tmpPath, self.name, filename)
 		#deserialization
-        f = open(tmpPath)
+        f = open(tmpPath, 'rb')
         data = pickle.load(f)
 		#return: ClassificationModule or None if there isnt one
         return data
