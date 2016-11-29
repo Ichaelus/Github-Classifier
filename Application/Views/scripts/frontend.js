@@ -163,9 +163,9 @@ function initVue(){
         // Reset classificators
         for(let c in classificatorData.classificators){ // c => classificator name
             cf = classificatorData.classificators[c];
-            cf.uncertainty = "";
-            for(let label in cf.result)
-              cf.result[label] = 0.0;
+            for(let i in cf.result)
+              Vue.set(cf.result[i], "val", 0.0);
+            Vue.set(cf, "uncertainty", "");
             console.log(cf);
         }
       }
