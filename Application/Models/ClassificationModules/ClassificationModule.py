@@ -251,6 +251,9 @@ class ClassificationModule:
     def tryNewDirForModule(self, savepath):
         """builds a new directory and xml-file if it doesnt exit"""
         #generating a path that is indepentent from operating system
+        if (os.path.exists(savepath) == False):
+            #building new Folder
+            os.mkdir(savepath)  
         tmpPath = os.path.join(savepath, self.name)
         if (os.path.exists(tmpPath) == False):
             #building new Folder
