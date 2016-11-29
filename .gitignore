@@ -48,3 +48,7 @@ First Try/modelnondev
 
 First Try/modelrmanddescr5epoch
 *.pkl
+
+*.pyc
+
+Classifier_SavePoints/Basic Neural Network/Basic Neural Network.xml

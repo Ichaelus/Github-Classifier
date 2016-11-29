@@ -164,7 +164,7 @@ def api(key):
 		ClassifierName = getQueryValue("name")
 		#try:
 		newModule = homeclassifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint(getQueryValue("savepoint"))
-		setClassificationModule(ClassifierName, newModule)
+		homeclassifiercollection.setClassificationModule(ClassifierName, newModule)
 		test_data = Models.DatabaseCommunication.getTestData()
 		return Models.JSONCommunication.formatSingleClassificationTest(newModule, newModule.testModule(test_data, newModule))
 		#except:
