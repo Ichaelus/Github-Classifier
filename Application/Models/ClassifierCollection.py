@@ -84,7 +84,7 @@ class ClassifierCollection:
                 else: raise Exception("No such formula")
                 if(uncertainty is not None and uncertainty > thresholdquery):
                     unsure = True
-                    DC.moveRepoFromUnlabeledToToClassify(sample)
+                    DC.moveRepoFromUnlabeledToToClassify(sample["api_url"])
                 elif(uncertainty is not None and uncertainty < thresholdunsupervisedl):
                     #Hier müssen wir uns noch Gedanken machen, vlt kontrollieren
                     #wir hier nochmal ob auch wirklich alle Classifier das selbe sagen und dann
@@ -92,7 +92,7 @@ class ClassifierCollection:
                     
                     #Label = NotImplemented
                     #sampleNowWithLabel = NotImplemented
-                    #DC.moveRepoFromUnlabeledToSemiSupervised(sampleNowWithLabel)
+                    #DC.moveRepoFromUnlabeledToSemiSupervised(sampleNowWithLabel["api_url"])
                     #SemiSupervisedLabel = Label
                     #SemiSupervisedL = True
                     pass

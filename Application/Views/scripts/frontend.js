@@ -78,6 +78,7 @@ function initVue(){
 		  singleStep: function(){
   			stateData.action = "singleStep";
   			console.log("Proceeding single step");
+        stateView.resetView();
         runGenerator(function *main(){
           // Fetch sample, display
           inputData.repoName = "Searching..";
@@ -93,6 +94,7 @@ function initVue(){
   		loop: function(){
   			stateData.action = "loop";
   			console.log("Looping");
+        stateView.resetView();
   			runGenerator(function *main(){
   				// Fetch sample, display then repeat until stateData has changed
   				while(stateData.action == "loop"){
@@ -156,6 +158,16 @@ function initVue(){
           results = yield jQGetPromise("/get/startTest", "json");
           stateView.updateResults(results);
         });
+      },
+      resetView: function(){
+        // Reset classificators
+        for(let c in classificatorData.classificators){ // c => classificator name
+            cf = classificatorData.classificators[c];
+            cf.uncertainty = "";
+            for(let label in cf.result)
+              cf.result[label] = 0.0;
+            console.log(cf);
+        }
       }
     }
   });
@@ -282,7 +294,7 @@ function initVue(){
   		load: function(){
   			console.log("Wrapper: "+wrapperData.currentName+" loading.");
         runGenerator(function *main(){
-          result = yield jQGetPromise("/get/load?name="+wrapperData.currentName, "json");
+          result = yield jQGetPromise("/get/load?name="+wrapperData.currentName + "&savepoint="+wrapperData.selectedPoint, "json");
           // result contains a name of the selected classificator and an accuracy array
           if(typeof(result.Error) != "undefined"){
             notify("Error", result.Error, 2500);

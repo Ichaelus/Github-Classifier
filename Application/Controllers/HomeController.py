@@ -153,22 +153,22 @@ def api(key):
 
 	elif(key == "save"):
 		ClassifierName = getQueryValue("name")
-		try:
-			classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
-			classifier.saveModule(classifier)
-			return "The classifier "+ClassifierName+" has been saved."
-		except:
-			return "Error while saving classifier."
+		#try:
+		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
+		classifier.saveModule(classifier)
+		return "The classifier "+ClassifierName+" has been saved."
+		#except:
+		#	return "Error while saving classifier."
 
 	elif(key == "load"):
 		ClassifierName = getQueryValue("name")
-		try:
-			newModule = homeclassifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint(getQueryValue("savepoint"))
-			setClassificationModule(ClassifierName, newModule)
-			test_data = Models.DatabaseCommunication.getTestData()
-			return Models.JSONCommunication.formatSingleClassificationTest(newModule, newModule.testModule(test_data, newModule))
-		except NameError as err:
-			return('{"Error": "Error loading classifier"}')
+		#try:
+		newModule = homeclassifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint(getQueryValue("savepoint"))
+		setClassificationModule(ClassifierName, newModule)
+		test_data = Models.DatabaseCommunication.getTestData()
+		return Models.JSONCommunication.formatSingleClassificationTest(newModule, newModule.testModule(test_data, newModule))
+		#except:
+		#	return('{"Error": "Error loading classifier"}')
 
 	elif(key == "savePoints"):
 		ClassifierName = getQueryValue("name")

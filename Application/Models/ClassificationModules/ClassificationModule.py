@@ -159,7 +159,7 @@ class ClassificationModule:
         ###Folder building if necessary
         self.newDirForModule()
         ###Serialization
-        filename = datetime.now().isoformat() + '.pkl'
+        filename = datetime.now().isoformat().replace(":", "") + '.pkl'
 		#generating a path that is indepentent from operating system
         tmpPath = self.getSavePath()
         tmpPath = os.path.join(tmpPath, self.name, filename)
