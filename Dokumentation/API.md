@@ -68,14 +68,10 @@ Diese Funktion ist vom Parameter `api-url` abhängig. Für das angegebene reposi
 
 `client_id` und `client_secret` können übergeben werden, ansonsten werden gespeicherte credentials verwendet.
 
-### ?key=api:move-unlabeled-toclassify
+### ?key=api:move
 
-Verschiebt ein (durch Active learning als wertvoll befundenes) sample von der `unlabeled` in die `to_classify` Tabelle. Als Identifier muss das Attribut `api-url` angegeben werden, welches die ID in der `unlabeled` Tabelle bezeichnet. (Attribute: `api-url`)
+Verschiebt ein (durch Active learning als wertvoll befundenes) sample von der `from_table` in die `to_table` Tabelle. Als Identifier muss das Attribut `api-url` angegeben werden. Wird zudem `label` gesetzt, wird zugleich die Klasse des repositories verändert. (Attribute: `from_table`, `to_table`, `api-url`, `label` (opt.))
 
-### api:move-toclassify-train"
-### api:move-unlabeled-semisupervised"
-
-Analog wie _api:move-unlabeled-toclassify_.  (Attribute: `api-url`)
 
 ## Deprecated
 
