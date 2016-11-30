@@ -54,6 +54,7 @@ def getVectorsFromData(data, processText=True):
     return (features, labels, label_names)
 
 def getLabelIndex(sample):
+    global label_dict
     return label_dict[sample['class']]
 
 def getLabelName(index):

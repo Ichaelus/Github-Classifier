@@ -61,7 +61,7 @@ def getToClassifyCount():
     return str(api_call('all', tableString="to_classify"))
 
 def getAllDescriptions():
-    tables = ['test', 'train', 'to_classify']
+    tables = ['train', 'to_classify']
     corpus = []
 
     for table in tables:

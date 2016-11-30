@@ -112,7 +112,7 @@ class ClassificationModule:
             pred_out = classifierself.predictLabelAndProbability(sample)
             # Check if prediction was right
             true_label_index = getLabelIndex(sample)
-            if (np.argmax(pred_out) == true_label_index):
+            if (pred_out[0] == true_label_index):
                 nb_right_pred += 1
                 class_right_pred_count[true_label_index] += 1
             class_count[true_label_index] += 1
