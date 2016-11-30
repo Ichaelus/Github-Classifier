@@ -178,7 +178,7 @@
                     </div>
                 </div>
                 <div  title="uncertainty" :class="'uncertainty ' + (typeof(c.uncertainty) != 'undefined' ? '' : 'hidden ') + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'red ' : '') : ' ')">
-                  {{parseInt(c.uncertainty * 100)}}%
+                  {{parseInt(c.uncertainty * 100) / 100}}
                 </div>
               </div>
             </div><!-- /classificators -->

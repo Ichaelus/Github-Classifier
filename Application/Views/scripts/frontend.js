@@ -101,8 +101,6 @@ function initVue(){
             inputData.repoName = "Searching..";
   					results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
   					stateView.updateResults(results);
-  					// To remove
-  					stateData.action = "halt";
   				}
   			});
   		},
@@ -281,8 +279,16 @@ function initVue(){
       },
   		retrain: function(){
   			console.log("Wrapper: "+wrapperData.currentName+" retraining.");
+        notify("Retraining", "The classifier: "+wrapperData.currentName+" started retraining. This could take a while.", 2500);
         runGenerator(function *main(){
-          notify("Retrained", yield jQGetPromise("/get/retrain?name="+wrapperData.currentName), 2500);
+          let data = yield jQGetPromise("/get/retrain?name="+wrapperData.currentName);
+          if(JSON.parse(data) != false){
+            data = JSON.parse(data);
+            stateView.updateClassificators(data.classificators);
+            notify("Retrained successfull", "The classifier: "+wrapperData.currentName+" finished retraining", 2500);
+          }else{
+            notify("Error while retraining", data, 2500);
+          }
         });
   		},
   		retrain_semi: function(){

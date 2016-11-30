@@ -7,7 +7,7 @@ if(!$db->init()){ throw new Exception("Could not connect to the database");}
 
 $apihandler = new GitHandler();
 
-$header = 'Content-Type: text/html; charset=utf-8';
+$header = 'Content-Type: text/html; charset=utf-8; Access-Control-Allow-Origin: *';
 session_start();
 ob_start();
 
@@ -36,43 +36,50 @@ try{
         $getkey = $db->check($_GET['key']);
         if($getkey != ""){
             $table = get_attr("table") != "" ? get_attr("table") : "train";
-
+            $attrs = "`class`, `api_calls`, `api_url`, `author`, `avg_commit_length`, `branch_count`, `commit_count`, `commit_interval_avg`, `commit_interval_max`, `contributors_count`, `description`, `file_count`, `files`, `folders`, `folder_count`, `forks`, `hasDownloads`, `hasWiki`, `isFork`, `open_issues_count`, `language_main`, `language_array`, `name`, `readme`, `stars`, `tagger`, `treeArray`, `treeDepth`, `url`, `watches`";
             switch ($getkey) {
                 case "api:old":
-                    $filter = generate_filter();
+                    $filter = generate_filter("(class != 'SKIPPED'  AND class != 'UNSURE') AND");
                     $data = $db->select("SELECT * FROM `_depr_samples` $filter");
                     print(json_encode($data));
                     break;
 
                 case "api:all":
+                    // Return every sample of <table>
+                    $filter = generate_filter("(class != 'SKIPPED'  AND class != 'UNSURE') AND");
+                    $data = $db->select("SELECT * FROM `$table` $filter");
+                   // print "SELECT * FROM `train` $filter";
+                    print(json_encode($data));
+                    break;
                 case "api:train":
                     // Returns a list of train samples
-                    $filter = generate_filter();
+                    $filter = generate_filter("(class != 'SKIPPED'  AND class != 'UNSURE') AND");
                     $data = $db->select("SELECT * FROM `train` $filter");
+                   // print "SELECT * FROM `train` $filter";
                     print(json_encode($data));
                     break;
                 case "api:test":
                     // Returns a list of test samples
                     $filter = generate_filter();
-                    $data = $db->select("SELECT * FROM `unlabeled`");
+                    $data = $db->select("SELECT * FROM `test` $filter");
                     print(json_encode($data));
                     break;
                 case "api:unlabeled":
                     // Returns a list of unlabeled samples
                     $filter = generate_filter();
-                    $data = $db->select("SELECT * FROM `unlabeled`");
+                    $data = $db->select("SELECT * FROM `unlabeled` $filter");
                     print(json_encode($data));
                     break;
                 case "api:to_classify":
                     // Returns a list of samples that should be classified
                     $filter = generate_filter();
-                    $data = $db->select("SELECT * FROM `unlabeled`");
+                    $data = $db->select("SELECT * FROM `to_classify` $filter");
                     print(json_encode($data));
                     break;
                 case "api:semi_supervised":
                     // Returns t of samples that should be classified
-                    $filter = generate_filter();
-                    $data = $db->select("SELECT * FROM `semi_supervised`");
+                    $filter = generate_filter("(class != 'SKIPPED'  AND class != 'UNSURE') AND");
+                    $data = $db->select("SELECT * FROM `semi_supervised` $filter");
                     print(json_encode($data));
                     break;
 
@@ -145,13 +152,14 @@ try{
                     if($credentials == false){
                         throw new Exception("API token missing.");
                     }else{
-                        $url = trim(get_attr("api-url")) == "" ?  generateSampleUrl() : get_attr("api-url");
+                        $url = trim(get_attr("api_url")) == "" ?  generateSampleUrl() : get_attr("api_url");
                         // Generate new sample url
                         $vector = generateRepoVector($url);
                         if(trim(get_attr("class")) != ""){
                             $vector["class"] = strtoupper(trim(get_attr("class")));
                         }
                         if($vector["url"] == ""){
+                            var_dump($vector);
                             throw new Exception("Something went wrong");
                         }
                         saveVector($vector);
@@ -165,29 +173,38 @@ try{
 
                     }
                     break;
+/*
                 case "api:move-unlabeled-toclassify":
                     // Move sample from unlabeled -> to_classify
-                    $api_url = get_attr("api-url");
+                    $api_url = get_attr("api_url");
                     if($api_url != ""){
-                        $data = $db->select("SELECT * FROM `unlabeled` WHERE `api_url` = '$api_url'");
+                        $data = $db->select("SELECT id FROM `unlabeled` WHERE `api_url` = '$api_url'");
                         if(count($data) == 1){
-                            $db->query("INSERT INTO `to_classify` SELECT * FROM `unlabeled` WHERE `api_url` = '$api_url'");
-                            $db->query("DELETE FROM `unlabeled` WHERE `api_url` = '$api_url'");
-                            print("Sample moved to the active learning pool.");
+                            $iid = $db->query("INSERT INTO `to_classify` SELECT $attrs FROM `unlabeled` WHERE `api_url` = '$api_url'");
+                            if($iid){
+                                $db->query("DELETE FROM `unlabeled` WHERE `api_url` = '$api_url'");
+                                print("Sample moved to the active learning pool.");
+                            }else{
+                                throw new Exception("Error moving row");
+                            }
                         }else
                             throw new Exception("There is no sample with the given api_url");
                     }else
                         throw new Exception("No api_url specified");
                     break;
                 case "api:move-toclassify-train":
-                    // Move sample from toclassify -> train
-                    $api_url = get_attr("api-url");
+                    // Move sample from to_classify -> train
+                    $api_url = get_attr("api_url");
                     if($api_url != ""){
-                        $data = $db->select("SELECT * FROM `to_classify` WHERE `api_url` = '$api_url'");
+                        $data = $db->select("SELECT id FROM `to_classify` WHERE `api_url` = '$api_url'");
                         if(count($data) == 1){
-                            $db->query("INSERT INTO `train` SELECT * FROM `to_classify` WHERE `api_url` = '$api_url'");
-                            $db->query("DELETE FROM `to_classify` WHERE `api_url` = '$api_url'");
-                            print("Sample moved to the training pool.");
+                            $iid = $db->query("INSERT INTO `train` SELECT $attrs FROM `to_classify` WHERE `api_url` = '$api_url'");
+                            if($iid){
+                                $db->query("DELETE FROM `to_classify` WHERE `api_url` = '$api_url'");
+                                print("Sample moved to the training pool.");
+                            }else{
+                                throw new Exception("Error moving row");
+                            }
                         }else
                             throw new Exception("There is no sample with the given api_url");
                     }else
@@ -195,18 +212,49 @@ try{
                     break;
                 case "api:move-unlabeled-semisupervised":
                     // Move sample from unlabeled -> semi_supervised
-                    $api_url = get_attr("api-url");
+                    $api_url = get_attr("api_url");
                     if($api_url != ""){
-                        $data = $db->select("SELECT * FROM `unlabeled` WHERE `api_url` = '$api_url'");
+                        $data = $db->select("SELECT id FROM `unlabeled` WHERE `api_url` = '$api_url'");
                         if(count($data) == 1){
-                            $db->query("INSERT INTO `semi_supervised` SELECT * FROM `unlabeled` WHERE `api_url` = '$api_url'");
-                            $db->query("DELETE FROM `unlabeled` WHERE `api_url` = '$api_url'");
-                            print("Sample moved to the semi_supervised pool.");
+                            $iid = $db->query("INSERT INTO `semi_supervised` SELECT $attrs FROM `unlabeled` WHERE `api_url` = '$api_url'");
+                            if($iid){
+                                $db->query("DELETE FROM `unlabeled` WHERE `api_url` = '$api_url'");
+                                print("Sample moved to the semi_supervised pool.");
+                            }else{
+                                throw new Exception("Error moving row");
+                            }
                         }else
                             throw new Exception("There is no sample with the given api_url");
                     }else
                         throw new Exception("No api_url specified");
                     break;
+*/
+                case "api:move":
+                    // Move a repo, taken from the pool <from_table> to the pool <table2>. If <label> is set, overwrite label
+                    $t1 = strtolower(get_attr("from_table")); $t2 = strtolower(get_attr("to_table")); $l = strtoupper(get_attr("label")); $api_url = get_attr("api_url");
+                    if(isValidTable($t1) && isValidTable($t2) && isValidApiUrl($api_url)){
+                        $qID = $db->select("SELECT id FROM `$t1` WHERE `api_url` = '$api_url'");
+                        if(count($qID) != 0 && $t1 != "train"){
+                            if($l != ""){ // Update label
+                                if(!isValidLabel($l))
+                                    throw new Exception("Invalid lable");
+                                $db->query("UPDATE `$t1` SET `class` = '$l' WHERE `api_url` = '$api_url'");
+                            }
+                            $iid = $db->insert("INSERT INTO `$t2` ($attrs) SELECT $attrs FROM `$t1` WHERE `api_url` = '$api_url'");
+                            if($iid){
+                                $db->query("DELETE FROM `$t1` WHERE `api_url` = '$api_url'");
+                                print(json_encode($db->select("SELECT * FROM `$t2` WHERE `api_url` = '$api_url'")));
+                            }else{
+                                throw new Exception("Error moving row");
+                            }
+                        }else{
+                            throw new Exception("Sample not generated");
+                        }
+                    }else{
+                        throw new Exception("Invalid Parameters");
+                    }
+                    break;
+
                 /*
                 case "todolist":
                     $todos = $db->select("SELECT `url` from `todo`");
@@ -242,6 +290,7 @@ try{
         // Handle POST Requests based on the `key` value
         $postkey = post_attr('key');
         if($postkey != ""){
+            $table = post_attr("table") != "" ? post_attr("table") : "train";
             switch ($postkey) {
                 case "unclassified":
                     // Add repo link only, to be classified
@@ -253,12 +302,17 @@ try{
                     $db->query("UPDATE `train` SET `class` = 'SKIPPED' WHERE `id` = '".post_attr('id')."'");
                     break;
                 case "classify":
-                    // Classify a generated repo
-                    $qID = $db->select("SELECT id FROM `train` WHERE `id` = '".post_attr('id')."'");
-                    if(count($qID) != 0){
-                        $query = "UPDATE `train` SET `class` = '".post_attr('class')."', `tagger` = '".post_attr('tagger')."' WHERE `id` = '".post_attr('id')."'";
-                        $db->query($query);
-                        print "Repository classified.";
+                    // Classify a generated repo, taken from the pool <table>
+                    $qID = $db->select("SELECT id FROM `$table` WHERE `id` = '".post_attr('id')."'");
+                    if(count($qID) != 0 && $table != "train"){
+                        $db->query("UPDATE `$table` SET `class` = '".post_attr('class')."', `tagger` = '".post_attr('tagger')."' WHERE `id` = '".post_attr('id')."'");
+                        $iid = $db->insert("INSERT INTO `train` ($attrs) SELECT $attrs FROM `$table` WHERE `api_url` = '$api_url'");
+                        if($iid){
+                            $db->query("DELETE FROM `<1tab></1tab>le` WHERE `api_url` = '$api_url'");
+                            print "Repository classified.";
+                        }else{
+                            throw new Exception("Error moving row");
+                        }
                     }else{
                         print("error: sample not generated");
                     }
@@ -276,13 +330,25 @@ try{
 header($header);
 ob_end_flush();
 
-function generate_filter(){
+function isValidTable($t){
+    return in_array($t, array("train", "test", "unlabeled", "to_classify", "semi_supervised")) == true;
+}
+
+function isValidLabel($l){
+    return in_array($l, array("DEV", "HW", "EDU", "DOCS", "WEB", "DATA", "OTHER", "UNSURE", "UNLABELED")) == true;
+}
+
+function isValidApiUrl($url){
+    return !(strpos($url, "https://api.github.com/repos/") === false);
+}
+
+function generate_filter($filterbasis = ""){
     # Adds potential filters to the sql query
     # Also, check if the equal-class-amount flag is set
+    # filterbasis must either be empty, or like '() AND'
     global $db;
-    $filter = "";
     $operators = array("=","<","<=",">=",">");
-    $attributes = array("author","class","description","forks","id","languages","name","readme","stars","tree","url","watches");
+    $attributes = array("id","class","api_calls","api_url","author","avg_commit_length","branch_count","commit_count","commit_interval_avg","commit_interval_max","contributors_count","description","file_count","files","folders","folder_count","forks","hasDownloads","hasWiki","isFork","open_issues_count","language_main","language_array","name","readme","stars","tagger","treeArray","treeDepth","url","watches");
     $q = base64_decode(get_attr("filter"));
     #print($q . "\n");
     if(strlen($q) > 0){
@@ -312,9 +378,10 @@ function generate_filter(){
                 }
             }
         }
-        $filter = rtrim($filter, " AND ");
-        $filter = strlen($filter) > 0 ? "WHERE $filter" : "";
     }
+    $filter = $filterbasis . $filter;
+    $filter = rtrim($filter, " AND "); // if filter is empty, cut AND from filterbasis. If not, cut it from filter
+    $filter = strlen($filter) > 0 ? "WHERE $filter" : "";
     // Add other conditions
     /*
     $additional = "";
