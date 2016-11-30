@@ -119,7 +119,7 @@ function initVue(){
           inputData.classifiersUnsure = results.classifiersUnsure;
           inputData.semisupervised = results.semisupervised;
           if(results.classifiersUnsure)
-            window.open("/user_classification.html?popup=true&api-url="+results.repo.repoAPILink, "User decision", "channelmode=yes");
+            window.open("/user_classification.html?popup=true&api_url="+results.repo.repoAPILink, "User decision", "channelmode=yes");
         }else if(stateData.mode == "pool"){
           inputData.classifierAsking = results.classifierAsking;
         }
@@ -325,7 +325,7 @@ function HandlePopupResult(result) {
   // If the sample has been labeled, update view
   console.log("result of popup is: ");
   console.log(result);
-  $.get("/get/ALclassification?api-url="+result["api-url"]+"&label="+result.label, function(result){
+  $.get("/get/ALclassification?api_url="+result["api_url"]+"&label="+result.label, function(result){
 
   });
 }

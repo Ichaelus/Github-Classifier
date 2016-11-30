@@ -88,7 +88,7 @@ def getAllReadmes():
 
 def getInformationsForRepo(repolink):
     '''Nur dafür da wenn ein bestimmtes Repo klassifiziert werden soll dass noch nicht in DB ist'''
-    data = api_call('generate_sample&api-url=' + repolink)
+    data = api_call('generate_sample&api_url=' + repolink)
     if(data == ""):
         raise Exception("Private Repository")
     # Check if api_call returned Error

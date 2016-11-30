@@ -32,7 +32,7 @@ try {
   initButtons();
   initVue();
   if(getParameterByName("popup") == "true"){
-    addCustomRepo(getParameterByName("api-url"));
+    addCustomRepo(getParameterByName("api_url"));
   }else{
     getRepos();
     updateClassifications();
@@ -51,7 +51,7 @@ function updateClassifications(){
       console.log(result.Error);
     }else{
       console.log(result);
-      $.get(server+"ajax.php?key=api:generate_sample&class="+result.class+"&api-url=" + result.url.replace("https://github.com/", "https://api.github.com/repos/"), function(res2){
+      $.get(server+"ajax.php?key=api:generate_sample&class="+result.class+"&api_url=" + result.url.replace("https://github.com/", "https://api.github.com/repos/"), function(res2){
         if(res2 != "")
           res2 = JSON.parse(res2);
         console.log(res2);
@@ -111,7 +111,7 @@ function addCustomRepo(api_url){
   if(api_url != ""){
     runGenerator(function *main(){
       // Add pending repos to list
-      //yield jQGetPromise(server+"ajax.php?key=api:generate_sample&api-url="+api_url, "json");
+      //yield jQGetPromise(server+"ajax.php?key=api:generate_sample&api_url="+api_url, "json");
       let res = yield jQGetPromise(server+"ajax.php?key=api:unlabeled&filter="+btoa("api_url=" + api_url), "json");
       if(res.length == 0 || res == "")
         throw new Error("There is no such sample.");
@@ -225,7 +225,7 @@ function classify(label, data = {}){
   if(getParameterByName("popup") == "true"){
     // Close windows with response
     try {
-        window.opener.HandlePopupResult({"api-url" : getParameterByName("api-url"), "label" : label});
+        window.opener.HandlePopupResult({"api_url" : getParameterByName("api_url"), "label" : label});
     }catch (err) {}
     window.close();
     return false;

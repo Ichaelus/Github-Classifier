@@ -185,9 +185,9 @@ def api(key):
 
 	elif(key == "ALclassification"):
 		# Save user classification
-		if("api-url" == ""):
+		if("api_url" == ""):
 			return "API url is empty"
-		sample = DC.moveRepoFromToClassifyToTrain(getQueryValue("api-url"), getQueryValue("label"))
+		sample = DC.moveRepoFromToClassifyToTrain(getQueryValue("api_url"), getQueryValue("label"))
 		ALTrainInstantlyAllClassificationModules(sample)
 
 	elif(key == "mute"):
