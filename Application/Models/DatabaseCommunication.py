@@ -70,6 +70,22 @@ def getAllDescriptions():
             corpus.append(sample['description'])
     return corpus
 
+def getAllReadmes():
+    tables = ['train', 'to_classify']
+    corpus = []
+
+    for table in tables:
+        data = api_call("all", tableString=table)
+        for sample in data:
+            rm = ""
+            try:
+                rm = base64.b64decode(sample['readme'])
+            except TypeError:
+                # If there was an error decoding the message, just ignore atm
+                pass
+            corpus.append(rm)
+    return corpus
+
 def getInformationsForRepo(repolink):
     '''Nur dafür da wenn ein bestimmtes Repo klassifiziert werden soll dass noch nicht in DB ist'''
     data = api_call('generate_sample&api-url=' + repolink)

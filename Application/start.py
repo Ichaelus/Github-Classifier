@@ -5,7 +5,8 @@ from bottle import Bottle
 import webbrowser
 from Controllers.HomeController import homebottle, homesetclassifiercollection
 from Models.ClassifierCollection import ClassifierCollection
-from Models.ClassificationModules.basicneuralnetwork import basicneuralnetwork
+from Models.ClassificationModules.nndescriptiononly import nndescriptiononly
+from Models.ClassificationModules.nnreadmeonly import nnreadmeonly
 import Models.DatabaseCommunication as DC
 
 print("Starting application..")
@@ -16,11 +17,15 @@ rootApp = Bottle()
 # Have no idea at the moment if that´s the best way to do it in our case
 classifiercollection = ClassifierCollection()
 homesetclassifiercollection(classifiercollection)
-print 'Getting DB Descriptions to be able to create vectorizer in basicneuralnetwork'
+print 'Getting DB Descriptions to be able to create vectorizer in nndescription'
 descriptionCorpus = DC.getAllDescriptions()
+print 'Getting DB Readmes to be able to create vectorizer in nndescription'
+readmeCorpus = DC.getAllReadmes()
 print 'Done getting DB Descriptions'
-bnn = basicneuralnetwork(descriptionCorpus)
-classifiercollection.addClassificationModule(bnn)
+nndescription = nndescriptiononly(descriptionCorpus)
+nnreadme = nnreadmeonly(readmeCorpus)
+classifiercollection.addClassificationModule(nndescription)
+classifiercollection.addClassificationModule(nnreadme)
 #on startup load last used version. also for testing loading
 #ClassifierName = bnn.getName()
 #try:

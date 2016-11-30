@@ -12,11 +12,11 @@ from ClassificationModule import ClassificationModule
 
 
 
-class basicneuralnetwork(ClassificationModule):
+class nnreadmeonly(ClassificationModule):
     """A basic feedforward neural network"""
 
     description = "A basic feedforward neural network"
-    name = "Basic Neural Network"
+    name = "Readme Only NN"
     
     def __init__(self, text_corpus, num_hidden_layers=3):
 
@@ -29,7 +29,7 @@ class basicneuralnetwork(ClassificationModule):
 
         # Set input-size and output_size
         self.input_size = len(self.vectorizer.get_feature_names())
-        self.output_size = 7 # Hardcoded for 6 classes
+        self.output_size = 7 # Hardcoded for 7 classes
 
         # Create model
         model = Sequential()
@@ -86,9 +86,9 @@ class basicneuralnetwork(ClassificationModule):
         prediction = self.model.predict(sample)[0]
         return [np.argmax(prediction)] + list(prediction) # [0] So 1-D array is returned
 
-    def formatInputData(self, data):
+    def formatInputData(self, sample):
         """Extract description and transform to vector"""
-        sd = getDescription(data)
+        sd = getReadme(sample)
         # Returns numpy array which contains 1 array with features
         return self.vectorizer.transform([sd]).toarray()
 
