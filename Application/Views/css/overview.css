@@ -268,6 +268,17 @@ button.control {
 .classifier_details .attribute div:last-child{
   font-style: italic;
 }
+.classifier_details .attribute:first-child div:last-child{
+  color: black;
+  font-size: 20px;
+  text-align: left;
+  font-style: unset;
+  display: inline;
+  border-bottom: 1px dotted #21212133;
+  margin: -2px 0 5px 0;
+  letter-spacing: 1px;
+  width: unset;
+}
 .action{
   width: 300px;
   display: block;

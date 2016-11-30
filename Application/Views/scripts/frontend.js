@@ -72,7 +72,7 @@ function initVue(){
     		stateData.formula = f;
     	},
       switchMode: function(){
-        // TODO reset
+        stateView.resetView();
         classificatorData.isPrediction = stateData.mode == 'test';
       },
 		  singleStep: function(){
@@ -81,7 +81,7 @@ function initVue(){
         stateView.resetView();
         runGenerator(function *main(){
           // Fetch sample, display
-          inputData.repoName = "Searching..";
+          Vue.set(inputData, "repoName", "Searching..");
           results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
           stateView.updateResults(results);
         });
@@ -98,7 +98,7 @@ function initVue(){
   			runGenerator(function *main(){
   				// Fetch sample, display then repeat until stateData has changed
   				while(stateData.action == "loop"){
-            inputData.repoName = "Searching..";
+            Vue.set(inputData, "repoName", "Searching..");
   					results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
   					stateView.updateResults(results);
   				}
@@ -151,10 +151,12 @@ function initVue(){
         }
       },
       startTest: function(){
+        Vue.set(inputData, "repoName", "Testing..");
         runGenerator(function *main(){
           // Fetch sample, display
           results = yield jQGetPromise("/get/startTest", "json");
           stateView.updateResults(results);
+          Vue.set(inputData, "repoName", "Test result");
         });
       },
       resetView: function(){

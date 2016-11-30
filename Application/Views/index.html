@@ -22,21 +22,23 @@
       <div class="container classifier_details">
         <h2>Classifier Module</h2>
         <hr>
-        <div class="row attribute">
-          <div class="col-xs-3">Name</div>
-          <div class="col-xs-9">{{currentName}}</div>
-        </div>
-        <div class="row attribute">
-          <div class="col-xs-3">Description</div>
-          <div class="col-xs-9">{{current.description}}</div>
-        </div>
-        <div class="row attribute">
-          <div class="col-xs-3">Yield</div>
-          <div class="col-xs-9">{{parseInt(current.yield * 100)}}%</div>
-        </div>
-        <div class="row attribute">
-          <div class="col-xs-3">Currently enabled</div>
-          <div class="col-xs-9">{{current.active ? 'Yes' : 'No'}}</div>
+        <div class="attributes">
+          <div class="row attribute">
+            <div class="col-xs-3">Name</div>
+            <div class="col-xs-9">{{currentName}}</div>
+          </div>
+          <div class="row attribute">
+            <div class="col-xs-3">Description</div>
+            <div class="col-xs-9">{{current.description}}</div>
+          </div>
+          <div class="row attribute">
+            <div class="col-xs-3">Yield</div>
+            <div class="col-xs-9">{{parseInt(current.yield * 100)}}%</div>
+          </div>
+          <div class="row attribute">
+            <div class="col-xs-3">Currently enabled</div>
+            <div class="col-xs-9">{{current.active ? 'Yes' : 'No'}}</div>
+          </div>
         </div>
         <h3>Actions</h3>
         <hr>
