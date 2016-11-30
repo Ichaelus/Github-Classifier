@@ -7,25 +7,29 @@ _Alle Abfragen werden via `GET` an den host `http://classifier.leimstaedtner.it/
 **Beispiel-Url:**
 `http://classifier.leimstaedtner.it/ajax.php?key=api:all&filter=Y2xhc3M9REVWfEhXLHN0YXJzPjM=`
 
+### ?key=api:all
+
+Gibt alle Datensätze der Tabelle `table` aus. (Attribute: `table`, `filter` (opt.))
+
 ### ?key=api:train
 
-Gibt alle Datensätze der Tabelle train aus.
+Gibt alle Datensätze der Tabelle train aus. (Attribute: `filter` (opt.))
 
 ### ?key=api:test
 
-Gibt alle Datensätze der Tabelle test aus.
+Gibt alle Datensätze der Tabelle test aus. (Attribute: `filter` (opt.))
 
 ### ?key=api:unlabeled
 
-Gibt alle Datensätze der Tabelle unlabeled aus.
+Gibt alle Datensätze der Tabelle unlabeled aus. (Attribute: `filter` (opt.))
 
 ### ?key=api:to_classify
 
-Gibt alle Datensätze der Tabelle train aus.
+Gibt alle Datensätze der Tabelle to_classify aus. (Attribute: `filter` (opt.))
 
 ### ?key=api:semi_supervised
 
-Gibt alle Datensätze der Tabelle train aus.
+Gibt alle Datensätze der Tabelle semi_supervised aus. (Attribute: `filter` (opt.))
 
 ## Weitere Funktionen
 
