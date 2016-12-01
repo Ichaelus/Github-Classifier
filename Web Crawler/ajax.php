@@ -243,7 +243,8 @@ try{
                             $iid = $db->insert("INSERT INTO `$t2` ($attrs) SELECT $attrs FROM `$t1` WHERE `api_url` = '$api_url'");
                             if($iid){
                                 $db->query("DELETE FROM `$t1` WHERE `api_url` = '$api_url'");
-                                print(json_encode($db->select("SELECT * FROM `$t2` WHERE `api_url` = '$api_url'")));
+                                $data = $db->select("SELECT * FROM `$t2` WHERE `api_url` = '$api_url'");
+                                print(json_encode($data[0]));
                             }else{
                                 throw new Exception("Error moving row");
                             }

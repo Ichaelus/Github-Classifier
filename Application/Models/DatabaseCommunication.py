@@ -15,22 +15,25 @@ def api_call(keyString, filterString="", tableString=""):
     try:
         response = urlopen(request)
         data = json.load(response)
+        if not isinstance(data, dict):
+            return data # int, string, whatever
+        assert "Error" not in data, "Database error: " + data["Error"] + "\nwith query url:" + url
     except URLError, e:
         print 'Error with api call', e
-    return data
+    return data # dict
 
 def moveRepoFromUnlabeledToToClassify(api_url):
-    data = api_call('move&from_table=unlabeled&to_tabel=to_classify&api_url=' + api_url)
+    data = api_call('move&from_table=unlabeled&to_table=to_classify&api_url=' + api_url)
     return data
 
 def moveRepoFromToClassifyToTrain(api_url, label):
     # moves <api_url> to train and assigns the given label
-    data = api_call('move&from_table=to_classify&to_tabel=train&api_url=' + api_url + '&label=' + label)
+    data = api_call('move&from_table=to_classify&to_table=train&api_url=' + api_url + '&label=' + label)
     return data
 
 def moveRepoFromUnlabeledToSemiSupervised(api_url, label):
     #label muss großgeschriebener String sein
-    data = api_call('move&from_table=unlabeled&to_tabel=semisupervised&api_url=' + api_url + '&label=' + label)
+    data = api_call('move&from_table=unlabeled&to_table=semisupervised&api_url=' + api_url + '&label=' + label)
     return data
 
 def getLabeledData():

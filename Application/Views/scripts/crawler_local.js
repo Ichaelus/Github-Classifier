@@ -112,7 +112,7 @@ function addCustomRepo(api_url){
     runGenerator(function *main(){
       // Add pending repos to list
       //yield jQGetPromise(server+"ajax.php?key=api:generate_sample&api_url="+api_url, "json");
-      let res = yield jQGetPromise(server+"ajax.php?key=api:unlabeled&filter="+btoa("api_url=" + api_url), "json");
+      let res = yield jQGetPromise(server+"ajax.php?key=api:to_classify&filter="+btoa("api_url=" + api_url), "json");
       if(res.length == 0 || res == "")
         throw new Error("There is no such sample.");
       let repo = res[0];

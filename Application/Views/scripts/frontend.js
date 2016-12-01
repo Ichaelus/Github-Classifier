@@ -101,6 +101,8 @@ function initVue(){
             Vue.set(inputData, "repoName", "Searching..");
   					results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
   					stateView.updateResults(results);
+            if(results.classifiersUnsure)
+              stateData.action = "halt_loop";
   				}
   			});
   		},
@@ -333,8 +335,10 @@ function HandlePopupResult(result) {
   // If the sample has been labeled, update view
   console.log("result of popup is: ");
   console.log(result);
-  $.get("/get/ALclassification?api_url="+result["api_url"]+"&label="+result.label, function(result){
-
+  $.get("/get/ALclassification"+getStateQuery()+"api_url="+result["api_url"]+"&label="+result.label, function(result){
+    console.log(result);
+    if(stateData.action == "halt_loop")
+      stateView.loop();
   });
 }
 function convertToApiLink(repoLink){

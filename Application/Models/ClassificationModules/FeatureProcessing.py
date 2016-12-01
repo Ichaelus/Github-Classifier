@@ -54,6 +54,7 @@ def getVectorsFromData(data, processText=True):
     return (features, labels, label_names)
 
 def getLabelIndex(sample):
+    assert  'class' in sample, "Data vector incomplete"
     global label_dict
     return label_dict[sample['class']]
 
@@ -77,9 +78,11 @@ def text_from_base64(text):
     return text
 
 def getReadme(data):
+    assert  'readme' in data, "Data vector incomplete"
     return base64.b64decode(data['readme'])
 
 def getDescription(data):
+    assert  'description' in data, "Data vector incomplete"
     return data['description']
 
 def getMetadataVector(sample):
@@ -103,6 +106,7 @@ def getMetadataVector(sample):
     return vec
 
 def getFileNameAndAuthorString(sample):
+    assert  'files' in sample and 'author' in sample, "Data vector incomplete"
     return (sample['files'], sample['author'])
 
 def getTextVectorizer(max_features, vectorizer_name="vectorizer.bin"):

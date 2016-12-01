@@ -71,6 +71,7 @@ class ClassifierCollection:
         unsure = False
         SemiSupervisedL = False
         SemiSupervisedLabel = None
+        moved = False
         for c in self.classificationmodules:
             if not c.isMuteClassificationModule():
                 resultc = c.predictLabelAndProbability(sample)
@@ -84,7 +85,9 @@ class ClassifierCollection:
                 else: raise Exception("No such formula")
                 if(uncertainty is not None and uncertainty > thresholdquery):
                     unsure = True
-                    DC.moveRepoFromUnlabeledToToClassify(sample["api_url"])
+                    if(not moved): # Move only once
+                        DC.moveRepoFromUnlabeledToToClassify(sample["api_url"])
+                        moved = True
                 elif(uncertainty is not None and uncertainty < thresholdunsupervisedl):
                     #Hier müssen wir uns noch Gedanken machen, vlt kontrollieren
                     #wir hier nochmal ob auch wirklich alle Classifier das selbe sagen und dann
@@ -92,7 +95,7 @@ class ClassifierCollection:
                     
                     #Label = NotImplemented
                     #sampleNowWithLabel = NotImplemented
-                    #DC.moveRepoFromUnlabeledToSemiSupervised(sampleNowWithLabel["api_url"])
+                    #ONCE: DC.moveRepoFromUnlabeledToSemiSupervised(sampleNowWithLabel["api_url"])
                     #SemiSupervisedLabel = Label
                     #SemiSupervisedL = True
                     pass
@@ -100,10 +103,11 @@ class ClassifierCollection:
         return (sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results)
     
     @classmethod
-    def ALTrainInstantlyAllClassificationModules(self, sample):
+    def ALTrainInstantlyAllClassificationModules(self, data):
         """Train all ClassificationModules with the user query result"""
+        assert isinstance(data, dict), "data is not a vector"
         for c in self.classificationmodules:
-            c.trainOnSample(sample)
+            c.trainOnSample(data)
     
     @classmethod
     def doPoolBasedALRound(self, formula, semisupervised=False, traininstantly=False):
