@@ -310,3 +310,33 @@ button.control {
 .graph{
     text-align: center;
 }
+
+#confusion_matrix .cell_own{
+  background: #329A65;
+  color: black;
+}
+#confusion_matrix .cell_classifier{
+  background: #f0ff00;
+  color: black;
+}
+#confusion_matrix .cell_reference{
+  background: orange;
+  color: black;
+}
+#confusion_matrix .total td, #confusion_matrix .bold{
+  background: #439fc3;
+  color: white;
+  font-weight: bold;
+}
+#confusion_matrix tr td:first-child {
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-align: right;
+    font-size: 1em;
+}
+#confusion_matrix tr th:first-child {
+    text-align: right;
+}
+#confusion_matrix .result_abs, #confusion_matrix .result{
+  color: black !important;
+}
