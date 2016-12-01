@@ -156,9 +156,7 @@ class ClassifierCollection:
         results = []
         for classifier in self.classificationmodules:
             classifierresult = [classifier.getName(), classifier.testModule(data, classifier)]
-            print 'start of testallclassmod-method: ' + str(classifierresult)
             results.append(classifierresult)
-        print 'end of testallclassmod-method: '+str(results)
         return results
 
     @classmethod
