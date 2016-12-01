@@ -23,12 +23,25 @@ let stateView, inputView, classificatorView, outputView, wrapperView,
 	},
 	outputData = {},
 	wrapperData = {
+    // Data used by the wrapper shown when displaying the detailed page
     currentName: "",
 		current: {description: "", yield: 0, active: false, uncertainty: 0, result: {}},
     savePoints: {}, // fileName: {yield, result: [{class, val}, ..]}
     selectedPoint: "",
 		id: 0
-	};
+  },
+  radarChartOptions = {
+    // Defines the standard configuration of radar graphs
+    margin: {top: 100, right: 100, bottom: 100, left: 100},
+    maxValue: 0.5,
+    levels: 5,
+    roundStrokes: true,
+    color: d3.scale.ordinal().range(["#EDC951","#CC333F","#00A0B0"]),
+    init: function(){
+      this.w =  Math.min(700, window.innerWidth - 10) - this.margin.left - this.margin.right,
+      this.h = Math.min(this.w, window.innerHeight - this.margin.top - this.margin.bottom - 20)
+    }
+  }.init();
 
 try{
 	runGenerator(function *main(){
@@ -209,6 +222,7 @@ function initVue(){
     	showInfo: function(name){
     		wrapperView.setData(name);
         wrapperView.getSavePoints();
+        RadarChart("#class_accuarcy_chart", [resultToGraphData(wrapperData.current.result)], radarChartOptions);
     		$('.overlay_blur').fadeIn();
     		$('#overlay_wrapper').fadeIn();
     	},
@@ -275,6 +289,12 @@ function initVue(){
             if(result === false)
               throw new Error("Invalid server response");
             wrapperData.savePoints = result.savepoints;
+            let data = [];
+            for(let sp in wrapperData.savePoints){
+              data.push(resultToGraphData(wrapperData.savePoints[sp].result));
+            }
+            if(data.length > 0)
+              RadarChart("#version_accuarcy_chart", data, radarChartOptions);
           }
         });
       },
@@ -349,6 +369,16 @@ function convertToApiLink(repoLink){
     throw new Error("RepoLink invalid");
   }
 }
+
+function resultToGraphData(res){
+  // Converts a result array to a radar data array
+  assert(typeof(res) == "object" && res.length > 0, "Invalid input data");
+  let data = [];
+  for(let i = 0; i < res.length; i++)
+    data.push({axis: res[i].class, value: res[i].val});
+  return data;
+}
+
 function jQGetPromise(url, datatype = ""){
   // Promise for $.get 
   assert(isNotEmpty(url), "URL missing");
