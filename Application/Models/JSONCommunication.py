@@ -124,6 +124,7 @@ def formatPoolBasedALRound(userquery, classifierasking, resultsForUserQuery):
 #falls wirs als array von formatSingleClassificationTest machen, ansonsten muss das wieder anders ausschaun
 def formatMultipleClassificationTests(results):
 	classificators = {}
+	print 'What reaches the JSON Method: ' + str(results)
 	for result in results:
 		classificators[result[0]] = {'result':formatClassificatorAccuracy(result[1][1]), 'yield':result[1][0]}
 	returndata = {'classificators':classificators}

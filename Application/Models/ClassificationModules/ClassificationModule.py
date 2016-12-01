@@ -127,6 +127,7 @@ class ClassificationModule:
             self.Accuracy['WEB'] = class_acc[4]
             self.Accuracy['DATA'] = class_acc[5]
             self.Accuracy['OTHER'] = class_acc[6]
+        print 'classificatortestresults: ' + str(self.Yield) + ', ' + str(self.Accuracy)
         return [self.Yield, self.Accuracy]
 
     @classmethod

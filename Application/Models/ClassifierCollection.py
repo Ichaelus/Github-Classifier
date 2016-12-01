@@ -154,8 +154,11 @@ class ClassifierCollection:
         """Tests all classification modules, they do that by themselves and return results to this function"""
         data = DC.getTestData()
         results = []
-        for c in self.classificationmodules:
-            results.append([c.getName(), c.testModule(data, c)])
+        for classifier in self.classificationmodules:
+            print str(classifier.getName()) + ': '
+            result = [classifier.getName(), classifier.testModule(data, classifier)]
+            results.append(result)
+        print 'end of testallclassmod-method: '+str(results)
         return results
 
     @classmethod
