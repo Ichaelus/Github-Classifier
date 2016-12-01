@@ -155,9 +155,9 @@ class ClassifierCollection:
         data = DC.getTestData()
         results = []
         for classifier in self.classificationmodules:
-            print str(classifier.getName()) + ': '
-            result = [classifier.getName(), classifier.testModule(data, classifier)]
-            results.append(result)
+            classifierresult = [classifier.getName(), classifier.testModule(data, classifier)]
+            print 'start of testallclassmod-method: ' + str(classifierresult)
+            results.append(classifierresult)
         print 'end of testallclassmod-method: '+str(results)
         return results
 
