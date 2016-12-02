@@ -47,10 +47,21 @@ try{
 	runGenerator(function *main(){
 		let initData = yield jQGetPromise("/get/classificators", "json");
     classificatorData.classificators = initData.classificators;
+    setInititalProbability();
 		initVue();
 	});
 }catch(ex){
 	console.log(ex);
+}
+
+function setInititalProbability(){
+  let cd = classificatorData.classificators;
+  for(let c in cd){
+    assert(typeof(cd[c].accuracy) != "undefined", "Object missing");
+    cd[c].probability = cd[c].accuracy;
+    for(let j = 0; j < cd[c].probability.length; j++)
+      cd[c].probability[j].val = 0;
+  }
 }
 
 function getStateQuery(){
@@ -219,6 +230,9 @@ function initVue(){
     el: '#classificators',
     data: classificatorData,
     methods:{
+      getMode: function(){
+        return stateData.mode;
+      },
     	showInfo: function(name){
     		wrapperView.setData(name);
         wrapperView.getSavePoints();
@@ -244,9 +258,9 @@ function initVue(){
     	getMax: function(id){
     		let max = 0;
         array = stateData.mode == "test" ? "accuracy" : "probability";
-        for(let i = 0; i < classificatorData.classificators[id][array].length; i ++){
-    			max = Math.max(max, classificatorData.classificators[id][array][i].val);
-    		}
+        if(typeof(classificatorData.classificators[id][array]) != "undefined")
+          for(let i = 0; i < classificatorData.classificators[id][array].length; i ++)
+      			max = Math.max(max, classificatorData.classificators[id][array][i].val);
     		return max;
     	},
       isAsking: function(name){
@@ -270,22 +284,22 @@ function initVue(){
     data: wrapperData,
     methods:{
     	setData: function(i){
-    		wrapperData.current = classificatorData.classificators[i];
-        wrapperData.currentName = i;
+    		Vue.set(wrapperData, "current", classificatorData.classificators[i]);
+        Vue.set(wrapperData, "currentName", i);
     	},
       getSavePoints: function(){
-        $.get("/get/savePoints?name="+wrapperData.currentName, function(data){
-          if(data != ""){
-            data = JSON.parse(data);
-            if(data === false)
+        $.get("/get/savePoints?name="+wrapperData.currentName, function(resp){
+          if(resp != ""){
+            resp = JSON.parse(resp);
+            if(resp === false)
               throw new Error("Invalid server response");
-            wrapperData.savePoints = data.savepoints;
-            let data = [];
+            wrapperData.savePoints = resp.savepoints;
+            let resp = [];
             for(let sp in wrapperData.savePoints){
-              data.push(accuracyToGraphData(wrapperData.savePoints[sp].accuracy));
+              resp.push(accuracyToGraphData(wrapperData.savePoints[sp].accuracy));
             }
-            if(data.length > 0)
-              RadarChart("#version_accuarcy_chart", data, radarChartOptions);
+            if(resp.length > 0)
+              RadarChart("#version_accuarcy_chart", resp, radarChartOptions);
           }
         });
       },
@@ -335,7 +349,6 @@ function initVue(){
     }
   });
 }
-
 function hideInfo(){
 	// Hide any visible popup
 	$('#overlay_wrapper').fadeOut();

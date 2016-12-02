@@ -16,7 +16,6 @@ rootApp = Bottle()
 # Should we create the ClassifierCollection here once and then pass it to the other controllers?
 # Have no idea at the moment if that´s the best way to do it in our case
 classifiercollection = ClassifierCollection()
-homesetclassifiercollection(classifiercollection)
 print 'Getting DB Descriptions to be able to create vectorizer in nndescription'
 descriptionCorpus = DC.getAllDescriptions()
 print 'Getting DB Readmes to be able to create vectorizer in nndescription'
@@ -24,8 +23,11 @@ readmeCorpus = DC.getAllReadmes()
 print 'Done getting DB Descriptions'
 nndescription = nndescriptiononly(descriptionCorpus)
 nnreadme = nnreadmeonly(readmeCorpus)
-classifiercollection.addClassificationModule(nndescription)
-classifiercollection.addClassificationModule(nnreadme)
+classifiercollection.addClassificationModuleWithLastSavePoint(nndescription)
+classifiercollection.addClassificationModuleWithLastSavePoint(nnreadme)
+# set Controller
+homesetclassifiercollection(classifiercollection)
+
 #on startup load last used version. also for testing loading
 #ClassifierName = bnn.getName()
 #try:

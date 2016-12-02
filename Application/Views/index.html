@@ -71,25 +71,25 @@
           <table id="confusion_matrix" class="table">
             <tbody><tr>
               <th>▼ Class. \ Reference ► </th>
-              <th v-for="(r, i) in current.result">{{r.class}}</th>
+              <th v-for="(r, i) in current.accuracy">{{r.class}}</th>
               <th>Total</th>
               <th>C.A. (%)</th>
             </tr>
-            <tr v-for="(r, i) in current.result">
+            <tr v-for="(r, i) in current.accuracy">
               <td>{{r.class}}</td>
-              <td v-for="(r2, i2) in current.result" :class="(i == i2 ? 'cell_own' : (i < i2 ? 'cell_classifier': 'cell_reference'))">{{parseInt(Math.random() * 100)}}</td>
+              <td v-for="(r2, i2) in current.accuracy" :class="(i == i2 ? 'cell_own' : (i < i2 ? 'cell_classifier': 'cell_reference'))">{{parseInt(Math.random() * 100)}}</td>
               <td class="bold">{{parseInt(Math.random() * 700)}}</td>
               <td class="bold">{{parseInt(Math.random() * 1000)/10}}</td>
             </tr>
             <tr class="total">
               <td>Total</td>
-              <td class="bold" v-for="(r, i) in current.result">{{parseInt(Math.random() * 100)}}</td>
+              <td class="bold" v-for="(r, i) in current.accuracy">{{parseInt(Math.random() * 100)}}</td>
               <td class="result_abs">{{parseInt(Math.random() * 700)}}</td>
               <td></td>
             </tr>
             <tr class="total">
               <td>P.A. (%)</td>
-              <td class="bold" v-for="(r, i) in current.result">{{parseInt(Math.random() * 1000)/10}}</td>
+              <td class="bold" v-for="(r, i) in current.accuracy">{{parseInt(Math.random() * 1000)/10}}</td>
               <td></td>
               <td class="result">{{parseInt(Math.random() * 1000)/10}}</td>
             </tr>
@@ -100,7 +100,7 @@
         </div>
       </div>
     </div> <!-- /Overlay -->
-    <div class="container-fluid">
+    <div id="page" class="container-fluid">
       <div id="header">
         <div class="container">
           <div class="col-xs-4">
@@ -208,8 +208,13 @@
                   </div>
                 </div>
                 <div class="arrow">=&gt;</div>
-                <div class="result_vector">
-                    <div v-for="(r, i) in c.result" :class="'v ' + (getMax(index)  == r.val ? 'max' : '')">
+                <div :class="'result_vector ' + (getMode() != 'test' ? 'hidden' : '')">
+                    <div v-for="(r, i) in c.accuracy" :class="'v ' + (getMax(index)  == r.val ? 'max' : '')">
+                      <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
+                    </div>
+                </div>
+                <div :class="'result_vector ' + (getMode() == 'test' ? 'hidden' : '')">
+                    <div v-for="(r, i) in c.probability" :class="'v ' + (getMax(index)  == r.val ? 'max' : '')">
                       <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
                     </div>
                 </div>

@@ -7,7 +7,7 @@ from datetime import datetime, date, time
 import ActiveLearningSpecific as AL
 from FeatureProcessing import getLabelIndex
 import numpy as np
-
+import re
 
 import xml.etree.ElementTree as ET
 import os
@@ -150,23 +150,23 @@ class ClassificationModule:
                 sampleindex = uncertainties.index(uncertainty)
         return data[sampleindex]
 
-	
+    
     @classmethod
     def saveModule(self, classifierself):
         """serializes modul and add a savepoint to XML-File"""
         ###Folder building if necessary
         ###Serialization
         filename = datetime.now().isoformat().replace(":", "") + '.pkl'
-		#generating a path that is indepentent from operating system
+        #generating a path that is indepentent from operating system
         tmpPath = self.getSavePath()
         tmpPath = os.path.join(tmpPath, self.name, filename)
-		#save module
+        #save module
         output = open(tmpPath, 'wb')
         pickle.dump(classifierself, output, 2)
         output.close()
-		
-		###XML-file
-		#generating a path that is indepentent from operating system
+        
+        ###XML-file
+        #generating a path that is indepentent from operating system
         tmpPath = self.getSavePath()
         tmpPath = os.path.join(tmpPath, self.name, self.name + '.xml')
         tree = ET.parse(tmpPath)
@@ -180,17 +180,17 @@ class ClassificationModule:
         month.text = str(today.month)
         year = ET.SubElement(entry, 'year')
         year.text = str(today.year)
-		#SubElement can only handle dicts out of strings => transformation necessary
+        #SubElement can only handle dicts out of strings => transformation necessary
         stringDict = {}
         for key, value in self.Accuracy.iteritems():
-			stringDict[str(key)] = str(value)
+            stringDict[str(key)] = str(value)
         ET.SubElement(entry, 'accuracy', stringDict)
         ElementYield = ET.SubElement(entry, 'yield')
         ElementYield.text = str(self.Yield)
         #save XML-File
         tree.write(tmpPath)
         return None
-		
+        
     @classmethod
     def getSavePointsForClassificationModules(self):
         ### require a xml-file which contains <data></data>
@@ -211,42 +211,45 @@ class ClassificationModule:
         #return: list of lists of element0: filename, element1: dict for Accuracy and element2: yield
         #       [['2016-11-28T18:38:10.221000.pkl', {"DEV":0.0, "HW":0.0, ...}, 90.93], ...]
         return savePoints
-		
-		
+        
+        
     @classmethod
     def loadClassificationModuleSavePoint(self, filename="lastused"):
         ### require a xml-file which contains <data></data>
-		###	at directory path
-		#wenn lastused, dann wird aus dem XML-File der Name vom zuletzt benutzten SavePoint rausgesucht
+        ###	at directory path
+        #wenn lastused, dann wird aus dem XML-File der Name vom zuletzt benutzten SavePoint rausgesucht
         """loads another SafePoint with filename of the current ClassificationModule"""
         if (filename is "lastused"):
             #generating a path that is indepentent from operating system
             tmpPath = self.getSavePath()
             tmpPath = os.path.join(tmpPath, self.name, self.name + '.xml')
             #open and convert XML-File to ElementTree-data
+            lastmodified = "000000"  #Lexikographisch sehr gutes wort
+                                #quasi wie -unendlich bei Zahlensortierverfahren
+            lastmodifiedOutNumbersLetters = "000000"
             tree = ET.parse(tmpPath)
             root = tree.getroot()
-            lastmodified = 'zzzzzzzzzzzzzzzzzzzzzz'  #Lexikographisch sehr schlechtes wort
-													#quasi wie -unendlich bei Zahlensortierverfahren
-			#search for last saved file
+            #search for last saved file
             for child in root:
-				tmp = child.attrib.values()[0]
-				if (lastmodified > tmp):
-					lastmodified = tmp
-            if (lastmodified is "zzzzzzzzzzzzzzzzzzzzzz"):
-				#there is no savepoint
-				return None
+                tmp = child.attrib.values()[0]
+                namelettersnumbers = re.sub("[^0-9a-zA-Z\s]", '', tmp)
+                if (lastmodifiedOutNumbersLetters < namelettersnumbers):
+                    lastmodifiedOutNumbersLetters = namelettersnumbers
+                    lastmodified = tmp
+            if (lastmodified is "000000"):
+                #there is no savepoint
+                return None
             filename = lastmodified
-        	#generating a path that is indepentent from operating system
+            #generating a path that is indepentent from operating system
         tmpPath = self.getSavePath()
         tmpPath = os.path.join(tmpPath, self.name, filename)
-		#deserialization
+        #deserialization
         f = open(tmpPath, 'rb')
         data = pickle.load(f)
-		#return: ClassificationModule or None if there isnt one
+        #return: ClassificationModule or None if there isnt one
         return data
-	
-	
+    
+    
     @classmethod
     def tryNewDirForModule(self, savepath):
         """builds a new directory and xml-file if it doesnt exit"""
@@ -269,7 +272,10 @@ class ClassificationModule:
     def getSavePath(self):
         """Returns the basic path to the save folder"""
         #ensure savepath exists
-        savepath = os.path.abspath(".")
+        savepath = os.path.abspath(__file__)
+        savepath = os.path.join(savepath, os.pardir)
+        savepath = os.path.join(savepath, os.pardir)
+        savepath = os.path.join(savepath, os.pardir)
         savepath = os.path.abspath(os.path.join(savepath, "Classifier_SavePoints"))
         self.tryNewDirForModule(savepath)
         return savepath
