@@ -25,6 +25,9 @@ nndescription = nndescriptiononly(descriptionCorpus)
 nnreadme = nnreadmeonly(readmeCorpus)
 classifiercollection.addClassificationModuleWithLastSavePoint(nndescription)
 classifiercollection.addClassificationModuleWithLastSavePoint(nnreadme)
+#initialize Accuracy and Yield for all ClassificationModules
+#(pickle doesn´t seem to save class variables of abstract parent class)
+classifiercollection.TestAllClassificationModules()
 # pass ClassifierCollection to Controller
 homesetclassifiercollection(classifiercollection)
 
