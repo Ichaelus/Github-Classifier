@@ -160,7 +160,7 @@ function RadarChart(id, data, options) {
 		.style("fill-opacity", cfg.opacityArea)
 		.on('mouseover', function (d,i){
 			//Dim all blobs
-			d3.selectAll(".radarArea")
+			d3.selectAll(id + " .radarArea")
 				.transition().duration(200)
 				.style("fill-opacity", 0.1); 
 			//Bring back the hovered over blob
@@ -170,7 +170,7 @@ function RadarChart(id, data, options) {
 		})
 		.on('mouseout', function(){
 			//Bring back all blobs
-			d3.selectAll(".radarArea")
+			d3.selectAll(id + " .radarArea")
 				.transition().duration(200)
 				.style("fill-opacity", cfg.opacityArea);
 		});
@@ -234,7 +234,8 @@ function RadarChart(id, data, options) {
 	//Set up the small tooltip for when you hover over a circle
 	var tooltip = g.append("text")
 		.attr("class", "tooltip")
-		.style("opacity", 0);
+		.style("opacity", 0)
+		.style("color", "black");
 	
 	/////////////////////////////////////////////////////////
 	/////////////////// Helper Function /////////////////////

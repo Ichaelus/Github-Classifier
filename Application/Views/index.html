@@ -55,12 +55,12 @@
           <span class="action btn btn-default" v-on:click="load()">Load version</span>
         </div>
         <h3>Performance Graphs</h3>
+        <!--
         <div class="graph">
         <hr>
           <h4><strong>Per class accuracy</strong></h4>
           <div id="class_accuarcy_chart"></div>
-          <!--<img src="http://www.visualcinnamon.com/wp-content/uploads/2015/09/D3-radar-chart-New-version-Hover.png">-->
-        </div>
+        </div>-->
         <div class="graph">
           <h4><strong>Overall accuracy per version</strong></h4>
           <div id="version_accuarcy_chart"></div>
@@ -213,7 +213,7 @@
                       <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
                     </div>
                 </div>
-                <div  title="uncertainty" :class="'uncertainty ' + (typeof(c.uncertainty) != 'undefined' ? '' : 'hidden ') + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'red ' : '') : ' ')">
+                <div  title="uncertainty" :class="'uncertainty ' + (c.uncertainty > 0 ? '' : 'hidden ') + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'uncertain ' : 'certain ') : ' ')">
                   {{parseInt(c.uncertainty * 100) / 100}}
                 </div>
               </div>

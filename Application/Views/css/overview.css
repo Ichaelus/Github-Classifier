@@ -235,7 +235,10 @@ button.control {
   font-style: italic;
   font-weight: bold;
 }
-.uncertainty.red{
+.uncertainty.uncertain{
+  color:red;
+}
+.uncertainty.certain{
   color:red;
 }
 .overlay_blur{

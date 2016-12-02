@@ -180,7 +180,7 @@ function initVue(){
             cf = classificatorData.classificators[c];
             for(let i in cf.result)
               Vue.set(cf.result[i], "val", 0.0);
-            Vue.set(cf, "uncertainty", "");
+            Vue.set(cf, "uncertainty", 0);
             console.log(cf);
         }
       }
