@@ -165,6 +165,14 @@ def formatSingleClassificationTest(classifier,result):
 	#			{class: "DATA", val : 0.02},
 	#			{class: "OTHER", val : 0.04}
 	#		],
+	#		"confusionMatrix":{
+	#			"matrix": 
+	#				[	[],
+	#					...
+	#					[]
+	#				],
+	#			"order": ["DEV",...]
+	#		}
 	#		yield: "81",
 	#	}}
 	#}
