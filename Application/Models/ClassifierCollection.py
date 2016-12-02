@@ -7,26 +7,22 @@ import ClassificationModules.ActiveLearningSpecific as AL
 
 class ClassifierCollection:
     """A class to deal with multiple Classification Modules"""
-    classificationmodules = []
-    poolbasedalclassifierturn = 0
 
 
     def __init__(self):
         # Manually add each classification module we´re currently using
         self.classificationmodules = []
+        self.poolbasedalclassifierturn = 0
     
-    @classmethod
     def getAllClassificationModules(self):
         """Return some basic informations about each Classification Module."""
         return self.classificationmodules
 
-    @classmethod
     def SaveAllClassificationModules(self, stillundefined):
         """Saves all classification modules"""
         for classifier in self.classificationmodules:
 		    classifier.saveModule()
 
-    @classmethod
     def getClassificationModule(self, classifiername):
         """Return the actual Classification Module object to do stuff like safing and loading."""
         for c in self.classificationmodules:
@@ -34,15 +30,12 @@ class ClassifierCollection:
                 return c
         raise NameError('No classifier with this name')
 
-    @classmethod
     def setClassificationModule(self, classifiername, otherVersionOfClassifier):
         """Set a Classification Module object to a new value for loading."""
         for i in xrange(0, len(self.classificationmodules)):
             if self.classificationmodules[i].getName() == classifiername:
                  self.classificationmodules[i] = otherVersionOfClassifier
 
-        
-    @classmethod
     def addClassificationModule(self, classificationmoduleobject):
         """Add a classification module to the collection. Der Name davon muss unique sein.
         Sollte nur am Anfang vom Programm verwendet werden"""
@@ -52,7 +45,6 @@ class ClassifierCollection:
         else :
             self.classificationmodules.append(classificationmoduleobject)
     
-    @classmethod
     def addClassificationModuleWithLastSavePoint(self, classificationmoduleobject):
         """Add a classification moudule to the collection. 
         And loads if existing last savepoint."""
@@ -75,7 +67,6 @@ class ClassifierCollection:
     #    """Remove a classification module from the collection."""
     #    self.classificationmodules.remove(self.getClassificationModule(classifiername))
     
-    @classmethod
     def doStreamBasedALRound(self, formula, semisupervised=False, thresholdunsupervisedl = 0.1, thresholdquery = 0.9):
         """Ein zufälliges unlabeled Sample wird genommen, von jedem klassifiziert, und wenn sich 
         mindestens 1er unsicher ist, wird beim Benutzer nachgefragt,
@@ -116,14 +107,12 @@ class ClassifierCollection:
                 results.append([c.getName(), resultc, uncertainty,(uncertainty > thresholdquery)])
         return (sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results)
     
-    @classmethod
     def ALTrainInstantlyAllClassificationModules(self, data):
         """Train all ClassificationModules with the user query result"""
         assert isinstance(data, dict), "data is not a vector"
         for c in self.classificationmodules:
             c.trainOnSample(data)
     
-    @classmethod
     def doPoolBasedALRound(self, formula, semisupervised=False, traininstantly=False):
         """Calculates the best query to be answered by user. First unmuted classifier 1
         gets to ask a question the next time this function is run, then unmuted classifier 2 etc."""
@@ -137,7 +126,7 @@ class ClassifierCollection:
             if(j == self.poolbasedalclassifierturn + i):
                 c = self.classificationmodules[j]
                 if not c.isMuteClassificationModule():
-                    userquery = c.calculatePoolBasedQuery(formula, data, c)
+                    userquery = c.calculatePoolBasedQuery(formula, data)
                     classifierasking = c
                 else:
                     i = i + 1
@@ -149,6 +138,14 @@ class ClassifierCollection:
                             return self.doPoolBasedALRound(formula, semisupervised, traininstantly)
                         else:
                             raise Exception('Error, trying to do doPoolBasedALRound without a non-muted classifier')
+        #Anzahl der nicht gemuteten classifier berechnen
+        NumberNonMuted = 0
+        for c in self.classificationmodules:
+            if not c.isMuteClassificationModule():
+                NumberNonMuted += 1
+        if NumberNonMuted != 0:
+            self.poolbasedalclassifierturn = (self.poolbasedalclassifierturn + i + 1) % NumberNonMuted
+        else: raise Exception("All Classifiers are muted")
         for c in self.classificationmodules:
             prob = c.predictLabelAndProbability(userquery)
             uncertainty = None
@@ -162,8 +159,6 @@ class ClassifierCollection:
             resultsForUserQuery.append([c.getName(),prob,uncertainty])
         return userquery, classifierasking, resultsForUserQuery
 
-
-    @classmethod
     def TestAllClassificationModules(self):
         """Tests all classification modules, they do that by themselves and return results to this function"""
         data = DC.getTestData()
@@ -173,7 +168,6 @@ class ClassifierCollection:
             results.append(classifierresult)
         return results
 
-    @classmethod
     def PredictSingleSample(self, repolink):
         """Returns the sample with the probability and label each classification module would assign"""
         data = DC.getInformationsForRepo(repolink)
@@ -182,7 +176,6 @@ class ClassifierCollection:
             results.append([c.getName(), c.predictLabelAndProbability(data)])
         return data, results
 
-    @classmethod
     def TrainAllClassificationModulesOnSample(self, repo):
         """Trains all classification modules with the data, e.g. the newly labeled sample"""
         results = []

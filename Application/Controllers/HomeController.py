@@ -160,7 +160,7 @@ def api(key):
 		ClassifierName = getQueryValue("name")
 		#try:
 		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
-		classifier.saveModule(classifier)
+		classifier.saveModule()
 		return "The classifier "+ClassifierName+" has been saved."
 		#except:
 		#	return "Error while saving classifier."

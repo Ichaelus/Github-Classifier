@@ -122,7 +122,7 @@ class ClassificationModule:
             self.Accuracy['WEB'] = class_acc[4]
             self.Accuracy['DATA'] = class_acc[5]
             self.Accuracy['OTHER'] = class_acc[6]
-        return [self.getYield, self.getAccuracy()]
+        return [self.getYield(), self.getAccuracy()]
 
     def calculatePoolBasedQuery(self,formula, data):
         """Module goes trough each sample, calculates the uncertainty for it and returns the sample with the highest uncertainty"""
