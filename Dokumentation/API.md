@@ -2,34 +2,34 @@
 
 ## Base url
 
-_Alle Abfragen werden via `GET` an den host `http://classifier.leimstaedtner.it/ajax.php` gesendet. Das Attribut `key` unterscheidet dann die gewünschte Grundmenge, `filter` und `table` dienen zur Verfeinerung der Resultate._
+_Alle Abfragen werden via `GET` an den host `http://classifier.leimstaedtner.it/ajax.php` gesendet. Das Attribut `key` unterscheidet dann die gewünschte Grundmenge, `filter`, `limit` und `table` dienen zur Verfeinerung der Resultate._
 
 **Beispiel-Url:**
 `http://classifier.leimstaedtner.it/ajax.php?key=api:all&filter=Y2xhc3M9REVWfEhXLHN0YXJzPjM=`
 
 ### ?key=api:all
 
-Gibt alle Datensätze der Tabelle `table` aus. (Attribute: `table`, `filter` (opt.))
+Gibt alle Datensätze der Tabelle `table` aus. (Attribute: `table`, `limit`(opt.), `filter` (opt.))
 
 ### ?key=api:train
 
-Gibt alle Datensätze der Tabelle train aus. (Attribute: `filter` (opt.))
+Gibt alle Datensätze der Tabelle train aus. (Attribute: `limit`(opt.), `filter` (opt.))
 
 ### ?key=api:test
 
-Gibt alle Datensätze der Tabelle test aus. (Attribute: `filter` (opt.))
+Gibt alle Datensätze der Tabelle test aus. (Attribute: `limit`(opt.), `filter` (opt.))
 
 ### ?key=api:unlabeled
 
-Gibt alle Datensätze der Tabelle unlabeled aus. (Attribute: `filter` (opt.))
+Gibt alle Datensätze der Tabelle unlabeled aus. (Attribute: `limit`(opt.), `filter` (opt.))
 
 ### ?key=api:to_classify
 
-Gibt alle Datensätze der Tabelle to_classify aus. (Attribute: `filter` (opt.))
+Gibt alle Datensätze der Tabelle to_classify aus. (Attribute: `limit`(opt.), `filter` (opt.))
 
 ### ?key=api:semi_supervised
 
-Gibt alle Datensätze der Tabelle semi_supervised aus. (Attribute: `filter` (opt.))
+Gibt alle Datensätze der Tabelle semi_supervised aus. (Attribute: `limit`(opt.), `filter` (opt.))
 
 ## Weitere Funktionen
 
@@ -89,6 +89,8 @@ Gibt einen Datensatz zurück, der in der alten Datenmenge vorhanden ist, aber no
 
 
 ## Filtern
+
+Der Paramter `limit` beschränkt das Resultat auf die angegebene Menge an Datensätzen, diese werden zufällig gewählt.
 
 Das `filter` Attribut kann, wenn gesetzt, mit einem **base 64 encodierten** Array der Form [attribut1=wert1,...] gefüllt werden. Neben dem Operator `=` können, wenn sinnvoll, auch die Operatoren `<, <=, >, >=` verwendet werden.
 Werden verschiedene Attributfilter mit einem `,` getrennt, resultiert das in eine **AND** Verknüpfung. Will man hingegen eine **OR** Verknüfung, reicht es ein `|` Symbol anstelle des Kommas zu verwenden. (OR bindet hier stärker(!) als AND).

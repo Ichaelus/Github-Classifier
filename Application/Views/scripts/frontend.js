@@ -2,7 +2,7 @@ console.log("Frontend started..");
 let stateView, inputView, classificatorView, outputView, wrapperView,
 	stateData = {
 		action: "halt",
-		mode: "stream", // pool, test, single
+		mode: "test", // stream, pool, test, single
 		isSemiSupervised: false,
 		trainInstantly: false,
 		formula: "",
@@ -19,14 +19,14 @@ let stateView, inputView, classificatorView, outputView, wrapperView,
 	},
 	classificatorData = {
     isPrediction: true,
-		classificators: {} // name : {description, yield, active, uncertainty, result : [{class, val},..]}
+		classificators: {} // name : {description, yield, active, uncertainty, accuracy: [{class, val},..], probability : [{class, val},..]}
 	},
 	outputData = {},
 	wrapperData = {
     // Data used by the wrapper shown when displaying the detailed page
     currentName: "",
-		current: {description: "", yield: 0, active: false, uncertainty: 0, result: {}},
-    savePoints: {}, // fileName: {yield, result: [{class, val}, ..]}
+		current: {description: "", yield: 0, active: false, uncertainty: 0, accuracy: {}, probability: {}},
+    savePoints: {}, // fileName: {yield, accuracy: [{class, val}, ..]}
     selectedPoint: "",
 		id: 0
   },
@@ -71,13 +71,13 @@ function initVue(){
     data: stateData,
     methods:{
     	getFormulas: function(){
-    		$.get("/get/formulas", function(result){
-    			result = JSON.parse(result);
-    			if(result === false)
+    		$.get("/get/formulas", function(data){
+    			data = JSON.parse(data);
+    			if(data === false)
     				throw new Error("Invalid server response");
-    			stateData.formulas = result;
-    			if(result.length > 0)
-    				stateData.formula = result[0];
+    			stateData.formulas = data;
+    			if(data.length > 0)
+    				stateData.formula = data[0];
     		});
     	},
     	setFormula: function(f){
@@ -175,11 +175,11 @@ function initVue(){
         });
       },
       resetView: function(){
-        // Reset classificators
+        // Reset classificators, but keep accuracy
         for(let c in classificatorData.classificators){ // c => classificator name
             cf = classificatorData.classificators[c];
-            for(let i in cf.result)
-              Vue.set(cf.result[i], "val", 0.0);
+            for(let i in cf.probability)
+              Vue.set(cf.probability[i], "val", 0.0);
             Vue.set(cf, "uncertainty", 0);
             console.log(cf);
         }
@@ -201,10 +201,10 @@ function initVue(){
 
       },
       getPoolsize: function(){
-        $.get("/get/poolSize", function(result){
-          if(isNaN(result))
+        $.get("/get/poolSize", function(data){
+          if(isNaN(data))
             throw new Error("Invalid server response");
-          inputData.poolSize = parseInt(result);
+          inputData.poolSize = parseInt(data);
         });
       },
       getClassifierAmount: function(){
@@ -222,7 +222,7 @@ function initVue(){
     	showInfo: function(name){
     		wrapperView.setData(name);
         wrapperView.getSavePoints();
-        RadarChart("#class_accuarcy_chart", [resultToGraphData(wrapperData.current.result)], radarChartOptions);
+        RadarChart("#class_accuarcy_chart", [accuracyToGraphData(wrapperData.current.accuracy)], radarChartOptions);
     		$('.overlay_blur').fadeIn();
     		$('#overlay_wrapper').fadeIn();
     	},
@@ -230,37 +230,28 @@ function initVue(){
         let c= classificatorData.classificators[name];
         c.active = !c.active;
         if(!c.active){
-          $.get("/get/mute?name="+name, function(result){
-            if(result != "success")
+          $.get("/get/mute?name="+name, function(data){
+            if(data != "success")
                 throw new Error("Invalid server response");
           });
         }else{
-          $.get("/get/unmute?name="+name, function(result){
-            if(result != "success")
+          $.get("/get/unmute?name="+name, function(data){
+            if(data != "success")
                 throw new Error("Invalid server response");
           });
         }
     	},
     	getMax: function(id){
     		let max = 0;
-    		for(let i = 0; i < classificatorData.classificators[id].result.length; i ++){
-    			max = Math.max(max, classificatorData.classificators[id].result[i].val);
+        array = stateData.mode == "test" ? "accuracy" : "probability";
+        for(let i = 0; i < classificatorData.classificators[id][array].length; i ++){
+    			max = Math.max(max, classificatorData.classificators[id][array][i].val);
     		}
     		return max;
     	},
       isAsking: function(name){
         return stateData.mode == "pool" && inputData.classifierAsking == name;
       }
-      /*,
-      updateSaveState: function(name, yield, classificatorResults){
-        for(let i in classificatorData.classificators){
-          if(i == name){
-            let c = classificatorData.classificators[i];
-            c.yield = yield <= 1 ? yield : yield/100;
-            c.result = classificatorResults;
-          }
-        }
-      }*/
     }
   });
 
@@ -283,15 +274,15 @@ function initVue(){
         wrapperData.currentName = i;
     	},
       getSavePoints: function(){
-        $.get("/get/savePoints?name="+wrapperData.currentName, function(result){
-          if(result != ""){
-            result = JSON.parse(result);
-            if(result === false)
+        $.get("/get/savePoints?name="+wrapperData.currentName, function(data){
+          if(data != ""){
+            data = JSON.parse(data);
+            if(data === false)
               throw new Error("Invalid server response");
-            wrapperData.savePoints = result.savepoints;
+            wrapperData.savePoints = data.savepoints;
             let data = [];
             for(let sp in wrapperData.savePoints){
-              data.push(resultToGraphData(wrapperData.savePoints[sp].result));
+              data.push(accuracyToGraphData(wrapperData.savePoints[sp].accuracy));
             }
             if(data.length > 0)
               RadarChart("#version_accuarcy_chart", data, radarChartOptions);
@@ -331,12 +322,12 @@ function initVue(){
   		load: function(){
   			console.log("Wrapper: "+wrapperData.currentName+" loading.");
         runGenerator(function *main(){
-          result = yield jQGetPromise("/get/load?name="+wrapperData.currentName + "&savepoint="+wrapperData.selectedPoint, "json");
-          // result contains a name of the selected classificator and an accuracy array
-          if(typeof(result.Error) != "undefined"){
-            notify("Error", result.Error, 2500);
+          data = yield jQGetPromise("/get/load?name="+wrapperData.currentName + "&savepoint="+wrapperData.selectedPoint, "json");
+          // data contains a name of the selected classificator and an accuracy array
+          if(typeof(data.Error) != "undefined"){
+            notify("Error", data.Error, 2500);
            }else{ 
-            stateView.updateClassificators(result.classificators);
+            stateView.updateClassificators(data.classificators);
             notify("Loaded", "The classifier "+wrapperData.currentName+" has been loaded.", 2500);
           }
         });
@@ -355,8 +346,8 @@ function HandlePopupResult(result) {
   // If the sample has been labeled, update view
   console.log("result of popup is: ");
   console.log(result);
-  $.get("/get/ALclassification"+getStateQuery()+"api_url="+result["api_url"]+"&label="+result.label, function(result){
-    console.log(result);
+  $.get("/get/ALclassification"+getStateQuery()+"api_url="+result["api_url"]+"&label="+result.label, function(data){
+    console.log(data);
     if(stateData.action == "halt_loop")
       stateView.loop();
   });
@@ -370,7 +361,7 @@ function convertToApiLink(repoLink){
   }
 }
 
-function resultToGraphData(res){
+function accuracyToGraphData(res){
   // Converts a result array to a radar data array
   assert(typeof(res) == "object" && res.length > 0, "Invalid input data");
   let data = [];
