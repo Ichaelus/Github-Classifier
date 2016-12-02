@@ -15,7 +15,7 @@ def ConvertClassifierCollectionToJSON(classificationModules):
 	# EXAMPLE
 	# {classificators:{
 	# 	"<ModuleName>" : {
-	#		result:[
+	#		accuracy:[
 	#			{class: "DEV", val : 0.04},
 	#			{class: "HW", val : 0.13},
 	#			{class: "EDU", val : 0.11},
@@ -24,6 +24,14 @@ def ConvertClassifierCollectionToJSON(classificationModules):
 	#			{class: "DATA", val : 0.02},
 	#			{class: "OTHER", val : 0.04}
 	#		],
+	#		"confusionMatrix":{
+	#			"matrix": 
+	#				[	[],
+	#					...
+	#					[]
+	#				],
+	#			"order": ["DEV",...]
+	#		}
 	#		description: "A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.",
 	#		yield: "81",
 	#		active: true
@@ -48,7 +56,7 @@ def formatSinglePrediction(data, results):
 	#	"repo":	{repoName: "repoName","repoAPILink":""},
 	#	"classificators":{
 	# 	"<ModuleName>" : {
-	#		result:[
+	#		probability:[
 	#			{class: "DEV", val : 0.04},
 	#			{class: "HW", val : 0.13},
 	#			{class: "EDU", val : 0.11},
@@ -79,7 +87,7 @@ def formatStreamBasedALRound(sample, unsure, SemiSupervisedL, SemiSupervisedLabe
 	#	"semisupervised":{"SemiSupervisedSureEnough":"false","SemiSupervisedLabel":"None"},
 	#	classificators:{
 	# 	"<ModuleName>" : {
-	#		result:[
+	#		probability:[
 	#			{class: "DEV", val : 0.04},
 	#			{class: "HW", val : 0.13},
 	#			{class: "EDU", val : 0.11},
@@ -108,7 +116,7 @@ def formatPoolBasedALRound(userquery, classifierasking, resultsForUserQuery):
 	# "classifierAsking":"Neural Network1",
 	# "classificators":{
 	# 	"<ModuleName>" : {
-	#		"result":[
+	#		"probability":[
 	#			{class: "DEV", val : 0.04},
 	#			{class: "HW", val : 0.13},
 	#			{class: "EDU", val : 0.11},
@@ -132,7 +140,7 @@ def formatMultipleClassificationTests(results):
 	# EXAMPLE
 	# {classificators:{
 	# 	"<ModuleName>" : {
-	#		result:[
+	#		accuracy:[
 	#			{class: "DEV", val : 0.04},
 	#			{class: "HW", val : 0.13},
 	#			{class: "EDU", val : 0.11},
@@ -141,6 +149,14 @@ def formatMultipleClassificationTests(results):
 	#			{class: "DATA", val : 0.02},
 	#			{class: "OTHER", val : 0.04}
 	#		],
+	#		"confusionMatrix":{
+	#			"matrix": 
+	#				[	[],
+	#					...
+	#					[]
+	#				],
+	#			"order": ["DEV",...]
+	#		}
 	#		yield: "81",
 	#	}}
 	#}
@@ -156,7 +172,7 @@ def formatSingleClassificationTest(classifier,result):
 	# EXAMPLE
 	# {classificators:{
 	# 	"<ModuleName>" : {
-	#		result:[
+	#		accuracy:[
 	#			{class: "DEV", val : 0.04},
 	#			{class: "HW", val : 0.13},
 	#			{class: "EDU", val : 0.11},
@@ -186,26 +202,7 @@ def formatSavePoints(savePoints):
 	# EXAMPLE
 	# {savepoints:{
 	# 	"<filename>" : {
-	#		result:[
-	#			{class: "DEV", val : 0.04},
-	#			{class: "HW", val : 0.13},
-	#			{class: "EDU", val : 0.11},
-	#			{class: "DOCS", val : 0.24},
-	#			{class: "WEB", val : 0.59},
-	#			{class: "DATA", val : 0.02},
-	#			{class: "OTHER", val : 0.04}
-	#		],
-	#		yield: "81",
-	#	}}
-	#}
-
-#nehmen da ja jetzt stattdessen testSingleClassifier bzw format davon
-#def formatClassifierLoaded(classifier):
-#	return 'NotImplemented'
-	# EXAMPLE
-	# {classificators:{
-	# 	"<ModuleName>" : {
-	#		result:[
+	#		accuracy:[
 	#			{class: "DEV", val : 0.04},
 	#			{class: "HW", val : 0.13},
 	#			{class: "EDU", val : 0.11},
@@ -244,3 +241,6 @@ def formatClassificatorAccuracy(classificatoraccuracy):
 def formatRepo(repo):
 	repo = {'repoName':sample['name'], 'repoAPILink':sample[api_url]}
 	return repo
+
+def formatConfusionMatrix(matrix):
+	pass
