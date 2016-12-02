@@ -13,9 +13,9 @@ print("Starting application..")
 
 rootApp = Bottle()
 
-# Should we create the ClassifierCollection here once and then pass it to the other controllers?
-# Have no idea at the moment if that´s the best way to do it in our case
+# Initialize ClassifierCollection
 classifiercollection = ClassifierCollection()
+#Initialize ClassificationModules
 print 'Getting DB Descriptions to be able to create vectorizer in nndescription'
 descriptionCorpus = DC.getAllDescriptions()
 print 'Getting DB Readmes to be able to create vectorizer in nndescription'
@@ -25,18 +25,14 @@ nndescription = nndescriptiononly(descriptionCorpus)
 nnreadme = nnreadmeonly(readmeCorpus)
 classifiercollection.addClassificationModuleWithLastSavePoint(nndescription)
 classifiercollection.addClassificationModuleWithLastSavePoint(nnreadme)
-# set Controller
+#initialize Accuracy and Yield for all ClassificationModules
+#(pickle doesn´t seem to save class variables of abstract parent class)
+classifiercollection.TestAllClassificationModules()
+# pass ClassifierCollection to Controller
 homesetclassifiercollection(classifiercollection)
 
-#on startup load last used version. also for testing loading
-#ClassifierName = bnn.getName()
-#try:
-#    newModule = classifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint()
-#    classifiercollection.setClassificationModule(ClassifierName, newModule)
-#    print 'succesfully loaded old bnn-version: ' + str(newModule)
-#except NameError as err:
-#    raise err
 
+#Start Bottle
 if __name__ == '__main__':
     webbrowser.open("http://localhost:8080/")
     rootApp.merge(homebottle)
