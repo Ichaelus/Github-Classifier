@@ -33,4 +33,4 @@ homesetclassifiercollection(classifiercollection)
 if __name__ == '__main__':
     webbrowser.open("http://localhost:8080/")
     rootApp.merge(homebottle)
-    rootApp.run(debug=True)
+    rootApp.run(server='paste', debug=True)

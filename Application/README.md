@@ -13,15 +13,14 @@ _Installed with the command `pip install path/to/file.whl`_
 
 1. numpy + mkl (from http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy)
 2. scipy (from http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy)
+3. paste (from http://www.lfd.uci.edu/~gohlke/pythonlibs/#paste)
 
 _Installed with the command `pip install xxx`_
 
 1. bottle
-2. demjson
-3. keras
-4. sklearn
-5. nltk
-6. demjson
+2. keras
+3. sklearn
+4. nltk
 
 ## Other
 
