@@ -107,7 +107,7 @@ def formatPoolBasedALRound(userquery, classifierasking, resultsForUserQuery):
 	classificators = {}
 	for cresult in resultsForUserQuery:
 		classificators[cresult[0]] = {'probability':formatProbabilities(cresult[1]), 'uncertainty':float(cresult[2])}
-	returndata = {'repo':repo,'classifierAsking':classifierasking.getName(), 'classificators':classificators}
+	returndata = {'repo':repo,'classifierAsking':classifierasking.getName(), 'classificators':classificators, 'unsure':True}
 	return json.dumps(returndata)
 	#return '{"repo":{"repoName": "rName", "repoAPILink":""}, "classifierAsking":"Neural Network1","classificatorResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
 	# EXAMPLE

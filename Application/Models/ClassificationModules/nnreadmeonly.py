@@ -14,12 +14,9 @@ from ClassificationModule import ClassificationModule
 
 class nnreadmeonly(ClassificationModule):
     """A basic feedforward neural network"""
-
-    description = "A basic feedforward neural network"
-    name = "Readme Only NN"
     
     def __init__(self, text_corpus, num_hidden_layers=3):
-
+        ClassificationModule.__init__(self, "Readme Only NN", "A basic feedforward neural network")
         # Create vectorizer and fit on all available Descriptions
         self.vectorizer = getTextVectorizer(3000) # Maximum of different columns
         corpus = []

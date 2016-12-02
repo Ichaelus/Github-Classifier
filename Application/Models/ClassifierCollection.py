@@ -60,9 +60,9 @@ class ClassifierCollection:
         loadedClassifier = classificationmoduleobject.loadClassificationModuleSavePoint("lastused")
         if (not loadedClassifier is None):
             self.addClassificationModule(loadedClassifier)
-            print 'Sucessfully loaded old version of ' + loadedClassifier.getName()
+            print '   Sucessfully loaded old version of ' + loadedClassifier.getName()
         else:
-            print 'There is no file for ' + classificationmoduleobject.getName()
+            print '   There is no file for ' + classificationmoduleobject.getName()
             self.addClassificationModule(classificationmoduleobject)
 
 
@@ -169,7 +169,7 @@ class ClassifierCollection:
         data = DC.getTestData()
         results = []
         for classifier in self.classificationmodules:
-            classifierresult = [classifier.getName(), classifier.testModule(data, classifier)]
+            classifierresult = [classifier.getName(), classifier.testModule(data)]
             results.append(classifierresult)
         return results
 

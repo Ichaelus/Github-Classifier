@@ -8,6 +8,7 @@ import ActiveLearningSpecific as AL
 from FeatureProcessing import getLabelIndex
 import numpy as np
 import re
+import copy
 
 import xml.etree.ElementTree as ET
 import os
@@ -15,33 +16,33 @@ import os
 class ClassificationModule:
     __metaclass__ = ABCMeta
 
-    description = "Doesnt have a description yet"
-    name = ""
-    muted = False
-    binary = False
-    Yield = 0.0
-    Accuracy = {"DEV":0.0, "HW":0.0, "EDU":0.0, "DOCS":0.0, "WEB":0.0, "DATA":0.0, "OTHER":0.0}
+    def __init__(self, name, description):
+        self.description = description
+        self.name = name
+        self.muted = False
+        self.binary = False
+        self.Yield = 0.0
+        self.Accuracy = {"DEV":0.0, "HW":0.0, "EDU":0.0, "DOCS":0.0, "WEB":0.0, "DATA":0.0, "OTHER":0.0}
+
     
-    @classmethod
     def getDescription(self):
         """Return the description"""
         return self.description
-    @classmethod
+
     def getYield(self):
         """Return the Yield"""
         return self.Yield
     
-    @classmethod
+
     def getAccuracy(self):
         """Return the Accuracy"""
-        return self.Accuracy
+        return self.Accuracy.copy()
 
-    @classmethod
+
     def setName(self, name):
         """Set name"""
         self.name = name
 
-    @classmethod
     def getName(self):
         """Return the name"""
         return self.name
@@ -76,40 +77,34 @@ class ClassificationModule:
         """Format data into the form the given classifier needs it, using functions from FeatureProcessing.py"""
         pass
 
-    @classmethod
     def muteClassificationModule(self):
         """The Module loses it´s right to give queries to the user"""
         self.muted = True
 
-    @classmethod
     def unmuteClassificationModule(self):
         """The Module gains the right back to give queries to the user"""
         self.muted = False
 
-    @classmethod
     def isMuteClassificationModule(self):
         """Returns if the module is muted or not"""
         return self.muted
 
-    @classmethod
     def isBinary(self):
         """Checks if classifier output is binary (dev/non_dev)"""
         return self.binary
     
-    @classmethod
     def setBinary(self, bin):
         """Set if classifier output is binary (dev/non_dev)"""
         self.binary = bin
     
-    @classmethod
-    def testModule(self, data, classifierself):
+    def testModule(self, data):
         """Module tests itself, refreshes yield and accuracy and returns data about these thests to the ClassifierCollection"""
         nb_right_pred = 0 # Number of right predictions
         class_count = np.zeros(7) # Number each class was found in data
         class_right_pred_count = np.zeros(7)
 
         for sample in data:
-            pred_out = classifierself.predictLabelAndProbability(sample)
+            pred_out = self.predictLabelAndProbability(sample)
             # Check if prediction was right
             true_label_index = getLabelIndex(sample)
             if (pred_out[0] == true_label_index):
@@ -127,14 +122,13 @@ class ClassificationModule:
             self.Accuracy['WEB'] = class_acc[4]
             self.Accuracy['DATA'] = class_acc[5]
             self.Accuracy['OTHER'] = class_acc[6]
-        return [self.Yield, self.Accuracy.copy()]
+        return [self.getYield, self.getAccuracy()]
 
-    @classmethod
-    def calculatePoolBasedQuery(self,formula, data, classifierself):
+    def calculatePoolBasedQuery(self,formula, data):
         """Module goes trough each sample, calculates the uncertainty for it and returns the sample with the highest uncertainty"""
         uncertainties = []
         for sample in data:
-            resultc = classifierself.predictLabelAndProbability(sample)
+            resultc = self.predictLabelAndProbability(sample)
             if(formula == 'Entropy-Based'):
                 uncertainty = AL.calculateUncertaintyEntropyBased(resultc)
             elif(formula == "Least Confident"):
@@ -150,9 +144,7 @@ class ClassificationModule:
                 sampleindex = uncertainties.index(uncertainty)
         return data[sampleindex]
 
-    
-    @classmethod
-    def saveModule(self, classifierself):
+    def saveModule(self):
         """serializes modul and add a savepoint to XML-File"""
         ###Folder building if necessary
         ###Serialization
@@ -162,7 +154,7 @@ class ClassificationModule:
         tmpPath = os.path.join(tmpPath, self.name, filename)
         #save module
         output = open(tmpPath, 'wb')
-        pickle.dump(classifierself, output, 2)
+        pickle.dump(self, output, 2)
         output.close()
         
         ###XML-file
@@ -191,7 +183,6 @@ class ClassificationModule:
         tree.write(tmpPath)
         return None
         
-    @classmethod
     def getSavePointsForClassificationModules(self):
         ### require a xml-file which contains <data></data>
         ###	at directory path
@@ -212,8 +203,6 @@ class ClassificationModule:
         #       [['2016-11-28T18:38:10.221000.pkl', {"DEV":0.0, "HW":0.0, ...}, 90.93], ...]
         return savePoints
         
-        
-    @classmethod
     def loadClassificationModuleSavePoint(self, filename="lastused"):
         ### require a xml-file which contains <data></data>
         ###	at directory path
@@ -249,8 +238,6 @@ class ClassificationModule:
         #return: ClassificationModule or None if there isnt one
         return data
     
-    
-    @classmethod
     def tryNewDirForModule(self, savepath):
         """builds a new directory and xml-file if it doesnt exit"""
         #generating a path that is indepentent from operating system
@@ -268,7 +255,6 @@ class ClassificationModule:
             d.write("<data></data>\n")
             d.close()
 
-    @classmethod
     def getSavePath(self):
         """Returns the basic path to the save folder"""
         #ensure savepath exists

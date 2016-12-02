@@ -171,7 +171,7 @@ def api(key):
 		newModule = homeclassifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint(getQueryValue("savepoint"))
 		homeclassifiercollection.setClassificationModule(ClassifierName, newModule)
 		test_data = Models.DatabaseCommunication.getTestData()
-		return Models.JSONCommunication.formatSingleClassificationTest(newModule, newModule.testModule(test_data, newModule))
+		return Models.JSONCommunication.formatSingleClassificationTest(newModule, newModule.testModule(test_data))
 		#except:
 		#	return('{"Error": "Error loading classifier"}')
 

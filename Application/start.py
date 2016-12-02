@@ -15,23 +15,23 @@ rootApp = Bottle()
 
 # Initialize ClassifierCollection
 classifiercollection = ClassifierCollection()
+
 #Initialize ClassificationModules
-print 'Getting DB Descriptions to be able to create vectorizer in nndescription'
+print 'Getting DB Data to be able to create vectorizers for classifiers that need it'
 descriptionCorpus = DC.getAllDescriptions()
-print 'Getting DB Readmes to be able to create vectorizer in nndescription'
 readmeCorpus = DC.getAllReadmes()
-print 'Done getting DB Descriptions'
+
+#Initialize Classifiers
+print 'Creating and adding Classifiers to Classifier Collection'
 nndescription = nndescriptiononly(descriptionCorpus)
 nnreadme = nnreadmeonly(readmeCorpus)
 classifiercollection.addClassificationModuleWithLastSavePoint(nndescription)
 classifiercollection.addClassificationModuleWithLastSavePoint(nnreadme)
-#initialize Accuracy and Yield for all ClassificationModules
-#(pickle doesn´t seem to save class variables of abstract parent class)
-classifiercollection.TestAllClassificationModules()
-# pass ClassifierCollection to Controller
+
+# Pass ClassifierCollection to Controller
 homesetclassifiercollection(classifiercollection)
 
-
+print 'Done. Starting Bottle...'
 #Start Bottle
 if __name__ == '__main__':
     webbrowser.open("http://localhost:8080/")
