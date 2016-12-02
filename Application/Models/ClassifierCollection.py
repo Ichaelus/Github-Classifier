@@ -51,6 +51,19 @@ class ClassifierCollection:
             raise NameError('Name must be unique')
         else :
             self.classificationmodules.append(classificationmoduleobject)
+    
+    @classmethod
+    def addClassificationModuleWithLastSavePoint(self, classificationmoduleobject):
+        """Add a classification moudule to the collection. 
+        And loads if existing last savepoint."""
+        self.addClassificationModule(classificationmoduleobject)
+        loadedClassifier = classificationmoduleobject.loadClassificationModuleSavePoint("lastused")
+        if (not loadedClassifier is None):
+            self.setClassificationModule(classificationmoduleobject.getName(), loadedClassifier)
+            print 'Sucessfully loaded old version of' + loadedClassifier.getName()
+        else:
+            print 'There is no file for ' + classificationmoduleobject.getName()
+
 
     #sollten wir nicht brauchen, da keine Funktion zum Entfernen von Classifiern aus der ClassifierCollection
     #von der GUI bereitgestellt wird, alle die in start hinzugefügt werden sind bis zum Ende dabei
