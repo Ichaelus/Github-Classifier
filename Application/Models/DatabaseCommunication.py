@@ -5,12 +5,13 @@ import base64
 from urllib2 import Request, urlopen, URLError
 import json
 
-def api_call(keyString, filterString="", tableString=""):
+def api_call(keyString, filterString="", tableString="", limitString=""):
     """Get list of Repos-Data in json-format"""
     filterString = base64.b64encode(b'' + filterString)
     url = None
     data = None
-    url = 'http://classifier.leimstaedtner.it/ajax.php?key=api:' + keyString.decode("utf-8") + '&filter=' + filterString.decode("utf-8") + '&table=' + tableString.decode("utf-8")
+    url = 'http://classifier.leimstaedtner.it/ajax.php?key=api:' + keyString.decode("utf-8") + '&filter=' 
+    url += filterString.decode("utf-8") + '&table=' + tableString.decode("utf-8") + '&limit=' + limitString.decode("utf-8")
     request = Request(url)
     try:
         response = urlopen(request)
@@ -40,7 +41,7 @@ def getLabeledData():
     return api_call('all', tableString="labeled")
 
 def getUnlabeledData():
-    return api_call('all', tableString="unlabeled")
+    return api_call('all', tableString="unlabeled", limitString="2500")
 
 def getUnlabeledSingleSample():
     return api_call('single', tableString="unlabeled")
