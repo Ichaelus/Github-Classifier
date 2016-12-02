@@ -134,7 +134,7 @@ def api(key):
 
 		# Test classifier
 		test_data = Models.DatabaseCommunication.getTestData()
-		return Models.JSONCommunication.formatSingleClassificationTest(classifier, classifier.testModule(test_data, classifier))
+		return Models.JSONCommunication.formatSingleClassificationTest(classifier, classifier.testModule(test_data))
 		#except:
 		#	return "The classifier "+ClassifierName+" has been retrained."
 
