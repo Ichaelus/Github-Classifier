@@ -239,7 +239,7 @@ button.control {
   color:red;
 }
 .uncertainty.certain{
-  color:red;
+  color:green;
 }
 .overlay_blur{
   position: fixed;
@@ -353,4 +353,21 @@ button.control {
 }
 #confusion_matrix .result_abs, #confusion_matrix .result{
   color: black !important;
+}
+
+#output h2{
+  background: green;
+  color: white;
+  text-align: center;
+  margin-top: 50px;
+  padding: 20px;
+  border: white double;
+  box-shadow: 0px 0px 1px green;
+  height: 80px;
+  top: 35px;
+  position: relative;
+}
+#output h2.uncertain{
+  background: #ff7738;
+  box-shadow: 0px 0px 1px #ff7738;
 }
