@@ -46,7 +46,7 @@ let stateView, inputView, classificatorView, outputView, wrapperView,
 try{
 	runGenerator(function *main(){
 		let initData = yield jQGetPromise("/get/classificators", "json");
-    classificatorData.classificators = initData.classificators;
+    Vue.set(classificatorData, "classificators", initData.classificators);
     setInititalProbability();
 		initVue();
 	});
@@ -58,9 +58,10 @@ function setInititalProbability(){
   let cd = classificatorData.classificators;
   for(let c in cd){
     assert(typeof(cd[c].accuracy) != "undefined", "Object missing");
-    cd[c].probability = cd[c].accuracy;
-    for(let j = 0; j < cd[c].probability.length; j++)
-      cd[c].probability[j].val = 0;
+    cd[c].probability = [];
+    for(let j = 0; j < cd[c].accuracy.length; j++){
+      cd[c].probability[j] = {class : cd[c].accuracy[j].class, val : 0.0};
+    }
   }
 }
 
@@ -86,21 +87,21 @@ function initVue(){
     			data = JSON.parse(data);
     			if(data === false)
     				throw new Error("Invalid server response");
-    			stateData.formulas = data;
+    			Vue.set(stateData, "formulas", data);
     			if(data.length > 0)
-    				stateData.formula = data[0];
+    				Vue.set(stateData, "formula", data[0]);
     		});
     	},
     	setFormula: function(f){
     		assert(isNotEmpty(f) && stateData.formulas.indexOf(f) >= 0, "Formula should not be empty");
-    		stateData.formula = f;
+    		Vue.set(stateData, "formula", f);
     	},
       switchMode: function(){
         stateView.resetView();
-        classificatorData.isPrediction = stateData.mode == 'test';
+        Vue.set(classificatorData, "isPrediction", stateData.mode == 'test');
       },
 		  singleStep: function(){
-  			stateData.action = "singleStep";
+  			Vue.set(stateData, "action", "singleStep");
   			console.log("Proceeding single step");
         stateView.resetView();
         runGenerator(function *main(){
@@ -111,12 +112,11 @@ function initVue(){
         });
   		},
   		halt: function(){
-  			stateData.action = "halt";
+  			Vue.set(stateData, "action", "halt");
   			console.log("Halting");
-        state.action = "halt";
   		},
   		loop: function(){
-  			stateData.action = "loop";
+  			Vue.set(stateData, "action", "loop");
   			console.log("Looping");
         stateView.resetView();
   			runGenerator(function *main(){
@@ -126,7 +126,7 @@ function initVue(){
   					results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
   					stateView.updateResults(results);
             if(results.classifiersUnsure)
-              stateData.action = "halt_loop";
+              Vue.set(stateData, "action", "halt_loop");
   				}
   			});
   		},
@@ -136,28 +136,29 @@ function initVue(){
         assert(results != null, "Result is not well-formatted.");
 
         if(typeof(results.repo) != "undefined"){
-          inputData.repoName = results.repo.repoName;
-          inputData.repoAPILink = results.repo.repoAPILink;
+          Vue.set(inputData, "repoName", results.repo.repoName);
+          Vue.set(inputData, "repoAPILink", results.repo.repoAPILink);
         }
         if(stateData.mode == "stream"){
-          inputData.classifiersUnsure = results.classifiersUnsure;
-          inputData.semisupervised = results.semisupervised;
+          Vue.set(inputData, "classifiersUnsure", results.classifiersUnsure);
+          Vue.set(inputData, "semisupervised", results.semisupervised);
           if(results.classifiersUnsure)
             window.open("/user_classification.html?popup=true&api_url="+results.repo.repoAPILink, "User decision", "channelmode=yes");
         }else if(stateData.mode == "pool"){
-          inputData.classifierAsking = results.classifierAsking;
+          Vue.set(inputData, "classifierAsking", results.classifierAsking);
         }
 
         if(typeof(results.classificators != "undefined"))
           stateView.updateClassificators(results.classificators);
   		},
       updateClassificators: function(data){
+        console.log("updateing classificators");
         // Update data regarding classificators
         for(let c in classificatorData.classificators){ // c => classificator name
           if(typeof(data[c] != "undefined")){
             // Classificator is not muted, update it's results
             for(let newkey in data[c])
-              classificatorData.classificators[c][newkey] = data[c][newkey];
+              Vue.set(classificatorData.classificators[c], newkey, data[c][newkey]);
           }
         }
       },
@@ -192,7 +193,6 @@ function initVue(){
             for(let i in cf.probability)
               Vue.set(cf.probability[i], "val", 0.0);
             Vue.set(cf, "uncertainty", 0);
-            console.log(cf);
         }
       }
     }
@@ -293,18 +293,18 @@ function initVue(){
             resp = JSON.parse(resp);
             if(resp === false)
               throw new Error("Invalid server response");
-            wrapperData.savePoints = resp.savepoints;
-            let resp = [];
+            Vue.set(wrapperData, "savePoints", resp.savepoints);
+            let data = [];
             for(let sp in wrapperData.savePoints){
-              resp.push(accuracyToGraphData(wrapperData.savePoints[sp].accuracy));
+              data.push(accuracyToGraphData(wrapperData.savePoints[sp].accuracy));
             }
-            if(resp.length > 0)
-              RadarChart("#version_accuarcy_chart", resp, radarChartOptions);
+            if(data.length > 0)
+              RadarChart("#version_accuarcy_chart", data, radarChartOptions);
           }
         });
       },
       setSavePoint: function(fileName){
-        wrapperData.selectedPoint = fileName;
+        Vue.set(wrapperData, "selectedPoint", fileName);
       },
   		retrain: function(){
   			console.log("Wrapper: "+wrapperData.currentName+" retraining.");
