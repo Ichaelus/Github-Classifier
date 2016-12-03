@@ -13,12 +13,9 @@ from ClassificationModule import ClassificationModule
 
 class lrreadmeonly(ClassificationModule):
     """A basic logistic regressor"""
-
-    description = "A simple Logistic Regressor"
-    name = "Readme Only Logistic Regressor"
     
     def __init__(self, text_corpus, num_hidden_layers=3):
-
+        ClassificationModule.__init__(self, "Readme Only Logistic Regressor", "A Logistic Regressor")
         # Create vectorizer and fit on all available Descriptions
         self.vectorizer = getTextVectorizer(5000) # Maximum of different columns
         corpus = []
@@ -26,7 +23,7 @@ class lrreadmeonly(ClassificationModule):
             corpus.append(process_text(description))
         self.vectorizer.fit(corpus)
 
-        self.clf = LogisticRegression()
+        self.clf = LogisticRegression(multi_class='ovr')
         
         print('Model build and ready')
 

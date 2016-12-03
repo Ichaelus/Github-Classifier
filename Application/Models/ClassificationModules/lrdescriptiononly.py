@@ -14,10 +14,9 @@ from ClassificationModule import ClassificationModule
 class lrdescriptiononly(ClassificationModule):
     """A basic logistic regressor"""
 
-    description = "A simple Logistic Regressor"
-    name = "Description Only Logistic Regressor"
     
-    def __init__(self, text_corpus, num_hidden_layers=3):
+    def __init__(self, text_corpus):
+        ClassificationModule.__init__(self, "Description Only Logistic Regressor", "Logistic Regressor")
 
         # Create vectorizer and fit on all available Descriptions
         self.vectorizer = getTextVectorizer(5000) # Maximum of different words
@@ -26,7 +25,7 @@ class lrdescriptiononly(ClassificationModule):
             corpus.append(process_text(description))
         self.vectorizer.fit(corpus)
 
-        self.clf = LogisticRegression()
+        self.clf = LogisticRegression(multi_class='ovr')
         
         print('Model build and ready')
 

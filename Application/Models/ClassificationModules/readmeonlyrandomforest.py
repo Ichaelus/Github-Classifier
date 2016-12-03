@@ -14,9 +14,8 @@ from ClassificationModule import ClassificationModule
 class readmeonlyrandomforest(ClassificationModule):
     """A basic Random Forest Classifier"""
 
-    description = "A simple Random Forest Classifier"
-    name = "Readme Only Random Forest"
     def __init__(self, text_corpus, num_hidden_layers=3):
+        ClassificationModule.__init__(self, "Readme Only Random Forest", "Ensemble Learner with multiple Decision-Trees")
 
         # Create vectorizer and fit on all available Descriptions
         self.vectorizer = getTextVectorizer(5000) # Maximum of different columns

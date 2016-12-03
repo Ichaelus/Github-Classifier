@@ -31,21 +31,12 @@ lrdescription = lrdescriptiononly(descriptionCorpus)
 nnreadme = nnreadmeonly(readmeCorpus)
 lrreadme = lrreadmeonly(readmeCorpus)
 rfreadme = readmeonlyrandomforest(readmeCorpus)
-classifiercollection.addClassificationModule(nndescription)
-classifiercollection.addClassificationModule(nnreadme)
-classifiercollection.addClassificationModule(lrreadme)
-classifiercollection.addClassificationModule(rfreadme)
-classifiercollection.addClassificationModule(lrdescription)
-#on startup load last used version. also for testing loading
-#ClassifierName = bnn.getName()
-#try:
-#    newModule = classifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint()
-#    classifiercollection.setClassificationModule(ClassifierName, newModule)
-#    print 'succesfully loaded old bnn-version: ' + str(newModule)
-#except NameError as err:
-#    raise err
+
 classifiercollection.addClassificationModuleWithLastSavePoint(nndescription)
 classifiercollection.addClassificationModuleWithLastSavePoint(nnreadme)
+classifiercollection.addClassificationModuleWithLastSavePoint(lrreadme)
+classifiercollection.addClassificationModuleWithLastSavePoint(rfreadme)
+classifiercollection.addClassificationModuleWithLastSavePoint(lrdescription)
 
 # Pass ClassifierCollection to Controller
 homesetclassifiercollection(classifiercollection)

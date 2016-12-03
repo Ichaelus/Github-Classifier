@@ -41,7 +41,7 @@ def getLabeledData():
     return api_call('all', tableString="labeled")
 
 def getUnlabeledData():
-    return api_call('all', tableString="unlabeled", limitString="2500")
+    return api_call('all', tableString="unlabeled", limitString="200")
 
 def getUnlabeledSingleSample():
     return api_call('single', tableString="unlabeled")
