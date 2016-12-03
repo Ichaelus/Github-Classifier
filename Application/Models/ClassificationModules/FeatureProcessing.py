@@ -10,6 +10,7 @@ from nltk.stem import PorterStemmer
 import numpy as np
 
 # Constants
+# TODO: Update values
 max_stars = 1000
 max_forks =  100
 max_watches = 10
@@ -23,8 +24,14 @@ max_open_issues_count = 10
 max_avg_commit_length = 100
 max_file_count = 100
 max_commit_interval_max = 10
+max_commit_count = 100
+max_readme_length = 1000
 
 max_vectorizer_word_count = 3000
+
+possibleLanguages = ['JavaScript', 'Java', 'Python', 'C#', 'C++', 'Ruby', 
+                    'CSS', 'C', 'Objective-C', 'Shell', 'Perl', 
+                    'R', 'CSS', 'HTML']
 
 label_dict = {'DEV':0, 'HW':1, 'EDU':2, 'DOCS':3, 'WEB':4, 'DATA':5, 'OTHER':6}
 
@@ -85,6 +92,10 @@ def getDescription(data):
     assert  'description' in data, "Data vector incomplete"
     return data['description']
 
+def getReadmeLength(sample):
+    readme = getReadme(sample)
+    return len(readme)
+
 def getMetadataVector(sample):
     # Get metadata
     vec = []
@@ -103,7 +114,42 @@ def getMetadataVector(sample):
     vec.append((min(1., float(sample['file_count']) / max_file_count)))
     vec.append((min(1., float(sample['commit_interval_max']) / max_commit_interval_max)))
     vec.append((min(1., float(sample['isFork']))))
+    vec.append((min(1., float(sample['commit_count']) / max_commit_count)))
+    vec.append(min(1., float(getReadmeLength(sample) / max_readme_length)))
+    vec = vec + getLanguageVector(sample)
     return vec
+
+
+def getMetadataLength():
+    """Get length of Metadata Vector"""
+    # TODO: Remove hardcoded answer in case more Features get added
+    return 17 + getLanguagesLength()
+
+def getLanguageVector(sample):
+    """Get vector of used languages"""
+    # Some of the most popular languages on Github
+    # TODO: Create better list
+    global possibleLanguages
+
+    vector = []
+    # Index of each language is set to 0.5, of main language set to 1
+    languageArray = sample['language_array'].split(' ')
+    mainLanguage = sample['language_main']
+    for language in possibleLanguages:
+        if language == mainLanguage:
+            vector.append(1.0)
+        elif language in languageArray:
+            vector.append(0.5)
+        else:
+            vector.append(0.0)
+    return vector
+
+def getLanguagesLength():
+    global possibleLanguages
+    return len(possibleLanguages)
+
+
+
 
 def getFileNameAndAuthorString(sample):
     assert  'files' in sample and 'author' in sample, "Data vector incomplete"

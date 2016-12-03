@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import time
 from bottle import Bottle
 import webbrowser
 from Controllers.HomeController import homebottle, homesetclassifiercollection
@@ -14,6 +15,8 @@ from Models.ClassificationModules.multinomialnbreadmeonly import multinomialnbre
 from Models.ClassificationModules.multinomialnbdescriptiononly import multinomialnbdescriptiononly
 from Models.ClassificationModules.bernoullinbreadmeonly import bernoullinbreadmeonly
 from Models.ClassificationModules.bernoullinbdescriptiononly import bernoullinbdescriptiononly
+from Models.ClassificationModules.nnmetaonly import nnmetaonly
+from Models.ClassificationModules.metaonlyrandomforest import metaonlyrandomforest
 import Models.DatabaseCommunication as DC
 
 print("Starting application..")
@@ -39,6 +42,8 @@ mnbdescription = multinomialnbdescriptiononly(descriptionCorpus)
 mnbreadme = multinomialnbreadmeonly(readmeCorpus)
 bnbdescription = bernoullinbdescriptiononly(descriptionCorpus)
 bnbreadme = bernoullinbreadmeonly(readmeCorpus)
+nnmeta = nnmetaonly()
+rfmeta = metaonlyrandomforest()
 
 
 print 'Loading last checkpoint for classifiers if available:'
@@ -52,9 +57,14 @@ classifiercollection.addClassificationModuleWithLastSavePoint(mnbdescription)
 classifiercollection.addClassificationModuleWithLastSavePoint(mnbreadme)
 classifiercollection.addClassificationModuleWithLastSavePoint(bnbdescription)
 classifiercollection.addClassificationModuleWithLastSavePoint(bnbreadme)
+classifiercollection.addClassificationModuleWithLastSavePoint(nnmeta)
+classifiercollection.addClassificationModuleWithLastSavePoint(rfmeta)
 
 # Pass ClassifierCollection to Controller
 homesetclassifiercollection(classifiercollection)
+
+# Wait a bit so website doesnt get called before it's ready
+time.sleep(2)
 
 print 'Done. Starting Bottle...'
 #Start Bottle
