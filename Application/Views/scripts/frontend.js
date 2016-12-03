@@ -26,19 +26,7 @@ let stateView, inputView, classificatorView, outputView, wrapperView,
     savePoints: {}, // fileName: {yield, accuracy: [{class, val}, ..]}
     selectedPoint: "",
 		id: 0
-  },
-  radarChartOptions = {
-    // Defines the standard configuration of radar graphs
-    margin: {top: 100, right: 100, bottom: 100, left: 100},
-    maxValue: 0.5,
-    levels: 5,
-    roundStrokes: true,
-    color: d3.scale.ordinal().range(["#EDC951","#CC333F","#00A0B0"]),
-    init: function(){
-      this.w =  Math.min(700, window.innerWidth - 10) - this.margin.left - this.margin.right,
-      this.h = Math.min(this.w, window.innerHeight - this.margin.top - this.margin.bottom - 20)
-    }
-  }.init();
+  };
 
 try{
 	runGenerator(function *main(){
@@ -46,6 +34,7 @@ try{
     Vue.set(inoutData, "classificators", initData.classificators);
     setInititalProbability();
 		initVue();
+    $("#page").fadeIn();
 	});
 }catch(ex){
 	console.log(ex);
@@ -96,6 +85,7 @@ function initVue(){
       switchMode: function(){
         stateView.resetView();
         Vue.set(inoutData, "isPrediction", stateData.mode == 'test');
+        outputView.switchMode(stateData.mode);
       },
 		  singleStep: function(){
   			Vue.set(stateData, "action", "singleStep");
@@ -238,7 +228,7 @@ function initVue(){
     	showInfo: function(name){
     		wrapperView.setData(name);
         wrapperView.getSavePoints();
-        RadarChart("#class_accuarcy_chart", [accuracyToGraphData(wrapperData.current.accuracy)], radarChartOptions);
+        RadarChart("#class_accuarcy_chart", [accuracyToGraphData(wrapperData.current.accuracy)], getRadarConfig(700));
     		$('.overlay_blur').fadeIn();
     		$('#overlay_wrapper').fadeIn();
     	},
@@ -275,8 +265,15 @@ function initVue(){
     el: '#output',
     data: inoutData,
     methods:{
-  		switchMode: function(type){
-
+  		switchMode: function(mode){
+        if(mode == "test"){
+          let data = [];
+          for(let c in inoutData.classificators){
+            data.push(accuracyToGraphData(inoutData.classificators[c].accuracy));
+          }
+          if(data.length > 0)
+            RadarChart("#testOuputChart", data, getRadarConfig(300));
+        }
   		},
       getClassifierAmount: function(type){
         return Object.keys(inoutData.classificators).length;
@@ -290,6 +287,7 @@ function initVue(){
       }
     }
   });
+  outputView.switchMode(stateView.mode);
 
   wrapperView = new Vue({
     el: '#overlay_wrapper',
@@ -311,7 +309,7 @@ function initVue(){
               data.push(accuracyToGraphData(wrapperData.savePoints[sp].accuracy));
             }
             if(data.length > 0)
-              RadarChart("#version_accuarcy_chart", data, radarChartOptions);
+              RadarChart("#version_accuarcy_chart", data, getRadarConfig(700));
           }
         });
       },
@@ -371,7 +369,7 @@ function HandlePopupResult(result) {
   // If the sample has been labeled, update view
   console.log("result of popup is: ");
   console.log(result);
-  Vue.set(inoutData, "manualClass", result.label);
+  setTimeout(function(){Vue.set(inoutData, "manualClass", result.label)}, 250);
   $.get("/get/ALclassification"+getStateQuery()+"api_url="+result["api_url"]+"&label="+result.label, function(data){
     console.log(data);
     if(stateData.action == "halt_loop")
@@ -394,6 +392,20 @@ function accuracyToGraphData(res){
   for(let i = 0; i < res.length; i++)
     data.push({axis: res[i].class, value: res[i].val});
   return data;
+}
+
+function getRadarConfig(size){
+  let radarChartOptions = {
+    // Defines the standard configuration of radar graphs
+    margin: {top: 25, right: 25, bottom: 25, left: 25},
+    maxValue: 0.5,
+    levels: 5,
+    roundStrokes: true,
+    color: d3.scale.ordinal().range(["#EDC951","#CC333F","#00A0B0"])
+  };
+  radarChartOptions.w =  Math.min(size, window.innerWidth - 10) - radarChartOptions.margin.left - radarChartOptions.margin.right;
+  radarChartOptions.h = Math.min(radarChartOptions.w, window.innerHeight - radarChartOptions.margin.top - radarChartOptions.margin.bottom - 20);
+  return radarChartOptions;
 }
 
 function jQGetPromise(url, datatype = ""){

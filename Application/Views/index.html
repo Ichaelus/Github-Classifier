@@ -230,6 +230,9 @@
                 :class="(getMode() != 'test' && classifiersUnsure ? '' : 'hidden ') + (manualClass == '?' ? 'uncertain' : '')" 
                 :style="{top: 'calc( 35px + (-1 + '+getClassifierAmount()+') * 75px)'}"
                 title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass)}}</h2>
+            <div :class="(getMode() == 'test' ? '' : 'hidden ')" 
+                 :style="{top: 'calc( 0px + (-1 + '+getClassifierAmount()+') * 75px)'}"
+                 id="testOuputChart"></div>
           </div><!-- /output -->
 
         </div><!-- /main -->
