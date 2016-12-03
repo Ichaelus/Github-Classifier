@@ -47,14 +47,14 @@ class nndescriptiononly(ClassificationModule):
         model.compile(metrics=['accuracy'], loss='categorical_crossentropy', optimizer=Adam())
 
         self.model = model
-        print('Model build and ready')
+        print "\t-", self.name
 
 
     def resetAllTraining(self):
         """Reset classification module to status before training"""
         self.model.compile(metrics=['accuracy'], loss='categorical_crossentropy', optimizer=Adam())
 
-    def trainOnSample(self, sample, nb_epoch=10, shuffle=True, verbose=True):
+    def trainOnSample(self, sample, nb_epoch=1, shuffle=True, verbose=True):
         """Trainiere (inkrementell) mit Sample. Evtl zusätzlich mit best. Menge alter Daten, damit overfitten auf neue Daten verhindert wird."""
         description_vec = self.formatInputData(sample)
         label_index = getLabelIndex(sample)

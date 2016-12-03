@@ -14,7 +14,7 @@ from ClassificationModule import ClassificationModule
 class readmeonlyrandomforest(ClassificationModule):
     """A basic Random Forest Classifier"""
 
-    def __init__(self, text_corpus, num_hidden_layers=3):
+    def __init__(self, text_corpus):
         ClassificationModule.__init__(self, "Readme Only Random Forest", "Ensemble Learner with multiple Decision-Trees")
 
         # Create vectorizer and fit on all available Descriptions
@@ -26,7 +26,7 @@ class readmeonlyrandomforest(ClassificationModule):
 
         self.clf = RandomForestClassifier()
         
-        print('Model build and ready')
+        print "\t-", self.name
 
 
     def resetAllTraining(self):

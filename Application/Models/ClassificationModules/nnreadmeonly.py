@@ -47,7 +47,7 @@ class nnreadmeonly(ClassificationModule):
         model.compile(metrics=['accuracy'], loss='categorical_crossentropy', optimizer=Adam())
 
         self.model = model
-        print('Model build and ready')
+        print "\t-", self.name
 
 
     def resetAllTraining(self):

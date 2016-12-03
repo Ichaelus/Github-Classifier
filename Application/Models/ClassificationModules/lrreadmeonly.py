@@ -14,7 +14,7 @@ from ClassificationModule import ClassificationModule
 class lrreadmeonly(ClassificationModule):
     """A basic logistic regressor"""
     
-    def __init__(self, text_corpus, num_hidden_layers=3):
+    def __init__(self, text_corpus):
         ClassificationModule.__init__(self, "Readme Only Logistic Regressor", "A Logistic Regressor")
         # Create vectorizer and fit on all available Descriptions
         self.vectorizer = getTextVectorizer(5000) # Maximum of different columns
@@ -25,20 +25,20 @@ class lrreadmeonly(ClassificationModule):
 
         self.clf = LogisticRegression(multi_class='ovr')
         
-        print('Model build and ready')
+        print "\t-", self.name
 
 
     def resetAllTraining(self):
         """Reset classification module to status before training"""
         self.clf = sklearn.base.clone(self.clf)
 
-    def trainOnSample(self, sample, nb_epoch=10, shuffle=True, verbose=True):
+    def trainOnSample(self, sample, shuffle=True, verbose=True):
         """Trainiere (inkrementell) mit Sample. Evtl zusätzlich mit best. Menge alter Daten, damit overfitten auf neue Daten verhindert wird."""
         readme_vec = self.formatInputData(sample)
         label_index = getLabelIndex(sample)
         return self.clf.fit(readme_vec, np.expand_dims(label_index, axis=0))
 
-    def train(self, samples, nb_epoch=10, shuffle=True, verbose=True):
+    def train(self, samples, shuffle=True, verbose=True):
         """Trainiere mit Liste von Daten. Evtl weitere Paramter nötig (nb_epoch, learning_rate, ...)"""
         train_samples = []
         train_lables = []
@@ -61,7 +61,7 @@ class lrreadmeonly(ClassificationModule):
         return [np.argmax(prediction)] + list(prediction) 
 
     def formatInputData(self, sample):
-        """Extract description and transform to vector"""
+        """Extract readme and transform to vector"""
         sd = getReadme(sample)
         # Returns numpy array which contains 1 array with features
         return self.vectorizer.transform([sd]).toarray()

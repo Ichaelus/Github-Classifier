@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from FeatureProcessing import *
 import sklearn
-from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import BernoulliNB
 import numpy as np
 import abc
 from ClassificationModule import ClassificationModule
@@ -11,22 +11,19 @@ from ClassificationModule import ClassificationModule
 
 
 
-class lrdescriptiononly(ClassificationModule):
-    """A basic logistic regressor"""
-
+class bernoullinbreadmeonly(ClassificationModule):
+    """A Bernoulli Naive Bayes"""
     
     def __init__(self, text_corpus):
-        ClassificationModule.__init__(self, "Description Only Logistic Regressor", "Logistic Regressor")
-
+        ClassificationModule.__init__(self, "Readme Only Bernoulli Naive Bayes", "A Bernoulli Naive Bayes-Classifier")
         # Create vectorizer and fit on all available Descriptions
-        self.vectorizer = getTextVectorizer(5000) # Maximum of different words
+        self.vectorizer = getTextVectorizer(5000) # Maximum of different columns
         corpus = []
         for description in text_corpus:
             corpus.append(process_text(description))
         self.vectorizer.fit(corpus)
 
-        self.clf = LogisticRegression(multi_class='ovr')
-        
+        self.clf = BernoulliNB()
         print "\t-", self.name
 
 
@@ -34,7 +31,7 @@ class lrdescriptiononly(ClassificationModule):
         """Reset classification module to status before training"""
         self.clf = sklearn.base.clone(self.clf)
 
-    def trainOnSample(self, sample, nb_epoch=10, shuffle=True, verbose=True):
+    def trainOnSample(self, sample, shuffle=True, verbose=True):
         """Trainiere (inkrementell) mit Sample. Evtl zusätzlich mit best. Menge alter Daten, damit overfitten auf neue Daten verhindert wird."""
         readme_vec = self.formatInputData(sample)
         label_index = getLabelIndex(sample)
@@ -60,11 +57,11 @@ class lrdescriptiononly(ClassificationModule):
         """Return the probability the module assignes each label"""
         sample = self.formatInputData(sample)
         prediction = self.clf.predict_proba(sample)[0]
-        return [np.argmax(prediction)] + list(prediction) # [0] So 1-D array is returned
+        return [np.argmax(prediction)] + list(prediction) 
 
     def formatInputData(self, sample):
-        """Extract description and transform to vector"""
-        sd = getDescription(sample)
+        """Extract readme and transform to vector"""
+        sd = getReadme(sample)
         # Returns numpy array which contains 1 array with features
         return self.vectorizer.transform([sd]).toarray()
 
