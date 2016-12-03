@@ -134,7 +134,7 @@ def api(key):
 
 		# Test classifier
 		test_data = Models.DatabaseCommunication.getTestData()
-		return Models.JSONCommunication.formatSingleClassificationTest(classifier, classifier.testModule(test_data, classifier))
+		return Models.JSONCommunication.formatSingleClassificationTest(classifier, classifier.testModule(test_data))
 		#except:
 		#	return "The classifier "+ClassifierName+" has been retrained."
 
@@ -160,7 +160,7 @@ def api(key):
 		ClassifierName = getQueryValue("name")
 		#try:
 		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
-		classifier.saveModule(classifier)
+		classifier.saveModule()
 		return "The classifier "+ClassifierName+" has been saved."
 		#except:
 		#	return "Error while saving classifier."
@@ -171,7 +171,7 @@ def api(key):
 		newModule = homeclassifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint(getQueryValue("savepoint"))
 		homeclassifiercollection.setClassificationModule(ClassifierName, newModule)
 		test_data = Models.DatabaseCommunication.getTestData()
-		return Models.JSONCommunication.formatSingleClassificationTest(newModule, newModule.testModule(test_data, newModule))
+		return Models.JSONCommunication.formatSingleClassificationTest(newModule, newModule.testModule(test_data))
 		#except:
 		#	return('{"Error": "Error loading classifier"}')
 
