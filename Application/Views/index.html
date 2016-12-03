@@ -226,7 +226,10 @@
           </div>
 
           <div class="col-xs-2" id="output"><!-- output -->
-            <h2 :class="(getMode() != 'test' && classifiersUnsure ? '' : 'hidden ') + (manualClass == '?' ? 'uncertain' : '')" :style="{top: 'calc( 35px + (-1 + '+getClassifierAmount()+') * 75px)'}">{{( manualClass)}}</h2>
+            <h2 v-on:click="manualClassification()"
+                :class="(getMode() != 'test' && classifiersUnsure ? '' : 'hidden ') + (manualClass == '?' ? 'uncertain' : '')" 
+                :style="{top: 'calc( 35px + (-1 + '+getClassifierAmount()+') * 75px)'}"
+                title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass)}}</h2>
           </div><!-- /output -->
 
         </div><!-- /main -->

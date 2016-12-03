@@ -370,4 +370,5 @@ button.control {
 #output h2.uncertain{
   background: #ff7738;
   box-shadow: 0px 0px 1px #ff7738;
+  cursor: pointer;
 }

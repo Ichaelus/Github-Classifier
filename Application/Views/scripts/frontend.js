@@ -15,9 +15,7 @@ let stateView, inputView, classificatorView, outputView, wrapperView,
 		poolSize: 0,
     repoAPILink: "",
     repoName: "Repository Name",
-    semisupervised: {"SemiSupervisedSureEnough" : true, "SemiSupervisedLabel": "None"}
-	},
-	classificatorData = {
+    semisupervised: {"SemiSupervisedSureEnough" : true, "SemiSupervisedLabel": "None"},
     isPrediction: true,
 		classificators: {} // name : {description, yield, active, uncertainty, accuracy: [{class, val},..], probability : [{class, val},..]}
 	},
@@ -45,7 +43,7 @@ let stateView, inputView, classificatorView, outputView, wrapperView,
 try{
 	runGenerator(function *main(){
 		let initData = yield jQGetPromise("/get/classificators", "json");
-    Vue.set(classificatorData, "classificators", initData.classificators);
+    Vue.set(inoutData, "classificators", initData.classificators);
     setInititalProbability();
 		initVue();
 	});
@@ -54,7 +52,7 @@ try{
 }
 
 function setInititalProbability(){
-  let cd = classificatorData.classificators;
+  let cd = inoutData.classificators;
   for(let c in cd){
     assert(typeof(cd[c].accuracy) != "undefined", "Object missing");
     cd[c].probability = [];
@@ -97,7 +95,7 @@ function initVue(){
     	},
       switchMode: function(){
         stateView.resetView();
-        Vue.set(classificatorData, "isPrediction", stateData.mode == 'test');
+        Vue.set(inoutData, "isPrediction", stateData.mode == 'test');
       },
 		  singleStep: function(){
   			Vue.set(stateData, "action", "singleStep");
@@ -138,30 +136,30 @@ function initVue(){
           Vue.set(inoutData, "repoName", results.repo.repoName);
           Vue.set(inoutData, "repoAPILink", results.repo.repoAPILink);
         }
-        if(stateData.mode == "stream"){
-          Vue.set(inoutData, "classifiersUnsure", results.classifiersUnsure);
-          Vue.set(inoutData, "semisupervised", results.semisupervised);
+        for(let key in {"classifiersUnsure" : 0, "semisupervised" : 0, "classifierAsking": 0}){
+          // Adjust state variables
+          if(typeof(results[key]) != "undefined")
+            Vue.set(inoutData, key, results[key]);
+        }
+
+        if(stateData.mode == "stream" || stateData.mode == "pool"){
+          // Set output ?
           if(results.classifiersUnsure){
             Vue.set(inoutData, "manualClass", "?");
-            setTimeout(function(){
-              window.open("/user_classification.html?popup=true&api_url="+results.repo.repoAPILink, "User decision", "channelmode=yes");
-            }, 2000);
           }
-        }else if(stateData.mode == "pool"){
-          Vue.set(inoutData, "classifierAsking", results.classifierAsking);
         }
 
         if(typeof(results.classificators != "undefined"))
           stateView.updateClassificators(results.classificators);
   		},
       updateClassificators: function(data){
-        console.log("updateing classificators");
+        console.log("updating classificators");
         // Update data regarding classificators
-        for(let c in classificatorData.classificators){ // c => classificator name
+        for(let c in inoutData.classificators){ // c => classificator name
           if(typeof(data[c] != "undefined")){
             // Classificator is not muted, update it's results
             for(let newkey in data[c])
-              Vue.set(classificatorData.classificators[c], newkey, data[c][newkey]);
+              Vue.set(inoutData.classificators[c], newkey, data[c][newkey]);
           }
         }
       },
@@ -191,8 +189,8 @@ function initVue(){
       },
       resetView: function(){
         // Reset classificators, but keep accuracy
-        for(let c in classificatorData.classificators){ // c => classificator name
-            cf = classificatorData.classificators[c];
+        for(let c in inoutData.classificators){ // c => classificator name
+            cf = inoutData.classificators[c];
             for(let i in cf.probability)
               Vue.set(cf.probability[i], "val", 0.0);
             Vue.set(cf, "uncertainty", 0);
@@ -223,7 +221,7 @@ function initVue(){
         });
       },
       getClassifierAmount: function(){
-        return Object.keys(classificatorData.classificators).length;
+        return Object.keys(inoutData.classificators).length;
       }
     }
   });
@@ -232,7 +230,7 @@ function initVue(){
 
   classificatorView = new Vue({
     el: '#classificators',
-    data: classificatorData,
+    data: inoutData,
     methods:{
       getMode: function(){
         return stateData.mode;
@@ -245,7 +243,7 @@ function initVue(){
     		$('#overlay_wrapper').fadeIn();
     	},
     	switchState: function(name){
-        let c= classificatorData.classificators[name];
+        let c= inoutData.classificators[name];
         c.active = !c.active;
         if(!c.active){
           $.get("/get/mute?name="+name, function(data){
@@ -262,9 +260,9 @@ function initVue(){
     	getMax: function(id){
     		let max = 0;
         array = stateData.mode == "test" ? "accuracy" : "probability";
-        if(typeof(classificatorData.classificators[id][array]) != "undefined")
-          for(let i = 0; i < classificatorData.classificators[id][array].length; i ++)
-      			max = Math.max(max, classificatorData.classificators[id][array][i].val);
+        if(typeof(inoutData.classificators[id][array]) != "undefined")
+          for(let i = 0; i < inoutData.classificators[id][array].length; i ++)
+      			max = Math.max(max, inoutData.classificators[id][array][i].val);
     		return max;
     	},
       isAsking: function(name){
@@ -281,10 +279,14 @@ function initVue(){
 
   		},
       getClassifierAmount: function(type){
-        return Object.keys(classificatorData.classificators).length;
+        return Object.keys(inoutData.classificators).length;
       },
       getMode: function(){
         return stateData.mode;
+      },
+      manualClassification: function(){
+        if(inoutData.manualClass == '?')
+          window.open("/user_classification.html?popup=true&api_url="+inoutData.repoAPILink, "User decision", "channelmode=yes");
       }
     }
   });
@@ -294,7 +296,7 @@ function initVue(){
     data: wrapperData,
     methods:{
     	setData: function(i){
-    		Vue.set(wrapperData, "current", classificatorData.classificators[i]);
+    		Vue.set(wrapperData, "current", inoutData.classificators[i]);
         Vue.set(wrapperData, "currentName", i);
     	},
       getSavePoints: function(){

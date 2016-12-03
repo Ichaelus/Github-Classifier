@@ -122,6 +122,7 @@ class ClassifierCollection:
         userquery = None
         classifierasking = 0
         resultsForUserQuery = []
+        moved = False
         for j in xrange(0, len(self.classificationmodules)):
             if(j == self.poolbasedalclassifierturn + i):
                 c = self.classificationmodules[j]
@@ -157,6 +158,9 @@ class ClassifierCollection:
                 uncertainty = AL.calculateUncertaintyMarginSampling(prob)
             else: raise Exception("No such formula")
             resultsForUserQuery.append([c.getName(),prob,uncertainty])
+        if(not moved): # Move sample 
+            DC.moveRepoFromUnlabeledToToClassify(userquery["api_url"])
+            moved = True
         return userquery, classifierasking, resultsForUserQuery
 
     def TestAllClassificationModules(self):

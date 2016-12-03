@@ -103,8 +103,8 @@ def api(key):
 			return Models.JSONCommunication.formatStreamBasedALRound(sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results)
 
 		elif(getQueryValue("mode") == "pool"):
-			userquery, classifierasking, propabilitiesForUserQuery = homeclassifiercollection.doPoolBasedALRound(getQueryValue("formula"), getQueryValue("isSemiSupervised") == 'true')
-			return Models.JSONCommunication.formatPoolBasedALRound(userquery, classifierasking, propabilitiesForUserQuery)
+			sample, classifierasking, propabilitiesForUserQuery = homeclassifiercollection.doPoolBasedALRound(getQueryValue("formula"), getQueryValue("isSemiSupervised") == 'true')
+			return Models.JSONCommunication.formatPoolBasedALRound(sample, classifierasking, propabilitiesForUserQuery)
 		else:
 			return "Invalid arguments"
 
