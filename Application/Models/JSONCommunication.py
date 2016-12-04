@@ -3,9 +3,10 @@
 import demjson
 import json
 import ClassificationModules.ClassificationModule
+from collections import OrderedDict
 
 def ConvertClassifierCollectionToJSON(classificationModules):
-	classificators = {}
+	classificators = OrderedDict()
 	for c in classificationModules:
 		accuracy = formatClassificatorAccuracy(c.getAccuracy())
 		classificators[c.getName()] = {'accuracy':accuracy, 'description':c.getDescription(), 'yield':c.getYield(), 'active': not c.isMuteClassificationModule()}

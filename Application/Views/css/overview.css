@@ -101,7 +101,7 @@ button.control {
 #classificators{
   padding: 50px 20px 20px 20px;
   box-shadow: 0 0 1px rgba(0,0,0,0.25);
-  margin-top: 20px;
+  margin: 20px 0;
   border-radius: 5px;
   border-left: 3px solid black;
   border-right: 3px solid black;
@@ -116,6 +116,9 @@ button.control {
 .classificator_row{
   margin-bottom: 50px;
   position: relative;
+}
+.classificator_row:last-child {
+  margin-bottom: 0;
 }
 .classificator_row.inactive{
   opacity: .5;
@@ -158,7 +161,8 @@ button.control {
   background: #008000cc;
   color: white;
   padding: 5px 0;
-  letter-spacing: 2px;
+  font-family: "RaleWay";
+  font-weight: bold;
 }
 .inactive .name{
   background: black;
@@ -189,7 +193,7 @@ button.control {
 .result_vector{
   display: inline-block;
   visibility: visible;
-  width: 398px;
+  width: 340px;
   line-height: 80px;
   position: relative;
 }
@@ -210,12 +214,13 @@ button.control {
   margin: 0 -10px 0 0;
 }
 .v {
-  width: 56.6px;
+  width: 47.6px;
   float: left;
   height: 80px;
 }
 .v span:first-child {
   font-weight: bold;
+  font-size: 14px;
 }
 .v span {
   display: block;
@@ -231,12 +236,13 @@ button.control {
   visibility: visible;
   display: inline-block;
   width: 37px;
-  text-align: right;
+  text-align: center;
   line-height: 50px;
-  top: -15px;
-  position: relative;
+  top: 11px;
+  position: absolute;
   font-style: italic;
   font-weight: bold;
+  left: 217px;
 }
 .uncertainty.uncertain{
   color:red;
@@ -318,16 +324,23 @@ button.control {
 .graph{
     text-align: center;
 }
-
+/* D3 */
 .legend {
   font-size: 13.5px;
   font-family: 'Raleway', sans-serif;
   fill: #333333;
 }
-
 .tooltip {
   fill: #333333;
 }
+.bar {
+  fill: steelblue;
+}
+.axis path {
+  display: none;
+}
+
+/* end D3 */
 #confusion_matrix .cell_own{
   background: #329A65;
   color: black;

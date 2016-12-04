@@ -272,7 +272,7 @@ function initVue(){
             data.push(accuracyToGraphData(inoutData.classificators[c].accuracy));
           }
           if(data.length > 0)
-            RadarChart("#testOuputChart", data, getRadarConfig(300));
+            RadarChart("#testOuputChart", data, getRadarConfig(350));
         }
   		},
       getClassifierAmount: function(type){

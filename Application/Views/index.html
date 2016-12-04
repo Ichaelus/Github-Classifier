@@ -178,11 +178,11 @@
 
         <div id="titles" class="row"><!-- titles -->
           <div class="col-xs-2"><h3>Input</h3></div>
-          <div class="col-xs-8">
+          <div class="col-xs-7">
             <div class="col-xs-4"><h3>Classificators</h3></div>
             <div class="col-xs-7 col-xs-offset-1"><h3>{{(mode != 'test' ? 'Classification results' : 'Accuracy per class')}}</h3></div>
           </div>
-          <div class="col-xs-2"><h3>Output</h3></div>
+          <div class="col-xs-3"><h3>Output</h3></div>
         </div><!-- /titles -->
 
         <div class="row main"><!-- main -->
@@ -195,7 +195,7 @@
             </div>
           </div><!-- /input -->
 
-          <div class="col-xs-8">
+          <div class="col-xs-7">
             <div id="classificators">
               <div v-for="(c, index) in classificators" :class="'classificator_row' + (c.active ? '' : ' inactive') ">
                 <div :class="'classificator ' + (isAsking(index) ? 'asking' : '')">
@@ -225,13 +225,16 @@
             </div><!-- /classificators -->
           </div>
 
-          <div class="col-xs-2" id="output"><!-- output -->
+          <div class="col-xs-3" id="output"><!-- output -->
             <h2 v-on:click="manualClassification()"
                 :class="(getMode() != 'test' && classifiersUnsure ? '' : 'hidden ') + (manualClass == '?' ? 'uncertain' : '')" 
                 :style="{top: 'calc( 35px + (-1 + '+getClassifierAmount()+') * 75px)'}"
                 title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass)}}</h2>
-            <div :class="(getMode() == 'test' ? '' : 'hidden ')" 
+            <!--<div :class="(getMode() == 'test' ? '' : 'hidden ')" 
                  :style="{top: 'calc( 0px + (-1 + '+getClassifierAmount()+') * 75px)'}"
+                 id="testOuputChart"></div>-->
+            <div :class="(getMode() == 'test' ? '' : 'hidden ')" 
+                 :style="{top: 'calc( -60px + (-1 + '+getClassifierAmount()+') * 75px)'}"
                  id="testOuputChart"></div>
           </div><!-- /output -->
 
