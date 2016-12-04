@@ -13,6 +13,10 @@ import copy
 import xml.etree.ElementTree as ET
 import os
 
+# Needed to pickle lstm-Network
+import sys
+sys.setrecursionlimit(10000)
+
 class ClassificationModule:
     __metaclass__ = ABCMeta
 

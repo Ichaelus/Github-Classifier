@@ -3,6 +3,7 @@
 import cPickle as pickle
 import os
 import base64
+import string
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 import re
@@ -10,6 +11,7 @@ from nltk.stem import PorterStemmer
 import numpy as np
 
 # Constants
+
 # TODO: Update values
 max_stars = 1000
 max_forks =  100
@@ -202,6 +204,9 @@ def process_text(text, remove_url=True, remove_code=True, remove_punctuation=Tru
             final_words = words
     return final_words
 
+def getName(sample):
+    return sample['name']
+
 def getMetaAttMax(data):
     max_dict = dict()
     for c in data[0]:
@@ -221,3 +226,30 @@ def oneHot(index):
     arr = np.zeros(7)
     arr[index] = 1
     return arr
+
+
+# Stuff for LSTM
+chars = string.ascii_lowercase + string.punctuation + string.digits + ' '
+chars = sorted(set(chars))
+char_indices = dict((c, i) for i, c in enumerate(chars))
+indices_char = dict((i, c) for i, c in enumerate(chars))
+
+def lstmEncode(C, maxlen=30):
+    global chars, char_indices
+    X = np.zeros((maxlen, len(chars)), np.uint8)
+    for i, c in enumerate(C):
+        if c.lower() not in chars:
+            continue
+        if i >= maxlen:
+            break
+        X[i, char_indices[c.lower()]] = 1
+    return X
+
+def lstmDecode(X):
+    global indices_char
+    X = X.argmax(axis=-1)
+    return ''.join(indices_char[x] for x in X)
+
+def getLstmCharLength():
+    global chars
+    return len(chars)

@@ -53,8 +53,7 @@ class metaonlysvc(ClassificationModule):
         """Return the probability the module assignes each label"""
         sample = self.formatInputData(sample)
         prediction = self.clf.predict(sample)[0]
-        print [prediction] + oneHot(prediction).tolist()
-        return [prediction] + oneHot(prediction).tolist()
+        return ([prediction] + oneHot(prediction).tolist())
 
     def formatInputData(self, sample):
         """Extract description and transform to vector"""
