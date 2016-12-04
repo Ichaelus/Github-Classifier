@@ -154,22 +154,24 @@ class ClassificationModule:
         ###Serialization
         filename = datetime.now().isoformat().replace(":", "") + '.pkl'
         #generating a path that is indepentent from operating system
-        tmpPath = self.getSavePath()
-        tmpPath = os.path.join(tmpPath, self.name, filename)
+        savepath = self.getSavePath()
+        savepath = os.path.join(savepath, self.name, filename)
         #save module
-        output = open(tmpPath, 'wb')
+        output = open(savepath, 'wb')
         pickle.dump(self, output, 2)
         output.close()
-        
+
         ###XML-file
         #generating a path that is indepentent from operating system
-        tmpPath = self.getSavePath()
-        tmpPath = os.path.join(tmpPath, self.name, self.name + '.xml')
-        tree = ET.parse(tmpPath)
+        xmlpath = self.getSavePath()
+        xmlpath = os.path.join(xmlpath, self.name, self.name + '.xml')
+        tree = ET.parse(xmlpath)
         root = tree.getroot()
         #write information about module into ElementTree-object
         today = date.today()
         entry = ET.SubElement(root, 'version', {'name':filename})
+        timestemp = ET.SubElement(entry, 'timestemp')
+        timestemp.text = re.sub("[^0-9a-zA-Z\s]", '', datetime.now().isoformat())
         day = ET.SubElement(entry, 'day')
         day.text = str(today.day)
         month = ET.SubElement(entry, 'month')
@@ -177,14 +179,14 @@ class ClassificationModule:
         year = ET.SubElement(entry, 'year')
         year.text = str(today.year)
         #SubElement can only handle dicts out of strings => transformation necessary
-        stringDict = {}
+        stringdict = {}
         for key, value in self.Accuracy.iteritems():
-            stringDict[str(key)] = str(value)
-        ET.SubElement(entry, 'accuracy', stringDict)
-        ElementYield = ET.SubElement(entry, 'yield')
-        ElementYield.text = str(self.Yield)
+            stringdict[str(key)] = str(value)
+        ET.SubElement(entry, 'accuracy', stringdict)
+        elementyield = ET.SubElement(entry, 'yield')
+        elementyield.text = str(self.Yield)
         #save XML-File
-        tree.write(tmpPath)
+        tree.write(xmlpath)
         return None
         
     def getSavePointsForClassificationModules(self):
@@ -192,72 +194,69 @@ class ClassificationModule:
         ###	at directory path
         """holt aus dem XML File die möglichen SaveZustände"""
         #generating a path that is indepentent from operating system
-        tmpPath = self.getSavePath()
-        tmpPath = os.path.join(tmpPath, self.name, self.name + '.xml')
+        xmlpath = self.getSavePath()
+        xmlpath = os.path.join(xmlpath, self.name, self.name + '.xml')
         #open and convert XML-File to ElementTree-object
-        tree = ET.parse(tmpPath)
+        tree = ET.parse(xmlpath)
         root = tree.getroot()
-        savePoints = []
+        savepoints = []
         for child in root:
-            moduleAccuracy = {}
+            moduleaccuracy = {}
             for i in xrange(0, len(child.find('accuracy').attrib.keys())):
-                moduleAccuracy[child.find('accuracy').attrib.keys()[i]] = float(child.find('accuracy').attrib.values()[i])
-            savePoints.append([child.attrib.values()[0], moduleAccuracy, float(child.find('yield').text)])
+                moduleaccuracy[child.find('accuracy').attrib.keys()[i]] = float(child.find('accuracy').attrib.values()[i])
+            savepoints.append([child.attrib.values()[0], moduleaccuracy, float(child.find('yield').text)])
         #return: list of lists of element0: filename, element1: dict for Accuracy and element2: yield
-        #       [['2016-11-28T18:38:10.221000.pkl', {"DEV":0.0, "HW":0.0, ...}, 90.93], ...]
-        return savePoints
+        #       [['2016-11-28T183810.221000.pkl', {"DEV":0.0, "HW":0.0, ...}, 90.93], ...]
+        return savepoints
         
     def loadClassificationModuleSavePoint(self, filename="lastused"):
         ### require a xml-file which contains <data></data>
         ###	at directory path
         #wenn lastused, dann wird aus dem XML-File der Name vom zuletzt benutzten SavePoint rausgesucht
         """loads another SafePoint with filename of the current ClassificationModule"""
-        if (filename is "lastused"):
+        if filename is "lastused":
             #generating a path that is indepentent from operating system
-            tmpPath = self.getSavePath()
-            tmpPath = os.path.join(tmpPath, self.name, self.name + '.xml')
+            xmlpath = self.getSavePath()
+            xmlpath = os.path.join(xmlpath, self.name, self.name + '.xml')
             #open and convert XML-File to ElementTree-data
             lastmodified = "000000"  #Lexikographisch sehr gutes wort
-                                #quasi wie -unendlich bei Zahlensortierverfahren
-            lastmodifiedOutNumbersLetters = "000000"
-            tree = ET.parse(tmpPath)
+                                #quasi wie +unendlich bei Zahlensortierverfahren
+            tree = ET.parse(xmlpath)
             root = tree.getroot()
             #search for last saved file
             for child in root:
-                tmp = child.attrib.values()[0]
-                namelettersnumbers = re.sub("[^0-9a-zA-Z\s]", '', tmp)
-                if (lastmodifiedOutNumbersLetters < namelettersnumbers):
-                    lastmodifiedOutNumbersLetters = namelettersnumbers
-                    lastmodified = tmp
-            if (lastmodified is "000000"):
+                timestemp = child.find('timestemp').text
+                if lastmodified < timestemp:
+                    lastmodified = timestemp
+                    filename = child.attrib.values()[0]
+            if lastmodified is "000000":
                 #there is no savepoint
                 return None
-            filename = lastmodified
-            #generating a path that is indepentent from operating system
-        tmpPath = self.getSavePath()
-        tmpPath = os.path.join(tmpPath, self.name, filename)
+        #generating a path that is indepentent from operating system
+        loadpath = self.getSavePath()
+        loadpath = os.path.join(loadpath, self.name, filename)
         #deserialization
-        f = open(tmpPath, 'rb')
-        data = pickle.load(f)
+        sfile = open(loadpath, 'rb')
+        data = pickle.load(sfile)
         #return: ClassificationModule or None if there isnt one
         return data
-    
+
     def tryNewDirForModule(self, savepath):
         """builds a new directory and xml-file if it doesnt exit"""
         #generating a path that is indepentent from operating system
-        if (os.path.exists(savepath) == False):
+        if os.path.exists(savepath) is False:
             #building new Folder
-            os.mkdir(savepath)  
-        tmpPath = os.path.join(savepath, self.name)
-        if (os.path.exists(tmpPath) == False):
+            os.mkdir(savepath)
+        newpath = os.path.join(savepath, self.name)
+        if os.path.exists(newpath) is False:
             #building new Folder
-            os.mkdir(tmpPath)       # throws a  OSError if path already exits
-            #building XML-SaveInfoFile
-        tmpPath = os.path.join(tmpPath, self.name + '.xml')
-        if  os.path.exists(tmpPath) == False:
-            d = open(tmpPath, "w")
-            d.write("<data></data>\n")
-            d.close()
+            os.mkdir(newpath)       # throws a  OSError if path already exits
+        #building XML-SaveInfoFile
+        newpath = os.path.join(newpath, self.name + '.xml')
+        if  os.path.exists(newpath) is False:
+            xmlfile = open(newpath, "w")
+            xmlfile.write("<data></data>\n")
+            xmlfile.close()
 
     def getSavePath(self):
         """Returns the basic path to the save folder"""
