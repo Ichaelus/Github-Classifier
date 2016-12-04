@@ -19,6 +19,7 @@ from Models.ClassificationModules.nnmetaonly import nnmetaonly
 from Models.ClassificationModules.metaonlyrandomforest import metaonlyrandomforest
 from Models.ClassificationModules.metaonlysvc import metaonlysvc
 from Models.ClassificationModules.metaonlyadaboost import metaonlyadaboost
+from Models.ClassificationModules.reponamelstm import reponamelstm
 import Models.DatabaseCommunication as DC
 
 print("Starting application..")
@@ -48,6 +49,7 @@ nnmeta = nnmetaonly()
 rfmeta = metaonlyrandomforest()
 svcmeta = metaonlysvc()
 abmeta = metaonlyadaboost()
+lstmname = reponamelstm()
 
 
 print 'Loading last checkpoint for classifiers if available:'
@@ -65,6 +67,7 @@ classifiercollection.addClassificationModuleWithLastSavePoint(nnmeta)
 classifiercollection.addClassificationModuleWithLastSavePoint(rfmeta)
 classifiercollection.addClassificationModuleWithLastSavePoint(svcmeta)
 classifiercollection.addClassificationModuleWithLastSavePoint(abmeta)
+classifiercollection.addClassificationModuleWithLastSavePoint(lstmname)
 
 # Pass ClassifierCollection to Controller
 homesetclassifiercollection(classifiercollection)

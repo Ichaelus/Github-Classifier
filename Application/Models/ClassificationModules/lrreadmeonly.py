@@ -19,11 +19,11 @@ class lrreadmeonly(ClassificationModule):
         # Create vectorizer and fit on all available Descriptions
         self.vectorizer = getTextVectorizer(5000) # Maximum of different columns
         corpus = []
-        for description in text_corpus:
-            corpus.append(process_text(description))
+        for readme in text_corpus:
+            corpus.append(process_text(readme))
         self.vectorizer.fit(corpus)
 
-        self.clf = LogisticRegression(multi_class='ovr')
+        self.clf = LogisticRegression(multi_class='multinomial')
         
         print "\t-", self.name
 
