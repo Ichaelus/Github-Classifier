@@ -52,7 +52,7 @@ class ClassifierCollection:
         loadedClassifier = classificationmoduleobject.loadClassificationModuleSavePoint("lastused")
         if (not loadedClassifier is None):
             self.addClassificationModule(loadedClassifier)
-            print '\t-Sucessfully loaded old version of ' + loadedClassifier.getName()
+            print '\t-Sucessfully loaded old version of ' + classificationmoduleobject.getName()
         else:
             print '\t-There is no file for ' + classificationmoduleobject.getName()
             self.addClassificationModule(classificationmoduleobject)

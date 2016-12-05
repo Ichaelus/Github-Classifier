@@ -27,6 +27,7 @@ class ClassificationModule:
         self.binary = False
         self.Yield = 0.0
         self.Accuracy = {"DEV":0.0, "HW":0.0, "EDU":0.0, "DOCS":0.0, "WEB":0.0, "DATA":0.0, "OTHER":0.0}
+        self.confusionmatrix = np.zeros(shape=(7,7), dtype=np.int)
 
     
     def getDescription(self):
@@ -50,6 +51,10 @@ class ClassificationModule:
     def getName(self):
         """Return the name"""
         return self.name
+
+    def getConfusionMatrix(self):
+        """Return ConfusionMatrix"""
+        return self.confusionmatrix
     
     @abstractmethod
     def resetAllTraining(self):
@@ -96,11 +101,11 @@ class ClassificationModule:
     def isBinary(self):
         """Checks if classifier output is binary (dev/non_dev)"""
         return self.binary
-    
+
     def setBinary(self, bin):
         """Set if classifier output is binary (dev/non_dev)"""
         self.binary = bin
-    
+
     def testModule(self, data):
         """Module tests itself, refreshes yield and accuracy and returns data about these thests to the ClassifierCollection"""
         nb_right_pred = 0 # Number of right predictions
@@ -115,6 +120,9 @@ class ClassificationModule:
                 nb_right_pred += 1
                 class_right_pred_count[true_label_index] += 1
             class_count[true_label_index] += 1
+            #columns: label_index (DEV, HW, EDU, DOCS, WEB, DATA, OTHER)
+            #rows: pred_index (same as columns)
+            self.confusionmatrix[pred_out[0], true_label_index] += 1
     
         if len(data) != 0:
             self.Yield = float(nb_right_pred) / len(data)
@@ -126,7 +134,7 @@ class ClassificationModule:
             self.Accuracy['WEB'] = class_acc[4]
             self.Accuracy['DATA'] = class_acc[5]
             self.Accuracy['OTHER'] = class_acc[6]
-        return [self.getYield(), self.getAccuracy()]
+        return [self.getYield(), self.getAccuracy(), self.getConfusionMatrix()]
 
     def calculatePoolBasedQuery(self,formula, data):
         """Module goes trough each sample, calculates the uncertainty for it and returns the sample with the highest uncertainty"""
