@@ -186,6 +186,12 @@ function initVue(){
             Vue.set(cf, "uncertainty", 0);
         }
         Vue.set(inoutData, "classifiersUnsure", false);
+      },
+      retrainAll: function(){
+        notify("Retrain all", "Training every untrained classificator. This may take a couple of minutes");
+        for(let c in inoutData.classificators)
+          if(inoutData.classificators[c].yield <= 0)
+            wrapperView.retrain(c, true);
       }
     }
   });
@@ -228,7 +234,7 @@ function initVue(){
     	showInfo: function(name){
     		wrapperView.setData(name);
         wrapperView.getSavePoints();
-        RadarChart("#class_accuarcy_chart", [accuracyToGraphData(wrapperData.current.accuracy)], getRadarConfig(700));
+        //RadarChart("#class_accuarcy_chart", [accuracyToGraphData(wrapperData.current.accuracy)], getRadarConfig(700));
     		$('.overlay_blur').fadeIn();
     		$('#overlay_wrapper').fadeIn();
     	},
@@ -310,21 +316,25 @@ function initVue(){
             }
             if(data.length > 0)
               RadarChart("#version_accuarcy_chart", data, getRadarConfig(700));
+            else
+              document.getElementById("version_accuarcy_chart").style.display = "none";
           }
         });
       },
       setSavePoint: function(fileName){
         Vue.set(wrapperData, "selectedPoint", fileName);
       },
-  		retrain: function(){
-  			console.log("Wrapper: "+wrapperData.currentName+" retraining.");
-        notify("Retraining", "The classifier: "+wrapperData.currentName+" started retraining. This could take a while.", 2500);
+  		retrain: function(name, save){
+  			console.log("Wrapper: "+name+" retraining.");
+        notify("Retraining", "The classifier: "+name+" started retraining. This could take a while.", 2500);
         runGenerator(function *main(){
-          let data = yield jQGetPromise("/get/retrain?name="+wrapperData.currentName);
+          let data = yield jQGetPromise("/get/retrain?name="+name);
           if(JSON.parse(data) != false){
             data = JSON.parse(data);
             stateView.updateClassificators(data.classificators);
-            notify("Retrained successfull", "The classifier: "+wrapperData.currentName+" finished retraining", 2500);
+            notify("Retrained successfull", "The classifier: "+name+" finished retraining", 2500);
+            if(save)
+              wrapperView.save(name);
           }else{
             notify("Error while retraining", data, 2500);
           }
@@ -336,10 +346,10 @@ function initVue(){
           notify("Retrained", yield jQGetPromise("/get/retrainSemiSupervised?name="+wrapperData.currentName), 2500);
         });
   		},
-  		save: function(){
-  			console.log("Wrapper: "+wrapperData.currentName+" saving.");
+  		save: function(name){
+  			console.log("Wrapper: "+name+" saving.");
         runGenerator(function *main(){
-          notify("Saved", yield jQGetPromise("/get/save?name="+wrapperData.currentName), 2500);
+          notify("Saved", yield jQGetPromise("/get/save?name="+name), 2500);
           wrapperView.getSavePoints();
         });
   		},
