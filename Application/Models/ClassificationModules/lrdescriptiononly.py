@@ -25,7 +25,7 @@ class lrdescriptiononly(ClassificationModule):
             corpus.append(process_text(description))
         self.vectorizer.fit(corpus)
 
-        self.clf = LogisticRegression(multi_class='ovr')
+        self.clf = LogisticRegression(multi_class='multinomial', solver='lbfgs')
         
         print "\t-", self.name
 

@@ -23,7 +23,7 @@ class lrreadmeonly(ClassificationModule):
             corpus.append(process_text(readme))
         self.vectorizer.fit(corpus)
 
-        self.clf = LogisticRegression(multi_class='multinomial')
+        self.clf = LogisticRegression(multi_class='multinomial', solver='lbfgs')
         
         print "\t-", self.name
 
