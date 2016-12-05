@@ -1,5 +1,5 @@
 console.log("Frontend started..");
-let stateView, inputView, classificatorView, outputView, wrapperView,
+let stateView, inputView, classifierView, outputView, wrapperView,
 	stateData = {
 		action: "halt",
 		mode: "test", // stream, pool, test, single
@@ -17,7 +17,7 @@ let stateView, inputView, classificatorView, outputView, wrapperView,
     repoName: "Repository Name",
     semisupervised: {"SemiSupervisedSureEnough" : true, "SemiSupervisedLabel": "None"},
     isPrediction: true,
-		classificators: {} // name : {description, yield, active, uncertainty, accuracy: [{class, val},..], probability : [{class, val},..]}
+		classifiers: {} // name : {description, yield, active, uncertainty, accuracy: [{class, val},..], probability : [{class, val},..]}
 	},
 	wrapperData = {
     // Data used by the wrapper shown when displaying the detailed page
@@ -30,8 +30,8 @@ let stateView, inputView, classificatorView, outputView, wrapperView,
 
 try{
 	runGenerator(function *main(){
-		let initData = yield jQGetPromise("/get/classificators", "json");
-    Vue.set(inoutData, "classificators", initData.classificators);
+		let initData = yield jQGetPromise("/get/classifiers", "json");
+    Vue.set(inoutData, "classifiers", initData.classifiers);
     setInititalProbability();
 		initVue();
     $("#page").fadeIn();
@@ -41,7 +41,7 @@ try{
 }
 
 function setInititalProbability(){
-  let cd = inoutData.classificators;
+  let cd = inoutData.classifiers;
   for(let c in cd){
     assert(typeof(cd[c].accuracy) != "undefined", "Object missing");
     cd[c].probability = [];
@@ -62,7 +62,7 @@ function getStateQuery(){
 }
 
 function initVue(){
-  // Init Vue components (state, input, classificators, output)
+  // Init Vue components (state, input, classifiers, output)
   assert(typeof(Vue) != "undefined", "Vue script missing");
   stateView = new Vue({
     el: '#header',
@@ -119,7 +119,7 @@ function initVue(){
   		},
   		updateResults: function(results){
         // Apply returned changes to the internal GUI state
-        // classificators: { moduleName => {attr_changed: val_changed,..},...}
+        // classifiers: { moduleName => {attr_changed: val_changed,..},...}
         assert(results != null, "Result is not well-formatted.");
 
         if(typeof(results.repo) != "undefined"){
@@ -139,17 +139,17 @@ function initVue(){
           }
         }
 
-        if(typeof(results.classificators != "undefined"))
-          stateView.updateClassificators(results.classificators);
+        if(typeof(results.classifiers != "undefined"))
+          stateView.updateClassifiers(results.classifiers);
   		},
-      updateClassificators: function(data){
-        console.log("updating classificators");
-        // Update data regarding classificators
-        for(let c in inoutData.classificators){ // c => classificator name
+      updateClassifiers: function(data){
+        console.log("updating classifiers");
+        // Update data regarding classifiers
+        for(let c in inoutData.classifiers){ // c => classifier name
           if(typeof(data[c] != "undefined")){
-            // Classificator is not muted, update it's results
+            // classifier is not muted, update it's results
             for(let newkey in data[c])
-              Vue.set(inoutData.classificators[c], newkey, data[c][newkey]);
+              Vue.set(inoutData.classifiers[c], newkey, data[c][newkey]);
           }
         }
       },
@@ -178,9 +178,9 @@ function initVue(){
         });
       },
       resetView: function(){
-        // Reset classificators, but keep accuracy
-        for(let c in inoutData.classificators){ // c => classificator name
-            cf = inoutData.classificators[c];
+        // Reset classifiers, but keep accuracy
+        for(let c in inoutData.classifiers){ // c => classifier name
+            cf = inoutData.classifiers[c];
             for(let i in cf.probability)
               Vue.set(cf.probability[i], "val", 0.0);
             Vue.set(cf, "uncertainty", 0);
@@ -188,9 +188,9 @@ function initVue(){
         Vue.set(inoutData, "classifiersUnsure", false);
       },
       retrainAll: function(){
-        notify("Retrain all", "Training every untrained classificator. This may take a couple of minutes");
-        for(let c in inoutData.classificators)
-          if(inoutData.classificators[c].yield <= 0)
+        notify("Retrain all", "Training every untrained classifier. This may take a couple of minutes");
+        for(let c in inoutData.classifiers)
+          if(inoutData.classifiers[c].yield <= 0)
             wrapperView.retrain(c, true);
       }
     }
@@ -217,15 +217,15 @@ function initVue(){
         });
       },
       getClassifierAmount: function(){
-        return Object.keys(inoutData.classificators).length;
+        return Object.keys(inoutData.classifiers).length;
       }
     }
   });
   inputView.getPoolsize();
 
 
-  classificatorView = new Vue({
-    el: '#classificators',
+  classifierView = new Vue({
+    el: '#classifiers',
     data: inoutData,
     methods:{
       getMode: function(){
@@ -239,7 +239,7 @@ function initVue(){
     		$('#overlay_wrapper').fadeIn();
     	},
     	switchState: function(name){
-        let c= inoutData.classificators[name];
+        let c= inoutData.classifiers[name];
         c.active = !c.active;
         if(!c.active){
           $.get("/get/mute?name="+name, function(data){
@@ -256,9 +256,9 @@ function initVue(){
     	getMax: function(id){
     		let max = 0;
         array = stateData.mode == "test" ? "accuracy" : "probability";
-        if(typeof(inoutData.classificators[id][array]) != "undefined")
-          for(let i = 0; i < inoutData.classificators[id][array].length; i ++)
-      			max = Math.max(max, inoutData.classificators[id][array][i].val);
+        if(typeof(inoutData.classifiers[id][array]) != "undefined")
+          for(let i = 0; i < inoutData.classifiers[id][array].length; i ++)
+      			max = Math.max(max, inoutData.classifiers[id][array][i].val);
     		return max;
     	},
       isAsking: function(name){
@@ -274,15 +274,15 @@ function initVue(){
   		switchMode: function(mode){
         if(mode == "test"){
           let data = [];
-          for(let c in inoutData.classificators){
-            data.push(accuracyToGraphData(inoutData.classificators[c].accuracy));
+          for(let c in inoutData.classifiers){
+            data.push(accuracyToGraphData(inoutData.classifiers[c].accuracy));
           }
           if(data.length > 0)
             RadarChart("#testOuputChart", data, getRadarConfig(350));
         }
   		},
       getClassifierAmount: function(type){
-        return Object.keys(inoutData.classificators).length;
+        return Object.keys(inoutData.classifiers).length;
       },
       getMode: function(){
         return stateData.mode;
@@ -300,7 +300,7 @@ function initVue(){
     data: wrapperData,
     methods:{
     	setData: function(i){
-    		Vue.set(wrapperData, "current", inoutData.classificators[i]);
+    		Vue.set(wrapperData, "current", inoutData.classifiers[i]);
         Vue.set(wrapperData, "currentName", i);
     	},
       getSavePoints: function(){
@@ -331,7 +331,7 @@ function initVue(){
           let data = yield jQGetPromise("/get/retrain?name="+name);
           if(JSON.parse(data) != false){
             data = JSON.parse(data);
-            stateView.updateClassificators(data.classificators);
+            stateView.updateClassifiers(data.classifiers);
             notify("Retrained successfull", "The classifier: "+name+" finished retraining", 2500);
             if(save)
               wrapperView.save(name);
@@ -357,11 +357,11 @@ function initVue(){
   			console.log("Wrapper: "+wrapperData.currentName+" loading.");
         runGenerator(function *main(){
           data = yield jQGetPromise("/get/load?name="+wrapperData.currentName + "&savepoint="+wrapperData.selectedPoint, "json");
-          // data contains a name of the selected classificator and an accuracy array
+          // data contains a name of the selected classifier and an accuracy array
           if(typeof(data.Error) != "undefined"){
             notify("Error", data.Error, 2500);
            }else{ 
-            stateView.updateClassificators(data.classificators);
+            stateView.updateClassifiers(data.classifiers);
             notify("Loaded", "The classifier "+wrapperData.currentName+" has been loaded.", 2500);
           }
         });
@@ -387,7 +387,7 @@ function HandlePopupResult(result) {
   });
 }
 function convertToApiLink(repoLink){
-  // Converts a repo link to an api link. E.g. https://github.com/Ichaelus/GithubClassificator/ -> https://api.github.com/repos/Ichaelus/GithubClassificator/
+  // Converts a repo link to an api link. E.g. https://github.com/Ichaelus/Githubclassifier/ -> https://api.github.com/repos/Ichaelus/Githubclassifier/
   if(repoLink.indexOf("https://github.com/") >= 0){
     return repoLink.replace("https://github.com/", "https://api.github.com/repos/");
   }else{

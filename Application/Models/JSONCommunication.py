@@ -6,15 +6,15 @@ import ClassificationModules.ClassificationModule
 from collections import OrderedDict
 
 def ConvertClassifierCollectionToJSON(classificationModules):
-	classificators = OrderedDict()
+	classifiers = OrderedDict()
 	for c in classificationModules:
-		accuracy = formatClassificatorAccuracy(c.getAccuracy())
-		classificators[c.getName()] = {'accuracy':accuracy, 'description':c.getDescription(), 'yield':c.getYield(), 'active': not c.isMuteClassificationModule()}
-	returndata = {'classificators': classificators}
+		accuracy = formatClassifierAccuracy(c.getAccuracy())
+		classifiers[c.getName()] = {'accuracy':accuracy, 'description':c.getDescription(), 'yield':c.getYield(), 'active': not c.isMuteClassificationModule()}
+	returndata = {'classifiers': classifiers}
 	return json.dumps(returndata)
-	#return '{"classificators": {"Neural network1": {"description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","yield":0.81,"active":true,"uncertainty": 0.5,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]},"Neural network2":{"description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","yield":0.55,"uncertainty": 0.5,"active":false,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]},"Neural network3":{"description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","yield":0.90,"uncertainty": 0.5,"active":true,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]}}}'
+	#return '{"classifiers": {"Neural network1": {"description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","yield":0.81,"active":true,"uncertainty": 0.5,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]},"Neural network2":{"description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","yield":0.55,"uncertainty": 0.5,"active":false,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]},"Neural network3":{"description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","yield":0.90,"uncertainty": 0.5,"active":true,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]}}}'
 	# EXAMPLE
-	# {classificators:{
+	# {classifiers:{
 	# 	"<ModuleName>" : {
 	#		accuracy:[
 	#			{class: "DEV", val : 0.04},
@@ -45,17 +45,17 @@ def getFormulas():
 
 def formatSinglePrediction(data, results):
 	repo = {'repoName':data['name'], 'repoAPILink':data["api_url"]}
-	classificators = {}
+	classifiers = {}
 	for cresult in results:
-		classificators[cresult[0]] = {'probability':formatProbabilities(cresult[1])}
-	returndata = {'repo':repo, 'classificators':classificators}
+		classifiers[cresult[0]] = {'probability':formatProbabilities(cresult[1])}
+	returndata = {'repo':repo, 'classifiers':classifiers}
 	return json.dumps(returndata)
-	#return '{"repoName": "rName", "classificatorResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
+	#return '{"repoName": "rName", "classifierResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
 
 		# EXAMPLE
 	# {
 	#	"repo":	{repoName: "repoName","repoAPILink":""},
-	#	"classificators":{
+	#	"classifiers":{
 	# 	"<ModuleName>" : {
 	#		probability:[
 	#			{class: "DEV", val : 0.04},
@@ -75,18 +75,18 @@ def formatSinglePrediction(data, results):
 def formatStreamBasedALRound(sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results):
 	repo = {'repoName':sample['name'], 'repoAPILink':sample['api_url']}
 	semisupervised = {'SemiSupervisedSureEnough': bool(SemiSupervisedL), 'SemiSupervisedLabel': SemiSupervisedLabel}
-	classificators = {}
+	classifiers = {}
 	for cresult in results:
-		classificators[cresult[0]] = {'probability':formatProbabilities(cresult[1]), 'uncertainty':cresult[2], 'unsure':bool(cresult[3])}
-	returndata = {'repo':repo, 'classifiersUnsure':bool(unsure), 'semisupervised':semisupervised, 'classificators':classificators}
+		classifiers[cresult[0]] = {'probability':formatProbabilities(cresult[1]), 'uncertainty':cresult[2], 'unsure':bool(cresult[3])}
+	returndata = {'repo':repo, 'classifiersUnsure':bool(unsure), 'semisupervised':semisupervised, 'classifiers':classifiers}
 	return json.dumps(returndata)
-	#return '{"repo": {"repoName": "rName", "repoAPILink":""}, "classifiersUnsure":"true","semisupervised":{"SemiSupervisedSureEnough":"false","SemiSupervisedLabel":"None"} ,"classificatorResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
+	#return '{"repo": {"repoName": "rName", "repoAPILink":""}, "classifiersUnsure":"true","semisupervised":{"SemiSupervisedSureEnough":"false","SemiSupervisedLabel":"None"} ,"classifierResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
 	# EXAMPLE
 	# {
 	#	"repo":{repoName: "repoName","repoAPILink":""},
 	#	"classifiersUnsure":"true",
 	#	"semisupervised":{"SemiSupervisedSureEnough":"false","SemiSupervisedLabel":"None"},
-	#	classificators:{
+	#	classifiers:{
 	# 	"<ModuleName>" : {
 	#		probability:[
 	#			{class: "DEV", val : 0.04},
@@ -105,18 +105,18 @@ def formatStreamBasedALRound(sample, unsure, SemiSupervisedL, SemiSupervisedLabe
 #wollen wir hier von allen classifiern die uncertainties zum ausgewählten sample angeben?
 def formatPoolBasedALRound(sample, classifierasking, resultsForUserQuery):
 	repo = {'repoName':sample['name'], 'repoAPILink':sample['api_url']}
-	classificators = {}
+	classifiers = {}
 	for cresult in resultsForUserQuery:
-		classificators[cresult[0]] = {'probability':formatProbabilities(cresult[1]), 'uncertainty':float(cresult[2])}
-	returndata = {'repo':repo,'classifierAsking':classifierasking.getName(), 'classificators':classificators, 'classifiersUnsure':True}
+		classifiers[cresult[0]] = {'probability':formatProbabilities(cresult[1]), 'uncertainty':float(cresult[2])}
+	returndata = {'repo':repo,'classifierAsking':classifierasking.getName(), 'classifiers':classifiers, 'classifiersUnsure':True}
 	return json.dumps(returndata)
-	#return '{"repo":{"repoName": "rName", "repoAPILink":""}, "classifierAsking":"Neural Network1","classificatorResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
+	#return '{"repo":{"repoName": "rName", "repoAPILink":""}, "classifierAsking":"Neural Network1","classifierResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
 	# EXAMPLE
 	# {
 	# "repo":{repoName: "repoName","repoAPILink":""},	
 	# "classifierAsking":"Neural Network1",
 	# "classifiersUnsure": true,
-	# "classificators":{
+	# "classifiers":{
 	# 	"<ModuleName>" : {
 	#		"probability":[
 	#			{class: "DEV", val : 0.04},
@@ -133,14 +133,14 @@ def formatPoolBasedALRound(sample, classifierasking, resultsForUserQuery):
 
 #falls wirs als array von formatSingleClassificationTest machen, ansonsten muss das wieder anders ausschaun
 def formatMultipleClassificationTests(results):
-	classificators = {}
+	classifiers = {}
 	for result in results:
-		classificators[result[0]] = {'accuracy':formatClassificatorAccuracy(result[1][1]), 'yield':float(result[1][0])}
-	returndata = {'classificators':classificators}
+		classifiers[result[0]] = {'accuracy':formatClassifierAccuracy(result[1][1]), 'yield':float(result[1][0])}
+	returndata = {'classifiers':classifiers}
 	return json.dumps(returndata)	
-	#return '[ { "name" : "blub", "yield" : 0.84, "classificatorResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}, { "name" : "blub2", "yield" : 0.84, "classificatorResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}]'
+	#return '[ { "name" : "blub", "yield" : 0.84, "classifierResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}, { "name" : "blub2", "yield" : 0.84, "classifierResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}]'
 	# EXAMPLE
-	# {classificators:{
+	# {classifiers:{
 	# 	"<ModuleName>" : {
 	#		accuracy:[
 	#			{class: "DEV", val : 0.04},
@@ -165,14 +165,14 @@ def formatMultipleClassificationTests(results):
 
 
 def formatSingleClassificationTest(classifier, result):
-	classificators = {}
-	classificators[classifier.getName()] = {'accuracy':formatClassificatorAccuracy(result[1]), 'yield':float(result[0])}
-	returndata = {'classificators':classificators}
+	classifiers = {}
+	classifiers[classifier.getName()] = {'accuracy':formatClassifierAccuracy(result[1]), 'yield':float(result[0])}
+	returndata = {'classifiers':classifiers}
 	return json.dumps(returndata)
-	#return '[ { "name" : "blub", "yield" : 0.84, "classificatorResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}]'
+	#return '[ { "name" : "blub", "yield" : 0.84, "classifierResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}]'
 
 	# EXAMPLE
-	# {classificators:{
+	# {classifiers:{
 	# 	"<ModuleName>" : {
 	#		accuracy:[
 	#			{class: "DEV", val : 0.04},
@@ -197,10 +197,10 @@ def formatSingleClassificationTest(classifier, result):
 def formatSavePoints(savePoints):
 	savePointsOutput = {}
 	for savePoint in savePoints:
-		savePointsOutput[savePoint[0]] = {'accuracy':formatClassificatorAccuracy(savePoint[1]), 'yield':savePoint[2]}
+		savePointsOutput[savePoint[0]] = {'accuracy':formatClassifierAccuracy(savePoint[1]), 'yield':savePoint[2]}
 	returndata = {'savepoints': savePointsOutput}
 	return json.dumps(returndata)
-	#return '[ { "name" : "blub", "yield" : 0.84, "classificatorResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}, { "name" : "blub2", "yield" : 0.84, "classificatorResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}, { "name" : "blub3", "yield" : 0.84, "classificatorResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}]'
+	#return '[ { "name" : "blub", "yield" : 0.84, "classifierResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}, { "name" : "blub2", "yield" : 0.84, "classifierResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}, { "name" : "blub3", "yield" : 0.84, "classifierResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}]'
 	# EXAMPLE
 	# {savepoints:{
 	# 	"<filename>" : {
@@ -229,15 +229,15 @@ def formatProbabilities(results):
 	cprobabilities.append({'class':'OTHER', 'val': float(results[7])})
 	return cprobabilities
 
-def formatClassificatorAccuracy(classificatoraccuracy):
+def formatClassifierAccuracy(classifieraccuracy):
 	accuracies = []
-	accuracies.append({'class':'DEV', 'val':float(classificatoraccuracy['DEV'])})
-	accuracies.append({'class':'HW', 'val':float(classificatoraccuracy['HW'])})
-	accuracies.append({'class':'EDU', 'val':float(classificatoraccuracy['EDU'])})
-	accuracies.append({'class':'DOCS', 'val':float(classificatoraccuracy['DOCS'])})
-	accuracies.append({'class':'WEB', 'val':float(classificatoraccuracy['WEB'])})
-	accuracies.append({'class':'DATA', 'val':float(classificatoraccuracy['DATA'])})
-	accuracies.append({'class':'OTHER', 'val':float(classificatoraccuracy['OTHER'])})
+	accuracies.append({'class':'DEV', 'val':float(classifieraccuracy['DEV'])})
+	accuracies.append({'class':'HW', 'val':float(classifieraccuracy['HW'])})
+	accuracies.append({'class':'EDU', 'val':float(classifieraccuracy['EDU'])})
+	accuracies.append({'class':'DOCS', 'val':float(classifieraccuracy['DOCS'])})
+	accuracies.append({'class':'WEB', 'val':float(classifieraccuracy['WEB'])})
+	accuracies.append({'class':'DATA', 'val':float(classifieraccuracy['DATA'])})
+	accuracies.append({'class':'OTHER', 'val':float(classifieraccuracy['OTHER'])})
 	return accuracies
 
 def formatRepo(repo):

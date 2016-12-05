@@ -90,7 +90,7 @@ button.control {
   font-weight: bold;
   cursor: default;
 }
-.input_pool:before, .classificator:before{
+.input_pool:before, .classifier:before{
   content: "►";
   position: absolute;
   top: 64px;
@@ -98,7 +98,7 @@ button.control {
   font-size: 25px;
 }
 
-#classificators{
+#classifiers{
   padding: 50px 20px 20px 20px;
   box-shadow: 0 0 1px rgba(0,0,0,0.25);
   margin: 20px 0;
@@ -106,21 +106,21 @@ button.control {
   border-left: 3px solid black;
   border-right: 3px solid black;
 }
-#classificators::after {
+#classifiers::after {
     content: "►";
     position: absolute;
     top: calc(50% - 12.5px);
     right: -6px;
     font-size: 25px;
 }
-.classificator_row{
+.classifier_row{
   margin-bottom: 50px;
   position: relative;
 }
-.classificator_row:last-child {
+.classifier_row:last-child {
   margin-bottom: 0;
 }
-.classificator_row.inactive{
+.classifier_row.inactive{
   opacity: .5;
 }
 .glyphicon-ok-circle{
@@ -132,7 +132,7 @@ button.control {
 .inactive .arrow, .inactive .result_vector, .inactive .uncertainty{
   visibility: hidden;
 }
-.inactive .glyphicon-ok-circle,  .inactive .classificator:before{
+.inactive .glyphicon-ok-circle,  .inactive .classifier:before{
   display: none;
 }
 .inactive .glyphicon-ban-circle{
@@ -141,21 +141,21 @@ button.control {
 .wrapper .glyphicon:hover {
     color: #719EED;
 }
-.classificator{
+.classifier{
   display: inline-block;
   width: 200px;
   text-align: center;
   border: 1px solid black;
   border-radius: 2.5px;
 }
-.classificator:before{
+.classifier:before{
   top: 35px;
 }
-.classificator.asking{
+.classifier.asking{
   background: #719EED;
   color: black;
 }
-.classificator .name{
+.classifier .name{
   display: block;
   border-bottom: 1px solid black;
   background: #008000cc;

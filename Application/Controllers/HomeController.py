@@ -91,10 +91,10 @@ def api(key):
 		# Return the amount of unlabeled samples
 		return DC.getUnlabeledCount()
 
-	elif(key == "classificators"):
-		# get classificators
-		classificators = homeclassifiercollection.getAllClassificationModules()
-		return Models.JSONCommunication.ConvertClassifierCollectionToJSON(classificators)
+	elif(key == "classifiers"):
+		# get classifiers
+		classifiers = homeclassifiercollection.getAllClassificationModules()
+		return Models.JSONCommunication.ConvertClassifierCollectionToJSON(classifiers)
 
 	elif(key == "doSingleStep"):
 		# Perform a single step based on the current stateData
