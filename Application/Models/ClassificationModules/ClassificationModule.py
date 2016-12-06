@@ -54,7 +54,7 @@ class ClassificationModule:
 
     def getConfusionMatrix(self):
         """Return ConfusionMatrix"""
-        return self.confusionmatrix
+        return self.confusionmatrix.copy()
     
     @abstractmethod
     def resetAllTraining(self):
@@ -111,6 +111,7 @@ class ClassificationModule:
         nb_right_pred = 0 # Number of right predictions
         class_count = np.zeros(7) # Number each class was found in data
         class_right_pred_count = np.zeros(7)
+        copyconfusionmatrix = np.zeros(shape=(7, 7), dtype=np.int)
 
         for sample in data:
             pred_out = self.predictLabelAndProbability(sample)
@@ -122,7 +123,9 @@ class ClassificationModule:
             class_count[true_label_index] += 1
             #columns: label_index (DEV, HW, EDU, DOCS, WEB, DATA, OTHER)
             #rows: pred_index (same as columns)
-            self.confusionmatrix[pred_out[0], true_label_index] += 1
+            copyconfusionmatrix[true_label_index, pred_out[0]] += 1
+        
+        self.confusionmatrix = copyconfusionmatrix
     
         if len(data) != 0:
             self.Yield = float(nb_right_pred) / len(data)
