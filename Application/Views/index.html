@@ -96,7 +96,7 @@
           </tbody></table>
 
           <!--<img src="http://www.geoinformation.net/lernmodule/lm06/Kapitel5DigitaleBildverarbeitung/Kapitel5_6_Klassifikation/bilder/konfusionsmatrix.jpg">-->
-          <img src="http://www.geoinformation.net/lernmodule/lm06/Kapitel5DigitaleBildverarbeitung/Kapitel5_6_Klassifikation/bilder/konfusionsmatrix_legende.jpg">
+          <!--<img src="http://www.geoinformation.net/lernmodule/lm06/Kapitel5DigitaleBildverarbeitung/Kapitel5_6_Klassifikation/bilder/konfusionsmatrix_legende.jpg">-->fca
         </div>
       </div>
     </div> <!-- /Overlay -->
@@ -111,10 +111,6 @@
                   <span :class="(action == 'halt' ? 'active ' : '') + 'glyphicon glyphicon-pause'" v-on:click="halt()" title="Stop training"></span>
                   <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" title="Train a single sample"></span>
               </div><!-- /control-subgroup -->
-
-              <button  v-on:click="startTest()" :class="'btn btn-default control ' + ((mode == 'test') ? '' : 'hidden')" title="Test all Classifiers">Start testing</button>
-
-              <button  v-on:click="predictSingle()" :class="'btn btn-default control ' + ((mode == 'single') ? '' : 'hidden')" title="Predict single samples">Predict</button>
 
           </div>
           <div class="col-xs-8">
@@ -144,36 +140,39 @@
                 <label for="stream_ai_4" class="form-control">Predict single samples</label>
               </div>   <!-- /input-group -->  
             </div>
-            <div :class="'col-xs-6 ' + ((mode != 'stream' && mode != 'pool') ? 'hidden' : '') "><!-- non test only -->
+            <div id="right" :class="'col-xs-6 '"><!-- right side options -->
 
-              <div  :class="'input-group ' + (mode != 'stream' ? 'hidden' : '') ">
+              <div  :class="'input-group ' + (mode == 'stream' ? '' : 'hidden') ">
                 <span class="input-group-addon">
                   <input disabled="disabled" id="semi_supervised" v-model="isSemiSupervised" name="semi_supervised" type="checkbox">
                 </span>
                 <label for="semi_supervised" class="form-control">Semi-Supervised</label>
               </div>   <!-- /input-group -->  
 
-              <div class="input-group">
+              <div :class="'input-group ' + ((mode != 'stream' && mode != 'pool') ? 'hidden' : '')">
                 <span class="input-group-addon">
                   <input id="instant_train" v-model="trainInstantly" name="instant_train" type="checkbox">
                 </span>
                 <label for="instant_train" class="form-control">Train instantly</label>
               </div>   <!-- /input-group -->  
 
-              <div class="input-group">
+              <div :class="'input-group ' + ((mode != 'stream' && mode != 'pool') ? 'hidden' : '')">
                 <label id="formula" class="form-control">{{formula}}</label>
                 <div class="input-group-btn">
-                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Uncertainty formula <span class="caret"></span></button>
+                  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Uncertainty formula <span class="caret"></span></button>
                   <ul class="dropdown-menu dropdown-menu-right">
                     <li v-for="f in formulas"><a v-on:click="setFormula(f)" href="#">{{f}}</a></li>
                   </ul>
                 </div><!-- /btn-group -->
               </div><!-- /input-group -->
-            </div><!-- /non test only -->
-
-            <div :class="'col-xs-6 ' + ((mode != 'test') ? 'hidden' : '') "><!-- test only options -->
-              <input v-on:click="retrainAll()" value="Retrain and save all" class="btn btn-primary " style="width: 100%;" type="button">
-            </div><!-- test only options -->
+              <input v-on:click="predictSingle()"
+                    :class="'btn btn-primary control ' + ((mode == 'single') ? '' : 'hidden')" 
+                    title="Predict single samples" value="Predict" type="button">
+              <input v-on:click="startTest()" 
+                    :class="'btn btn-primary control ' + ((mode == 'test') ? '' : 'hidden')" 
+                    title="Test all Classifiers" value="Start testing" type="button">
+              <input v-on:click="retrainAll()" value="Retrain and save all" :class="'btn btn-primary ' + ((mode == 'test') ? '' : 'hidden')" type="button">
+            </div><!-- /right side options -->
           </div><!-- /controls -->
         </div><!-- /container -->
       </div><!-- /header -->
@@ -190,7 +189,7 @@
 
         <div class="row main"><!-- main -->
           <div id="input" class="col-xs-2"><!-- input -->
-            <div class="input_pool" :style="{top: 'calc( 40px + (-1 + '+getClassifierAmount()+') * 75px)'}">
+            <div class="input_pool" :style="{top: 'calc( 40px * (-1 + '+getClassifierAmount()+') * 75px)'}">
               <span>{{poolSize}}</span>
               <div title="Sample pool size">
                 <span title="Repository name">{{repoName}}</span>
@@ -231,7 +230,7 @@
           <div class="col-xs-3" id="output"><!-- output -->
             <h2 v-on:click="manualClassification()"
                 :class="(getMode() != 'test' && classifiersUnsure ? '' : 'hidden ') + (manualClass == '?' ? 'uncertain' : '')" 
-                :style="{top: 'calc( 35px + (-1 + '+getClassifierAmount()+') * 75px)'}"
+                :style="{top: 'calc( 35px * (-1 + '+getClassifierAmount()+') * 75px)'}"
                 title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass)}}</h2>
             <!--<div :class="(getMode() == 'test' ? '' : 'hidden ')" 
                  :style="{top: 'calc( 0px + (-1 + '+getClassifierAmount()+') * 75px)'}"

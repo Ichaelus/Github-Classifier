@@ -31,23 +31,29 @@ try {
   console.log("Repocrawler started");
   initButtons();
   initVue();
-  getRepos();
-  updateClassifications();
-  sampleMining();
+  if(getParameterByName("popup") == "true"){
+    addCustomRepo(getParameterByName("api-url"));
+  }else{
+    getRepos();
+    patchworkClassifications();
+    //sampleMining();
+  }
 }catch(ex){
   console.log(ex);
 }
 
-function updateClassifications(){
+function patchworkClassifications(){
   // Ask the server if there are old samples that need to be reclassified
-  $.get("ajax.php?key=api:to-reclassify").then(function(result){
+  $.get("ajax.php?key=api:patchwork&table=unlabeled").then(function(result){
     result = JSON.parse(result);
     if(typeof(result.Error) != "undefined"){
       // Maybe out of old classifications
       console.log(result.Error);
     }else{
       console.log(result);
-      $.get("ajax.php?key=api:generate_sample&class="+result.class+"&api-url=" + result.url.replace("https://github.com/", "https://api.github.com/repos/"), function(res2){
+      setTimeout(patchworkClassifications, 1000);
+      /*
+      $.get("ajax.php?key=api:generate_sample&class="+result.class+"&api_url=" + result.url.replace("https://github.com/", "https://api.github.com/repos/"), function(res2){
         if(res2 != "")
           res2 = JSON.parse(res2);
         console.log(res2);
@@ -55,9 +61,9 @@ function updateClassifications(){
           // Maybe out of old classifications
           console.log(res2.Error);
         }else{
-          setTimeout(updateClassifications, 10000);
+          setTimeout(patchworkClassifications, 10000);
         }
-      });
+      });*/
     }
   });
 }
@@ -101,6 +107,30 @@ function getRepos(){
     console.log(allRepos);
   });
 }
+
+function addCustomRepo(api_url){
+  // Add a custom repository to the list. Must be part of the unlabeled table
+  if(api_url != ""){
+    runGenerator(function *main(){
+      // Add pending repos to list
+      //yield jQGetPromise("ajax.php?key=api:generate_sample&api-url="+api_url, "json");
+      let res = yield jQGetPromise("ajax.php?key=api:unlabeled&filter="+btoa("api_url=" + api_url), "json");
+      if(res.length == 0 || res == "")
+        throw new Error("There is no such sample.");
+      let repo = res[0];
+      if(typeof(repo.Error) == "undefined"){
+        allRepos.push(repo);
+        tryNextIteration();
+        initialized = true;
+      }else{
+        notify(repo.Error, "There is no sample that needs to be classified.", 4000);
+        //yield jQGetPromise("ajax.php?key=api:generate_sample", "json");
+        //setTimeout(getRepos, 5000);
+      }
+    });
+  }
+}
+
 function tryNextIteration(){
   // Display current repository
   // If a preloaded repo is ready, remove it from the list and visualize it
@@ -196,6 +226,7 @@ function classify(label, data = {}){
 
   postData.key = "classify";
   postData.class = label;
+  postData.table = getParameterByName("popup") == "true" ? "unlabeled" : "to_classify";
   console.log(postData);
   $.post("/ajax.php", postData).then(
     function(result){
@@ -204,8 +235,17 @@ function classify(label, data = {}){
       }else{
         notify("Status", "There was an error while trying to submit ("+result+").");
       }
-      // Keep at least three repos buffered + get next liveView
-      getRepos();
+      if(getParameterByName("popup") == "true"){
+        // Close windows with response
+        try {
+            window.opener.HandlePopupResult(label);
+        }catch (err) {}
+        window.close();
+        return false;
+      }else{
+        // Keep at least three repos buffered + get next liveView
+        getRepos();
+      }
   });
 }
 function skipRepo(){
@@ -369,4 +409,16 @@ function isNotEmpty(str){
 function isEmpty(str) {
   // Checks if str is empty or null
   return (!str || 0 === str.length);
+}
+
+function getParameterByName(name, url) {
+    // retrieving query string values
+    if (!url)
+      url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }

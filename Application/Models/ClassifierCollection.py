@@ -178,6 +178,7 @@ class ClassifierCollection:
         results = []
         for c in self.classificationmodules:
             results.append([c.getName(), c.predictLabelAndProbability(data)])
+        DC.moveRepoFromUnlabeledToToClassify(data["api_url"])
         return data, results
 
     def TrainAllClassificationModulesOnSample(self, repo):

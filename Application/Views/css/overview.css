@@ -51,6 +51,10 @@ h1{
   bottom: 0;
   left: calc(50% - 37.5px);
 }
+#header #right input[type="button"]{
+  width: 100%;
+  margin-bottom: 6px;
+}
 .active, .control_buttons span:hover{
   color: #719eec;
 }
