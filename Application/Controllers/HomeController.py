@@ -206,6 +206,12 @@ def api(key):
 		except NameError as err:
 			return('Module not found')
 
+	elif(key == "matrix"):
+		try:
+			return Models.JSONCommunication.formatConfusionMatrix(homeclassifiercollection.getClassificationModule(getQueryValue("name")).getConfusionMatrix())
+		except NameError as err:
+			return('Module not found')
+
 	else :
 		return "API call for: " + key
 
