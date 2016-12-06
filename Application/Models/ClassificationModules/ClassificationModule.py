@@ -27,7 +27,7 @@ class ClassificationModule:
         self.binary = False
         self.Yield = 0.0
         self.Accuracy = {"DEV":0.0, "HW":0.0, "EDU":0.0, "DOCS":0.0, "WEB":0.0, "DATA":0.0, "OTHER":0.0}
-        self.confusionmatrix = np.zeros(shape=(7,7), dtype=np.int)
+        self.confusionmatrix = np.zeros(shape=(9,9))
 
     
     def getDescription(self):
@@ -107,26 +107,55 @@ class ClassificationModule:
         self.binary = bin
 
     def testModule(self, data):
-        """Module tests itself, refreshes yield and accuracy and returns data about these thests to the ClassifierCollection"""
+        """Module tests itself, refreshes yield and accuracy 
+        and returns data about these thests to the ClassifierCollection"""
         nb_right_pred = 0 # Number of right predictions
         class_count = np.zeros(7) # Number each class was found in data
         class_right_pred_count = np.zeros(7)
-        copyconfusionmatrix = np.zeros(shape=(7, 7), dtype=np.int)
+        copyconfusionmatrix = np.zeros(shape=(9, 9))
 
         for sample in data:
             pred_out = self.predictLabelAndProbability(sample)
             # Check if prediction was right
             true_label_index = getLabelIndex(sample)
-            if (pred_out[0] == true_label_index):
+            if pred_out[0] == true_label_index:
                 nb_right_pred += 1
                 class_right_pred_count[true_label_index] += 1
             class_count[true_label_index] += 1
             #columns: label_index (DEV, HW, EDU, DOCS, WEB, DATA, OTHER)
             #rows: pred_index (same as columns)
-            copyconfusionmatrix[true_label_index, pred_out[0]] += 1
-        
+            # Beispiel:
+            #       Labeled as Category
+            # C  a |___|DEV|HW|..____________________
+            # l  s |DEV|___|__|_____
+            # a    |HW_|___|___
+            # s  C |EDU|__
+            # s  a |
+            # i  t |
+            # f  e |
+            # i  g |
+            # e  o |
+            # d  r |
+            #    y |
+            copyconfusionmatrix[pred_out[0], true_label_index] += 1
+        # computation of total values
+        l = len(copyconfusionmatrix)
+        for i in xrange(0, l-2):
+            for j in xrange(0, l-2):
+                #computation of total in labelled category i
+                copyconfusionmatrix[7, i] += copyconfusionmatrix[j, i]
+                #computation of total in predicted category  i
+                copyconfusionmatrix[i, 7] += copyconfusionmatrix[i, j]
+            #producer's accurency
+            copyconfusionmatrix[8, i] = copyconfusionmatrix[i, i] / copyconfusionmatrix[7, i]
+            #consumer's accurency
+            copyconfusionmatrix[i, 8] = copyconfusionmatrix[i, i] / copyconfusionmatrix[7, i]
+            #computation of total samples
+            copyconfusionmatrix[l-2, l-2] += copyconfusionmatrix[7, i]
+        #overall accurency
+        copyconfusionmatrix[l-1, l-1] = copyconfusionmatrix[l-2, l-2] / nb_right_pred
         self.confusionmatrix = copyconfusionmatrix
-    
+
         if len(data) != 0:
             self.Yield = float(nb_right_pred) / len(data)
             class_acc = class_right_pred_count / class_count
