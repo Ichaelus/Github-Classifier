@@ -28,11 +28,21 @@ def ConvertClassifierCollectionToJSON(classificationModules):
 	#		],
 	#		"confusionMatrix":{
 	#			"matrix": 
-	#				[	[],
+	#				[	[val11,...		  val1N, 		totalRow, 	percentageRow],
 	#					...
-	#					[]
+	#					[valM1,...		  valMN, 		totalRow, 	percentageRow],
+	#					[totalCol,...     totalCol, 	TOTAL, 		""],
+	#					[percentageCol,...percentageCol, "", 	percentageTOTAL]
 	#				],
-	#			"order": ["DEV",...]
+	#			"order": ["DEV",...],
+	#			/* Table 3 @ http://rali.iro.umontreal.ca/rali/sites/default/files/publis/SokolovaLapalme-JIPM09.pdf */
+	#			"measures": {
+	#							"Average Accuracy" : 0.3,
+	#							"Error Rate" : 0.1,
+	#							"Precision" : 0.5,
+	#							"Recall" : 0.1,
+	#							"Fscore" : 0.6
+	#						}
 	#		}
 	#		description: "A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.",
 	#		yield: "81",
