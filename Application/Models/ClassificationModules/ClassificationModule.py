@@ -147,13 +147,16 @@ class ClassificationModule:
                 #computation of total in predicted category  i
                 copyconfusionmatrix[i, 7] += copyconfusionmatrix[i, j]
             #producer's accurency
-            copyconfusionmatrix[8, i] = copyconfusionmatrix[i, i] / copyconfusionmatrix[7, i]
+            if copyconfusionmatrix[7, i] != 0:
+                copyconfusionmatrix[8, i] = copyconfusionmatrix[i, i] / copyconfusionmatrix[7, i]
             #consumer's accurency
-            copyconfusionmatrix[i, 8] = copyconfusionmatrix[i, i] / copyconfusionmatrix[7, i]
+            if copyconfusionmatrix[i, 7] != 0:
+                copyconfusionmatrix[i, 8] = copyconfusionmatrix[i, i] / copyconfusionmatrix[i, 7]
             #computation of total samples
             copyconfusionmatrix[l-2, l-2] += copyconfusionmatrix[7, i]
         #overall accurency
-        copyconfusionmatrix[l-1, l-1] = copyconfusionmatrix[l-2, l-2] / nb_right_pred
+        if nb_right_pred != 0:
+            copyconfusionmatrix[l-1, l-1] = copyconfusionmatrix[l-2, l-2] / nb_right_pred
         self.confusionmatrix = copyconfusionmatrix
 
         if len(data) != 0:
