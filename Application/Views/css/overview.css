@@ -346,8 +346,8 @@ button.control {
 
 /* end D3 */
 #confusion_matrix .cell_own{
-  background: #329A65;
-  color: black;
+  background: #329A65!important;
+  color: black!important;
 }
 #confusion_matrix .cell_classifier{
   background: #f0ff00;
@@ -357,16 +357,16 @@ button.control {
   background: orange;
   color: black;
 }
-#confusion_matrix .total td, #confusion_matrix .bold{
+#confusion_matrix .total td, #confusion_matrix .bold, #confusion_matrix td:nth-last-child(1), #confusion_matrix td:nth-last-child(2) {
   background: #439fc3;
   color: white;
   font-weight: bold;
 }
 #confusion_matrix tr td:first-child {
-    font-weight: bold;
-    letter-spacing: 1px;
-    text-align: right;
-    font-size: 1em;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-align: right;
+  font-size: 1em;
 }
 #confusion_matrix tr th:first-child {
     text-align: right;
@@ -374,6 +374,13 @@ button.control {
 #confusion_matrix .result_abs, #confusion_matrix .result{
   color: black !important;
 }
+.measure_table tr td:first-child,.measure_table tr th:first-child{
+  text-align: right;
+}
+.measure_table tr td:last-child{
+  text-align: left;
+}
+
 
 #output h2{
   background: green;
