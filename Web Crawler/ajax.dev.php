@@ -43,8 +43,9 @@ try{
         if($postkey != "")
             handlePOST($postkey);
     }
+    report(false, "This is not a valid API call."); // this report() call will only be shown if no previous report() was made.
 }catch(Exception $e){
-    print(json_encode(array("Error" => $e->getMessage())));
+    report(false, "Exception catched: " . $e->getMessage());
 }
 
 header($header);
@@ -56,18 +57,18 @@ function handleGET($getkey){
     $attrs = "`class`, `api_calls`, `api_url`, `author`, `avg_commit_length`, `branch_count`, `commit_count`, `commit_interval_avg`, `commit_interval_max`, `contributors_count`, `description`, `file_count`, `files`, `folders`, `folder_count`, `forks`, `hasDownloads`, `hasWiki`, `isFork`, `open_issues_count`, `language_main`, `language_array`, `name`, `readme`, `stars`, `tagger`, `treeArray`, `treeDepth`, `url`, `watches`";
     switch ($getkey) {
         case "api:old":
+            // To be removed: returns the content of the old train set.
             $filter = generate_filter("(class != 'SKIPPED'  AND class != 'UNSURE') AND");
             $limitation = getLimitation();
             $data = $db->select("SELECT * FROM `_depr_samples` $filter $limitation");
-            print(json_encode($data));
+            reportIf($data !== false, $data, "Database error.");
             break;
         case "api:all":
             // Return every sample of <table>
             $filter = generate_filter("(class != 'SKIPPED'  AND class != 'UNSURE') AND");
             $limitation = getLimitation();
             $data = $db->select("SELECT * FROM `$table` $filter $limitation");
-           // print "SELECT * FROM `train` $filter";
-            print(json_encode($data));
+            reportIf($data !== false, $data, "Database error.");
             break;
         case "api:train":
         case "api:test":
@@ -82,54 +83,55 @@ function handleGET($getkey){
             $limitation = getLimitation();
             $data = $db->select("SELECT * FROM `$t` $filter $limitation");
            // print "SELECT * FROM `train` $filter";
-            print(json_encode($data));
+            reportIf($data !== false, $data, "Database error.");
             break;
 
         case "api:single":
             // Returns a random sample of the given <table>
             $data = $db->select("SELECT * FROM `$table` WHERE class != 'SKIPPED'  AND class != 'UNSURE'  ORDER BY RAND() LIMIT 0, 1");
-            if(count($data) == 0)
-                throw new Exception("There is no classified sample.");
-            print(json_encode($data[0]));
+            reportIf($data !== false && count($data) > 0, $data[0], "There is no classified sample.");
             break;
         case "api:equal":
             // Returns an equal amount of samples based on the class count of the given <table>
             $mdata = $db->select("SELECT COUNT(*) AS minimum FROM `$table` GROUP BY class ORDER BY minimum LIMIT 0, 1");
-            $minimum = $mdata[0]["minimum"];
-            $class_equal_query = "SELECT
-                                  `$table`.*
-                                FROM
-                                  `$table` INNER JOIN (
-                                    SELECT
-                                      class,
-                                      GROUP_CONCAT(id ORDER BY id DESC) grouped_id
+            if($mdata !== false && count($mdata) == 1){
+                $minimum = $mdata[0]["minimum"];
+                $class_equal_query = "SELECT
+                                      `$table`.*
                                     FROM
-                                      `$table`
-                                    GROUP BY class) group_max
-                                  ON `$table`.class = group_max.class
-                                     AND FIND_IN_SET(id, grouped_id) BETWEEN 1 AND $minimum
-                                ORDER BY
-                                  `$table`.class DESC";
-            $data = $db->select($class_equal_query);
-            print(json_encode($data));
+                                      `$table` INNER JOIN (
+                                        SELECT
+                                          class,
+                                          GROUP_CONCAT(id ORDER BY id DESC) grouped_id
+                                        FROM
+                                          `$table`
+                                        GROUP BY class) group_max
+                                      ON `$table`.class = group_max.class
+                                         AND FIND_IN_SET(id, grouped_id) BETWEEN 1 AND $minimum
+                                    ORDER BY
+                                      `$table`.class DESC";
+                $data = $db->select($class_equal_query);
+                reportIf($data !== false, $data, "Database error");
+            }else
+                report(false, "Table empty or database error");
             break;
         case "api:class":
             // Returns all samples of the given class <name>
             $class = get_attr("name");
             $data = $db->select("SELECT * FROM `$table` WHERE `class` = '$class'");
-            print(json_encode($data));
+            reportIf($data !== false, $data, "Database error");
             break;
         case "api:count":
             // Returns the amount of data affected by <table> and <filter>
             $filter = generate_filter();
             $data = $db->select("SELECT COUNT(*) AS count FROM `$table` $filter");
-            print($data[0]["count"]);
+            reportIf($data !== false && count($data) == 1, $data[0]["count"], "Result empty or database error");
             break;
         case "api:class-count":
             // Returns the a class-based count
             $filter = generate_filter();
             $data = $db->select("SELECT class, COUNT(*) AS count FROM `$table` $filter GROUP BY `class`");
-            print(json_encode($data));
+            reportIf($data !== false, $data, "Database error");
             break;
         case "api:tagger-class-count":
             // Returns the a class-based count based on the <tagger> attribute
@@ -137,45 +139,32 @@ function handleGET($getkey){
             if(get_attr("tagger") != "")
                 $additional .= "WHERE `tagger` = '".get_attr("tagger")."'";
             $data = $db->select("SELECT class, COUNT(*) AS count FROM `$table` $additional GROUP BY `class`");
-            print(json_encode($data));
+            reportIf($data !== false, $data, "Database error");
             break;
         case "api:generate_sample_url":
             $credentials = $apihandler->getAPItoken(get_attr("client_id"), get_attr("client_secret"));
             // Either use passed credentials or rotate through the list
-            if($credentials == false){
-                throw new Exception("API token missing.");
-            }else{
-                print generateSampleUrl();
-            }
+            reportIf($credentials !== false, generateSampleUrl(), "API token missing.");
             break;
         case "api:generate_sample":
             $credentials = $apihandler->getAPItoken(get_attr("client_id"), get_attr("client_secret"));
             // Either use passed credentials or rotate through the list
             if($credentials == false){
-                throw new Exception("API token missing.");
+                report(false, "API token missing.");
             }else{
                 $url = trim(get_attr("api_url")) == "" ?  generateSampleUrl() : get_attr("api_url");
                 $class = strtoupper(trim(get_attr("class")));
                 if(!isValidApiUrl($url))
-                    throw new Error("Invalid API url");
+                    throw new Exception("Invalid API url");
                 // Generate new sample url
                 $vector = generateRepoVector($url);
                 if(isValidLabel($class))
+                    // Set class if given
                     $vector["class"] = $class;
-
-                if($vector["url"] == ""){
-                    var_dump($vector);
+                if($vector["url"] == "")
                     throw new Exception("Something went wrong");
-                }
                 saveVector($vector);
-                $enc = json_encode($vector);
-                if($enc == false){
-                    var_dump($vector);
-                    throw new Exception("JSON could not be generated.");
-                }else{
-                    print($enc);
-                }
-
+                reportIf(count($vector) > 0, $vector, "Vector seems to be broken");
             }
             break;
         case "api:move":
@@ -193,24 +182,19 @@ function handleGET($getkey){
                     if($iid){
                         $db->query("DELETE FROM `$t1` WHERE `api_url` = '$api_url'");
                         $data = $db->select("SELECT * FROM `$t2` WHERE `api_url` = '$api_url'");
-                        print(json_encode($data[0]));
-                    }else{
+                        reportIf($data !== false && count($data) > 0, $data[0], "Database error");
+                    }else
                         throw new Exception("Error moving row");
-                    }
-                }else{
+                }else
                     throw new Exception("Sample not generated");
-                }
-            }else{
+            }else
                 throw new Exception("Invalid Parameters");
-            }
             break;
             
         case "api:to-reclassify":
             // Single classified repo, that is present in `standard_train_samples` but not in `train`
             $data = $db->select("SELECT s.url, s.class FROM `standard_train_samples` s LEFT JOIN `train` r ON s.url = r.url WHERE r.id IS NULL AND s.class != 'UNLABELED' AND s.class != 'SKIPPED'  AND s.class != 'UNSURE'  ORDER BY s.id DESC LIMIT 0, 1");
-            if(count($data) == 0)
-                throw new Exception("There is no old classified sample.");
-            print(json_encode($data[0]));
+            reportIf(count($data) == 1, $data[0], "There is no old classified sample.");
             break;
         case "api:patchwork":
             // Add missing data to the table <table>
@@ -221,16 +205,17 @@ function handleGET($getkey){
                     $api_url = $data[0]['api_url'];
                     $lm = getLanguageMain($api_url);
                     $folders = getFolderList($api_url);
-                    $query = $db->query("UPDATE `$table` SET `language_main` = '$lm',`folders` = '$folders', `patchworked` = true WHERE `api_url` = '$api_url'");
-                    print(json_encode(array("status" => "Sample patchworked.")));
+                    $db->query("UPDATE `$table` SET `language_main` = '$lm',`folders` = '$folders', `patchworked` = true WHERE `api_url` = '$api_url'");
+                    report(true, "Sample patchworked.");
                 }else{
-                    throw new Exception("There is no sample that needs to be patchworked");
+                    report(false, "There is no sample that needs to be patchworked");
                 }
-            }
+            }else
+                report(false, "Invalid table");
             break;
 
         default:
-            throw new Exception("Nothing in here.");
+            report(false, "Nothing in here.");
             break;
 
     }//switch
@@ -243,32 +228,57 @@ function handlePOST($postkey){
         case "unclassified":
             // Add repo link only, to be classified
             $iid = $db -> insert("INSERT INTO `todo` (url) VALUES ('".post_attr('api_url')."')");
-            print(is_numeric($iid) ? "success" : "error");
+            reportIf(is_numeric($iid), "Insertion succeeded","Failed inserting row");
             break;
         case "skip":
             // Remove repo link
             $db->query("UPDATE `train` SET `class` = 'SKIPPED' WHERE `id` = '".post_attr('id')."'");
+            report(true, "Sample skipped");
             break;
         case "classify":
             // Classify a generated repo, taken from the pool <table>
             $qID = $db->select("SELECT id FROM `$table` WHERE `id` = '".post_attr('id')."'");
-            if(count($qID) != 0 && $table != "train"){
+            if($qID !== false && count($qID) != 0 && $table != "train"){
                 $db->query("UPDATE `$table` SET `class` = '".post_attr('class')."', `tagger` = '".post_attr('tagger')."' WHERE `id` = '".post_attr('id')."'");
                 $iid = $db->insert("INSERT INTO `train` ($attrs) SELECT $attrs FROM `$table` WHERE `api_url` = '$api_url'");
                 if($iid){
                     $db->query("DELETE FROM `<1tab></1tab>le` WHERE `api_url` = '$api_url'");
-                    print "Repository classified.";
-                }else{
-                    throw new Exception("Error moving row");
-                }
-            }else{
-                print("error: sample not generated");
-            }
+                    report(true,"Repository classified.");
+                }else
+                    report(false, "Error moving row");
+            }else
+                report(false, "Sample not generated");
             break;
         default:
-            print("Nothing in here.");
+            report(false, "Nothing in here.");
             break;
     }//switch
+}
+
+function reportIf($condition, $data, $error_message){
+    // If condition is true, return data. If not, display error message
+    if($condition === false)
+        report(false, $error_message);
+    else
+        report(true, $data);
+}
+
+$reported = false;
+function report($succes, $data){
+    // Report the call status, only once per call
+    //var_dump($data);
+    global $reported;
+    if(!$reported){
+        if($succes)
+            $response = json_encode(array("success" => true, "data" => $data));
+        else
+            $response = json_encode(array("success" => false, "message" => $data));
+        if($response === false)
+            throw new Exception("JSON could not be generated.");
+        else
+            print($response);
+        $reported = true;
+    }
 }
 
 function isValidTable($t){
@@ -310,13 +320,13 @@ function generate_filter($filterbasis = ""){
                 $attrname = $tokens[0];
                 $ORs = explode("|", $tokens[1]);
                 $attrfilter = "";
-                foreach ($ORs as $value) {
+                foreach ($ORs as $value) 
                     $attrfilter .= "`$attrname` $operator '".$db->check($value)."' OR ";
-                }
+
                 $attrfilter = rtrim($attrfilter, " OR ");
-                if(in_array($attrname, $attributes)){
+                if(in_array($attrname, $attributes))
                     $filter .= " ( " . $attrfilter . " ) AND ";
-                }
+                
             }
         }
     }
@@ -344,8 +354,7 @@ function generateSampleUrl(){
     global $apihandler, $db;
     $url = "https://api.github.com/repositories?since=" . rand(0, 5*pow(10, 7)) . "&" . $apihandler->getAPItoken();
     $repos = $apihandler -> getJSON($url);
-    
-    //var_dump($repos);
+    if(count($repos) == 0) throw new Exception("failed generating sample url.");
     return $repos[rand(0, count($repos) - 1)]["url"];
 }
 
@@ -481,13 +490,13 @@ function recTree($node, &$tree_result, $path, $depth){
 function getLanguageMain($api_url){
     // Get only the main language of a repo
     global $db, $apihandler;
-    $repo = $apihandler->getJSON($api_url . "?" . $apihandler->getAPItoken());
-    if(isset($repo["Error"])) return "";
-    $languages = array_keys($apihandler -> getJSON($repo["languages_url"]. "?" . $apihandler->getAPItoken()));
-    if($languages == null || isset($languages["Error"]))
         return "";
     try{
-        return $repo["language"] != null ? $db->check($repo["language"]) : (count($languages) == 0 ? "" : $db->check($languages[0]));
+        $repo = $apihandler->getJSON($api_url . "?" . $apihandler->getAPItoken());
+        if(isset($repo["Error"])) return "";
+        $languages = array_keys($apihandler -> getJSON($repo["languages_url"]. "?" . $apihandler->getAPItoken()));
+        if($languages == null || isset($languages["Error"]))
+            return $repo["language"] != null ? $db->check($repo["language"]) : (count($languages) == 0 ? "" : $db->check($languages[0]));
     }catch(Exception $ex){
         throw new Exception("Error while getting main language for $api_url: ". $ex->getMessage);
     }
@@ -550,18 +559,17 @@ function isEmptyRepo($repo){
 function saveVector(&$vector){
     // Save the feature vector as a new repository in the database
     global $db;
-    if(count($db->select("SELECT * FROM `train` WHERE `url` = '".$vector['url']."'")) == 0){
+    $table = strtolower($vector['class']) != 'unlabeled' ? 'train' : 'unlabeled';
+
+    $data = $db->select("SELECT * FROM `$table` WHERE `url` = '".$vector['url']."'");
+    if($data !== false && count() == 0){
         $keys =  "`" . join("`, `", array_keys($vector)) . "`";
         $values = "'" . join("', '", $vector) . "'";
-        $table = strtolower($vector['class']) != 'unlabeled' ? 'train' : 'unlabeled';
         $query = "INSERT INTO `$table` ( $keys ) VALUES ( $values )";
-        //print $query;
         $iid = $db->insert($query);
         return $iid;
-        //print(is_numeric($iid) ? "success" : "error");
-    }else{
-        throw new Exception("error: duplicate");
-    }
+    }else
+        throw new Exception("Duplicate Vector");
 }
 
 ?>
