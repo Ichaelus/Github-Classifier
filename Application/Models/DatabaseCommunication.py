@@ -47,7 +47,7 @@ def getUnlabeledSingleSample():
     return api_call('single', tableString="unlabeled")
 
 def getTestData():
-    return api_call('all', tableString="test")
+    return api_call('all', tableString="test") + api_call('all', tableString="standard_test_samples") + api_call('all', tableString="_old_test")
 
 def getLabeledCount():
     return api_call('count', tableString="labeled")
@@ -56,16 +56,16 @@ def getUnlabeledCount():
     return  api_call('count', tableString="unlabeled")
 
 def getTestCount():
-    return api_call('count', tableString="test")
+    return api_call('count', tableString="test") + api_call('count', tableString="standard_test_samples") + api_call('count', tableString="_old_test")
 
 def getTrainData():
-    return api_call('all', tableString="train")
+    return api_call('all', tableString="train") + api_call('all', tableString="standard_train_samples")
 
 def getToClassifyCount():
     return api_call('all', tableString="to_classify")
 
 def getAllDescriptions():
-    tables = ['_old_train', '_old_to_classify']
+    tables = ['standard_train_samples', 'train', 'to_classify']
     corpus = []
 
     for table in tables:
@@ -75,7 +75,7 @@ def getAllDescriptions():
     return corpus
 
 def getAllReadmes():
-    tables = ['_old_train', '_old_to_classify']
+    tables = ['standard_train_samples', 'train', 'to_classify']
     corpus = []
 
     for table in tables:
