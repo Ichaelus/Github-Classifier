@@ -18,10 +18,10 @@ def api_call(keyString, filterString="", tableString="", limitString=""):
         data = json.load(response)
         if not isinstance(data, dict):
             return data # int, string, whatever
-        assert "Error" not in data, "Database error: " + data["Error"] + "\nwith query url:" + url
+        assert data["success"] == True, "Database error: " + data["message"] + "\nwith query url:" + url
     except URLError, e:
         print 'Error with api call', e
-    return data # dict
+    return data["data"] # dict
 
 def moveRepoFromUnlabeledToToClassify(api_url):
     data = api_call('move&from_table=unlabeled&to_table=to_classify&api_url=' + api_url)
@@ -50,19 +50,19 @@ def getTestData():
     return api_call('all', tableString="test")
 
 def getLabeledCount():
-    return str(api_call('count', tableString="labeled"))
+    return api_call('count', tableString="labeled")
 
 def getUnlabeledCount():
-    return  str(api_call('count', tableString="unlabeled"))
+    return  api_call('count', tableString="unlabeled")
 
 def getTestCount():
-    return str(api_call('count', tableString="test"))
+    return api_call('count', tableString="test")
 
 def getTrainData():
     return api_call('all', tableString="train")
 
 def getToClassifyCount():
-    return str(api_call('all', tableString="to_classify"))
+    return api_call('all', tableString="to_classify")
 
 def getAllDescriptions():
     tables = ['_old_train', '_old_to_classify']
