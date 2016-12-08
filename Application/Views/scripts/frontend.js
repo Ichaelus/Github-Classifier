@@ -17,12 +17,12 @@ let stateView, inputView, classifierView, outputView, wrapperView,
     repoName: "Repository Name",
     semisupervised: {"SemiSupervisedSureEnough" : true, "SemiSupervisedLabel": "None"},
     isPrediction: true,
-		classifiers: {} // name : {description, yield, active, uncertainty, accuracy: [{class, val},..], probability : [{class, val},..]}
+		classifiers: {} // name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
 	},
 	wrapperData = {
     // Data used by the wrapper shown when displaying the detailed page
     currentName: "",
-		current: {description: "", yield: 0, active: false, uncertainty: 0, accuracy: {}, probability: {}},
+		current: {description: "", yield: 0, active: false, uncertainty: 0, confusionMatrix: {}, accuracy: {}, probability: {}},
     savePoints: {}, // fileName: {yield, accuracy: [{class, val}, ..]}
     selectedPoint: "",
 		id: 0
@@ -365,7 +365,20 @@ function initVue(){
             notify("Loaded", "The classifier "+wrapperData.currentName+" has been loaded.", 2500);
           }
         });
-  		}
+  		},
+      getMatrixDiag: function(matrix){
+        // Returns the elements on the diagonal of the confusion matrix
+        if(typeof(matrix) !== "undefined")
+          return matrix.map(function(val, rowInd) {return val.filter( function(cell, colInd) {return rowInd == colInd})[0];});
+      },
+      arrayRowSum: function(array){
+        if(typeof(array) !== "undefined")
+          return array.reduce(function(pv, cv) { return parseInt(pv) + parseInt(cv); }, 0);
+      },
+      arrayColSum: function(array, i){
+        if(typeof(array) !== "undefined")
+          return array.reduce(function(prevRow, actRow, actIndex) { return prevRow == 0 ? actRow[i] : parseInt(prevRow[i]) + parseInt(actRow[i]); 0})
+      },
     }
   });
 }
