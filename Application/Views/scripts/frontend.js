@@ -35,6 +35,7 @@ try{
     setInititalProbability();
 		initVue();
     $("#page").fadeIn();
+    $('[data-toggle="tooltip"]').tooltip();
 	});
 }catch(ex){
 	console.log(ex);

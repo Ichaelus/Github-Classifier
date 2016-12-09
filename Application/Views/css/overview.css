@@ -198,6 +198,7 @@ button.control {
 }
 .stats{
   font-weight: bold;
+  cursor: default;
 }
 .wrapper .glyphicon{
   cursor: pointer;
@@ -267,6 +268,7 @@ button.control {
   font-style: italic;
   font-weight: bold;
   left: 217px;
+  cursor: default;
 }
 .uncertainty.uncertain{
   color:red;

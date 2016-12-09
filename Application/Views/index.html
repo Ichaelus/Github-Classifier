@@ -106,9 +106,9 @@
             <h1>Classification Overview</h1>
 
               <div :class="'control_buttons ' + ((mode == 'stream' || mode == 'pool') ? '' : 'hidden')"><!--control-subgroup-->
-                  <span :class="(action == 'loop' ? 'active ' : '') + 'glyphicon glyphicon-play'" v-on:click="loop()" title="Train until paused"></span>
-                  <span :class="(action == 'halt' ? 'active ' : '') + 'glyphicon glyphicon-pause'" v-on:click="halt()" title="Stop training"></span>
-                  <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" title="Train a single sample"></span>
+                  <span :class="(action == 'loop' ? 'active ' : '') + 'glyphicon glyphicon-play'" v-on:click="loop()" data-toggle="tooltip" data-placement="top" title="Train until paused"></span>
+                  <span :class="(action == 'halt' ? 'active ' : '') + 'glyphicon glyphicon-pause'" v-on:click="halt()" data-toggle="tooltip" data-placement="top" title="Stop training"></span>
+                  <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" data-toggle="tooltip" data-placement="top" title="Train a single sample"></span>
               </div><!-- /control-subgroup -->
 
           </div>
@@ -203,10 +203,10 @@
                 <div :class="'classifier ' + (isAsking(index) ? 'asking' : '')">
                   <span class="name">{{index}}</span>
                   <div class="wrapper">
-                    <span title="Current yield" class="stats">{{parseInt(c.yield * 100)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
-                    <span title="Show classifier details" v-on:click="showInfo(index)" class="glyphicon glyphicon-info-sign"></span>
-                    <span title="Enable classifier" v-on:click="switchState(index)" class="glyphicon glyphicon-ban-circle"></span>
-                    <span title="Disable classifier" v-on:click="switchState(index)" class="glyphicon glyphicon-ok-circle"></span>
+                    <span data-toggle="tooltip" data-placement="top" title="Current yield" class="stats">{{parseInt(c.yield * 100)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
+                    <span data-toggle="tooltip" data-placement="top" title="Show classifier details" v-on:click="showInfo(index)" class="glyphicon glyphicon-info-sign"></span>
+                    <span data-toggle="tooltip" data-placement="top" title="Enable classifier" v-on:click="switchState(index)" class="glyphicon glyphicon-ban-circle"></span>
+                    <span data-toggle="tooltip" data-placement="top" title="Disable classifier" v-on:click="switchState(index)" class="glyphicon glyphicon-ok-circle"></span>
                   </div>
                 </div>
                 <div class="arrow">=&gt;</div>
@@ -220,7 +220,7 @@
                       <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
                     </div>
                 </div>
-                <div  title="uncertainty" :class="'uncertainty ' + (c.uncertainty > 0 ? '' : 'hidden ') + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'uncertain ' : 'certain ') : ' ')">
+                <div data-toggle="tooltip" data-placement="top" title="Classifier uncertainty" :class="'uncertainty ' + (c.uncertainty > 0 ? '' : 'hidden ') + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'uncertain ' : 'certain ') : ' ')">
                   {{parseInt(c.uncertainty * 100) / 100}}
                 </div>
               </div>
@@ -231,7 +231,7 @@
             <h2 v-on:click="manualClassification()"
                 :class="(getMode() != 'test' && classifiersUnsure ? '' : 'hidden ') + (manualClass == '?' ? 'uncertain' : '')" 
                 :style="{top: 'calc( 35px * (-1 + '+getClassifierAmount()+') * 75px)'}"
-                title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass)}}</h2>
+                :title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass)}}</h2>
             <!--<div :class="(getMode() == 'test' ? '' : 'hidden ')" 
                  :style="{top: 'calc( 0px + (-1 + '+getClassifierAmount()+') * 75px)'}"
                  id="testOuputChart"></div>-->
