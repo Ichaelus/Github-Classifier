@@ -208,7 +208,7 @@ def api(key):
 
 	elif(key == "matrix"):
 		try:
-			return Models.JSONCommunication.formatConfusionMatrix(homeclassifiercollection.getClassificationModule(getQueryValue("name")).getConfusionMatrix())
+			return Models.JSONCommunication.formatxfusionMatrix(homeclassifiercollection.getClassificationModule(getQueryValue("name")).getConfusionMatrix())
 		except NameError as err:
 			return('Module not found')
 

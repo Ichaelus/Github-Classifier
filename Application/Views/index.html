@@ -136,23 +136,23 @@
                 <span class="input-group-addon">
                   <input id="mode_4" v-on:change="switchMode()" value="single" v-model="mode" name="mode" type="radio">
                 </span>
-                <label for="stream_ai_4" class="form-control">Predict single samples</label>
+                <label for="mode_4" class="form-control">Predict single samples</label>
               </div>   <!-- /input-group -->  
             </div>
             <div id="right" :class="'col-xs-6 '"><!-- right side options -->
+
+              <div :class="'input-group ' + ((mode != 'stream' && mode != 'pool') ? 'hidden' : '')">
+                <span class="input-group-addon">
+                  <input id="instant_train" v-model="trainInstantly" name="instant_train" type="checkbox">
+                </span>
+                <label for="instant_train" class="form-control">Classify instantly and train incrementaly</label>
+              </div>   <!-- /input-group -->  
 
               <div  :class="'input-group ' + (mode == 'stream' ? '' : 'hidden') ">
                 <span class="input-group-addon">
                   <input disabled="disabled" id="semi_supervised" v-model="isSemiSupervised" name="semi_supervised" type="checkbox">
                 </span>
                 <label for="semi_supervised" class="form-control">Semi-Supervised</label>
-              </div>   <!-- /input-group -->  
-
-              <div :class="'input-group ' + ((mode != 'stream' && mode != 'pool') ? 'hidden' : '')">
-                <span class="input-group-addon">
-                  <input id="instant_train" v-model="trainInstantly" name="instant_train" type="checkbox">
-                </span>
-                <label for="instant_train" class="form-control">Train instantly</label>
               </div>   <!-- /input-group -->  
 
               <div :class="'input-group ' + ((mode != 'stream' && mode != 'pool') ? 'hidden' : '')">
@@ -178,6 +178,7 @@
       <div class="container">
 
         <div id="titles" class="row"><!-- titles -->
+          <blockquote class="lead" v-html="getQuote()"></blockquote>
           <div class="col-xs-2"><h3>Input</h3></div>
           <div class="col-xs-7">
             <div class="col-xs-4"><h3>Classifiers</h3></div>
@@ -188,11 +189,11 @@
 
         <div class="row main"><!-- main -->
           <div id="input" class="col-xs-2"><!-- input -->
-            <div class="input_pool" :style="{top: 'calc( 40px * (-1 + '+getClassifierAmount()+') * 75px)'}">
-              <span>{{poolSize}}</span>
-              <div title="Sample pool size">
-                <span title="Repository name">{{repoName}}</span>
-              </div>
+            <div class="live-example">
+              <br/>
+              <br/>
+              <!-- ko if: showPreview -->
+              <iframe class="link-preview" data-bind="attr: {target: '_top', src: }" src="http://classifier.leimstaedtner.it/" sandbox='' scrolling="no"></iframe>
             </div>
           </div><!-- /input -->
 

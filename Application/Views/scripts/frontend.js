@@ -2,17 +2,17 @@ console.log("Frontend started..");
 let stateView, inputView, classifierView, outputView, wrapperView,
 	stateData = {
 		action: "halt",
-		mode: "test", // stream, pool, test, single
-		isSemiSupervised: false,
-		trainInstantly: false,
 		formula: "",
-		formulas: []
+		formulas: [],
+    isSemiSupervised: false,
+    mode: "test", // stream, pool, test, single
+    poolSize: 0,
+    trainInstantly: false
 	},
 	inoutData = {
     classifierAsking: "",
     classifiersUnsure: false,
     manualClass: "?",
-		poolSize: 0,
     repoAPILink: "",
     repoName: "Repository Name",
     semisupervised: {"SemiSupervisedSureEnough" : true, "SemiSupervisedLabel": "None"},
@@ -199,8 +199,35 @@ function initVue(){
 
   titleView = new Vue({
     el: '#titles',
-    data: stateData
+    data: stateData,
+    methods: {
+      getQuote: function(){
+        switch(stateData.mode){
+          case "pool":
+            return "<strong>Pool Based Active Learning</strong> selects the sample with the highest uncerainty out of a pool of unlabeled data as input. The uncertainty is being calculated (in turns) by a single classifier, marked in blue. There are currently <strong>"+stateData.poolSize+"</strong> samples in this pool.";
+            break;
+          case "test":
+            return "The <strong>testing option</strong> runs each classifier against a predefined set of test samples, thus updating the confusion matrix and accuracy per class.";
+            break;
+          case "single":
+            return "The <strong>single sample prediction</strong> method is used to test the outcome of the classifiers for specified a repository (identified by it's URL).";
+            break;
+          default:
+          case "stream": 
+            return "<strong>Stream Based Active Learning</strong> selects a random sample out of a pool of unlabeled data as input. There are currently <strong>"+stateData.poolSize+"</strong> samples in this pool.";
+            break;
+        }
+      },
+      getPoolsize: function(){
+        $.get("/get/poolSize", function(data){
+          if(isNaN(data))
+            throw new Error("Invalid server response");
+          Vue.set(stateData, "poolSize", parseInt(data));
+        });
+      }
+    }
   });
+  titleView.getPoolsize();
 
   inputView = new Vue({
     el: '#input',
@@ -209,19 +236,11 @@ function initVue(){
       switchMode: function(type){
 
       },
-      getPoolsize: function(){
-        $.get("/get/poolSize", function(data){
-          if(isNaN(data))
-            throw new Error("Invalid server response");
-          inoutData.poolSize = parseInt(data);
-        });
-      },
       getClassifierAmount: function(){
         return Object.keys(inoutData.classifiers).length;
       }
     }
   });
-  inputView.getPoolsize();
 
 
   classifierView = new Vue({
@@ -236,6 +255,7 @@ function initVue(){
         wrapperView.getSavePoints();
         //RadarChart("#class_accuarcy_chart", [accuracyToGraphData(wrapperData.current.accuracy)], getRadarConfig(700));
     		$('.overlay_blur').fadeIn();
+        $('#overlay_wrapper').css("margin-top", window.scrollY - 50);
     		$('#overlay_wrapper').fadeIn();
     	},
     	switchState: function(name){
@@ -393,11 +413,15 @@ function HandlePopupResult(result) {
   console.log("result of popup is: ");
   console.log(result);
   setTimeout(function(){Vue.set(inoutData, "manualClass", result.label)}, 250);
-  $.get("/get/ALclassification"+getStateQuery()+"api_url="+result["api_url"]+"&label="+result.label, function(data){
-    console.log(data);
+  if(!result.skipped)
+    $.get("/get/ALclassification"+getStateQuery()+"api_url="+result["api_url"]+"&label="+result.label, function(data){
+      console.log(data);
+      if(stateData.action == "halt_loop")
+        stateView.loop();
+    });
+  else
     if(stateData.action == "halt_loop")
       stateView.loop();
-  });
 }
 function convertToApiLink(repoLink){
   // Converts a repo link to an api link. E.g. https://github.com/Ichaelus/Githubclassifier/ -> https://api.github.com/repos/Ichaelus/Githubclassifier/

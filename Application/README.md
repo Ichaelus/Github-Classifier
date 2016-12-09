@@ -3,7 +3,7 @@
 * python 2.7 (coding language) 64bit
 * pip (module manager)
 * Firefox >= 50
-
+* Screen size >= (1280px x 600px)
 
 ## Notes
 
@@ -30,5 +30,3 @@ _Installed with the command `pip install xxx`_
 
 * (Microsoft Visual C++ Compiler for Python 2.7)[https://www.microsoft.com/en-us/download/details.aspx?id=44266]
 * (64bit g++ compiler)[http://deeplearning.net/software/theano/install_windows.html#gcc]
-* (PhantomJS)[http://phantomjs.org/download.html]
-  * Note that you have to add the location of phantomjs.exe to the PATH variable

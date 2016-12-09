@@ -67,6 +67,25 @@ button.control {
 .main{
   min-height: 600px;
 }
+.live-example {
+    height: 200px !important;
+    overflow: hidden;
+}
+.link-preview {
+  width: 1028px;
+  height: 800px;
+  border: none;
+  pointer-events: none;
+  -webkit-transform: scale(0.2);
+  -moz-transform: scale(0.2);
+  -ms-transform: scale(0.2);
+  transform: scale(0.2);
+  -webkit-transform-origin: 0 0;
+  -moz-transform-origin: 0 0;
+  -ms-transform-origin: 0 0;
+  transform-origin: 0 0;
+}
+/*
 .input_pool{
   border-radius: 50%;
   background: #719EED;
@@ -101,6 +120,7 @@ button.control {
   left: -25px;
   font-size: 25px;
 }
+*/
 
 #classifiers{
   padding: 50px 20px 20px 20px;
@@ -110,13 +130,13 @@ button.control {
   border-left: 3px solid black;
   border-right: 3px solid black;
 }
-#classifiers::after {
+/*#classifiers::after {
     content: "►";
     position: absolute;
     top: calc(50% - 12.5px);
     right: -6px;
     font-size: 25px;
-}
+}*/
 .classifier_row{
   margin-bottom: 50px;
   position: relative;
@@ -324,6 +344,10 @@ button.control {
 }
 #titles{
   text-align: center;
+}
+#titles blockquote{
+  margin: 20px;
+  text-align: justify;
 }
 .graph{
     text-align: center;

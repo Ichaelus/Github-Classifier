@@ -34,9 +34,9 @@ try {
   if(getParameterByName("popup") == "true"){
     addCustomRepo(getParameterByName("api_url"));
   }else{
-    getRepos();
-    updateClassifications();
-    sampleMining();
+    //getRepos();
+    //updateClassifications();
+    //sampleMining();
   }
 }catch(ex){
   console.log(ex);
@@ -46,7 +46,7 @@ function updateClassifications(){
   // Ask the server if there are old samples that need to be reclassified
   $.get(server+"ajax.php?key=api:to-reclassify").then(function(result){
     result = JSON.parse(result);
-    if(typeof(result.Error) != "undefined"){
+    if(!result.success){
       // Maybe out of old classifications
       console.log(result.Error);
     }else{
@@ -55,7 +55,7 @@ function updateClassifications(){
         if(res2 != "")
           res2 = JSON.parse(res2);
         console.log(res2);
-        if(res2 != "" && typeof(res2.Error) != "undefined"){
+        if(!res2.success){
           // Maybe out of old classifications
           console.log(res2.Error);
         }else{
@@ -113,18 +113,18 @@ function addCustomRepo(api_url){
       // Add pending repos to list
       //yield jQGetPromise(server+"ajax.php?key=api:generate_sample&api_url="+api_url, "json");
       let res = yield jQGetPromise(server+"ajax.php?key=api:to_classify&filter="+btoa("api_url=" + api_url), "json");
-      if(res.length == 0 || res == "")
+      if(res == "" || !res.success || res.data.length == 0){
         throw new Error("There is no such sample.");
-      let repo = res[0];
-      if(typeof(repo.Error) == "undefined"){
-        allRepos.push(repo);
-        tryNextIteration();
-        initialized = true;
-      }else{
-        notify(repo.Error, "There is no sample that needs to be classified.", 4000);
+      }
+      let repo = res.data[0];
+      allRepos.push(repo);
+      tryNextIteration();
+      initialized = true;
+      //}else{
+        //notify(repo.Error, "There is no sample that needs to be classified.", 4000);
         //yield jQGetPromise(server+"ajax.php?key=api:generate_sample", "json");
         //setTimeout(getRepos, 5000);
-      }
+      //}
     });
   }
 }
@@ -225,7 +225,7 @@ function classify(label, data = {}){
   if(getParameterByName("popup") == "true"){
     // Close windows with response
     try {
-        window.opener.HandlePopupResult({"api_url" : getParameterByName("api_url"), "label" : label});
+        window.opener.HandlePopupResult({"skipped": false, "api_url" : getParameterByName("api_url"), "label" : label});
     }catch (err) {}
     window.close();
     return false;
@@ -248,13 +248,20 @@ function classify(label, data = {}){
 }
 function skipRepo(){
   // Skip current visible repository and fetch next one
-  assert(isNotEmpty(postData.id), "Invalid repository ID");
-  $.post(server+"ajax.php", {key: "skip", id: postData.id}).then(
-    function(result){
-      notify("Status", "Classification skipped.");
-      // Keep at least three repos buffered + get next liveView
-      getRepos();
-  });
+  if(getParameterByName("popup") == "true"){
+    try {
+        window.opener.HandlePopupResult({"skipped": true, "api_url" : getParameterByName("api_url"), "label" : "SKIPPED"});
+    }catch (err) {}
+    window.close();
+  }else{
+    assert(isNotEmpty(postData.id), "Invalid repository ID");
+    $.post(server+"ajax.php", {key: "skip", id: postData.id}).then(
+      function(result){
+        notify("Status", "Classification skipped.");
+        // Keep at least three repos buffered + get next liveView
+        getRepos();
+    });
+  }
 }
 function initButtons(){
   // Display the classification buttons on the right side of the screen
