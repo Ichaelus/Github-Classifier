@@ -212,6 +212,9 @@ def api(key):
 		except NameError as err:
 			return('Module not found')
 
+	elif(key == "stats"):
+		return Models.JSONCommunication.formatStats(DC.getStats(getQueryValue("table")))
+
 	else :
 		return "API call for: " + key
 

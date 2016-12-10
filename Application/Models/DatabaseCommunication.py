@@ -99,3 +99,6 @@ def getInformationsForRepo(repolink):
     if(data.has_key('Error')):
         raise Exception(data['Error'])
     return data
+
+def getStats(table):
+    return api_call('stats', tableString=table)

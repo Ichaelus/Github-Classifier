@@ -25,6 +25,7 @@ let stateView, inputView, classifierView, outputView, wrapperView,
 		current: {description: "", yield: 0, active: false, uncertainty: 0, confusionMatrix: {}, accuracy: {}, probability: {}},
     savePoints: {}, // fileName: {yield, accuracy: [{class, val}, ..]}
     selectedPoint: "",
+    stats: {},
 		id: 0
   };
 
@@ -193,6 +194,16 @@ function initVue(){
         for(let c in inoutData.classifiers)
           if(inoutData.classifiers[c].yield <= 0)
             wrapperView.retrain(c, true);
+      },
+      showStats: function(){
+        runGenerator(function *main(){
+          // Fetch sample, display
+          stats = yield jQGetPromise("/get/stats?table=unlabeled", "json");
+          Vue.set(wrapperData, "stats", stats);
+          $('.overlay_blur').fadeIn();
+          $('#stats_wrapper').css("margin-top", window.scrollY - 50);
+          $('#stats_wrapper').fadeIn();
+        });
       }
     }
   });
@@ -256,8 +267,8 @@ function initVue(){
         wrapperView.getSavePoints();
         //RadarChart("#class_accuarcy_chart", [accuracyToGraphData(wrapperData.current.accuracy)], getRadarConfig(700));
     		$('.overlay_blur').fadeIn();
-        $('#overlay_wrapper').css("margin-top", window.scrollY - 50);
-    		$('#overlay_wrapper').fadeIn();
+        $('#details_wrapper').css("margin-top", window.scrollY - 50);
+    		$('#details_wrapper').fadeIn();
     	},
     	switchState: function(name){
         let c= inoutData.classifiers[name];
@@ -317,7 +328,7 @@ function initVue(){
   outputView.switchMode(stateView.mode);
 
   wrapperView = new Vue({
-    el: '#overlay_wrapper',
+    el: '#wrappers',
     data: wrapperData,
     methods:{
     	setData: function(i){
@@ -400,12 +411,22 @@ function initVue(){
         if(typeof(array) !== "undefined")
           return array.reduce(function(prevRow, actRow, actIndex) { return prevRow == 0 ? actRow[i] : parseInt(prevRow[i]) + parseInt(actRow[i]); 0})
       },
+      formatStats: function(stats){
+        let attrs = {};
+        for(let i in stats){
+          let attrName = i.substr(4, i.length - 5);
+          if(typeof(attrs[attrName]) === "undefined")
+            attrs[attrName] = {};
+          attrs[attrName][i.substr(0, 3)] = stats[i];
+        }
+        return attrs;
+      }
     }
   });
 }
 function hideInfo(){
 	// Hide any visible popup
-	$('#overlay_wrapper').fadeOut();
+	$('.overlay_wrapper').fadeOut();
 	$('.overlay_blur').fadeOut();
 }
 

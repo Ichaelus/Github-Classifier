@@ -17,88 +17,104 @@
     <link rel="stylesheet" href="css/overview.css"/>
   </head>
   <body>
-    <div style="display:none;"  onclick="hideInfo()" class="overlay_blur"></div>
-    <div style="display:none;" id="overlay_wrapper"> <!-- Overlay -->
-      <div class="container classifier_details">
-        <h2>Classifier Module</h2>
-        <hr>
-        <div class="attributes">
-          <div class="row attribute">
-            <div class="col-xs-3">Name</div>
-            <div class="col-xs-9">{{currentName}}</div>
-          </div>
-          <div class="row attribute">
-            <div class="col-xs-3">Description</div>
-            <div class="col-xs-9">{{current.description}}</div>
-          </div>
-          <div class="row attribute">
-            <div class="col-xs-3">Yield</div>
-            <div class="col-xs-9">{{parseInt(current.yield * 100)}}%</div>
-          </div>
-          <div class="row attribute">
-            <div class="col-xs-3">Currently enabled</div>
-            <div class="col-xs-9">{{current.active ? 'Yes' : 'No'}}</div>
-          </div>
-        </div>
-        <h3>Actions</h3>
-        <hr>
-        <span class="action btn btn-default" v-on:click="retrain(currentName, false)">Retrain from scratch</span>
-        <span class="action btn btn-default" v-on:click="retrain_semi()">Retrain with semi-supervised data</span>
-        <span class="action btn btn-default" v-on:click="save(currentName)">Save current image</span>
-        <div class="version_wrapper">
-          <div class="input-group-btn select">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b>{{selectedPoint == '' ? 'Version' : selectedPoint}}</b> <span class="caret"></span></button>
-                <ul class="dropdown-menu" style="margin: 0px auto;">
-                  <li v-for="(sp, fileName) in savePoints"><a v-on:click="setSavePoint(fileName)" href="#">{{fileName}} <b>({{parseInt(sp.yield * 100)+'%'}}</b>)</a></li>
-                </ul>
-          </div>
-          <span class="action btn btn-default" v-on:click="load()">Load version</span>
-        </div>
-        <h3>Performance Graphs</h3>
-        <!--
-        <div class="graph">
-        <hr>
-          <h4><strong>Per class accuracy</strong></h4>
-          <div id="class_accuarcy_chart"></div>
-        </div>-->
-        <div class="graph">
-          <h4><strong>Overall accuracy per version</strong></h4>
-          <div id="version_accuarcy_chart"></div>
-          <!--<img src="http://www.visualcinnamon.com/wp-content/uploads/2015/09/D3-radar-chart-New-version-Hover.png">-->
-        </div>
-        <div class="graph">
-          <h4><strong>Confusion matrix</strong></h4>
-          <table id="confusion_matrix" class="table">
-            <tbody>
-              <tr>
-                <th>▼ Class. \ Reference ► </th>
-                <th v-for="(c, i) in current.confusionMatrix.order">{{c}}</th>
-                <th>Total</th>
-                <th>C.A. (%)</th>
-              </tr>
-              <tr v-for="(r, i) in current.confusionMatrix.matrix"
-                  :class="(i >= current.confusionMatrix.order.length ? 'total' : '') ">
-                <td>
-                    {{(i <  current.confusionMatrix.order.length ? current.confusionMatrix.order[i] : (current.confusionMatrix.order.length == i ? 'Total' : 'P.A. (%)'))}}</td>
-
-                <td v-for="(r2, i2) in current.confusionMatrix.matrix[i]" 
-                    :class="(i == i2 ? 'cell_own' : (i < i2 ? 'cell_classifier': 'cell_reference'))">
-                    {{parseInt(current.confusionMatrix.matrix[i][i2])}}</td>
-
-              </tr>
-            </tbody>
-          </table>
-          <h4><strong>Measure table</strong></h4>
+    <div id="wrappers">
+      <div style="display:none;"  onclick="hideInfo()" class="overlay_blur"></div>
+      <div style="display:none" class="overlay_wrapper" id="stats_wrapper">
+        <div class="container">
+          <h2>Sample statistics</h2>
+          <hr>
+          <h4><strong>Table `unlabeled`</strong></h4>
           <table class="table table-bordered table-striped measure_table"> 
-            <colgroup> <col class="col-xs-6"> <col class="col-xs-6"> </colgroup>
-            <thead> <tr> <th>Measure</th> <th>Result</th> </tr> </thead>
+            <colgroup> <col class="col-xs-4"> <col class="col-xs-2"><col class="col-xs-2"><col class="col-xs-2"><col class="col-xs-2"> </colgroup>
+            <thead> <tr> <th>Attribute</th> <th>Avg</th> <th>Min</th> <th>Max</th> <th>Sum</th> </tr> </thead>
             <tbody> 
-              <tr v-for="(val, m) in current.confusionMatrix.measures"> <td scope="row"> <code>{{m}}</code> </td> <td>{{val}}</td> </tr>
+              <tr v-for="(val, m) in formatStats(stats)"> <td scope="row"> <code>{{m}}</code> </td> <td><b>{{parseInt(parseFloat(val['AVG'])*100)/100}}</b></td> <td>{{val['MIN']}}</td> <td>{{val['MAX']}}</td> <td>{{val['SUM']}}</td> </tr>
             </tbody>
           </table>
         </div>
       </div>
-    </div> <!-- /Overlay -->
+      <div style="display:none;" class="overlay_wrapper" id="details_wrapper"> <!-- Overlay -->
+        <div class="container">
+          <h2>Classifier Module</h2>
+          <hr>
+          <div class="attributes">
+            <div class="row attribute">
+              <div class="col-xs-3">Name</div>
+              <div class="col-xs-9">{{currentName}}</div>
+            </div>
+            <div class="row attribute">
+              <div class="col-xs-3">Description</div>
+              <div class="col-xs-9">{{current.description}}</div>
+            </div>
+            <div class="row attribute">
+              <div class="col-xs-3">Yield</div>
+              <div class="col-xs-9">{{parseInt(current.yield * 100)}}%</div>
+            </div>
+            <div class="row attribute">
+              <div class="col-xs-3">Currently enabled</div>
+              <div class="col-xs-9">{{current.active ? 'Yes' : 'No'}}</div>
+            </div>
+          </div>
+          <h3>Actions</h3>
+          <hr>
+          <span class="action btn btn-default" v-on:click="retrain(currentName, false)">Retrain from scratch</span>
+          <span class="action btn btn-default" v-on:click="retrain_semi()">Retrain with semi-supervised data</span>
+          <span class="action btn btn-default" v-on:click="save(currentName)">Save current image</span>
+          <div class="version_wrapper">
+            <div class="input-group-btn select">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b>{{selectedPoint == '' ? 'Version' : selectedPoint}}</b> <span class="caret"></span></button>
+                  <ul class="dropdown-menu" style="margin: 0px auto;">
+                    <li v-for="(sp, fileName) in savePoints"><a v-on:click="setSavePoint(fileName)" href="#">{{fileName}} <b>({{parseInt(sp.yield * 100)+'%'}}</b>)</a></li>
+                  </ul>
+            </div>
+            <span class="action btn btn-default" v-on:click="load()">Load version</span>
+          </div>
+          <h3>Performance Graphs</h3>
+          <!--
+          <div class="graph">
+          <hr>
+            <h4><strong>Per class accuracy</strong></h4>
+            <div id="class_accuarcy_chart"></div>
+          </div>-->
+          <div class="graph">
+            <h4><strong>Overall accuracy per version</strong></h4>
+            <div id="version_accuarcy_chart"></div>
+            <!--<img src="http://www.visualcinnamon.com/wp-content/uploads/2015/09/D3-radar-chart-New-version-Hover.png">-->
+          </div>
+          <div class="graph">
+            <h4><strong>Confusion matrix</strong></h4>
+            <table id="confusion_matrix" class="table">
+              <tbody>
+                <tr>
+                  <th>▼ Class. \ Reference ► </th>
+                  <th v-for="(c, i) in current.confusionMatrix.order">{{c}}</th>
+                  <th>Total</th>
+                  <th>C.A. (%)</th>
+                </tr>
+                <tr v-for="(r, i) in current.confusionMatrix.matrix"
+                    :class="(i >= current.confusionMatrix.order.length ? 'total' : '') ">
+                  <td>
+                      {{(i <  current.confusionMatrix.order.length ? current.confusionMatrix.order[i] : (current.confusionMatrix.order.length == i ? 'Total' : 'P.A. (%)'))}}</td>
+
+                  <td v-for="(r2, i2) in current.confusionMatrix.matrix[i]" 
+                      :class="(i == i2 ? 'cell_own' : (i < i2 ? 'cell_classifier': 'cell_reference'))">
+                      {{parseInt(current.confusionMatrix.matrix[i][i2])}}</td>
+
+                </tr>
+              </tbody>
+            </table>
+            <h4><strong>Measure table</strong></h4>
+            <table class="table table-bordered table-striped measure_table"> 
+              <colgroup> <col class="col-xs-6"> <col class="col-xs-6"> </colgroup>
+              <thead> <tr> <th>Measure</th> <th>Result</th> </tr> </thead>
+              <tbody> 
+                <tr v-for="(val, m) in current.confusionMatrix.measures"> <td scope="row"> <code>{{m}}</code> </td> <td>{{val}}</td> </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div> <!-- /Overlay -->
+    </div> <!-- /Wrappers -->
     <div id="page" class="container-fluid" style="display:none;">
       <div id="header">
         <div class="container">
@@ -170,7 +186,10 @@
               <input v-on:click="startTest()" 
                     :class="'btn btn-primary control ' + ((mode == 'test') ? '' : 'hidden')" 
                     title="Test all Classifiers" value="Start testing" type="button">
-              <input v-on:click="retrainAll()" value="Retrain and save all" :class="'btn btn-primary ' + ((mode == 'test') ? '' : 'hidden')" type="button">
+              <input v-on:click="retrainAll()" value="Retrain and save all" 
+                    :class="'btn btn-primary ' + ((mode == 'test') ? '' : 'hidden')" type="button">
+              <input v-on:click="showStats()" value="Display sample statistics" 
+                    :class="'btn btn-primary ' + ((mode == 'test') ? '' : 'hidden')" type="button">
             </div><!-- /right side options -->
           </div><!-- /controls -->
         </div><!-- /container -->

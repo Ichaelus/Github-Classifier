@@ -371,3 +371,6 @@ def formatRepo(repo):
 
 def formatConfusionMatrix(matrix):
     return matrix.tolist()
+
+def formatStats(data):
+    return json.dumps(data)

@@ -59,17 +59,17 @@ h1{
   color: #719eec;
 }
 button.control {
-    position: absolute;
-    bottom: 0;
-    left: calc(50% - 50px);
-    width: 100px;
+  position: absolute;
+  bottom: 0;
+  left: calc(50% - 50px);
+  width: 100px;
 }
 .main{
   min-height: 600px;
 }
 .live-example {
-    height: 200px !important;
-    overflow: hidden;
+  height: 200px !important;
+  overflow: hidden;
 }
 .link-preview {
   width: 1028px;
@@ -131,11 +131,11 @@ button.control {
   border-right: 3px solid black;
 }
 /*#classifiers::after {
-    content: "►";
-    position: absolute;
-    top: calc(50% - 12.5px);
-    right: -6px;
-    font-size: 25px;
+  content: "►";
+  position: absolute;
+  top: calc(50% - 12.5px);
+  right: -6px;
+  font-size: 25px;
 }*/
 .classifier_row{
   margin-bottom: 50px;
@@ -163,7 +163,7 @@ button.control {
   display: inline-block;
 }
 .wrapper .glyphicon:hover {
-    color: #719EED;
+  color: #719EED;
 }
 .classifier{
   display: inline-block;
@@ -285,13 +285,13 @@ button.control {
   left: 0;
   z-index: 3;
 }
-#overlay_wrapper{
+.overlay_wrapper{
   position: absolute;
   width: 100%;
   top: 0;
   height: 100%;
 }
-.classifier_details{
+.overlay_wrapper .container{
   width: 800px;
   border: 1px solid;
   border-radius: 2.5px;
@@ -301,14 +301,14 @@ button.control {
   background: white;
   padding: 20px;
 }
-.classifier_details .attribute div:first-child{
+.overlay_wrapper .container .attribute div:first-child{
   font-weight: bold;
   text-align: right;
 }
-.classifier_details .attribute div:last-child{
+.overlay_wrapper .container .attribute div:last-child{
   font-style: italic;
 }
-.classifier_details .attribute:first-child div:last-child{
+.overlay_wrapper .container .attribute:first-child div:last-child{
   color: black;
   font-size: 20px;
   text-align: left;
@@ -352,7 +352,7 @@ button.control {
   text-align: justify;
 }
 .graph{
-    text-align: center;
+  text-align: center;
 }
 /* D3 */
 .legend {
@@ -395,7 +395,7 @@ button.control {
   font-size: 1em;
 }
 #confusion_matrix tr th:first-child {
-    text-align: right;
+  text-align: right;
 }
 #confusion_matrix .result_abs, #confusion_matrix .result{
   color: black !important;
