@@ -3,6 +3,7 @@
 
 ## DEV
 > A repository primarily used for development of a tool, component, application, app, or API
+
 #### Examples
 * [A simple rails app to handle homework assignment submission and grading](https://github.com/briantemple/homeworkr)
 * [Spring Boot makes it easy to create Spring-powered, production-grade applications and services with absolute minimum fuss](https://github.com/spring-projects/spring-boot)
@@ -74,3 +75,29 @@ category, for example, empty repositories
 
 ## Ambiguities
 > List possible confusions here if encountered while training...
+
+#### College-Courses vs. Online-Courses
+> When course-repos belong to a college or university, 'HW' is the right choice. But an online-course for e.g. a coursera course should be classified as 'EDU'.   
+> This might cause some confusion later on.  
+> **Anyhow:** Homework for online-courses should be classified as 'HW' as well.
+
+#### Design Principles or Standards
+> Mostly belong to docs as they're non-educational. Be careful here and look out for occuring explanations (Obviously 'EDU' then).
+
+#### Scripts and Functional Plugins
+> If repo is used mainly for development and not for hosting, 'DEV' is the desired class. 'DOCS' get's used if not.  
+> **Example:** [gmon-scripts](https://github.com/gwoo/gmon-scripts) was classified as 'DOCS'.
+
+#### Empty repositories
+> If repo is empty, 'OTHER' is the class to go with. Even if purpose of repo is obvious (e.g. repo-name is sth. like "XYZ.github.io").
+
+#### DOCS vs DATA
+> Look out for folder structure and filetypes ('.csv', ...)
+> [language-tag-extensions](https://github.com/ppKrauss/language-tag-extensions) is 'DATA'
+
+#### Websites
+> Decision if Web or Dev depends on complexity of website.   
+> **Note:** We changed the official class-description from only _personal_ 'static website' to **just** 'static website'. This constraint didn't seem plausible.
+
+#### Collection of tips
+> **Example:** 'Collection of Android tips' is educational so 'EDU' is the way to go.
