@@ -213,7 +213,10 @@ def api(key):
 			return('Module not found')
 
 	elif(key == "stats"):
-		return Models.JSONCommunication.formatStats(DC.getStats(getQueryValue("table")))
+		if(getQueryValue("string_attrs") == "true"):
+			return Models.JSONCommunication.formatStats(DC.getStats(getQueryValue("table"), "string"))
+		else:
+			return Models.JSONCommunication.formatStats(DC.getStats(getQueryValue("table"), "numerical"))
 
 	else :
 		return "API call for: " + key

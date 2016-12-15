@@ -203,15 +203,42 @@
                     $data = $db->select("SELECT api_url FROM `$table` WHERE `patchworked` = false LIMIT 0, 1");
                     if($data && count($data) > 0){
                         $api_url = $data[0]['api_url'];
-                        $lm = getLanguageMain($api_url);
-                        $folders = getFolderList($api_url);
-                        $db->query("UPDATE `$table` SET `language_main` = '$lm',`folders` = '$folders', `patchworked` = true WHERE `api_url` = '$api_url'");
+                        $repo = $apihandler->getJSON($api_url . "?" . $apihandler->getAPItoken(), false);
+                        if(isEmptyRepo($repo)){
+                            $db->query("DELETE FROM `$table` WHERE `api_url` = '$api_url'");
+                            throw new Exception("Repository is empty.");
+                        }
+                        $git_refs = getGitRefs($repo);
+                        $treeObj = getTreeObj($repo, $git_refs);
+                        $filesAndFolders = getFilesAndFolders($treeObj);
+                        $folders = $filesAndFolders["folders"];
+                        $db->query("UPDATE `$table` SET `folders` = '$folders', `patchworked` = true WHERE `api_url` = '$api_url'");
                         report(true, "Sample patchworked.");
                     }else{
                         report(false, "There is no sample that needs to be patchworked");
                     }
                 }else
                     report(false, "Invalid table");
+                break;
+            case "api:stats":
+                // Gets a list of per <table> statistics
+                if(get_attr("string_based") === ""){
+                    $numerical_attrs = array("api_calls", "avg_commit_length", "branch_count", "commit_count", "commit_interval_avg", "commit_interval_max", "contributors_count", "file_count", "folder_count", "forks", "open_issues_count", "stars", "treeDepth", "watches");
+                    $selector = "";
+                    foreach ($numerical_attrs as $na)
+                        $selector .= " ROUND(SUM($na)), ROUND(AVG($na)), ROUND(MIN($na)), ROUND(MAX($na)),";
+                    $selector = trim($selector, ",");
+                    $data = $db->select("SELECT $selector FROM `$table`");
+                    reportIf($data !== false && count($data) == 1, $data[0], "Error while generating numerical stats for < $table >");
+                }else{
+                    $string_attrs = array("class", "api_url", "author", "description", "files", "folders", "language_main", "language_array", "name", "readme", "tagger", "treeArray", "url");
+                    $selector = "";
+                    foreach ($string_attrs as $sa)
+                        $selector .= "  ROUND(AVG(CHAR_LENGTH($sa))),";
+                    $selector = trim($selector, ",");
+                    $data = $db->select("SELECT $selector FROM `$table`");
+                    reportIf($data !== false && count($data) == 1, $data[0], "Error while generating string stats for < $table >");
+                }
                 break;
 
             default:
@@ -407,7 +434,7 @@
            return $vector;
         }catch(Exception $ex){
             //var_dump($ex);
-            throw new Exception("Error while generating sample vector: ". $ex->getMessage());
+            throw new Exception("Error while generating sample vector ($api_url): ". $ex->getMessage());
         }
     }
 
@@ -550,68 +577,10 @@
 
     function isEmptyRepo($repo){
         if(isset($repo["documentation_url"]) && isset($repo["message"]))
-            if($repo["message"] == "Moved Permanently" || $repo["message"] == "Git Repository is empty.")
+            if($repo["message"] == "Moved Permanently" || $repo["message"] == "Git Repository is empty." || $repo["message"] == "Not Found")
                 return true;
         return false;
     }
-
-
-    function getLanguageMain($repo, $api_url){
-        // PATCHWORK ONLY
-        // Get only the main language of a repo
-        global $db, $apihandler;
-        try{
-            $repo = $apihandler->getJSON($api_url . "?" . $apihandler->getAPItoken());
-            if(isset($repo["Error"])) return "";
-            $languages = array_keys($apihandler -> getJSON($repo["languages_url"]. "?" . $apihandler->getAPItoken()));
-            if($languages == null || isset($languages["Error"]))
-                return $repo["language"] != null ? $db->check($repo["language"]) : (count($languages) == 0 ? "" : $db->check($languages[0]));
-        }catch(Exception $ex){
-            throw new Exception("Error while getting main language for $api_url: ". $ex->getMessage);
-        }
-    }
-
-    function getFolderList($api_url){
-        // PATCHWORK ONLY
-        // Get only the folder list of a repo
-        global $db, $apihandler;
-        $repo = $apihandler->getJSON($api_url . "?" . $apihandler->getAPItoken());
-        if(!isEmptyRepo($repo)){
-            $ref_url_base = explode("{", $repo["git_refs_url"]);
-            $git_refs = $apihandler -> getJSON($ref_url_base[0] . "?" . $apihandler->getAPItoken());
-            if(isset($git_refs["Error"])) return "";
-            try{
-                $ref_url = "";
-                for($i = 0; $i < count($git_refs); $i++){
-                  if(strpos($git_refs[$i]["ref"], $repo["default_branch"]) >= 0){
-                    $ref_url = $git_refs[$i]["object"]["url"];
-                    break;
-                  }
-                }
-
-                if(trim($ref_url) == "")
-                  // Default branch is not available
-                  $ref_url = $git_refs[0]["object"]["url"];
-                $branch =  $apihandler -> getJSON($ref_url . "?" . $apihandler->getAPItoken());
-                if(isset($branch["Error"])) return "";
-                $treeObj = $apihandler -> getJSON($branch["tree"]["url"] . "?" . $apihandler->getAPItoken());
-                if(isset($treeObj["Error"])) return "";
-
-
-                $folders = array();
-                for($i = 0; $i < count($treeObj["tree"]); $i++)
-                    if($treeObj["tree"][$i]["type"] != "blob")
-                        $folders[] = $db->check($treeObj["tree"][$i]["path"]);
-
-                  return join(" ", $folders);
-            }catch(Exception $ex){
-                //var_dump($ex);
-                //throw new Exception("Error while getting folder list: ". $ex->getMessage());
-            }
-        }
-        return "";
-    }
-
 
     function saveVector(&$vector){
         // Save the feature vector as a new repository in the database

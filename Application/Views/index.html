@@ -26,9 +26,17 @@
           <h4><strong>Table `unlabeled`</strong></h4>
           <table class="table table-bordered table-striped measure_table"> 
             <colgroup> <col class="col-xs-4"> <col class="col-xs-2"><col class="col-xs-2"><col class="col-xs-2"><col class="col-xs-2"> </colgroup>
-            <thead> <tr> <th>Attribute</th> <th>Avg</th> <th>Min</th> <th>Max</th> <th>Sum</th> </tr> </thead>
+            <thead> <tr> <th>Numerical Attribute</th> <th>Avg</th> <th>Min</th> <th>Max</th> <th>Sum</th> </tr> </thead>
             <tbody> 
-              <tr v-for="(val, m) in formatStats(stats)"> <td scope="row"> <code>{{m}}</code> </td> <td><b>{{parseInt(parseFloat(val['AVG'])*100)/100}}</b></td> <td>{{val['MIN']}}</td> <td>{{val['MAX']}}</td> <td>{{val['SUM']}}</td> </tr>
+              <tr v-for="(val, m) in formatStats(numStats)"> <td scope="row"> <code>{{m}}</code> </td> <td><b>{{parseInt(parseFloat(val['AVG'])*100)/100}}</b></td> <td>{{val['MIN']}}</td> <td>{{val['MAX']}}</td> <td>{{val['SUM']}}</td> </tr>
+            </tbody>
+          </table>
+          <table class="table table-bordered table-striped measure_table"> 
+            <!-- Strings -->
+            <colgroup> <col class="col-xs-6"> <col class="col-xs-6"></colgroup>
+            <thead> <tr> <th>String Attribute</th> <th>Avg length</th> </tr> </thead>
+            <tbody> 
+              <tr v-for="(val, m) in formatStats(strStats)"> <td scope="row"> <code>{{m}}</code> </td> <td><b>{{parseInt(parseFloat(val['AVG'])*100)/100}}</b></td></tr>
             </tbody>
           </table>
         </div>

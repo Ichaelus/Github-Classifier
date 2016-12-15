@@ -25,7 +25,8 @@ let stateView, inputView, classifierView, outputView, wrapperView,
 		current: {description: "", yield: 0, active: false, uncertainty: 0, confusionMatrix: {}, accuracy: {}, probability: {}},
     savePoints: {}, // fileName: {yield, accuracy: [{class, val}, ..]}
     selectedPoint: "",
-    stats: {},
+    numStats: {},
+    strStats: {},
 		id: 0
   };
 
@@ -198,8 +199,10 @@ function initVue(){
       showStats: function(){
         runGenerator(function *main(){
           // Fetch sample, display
-          stats = yield jQGetPromise("/get/stats?table=unlabeled", "json");
-          Vue.set(wrapperData, "stats", stats);
+          numStats = yield jQGetPromise("/get/stats?table=unlabeled&string_attrs=false", "json");
+          strStats = yield jQGetPromise("/get/stats?table=unlabeled&string_attrs=true", "json");
+          Vue.set(wrapperData, "numStats", numStats);
+          Vue.set(wrapperData, "strStats", strStats);
           $('.overlay_blur').fadeIn();
           $('#stats_wrapper').css("margin-top", window.scrollY - 50);
           $('#stats_wrapper').fadeIn();
@@ -412,12 +415,13 @@ function initVue(){
           return array.reduce(function(prevRow, actRow, actIndex) { return prevRow == 0 ? actRow[i] : parseInt(prevRow[i]) + parseInt(actRow[i]); 0})
       },
       formatStats: function(stats){
+        console.log(stats);
         let attrs = {};
         for(let i in stats){
-          let attrName = i.substr(4, i.length - 5);
+          let attrName = i.substr(10, i.length - 12);//ROUND(AVG(attrName))
           if(typeof(attrs[attrName]) === "undefined")
             attrs[attrName] = {};
-          attrs[attrName][i.substr(0, 3)] = stats[i];
+          attrs[attrName][i.substr(6, 3)] = stats[i]; 
         }
         return attrs;
       }

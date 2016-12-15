@@ -100,5 +100,6 @@ def getInformationsForRepo(repolink):
         raise Exception(data['Error'])
     return data
 
-def getStats(table):
-    return api_call('stats', tableString=table)
+def getStats(table, t):
+    q = "" if t == "numerical"  else "&string_attrs=true"
+    return api_call('stats'+q, tableString=table)
