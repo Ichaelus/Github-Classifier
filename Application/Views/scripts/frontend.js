@@ -324,7 +324,11 @@ function initVue(){
       },
       manualClassification: function(){
         if(inoutData.manualClass == '?')
-          window.open("/user_classification.html?popup=true&api_url="+inoutData.repoAPILink, "User decision", "channelmode=yes");
+          (function(window, undefined){
+              var win = window.open("/user_classification.html?popup=true&api_url="+inoutData.repoAPILink, '_blank');
+              win.focus();
+          })(window);
+          //window.open("/user_classification.html?popup=true&api_url="+inoutData.repoAPILink, "User decision", "channelmode=yes");
       }
     }
   });
