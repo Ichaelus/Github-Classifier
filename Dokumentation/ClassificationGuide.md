@@ -44,7 +44,6 @@
 * [Bundesgesetze und -verordnungen](https://github.com/bundestag/gesetze)
 * [_Dokumente der Fachschaft IT-Systems Engineering am Hasso-Plattner-Institut an der Universität Potsdam_](https://github.com/fsr-itse/docs)
 
-
 ## WEB
 > A repository primarily used to host static personal websites or blogs
 
@@ -53,7 +52,7 @@
 * [Webpage to display the results of data mining project of Twitter for class CS-3250-01 Computational Data Analysis taught by Dr. Doran at Wright State University. ](https://github.com/JaceRobinson8/jacerobinson8.github.io)
 * [The website of Ruby Monstas Zurich](https://github.com/rubymonstas-zurich/rubymonstas-zurich.github.io)
 * [Create an academic personal website on Jekyll and GitHub Pages](https://github.com/ianli/elbowpatched-boilerplate)
-* [[whoisjuan] portfolio](https://github.com/whoisjuan/whoisjuan.github.io)
+* [whoisjuan portfolio](https://github.com/whoisjuan/whoisjuan.github.io)
 
 ## DATA
 > A repository primarily used to store data sets
@@ -80,6 +79,7 @@ category, for example, empty repositories
 > When course-repos belong to a college or university, 'HW' is the right choice. But an online-course for e.g. a coursera course should be classified as 'EDU'.   
 > This might cause some confusion later on.  
 > **Anyhow:** Homework for online-courses should be classified as 'HW' as well.
+> Example: (Challenges with the purpose of learning) [https://github.com/loulee22/pull-request-challenge]
 
 #### Design Principles or Standards
 > Mostly belong to docs as they're non-educational. Be careful here and look out for occuring explanations (Obviously 'EDU' then).
@@ -101,3 +101,10 @@ category, for example, empty repositories
 
 #### Collection of tips
 > **Example:** 'Collection of Android tips' is educational so 'EDU' is the way to go.
+
+#### EDU vs DOCS
+> A bug reproduction description that does not contain the solution (no educational value) -> DOCS
+> **Example** [Bug description](https://api.github.com/repos/GrahamDennis/spark-kryo-serialisation)
+
+#### Example / showcase projects
+> EDU
