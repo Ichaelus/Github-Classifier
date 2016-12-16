@@ -76,10 +76,8 @@ category, for example, empty repositories
 ## Ambiguities
 > List possible confusions here if encountered while training...
 
-#### College-Courses vs. Online-Courses
-> When course-repos belong to a college or university, 'HW' is the right choice. But an online-course for e.g. a coursera course should be classified as 'EDU'.   
-> This might cause some confusion later on.  
-> **Anyhow:** Homework for online-courses should be classified as 'HW' as well.
+#### Lecture repos
+> Whenever the focus of such repo lays on homework assignments, 'HW' is the correct class. When focus lays primarily on hosting of documents, choose 'EDU'.
 
 #### Design Principles or Standards
 > Mostly belong to docs as they're non-educational. Be careful here and look out for occuring explanations (Obviously 'EDU' then).
@@ -101,3 +99,18 @@ category, for example, empty repositories
 
 #### Collection of tips
 > **Example:** 'Collection of Android tips' is educational so 'EDU' is the way to go.
+
+#### Collection of problems vs answers to them
+> Whereas answers to possible questions are of an educational origin, the sole collection of such should be seen as a collection.    
+> In the first case choose 'EDU', 'DOCS' elsewhen.  
+
+#### Dummy repositories
+> If the focus of a repository lays on the existence of it only and not on storage of information (repository is _almost_ empty or doesnt contain any files), we call it a **Dummy** repository.  
+> Even such repository is subject to practice or homework, 'OTHER' should be chosen nevertheless.  
+> [This repo is for demonstration purposes only.](https://github.com/octocat/Spoon-Knife)
+
+#### Data-Visualization
+> If repo contains dataset and visualization as well, 'DATA' should still be chosen.    
+> Altough this applies only to repositories, that contain such datasets. If datasets in general can be used for these programs, 'DEV' is the better choice.  
+
+
