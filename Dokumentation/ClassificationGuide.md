@@ -44,7 +44,6 @@
 * [Bundesgesetze und -verordnungen](https://github.com/bundestag/gesetze)
 * [_Dokumente der Fachschaft IT-Systems Engineering am Hasso-Plattner-Institut an der Universität Potsdam_](https://github.com/fsr-itse/docs)
 
-
 ## WEB
 > A repository primarily used to host static personal websites or blogs
 
@@ -53,7 +52,7 @@
 * [Webpage to display the results of data mining project of Twitter for class CS-3250-01 Computational Data Analysis taught by Dr. Doran at Wright State University. ](https://github.com/JaceRobinson8/jacerobinson8.github.io)
 * [The website of Ruby Monstas Zurich](https://github.com/rubymonstas-zurich/rubymonstas-zurich.github.io)
 * [Create an academic personal website on Jekyll and GitHub Pages](https://github.com/ianli/elbowpatched-boilerplate)
-* [[whoisjuan] portfolio](https://github.com/whoisjuan/whoisjuan.github.io)
+* [whoisjuan portfolio](https://github.com/whoisjuan/whoisjuan.github.io)
 
 ## DATA
 > A repository primarily used to store data sets
@@ -113,4 +112,13 @@ category, for example, empty repositories
 > If repo contains dataset and visualization as well, 'DATA' should still be chosen.    
 > Altough this applies only to repositories, that contain such datasets. If datasets in general can be used for these programs, 'DEV' is the better choice.  
 
+#### DOCS vs EDU
+> A bug reproduction description that does not contain the solution (no educational value) -> DOCS
+> **Example** [Bug description](https://api.github.com/repos/GrahamDennis/spark-kryo-serialisation)
 
+#### DOCS vs DEV
+> A repository containing a project structure always tends to be DEV. Only if the readme implies to be categorised as DOCS, it should be classified as such.
+> A **single commit** of a **fully developed** project tends to be rather DOCS than DEV.
+
+#### Example / showcase projects
+> EDU
