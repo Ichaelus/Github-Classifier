@@ -191,9 +191,11 @@ function initVue(){
         Vue.set(inoutData, "classifiersUnsure", false);
       },
       retrainAll: function(){
+        let all = confirm("Would you like to retrain every classifier (yes) or only untrained classifiers (abort)?");
+        
         notify("Retrain all", "Training every untrained classifier. This may take a couple of minutes");
         for(let c in inoutData.classifiers)
-          if(inoutData.classifiers[c].yield <= 0)
+          if(all || inoutData.classifiers[c].yield <= 0)
             wrapperView.retrain(c, true);
       },
       showStats: function(){
@@ -456,7 +458,7 @@ function HandlePopupResult(result) {
 function convertToApiLink(repoLink){
   // Converts a repo link to an api link. E.g. https://github.com/Ichaelus/Githubclassifier/ -> https://api.github.com/repos/Ichaelus/Githubclassifier/
   if(repoLink.indexOf("https://github.com/") >= 0){
-    return repoLink.replace("https://github.com/", "https://api.github.com/repos/");
+    return trimRight(repoLink.replace("https://github.com/", "https://api.github.com/repos/", "/").trim(), "/");
   }else{
     throw new Error("RepoLink invalid");
   }
@@ -573,3 +575,11 @@ function notify(title, note, duration = 1000){
       setTimeout(notification.close.bind(notification), duration); 
   }
 }
+
+
+function trimRight(str, charlist) {
+  // Trims specific chars from the right side of a string
+  if (charlist === undefined)
+    charlist = "\s";
+  return str.replace(new RegExp("[" + charlist + "]+$"), "");
+};
