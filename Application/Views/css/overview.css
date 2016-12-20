@@ -447,6 +447,16 @@ button.control {
   margin: 50px auto;
   box-shadow: 0px 0px 10px;
 }
+#expression span{
+  width: 255px;
+  text-align: center;
+  background: white;
+  display: block;
+  top: 225px;
+  position: relative;
+  font-family: "Raleway";
+  padding: 2px 0px;
+}
 #expression.neutral{
   background: url("../images/facial_expressions/KA.NE1.26.jpg");
 }
