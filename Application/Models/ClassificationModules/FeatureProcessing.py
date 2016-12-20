@@ -78,7 +78,6 @@ def text_from_base64(text):
     missing_padding = len(text) % 4
     if missing_padding != 0:
         text += b'='* (4 - missing_padding)
-    text = None
     try:
         text = base64.b64decode(text)
     except TypeError:
@@ -88,7 +87,7 @@ def text_from_base64(text):
 
 def getReadme(data):
     assert  'readme' in data, "Data vector incomplete"
-    return base64.b64decode(data['readme'])
+    return text_from_base64(data['readme'])
 
 def getDescription(data):
     assert  'description' in data, "Data vector incomplete"

@@ -319,6 +319,10 @@ button.control {
   letter-spacing: 1px;
   width: unset;
 }
+#predictionList_wrapper textarea{
+  width: 100%;
+  min-height: 200px;
+}
 .action{
   width: 300px;
   display: block;
@@ -431,4 +435,30 @@ button.control {
 }
 #output #testOuputChart > svg{
   overflow: visible;
+}
+
+#expression{
+  width: 256px;
+  height: 256px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  box-shadow: 0px 0px 10px;
+}
+#expression.neutral{
+  background: url("../images/facial_expressions/KA.NE1.26.jpg");
+}
+#expression.thinking0{
+  background: url("../images/facial_expressions/KA.AN1.39.jpg");
+}
+#expression.thinking1{
+  background: url("../images/facial_expressions/KA.AN2.40.jpg");
+}
+#expression.thinking2{
+  background: url("../images/facial_expressions/KA.AN3.41.jpg");
+}
+#expression.found{
+  background: url("../images/facial_expressions/KA.SU3.38.jpg");
+}
+#expression.other, #expression.error{
+  background: url("../images/facial_expressions/KA.DI3.44.jpg");
 }

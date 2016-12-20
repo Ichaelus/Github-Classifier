@@ -22,25 +22,28 @@ def home():
     return static_file("index.html", root = abspath, mimetype='text/html')
 
 @homebottle.get('/user_classification.html')
-def home():
+def home_c():
     return static_file("user_classification.html", root = abspath, mimetype='text/html')
 
 @homebottle.get('/favicon.ico')
-def home():
+def home_fi():
     return static_file("favicon.ico", root = abspath, mimetype='image/x-icon')
 
 @homebottle.get('/favicon.png')
-def home():
+def home_fp():
     return static_file("favicon.png", root = abspath, mimetype='image/png')
 
 @homebottle.get('/loading.gif')
-def home():
+def home_loading():
     return static_file("loading.gif", root = abspath, mimetype='image/gif')
+
+@homebottle.get('/images/facial_expressions/<filename:re:.*\.jpg>')
+def facial_expressions(filename):
+    return static_file(filename, root=os.path.join(os.path.join(abspath, "images"), "facial_expressions"), mimetype='image/jpg')
 
 @homebottle.get('/scripts/<filename:re:.*\.js>')
 def getScript(filename):
 	return static_file(filename, root=os.path.join(abspath, "scripts"), mimetype='text/javascript')
-
 
 @homebottle.get('/css/<filename:re:.*\.css>')
 def getCSS(filename):
@@ -111,11 +114,11 @@ def api(key):
 	elif(key == "PredictSingleSample"):
 		# Returns classifier prediction for a given `repoLink`
 		data, result = None, None
-		try:
-			data, result = homeclassifiercollection.PredictSingleSample(getQueryValue("repoLink"))
-		except Exception, e:
-			print e
-			return e
+		#try:
+		data, result = homeclassifiercollection.PredictSingleSample(getQueryValue("repoLink"))
+		#except Exception, e:
+		#	print e
+		#	return e
 		return Models.JSONCommunication.formatSinglePrediction(data, result)
 
 	elif(key == "startTest"):

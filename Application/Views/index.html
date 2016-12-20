@@ -19,7 +19,36 @@
   <body>
     <div id="wrappers">
       <div style="display:none;"  onclick="hideInfo()" class="overlay_blur"></div>
-      <div style="display:none" class="overlay_wrapper" id="stats_wrapper">
+      <div style="display:none" class="overlay_wrapper" id="predictionList_wrapper"> <!-- Overlay -->
+        <div class="container">
+          <h2>List prediction</h2>
+          <hr>
+          <div class="row">
+            <div class="col-xs-6">
+              <textarea placeholder="Insert one repository link per line" id="inputList"></textarea>
+            </div>
+            <div class="col-xs-6">
+              <textarea placeholder="Classification results will be shown here" readonly id="outputList"></textarea>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-xs-4 col-xs-offset-4 text-center">
+              <button v-on:click="predictList()"
+              class="btn btn-primary">Start prediction</button>
+            </div>
+          </div>
+          <div class="row">
+            <div  :class="expression + ' col-xs-4 col-xs-offset-4'"
+                  id="expression">
+            </div>
+          </div>
+          <div class="row text-center" style="font-style:italic">
+            <span>Images taken from the <a href="http://www.kasrl.org/jaffe.html" target="_blank">jaffe</a> dataset.</span>
+          </div>
+        </div>
+      </div> <!-- /Overlay -->
+      <div style="display:none" class="overlay_wrapper" id="stats_wrapper"> <!-- Overlay -->
         <div class="container">
           <h2>Sample statistics</h2>
           <hr>
@@ -40,7 +69,7 @@
             </tbody>
           </table>
         </div>
-      </div>
+      </div> <!-- /Overlay -->
       <div style="display:none;" class="overlay_wrapper" id="details_wrapper"> <!-- Overlay -->
         <div class="container">
           <h2>Classifier Module</h2>
@@ -132,7 +161,8 @@
               <div :class="'control_buttons ' + ((mode == 'stream' || mode == 'pool') ? '' : 'hidden')"><!--control-subgroup-->
                   <span :class="(action == 'loop' ? 'active ' : '') + 'glyphicon glyphicon-play'" v-on:click="loop()" data-toggle="tooltip" data-placement="top" title="Train until paused"></span>
                   <span :class="(action == 'halt' ? 'active ' : '') + 'glyphicon glyphicon-pause'" v-on:click="halt()" data-toggle="tooltip" data-placement="top" title="Stop training"></span>
-                  <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" data-toggle="tooltip" data-placement="top" title="Train a single sample"></span>
+                  <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" data-toggle="tooltip" data-placement="top" title="Train a single sample">
+                  </span>
               </div><!-- /control-subgroup -->
 
           </div>
@@ -188,9 +218,12 @@
                   </ul>
                 </div><!-- /btn-group -->
               </div><!-- /input-group -->
-              <input v-on:click="predictSingle()"
+              <input v-on:click="predictSingle('')"
                     :class="'btn btn-primary control ' + ((mode == 'single') ? '' : 'hidden')" 
-                    title="Predict single samples" value="Predict" type="button">
+                    title="Predict single samples" value="Predict single" type="button">
+              <input v-on:click="showListPrediction()"
+                    :class="'btn btn-primary control ' + ((mode == 'single') ? '' : 'hidden')" 
+                    title="Predict a list of samples" value="Predict list" type="button">
               <input v-on:click="startTest()" 
                     :class="'btn btn-primary control ' + ((mode == 'test') ? '' : 'hidden')" 
                     title="Test all Classifiers" value="Start testing" type="button">

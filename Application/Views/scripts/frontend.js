@@ -23,6 +23,8 @@ let stateView, inputView, classifierView, outputView, wrapperView,
     // Data used by the wrapper shown when displaying the detailed page
     currentName: "",
 		current: {description: "", yield: 0, active: false, uncertainty: 0, confusionMatrix: {}, accuracy: {}, probability: {}},
+    expression: "neutral",
+    thinking: false,
     savePoints: {}, // fileName: {yield, accuracy: [{class, val}, ..]}
     selectedPoint: "",
     numStats: {},
@@ -156,8 +158,9 @@ function initVue(){
           }
         }
       },
-      predictSingle: function(){
-        let repoLink = prompt("Please insert the link to a repository you wish to classify.");
+      predictSingle: function(repoLink){
+        if(repoLink == "")
+          repoLink = prompt("Please insert the link to a repository you wish to classify.");
         if(repoLink){
           try{
             repoLink = convertToApiLink(repoLink);
@@ -170,6 +173,11 @@ function initVue(){
             notify("Error predicting sample", ex, 2500);
           }
         }
+      },
+      showListPrediction: function(){
+        $('.overlay_blur').fadeIn();
+        $('#predictionList_wrapper').css("margin-top", window.scrollY - 50);
+        $('#predictionList_wrapper').fadeIn();
       },
       startTest: function(){
         Vue.set(inoutData, "repoName", "Testing..");
@@ -418,10 +426,9 @@ function initVue(){
       },
       arrayColSum: function(array, i){
         if(typeof(array) !== "undefined")
-          return array.reduce(function(prevRow, actRow, actIndex) { return prevRow == 0 ? actRow[i] : parseInt(prevRow[i]) + parseInt(actRow[i]); 0})
+          return array.reduce(function(prevRow, actRow, actIndex) { return prevRow == 0 ? actRow[i] : parseInt(prevRow[i]) + parseInt(actRow[i]); 0});
       },
       formatStats: function(stats){
-        console.log(stats);
         let attrs = {};
         for(let i in stats){
           let attrName = i.substr(10, i.length - 12);//ROUND(AVG(attrName))
@@ -430,10 +437,53 @@ function initVue(){
           attrs[attrName][i.substr(6, 3)] = stats[i]; 
         }
         return attrs;
+      },
+      predictList: function(){
+        let list = document.querySelector("#inputList").value.split("\n");
+        let to_append = "\n";
+        document.querySelector("#outputList").value = "";
+        runGenerator(function *main(){
+          for (var i = 0; i < list.length; i++) {
+            try{
+              Vue.set(wrapperData, "expression", "neutral");
+              Vue.set(wrapperData, "thinking", true);
+              wrapperView.keepThinking();
+              repoLink = convertToApiLink(list[i]);
+              results = yield jQGetPromise("/get/PredictSingleSample?repoLink="+repoLink, "json");
+              Vue.set(wrapperData, "thinking", false);
+              to_append = repoLink + " " + "TODO\n";
+              Vue.set(wrapperData, "expression", "found");
+            }catch(err){
+              Vue.set(wrapperData, "expression", "error");
+              to_append = "Invalid Repository url\n";
+              console.log(err);
+            };
+            document.querySelector("#outputList").value += to_append;
+            yield wait_async(1000);
+          };
+        });
+      },
+      keepThinking: function(){
+        let i = 0;
+        let interval = setInterval(
+          function(){
+            if(!wrapperData.thinking)
+              clearInterval(interval);
+            else
+              Vue.set(wrapperData, "expression", "thinking"+i%3)
+        }, 1000);
       }
     }
   });
 }
+function wait_async(time){
+  return new Promise(function(resolve, reject){
+    setTimeout(function(){
+      resolve();
+    }, time);
+  });
+}
+
 function hideInfo(){
 	// Hide any visible popup
 	$('.overlay_wrapper').fadeOut();

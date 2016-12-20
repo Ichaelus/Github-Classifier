@@ -24,18 +24,15 @@ def api_call(keyString, filterString="", tableString="", limitString=""):
     return data["data"] # dict
 
 def moveRepoFromUnlabeledToToClassify(api_url):
-    data = api_call('move&from_table=unlabeled&to_table=to_classify&api_url=' + api_url)
-    return data
+    return api_call('move&from_table=unlabeled&to_table=to_classify&api_url=' + api_url)
 
 def moveRepoFromToClassifyToTrain(api_url, label):
     # moves <api_url> to train and assigns the given label
-    data = api_call('move&from_table=to_classify&to_table=train&api_url=' + api_url + '&label=' + label)
-    return data
+    return api_call('move&from_table=to_classify&to_table=train&api_url=' + api_url + '&label=' + label)
 
 def moveRepoFromUnlabeledToSemiSupervised(api_url, label):
     #label muss großgeschriebener String sein
-    data = api_call('move&from_table=unlabeled&to_table=semisupervised&api_url=' + api_url + '&label=' + label)
-    return data
+    return api_call('move&from_table=unlabeled&to_table=semisupervised&api_url=' + api_url + '&label=' + label)
 
 def getLabeledData():
     return api_call('all', tableString="labeled")
@@ -92,13 +89,7 @@ def getAllReadmes():
 
 def getInformationsForRepo(repolink):
     '''Nur dafür da wenn ein bestimmtes Repo klassifiziert werden soll dass noch nicht in DB ist'''
-    data = api_call('generate_sample&api_url=' + repolink)
-    if(data == ""):
-        raise Exception("Private Repository")
-    # Check if api_call returned Error
-    if(data.has_key('Error')):
-        raise Exception(data['Error'])
-    return data
+    return api_call('generate_sample&api_url=' + repolink)
 
 def getStats(table, t):
     q = "" if t == "numerical"  else "&string_attrs=true"
