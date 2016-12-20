@@ -24,6 +24,7 @@ let stateView, inputView, classifierView, outputView, wrapperView,
     currentName: "",
 		current: {description: "", yield: 0, active: false, uncertainty: 0, confusionMatrix: {}, accuracy: {}, probability: {}},
     expression: "neutral",
+    exprState: "",
     thinking: false,
     savePoints: {}, // fileName: {yield, accuracy: [{class, val}, ..]}
     selectedPoint: "",
@@ -444,29 +445,36 @@ function initVue(){
         document.querySelector("#outputList").value = "";
         runGenerator(function *main(){
           for (var i = 0; i < list.length; i++) {
-            try{
-              Vue.set(wrapperData, "expression", "neutral");
-              Vue.set(wrapperData, "thinking", true);
-              wrapperView.keepThinking();
-              repoLink = convertToApiLink(list[i]);
-              results = yield jQGetPromise("/get/PredictSingleSample?repoLink="+repoLink, "json");
-              Vue.set(wrapperData, "thinking", false);
-              to_append = repoLink + " " + "TODO\n";
-              Vue.set(wrapperData, "expression", "found");
-            }catch(err){
-              Vue.set(wrapperData, "expression", "error");
-              to_append = "Invalid Repository url\n";
-              console.log(err);
-            };
-            document.querySelector("#outputList").value += to_append;
-            yield wait_async(1000);
+            if(list[i].length > 0){
+              Vue.set(wrapperData, "exprState", "Processing " + list[i]);
+              try{
+                Vue.set(wrapperData, "expression", "neutral");
+                Vue.set(wrapperData, "thinking", true);
+                wrapperView.keepThinking();
+                repoLink = convertToApiLink(list[i]);
+                results = yield jQGetPromise("/get/PredictSingleSample?repoLink="+repoLink, "json");
+                Vue.set(wrapperData, "thinking", false);
+                to_append = repoLink + " " + "TODO\n";
+                Vue.set(wrapperData, "expression", "found");
+              }catch(err){
+                Vue.set(wrapperData, "expression", "error");
+                Vue.set(wrapperData, "thinking", false);
+                to_append = "Invalid Repository url\n";
+                console.log(err);
+              };
+              document.querySelector("#outputList").value += to_append;
+              yield wait_async(1000);
+            }
           };
+          Vue.set(wrapperData, "expression", "neutral");
+          Vue.set(wrapperData, "exprState", "Finished processing list.");
         });
       },
       keepThinking: function(){
         let i = 0;
         let interval = setInterval(
           function(){
+            i++;
             if(!wrapperData.thinking)
               clearInterval(interval);
             else
