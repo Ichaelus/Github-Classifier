@@ -122,7 +122,14 @@ category, for example, empty repositories
 
 #### DOCS vs DEV
 > A repository containing a project structure always tends to be DEV. Only if the readme implies to be categorised as DOCS, it should be classified as such.
+> A project primarily used for storing files, even if those files are code and get small changes, is still docs
 > A **single commit** of a **fully developed** project tends to be rather DOCS than DEV.
+> **Example** [Code stored for creating a tutorial](https://github.com/yahwin/backbone-tutorials)
+
+### EDU vs HW
+> Homework instructions and the work on some homework is HW. However, if only homework solutions are stored somewhere,
+> along with other code for educational purposes it´s EDU? Did only encounter this a single time sofar, can still be changed.
+> **Example** [Code related to an educational book, which also contains exercises] https://github.com/alakras/javaForTestersCode
 
 #### Example / showcase projects
 > EDU

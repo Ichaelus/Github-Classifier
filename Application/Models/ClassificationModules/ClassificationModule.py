@@ -161,7 +161,7 @@ class ClassificationModule:
 
         if len(data) != 0:
             self.Yield = float(nb_right_pred) / len(data)
-            class_acc = class_right_pred_count / class_count
+            class_acc = class_right_pred_count / class_count if class_count > 0 else 0
             self.Accuracy['DEV'] = class_acc[0]
             self.Accuracy['HW'] = class_acc[1]
             self.Accuracy['EDU'] = class_acc[2]
