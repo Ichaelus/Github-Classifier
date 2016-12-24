@@ -220,6 +220,9 @@ def api(key):
 			return Models.JSONCommunication.formatStats(DC.getStats(getQueryValue("table"), "string"))
 		else:
 			return Models.JSONCommunication.formatStats(DC.getStats(getQueryValue("table"), "numerical"))
+			
+	elif(key == "trainCount"):
+		return Models.JSONCommunication.toJson(DC.getTrainCount())
 
 	else :
 		return "API call for: " + key

@@ -251,9 +251,11 @@
 
         <div class="row main"><!-- main -->
           <div id="input" class="col-xs-2"><!-- input -->
+            <h4 
+                :class="'text-center ' + (state == 'showResult' || state == 'empty' ? 'hidden' : '')"
+            >{{state}}</h4>
             <div 
-                :class="'repoDetails ' + (getMode() == 'test' || state != 'showResult' ? 'hidden' : '')"
-            >
+                :class="'repoDetails ' + (getMode() == 'test' || state != 'showResult' ? 'hidden' : '')">
               <h4><small>{{repo.author}} / </small>{{repo.repoName}}</h4>
               <p>{{shortDesc}}</p>
               <table class="table table-bordered table-striped measure_table"> 
@@ -268,9 +270,18 @@
                 </tbody>
               </table>
             </div>
-            <h4 
-                :class="'text-center ' + (state == 'showResult' || state == 'empty' ? 'hidden' : '')"
-            >{{state}}</h4>
+            <div 
+              :class="trainCount">
+              <h4 class="text-center">Train sample distribution</h4>
+              <table class="table table-bordered table-striped measure_table"> 
+                <!-- Strings -->
+                <colgroup> <col class="col-xs-6"> <col class="col-xs-6"></colgroup>
+                <thead> <tr> <th>Class</th> <th>#Train samples</th> </tr> </thead>
+                <tbody> 
+                  <tr v-for="x in trainCount"> <td scope="row">{{x.class}}</td> <td><code>{{x.count}}</code></td></tr>
+                </tbody>
+              </table>
+            </div>
           </div><!-- /input -->
 
           <div class="col-xs-7">

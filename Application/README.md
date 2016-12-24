@@ -25,6 +25,7 @@ _Installed with the command `pip install xxx`_
 3. sklearn
 4. nltk
 5. selenium
+6. gensim
 
 ## Other
 

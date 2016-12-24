@@ -94,3 +94,6 @@ def getInformationsForRepo(repolink):
 def getStats(table, t):
     q = "" if t == "numerical"  else "&string_attrs=true"
     return api_call('stats'+q, tableString=table)
+
+def getTrainCount():
+    return api_call('class-count', tableString = "train")

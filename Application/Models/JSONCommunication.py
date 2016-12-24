@@ -380,3 +380,6 @@ def formatConfusionMatrix(matrix):
 
 def formatStats(data):
     return json.dumps(data)
+
+def toJson(x):
+    return json.dumps(x)

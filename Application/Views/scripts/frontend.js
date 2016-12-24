@@ -17,7 +17,8 @@ let stateView, inputView, classifierView, outputView, wrapperView,
     state: "empty", // empty, xy, showResult
     semisupervised: {"SemiSupervisedSureEnough" : true, "SemiSupervisedLabel": "None"},
     isPrediction: true,
-    classifiers: {} // name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
+    classifiers: {}, // name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
+    trainCount: [] // [{class, count},..]
   },
 	wrapperData = {
     // Data used by the wrapper shown when displaying the detailed page
@@ -93,6 +94,8 @@ function initVue(){
         Vue.set(inoutData, "isPrediction", stateData.mode == 'test');
         outputView.switchMode(stateData.mode);
         Vue.set(inoutData, "state", "empty");
+        if(stateData.mode == 'test')
+          inputView.getTrainCount();
       },
 		  singleStep: function(){
   			Vue.set(stateData, "action", "singleStep");
@@ -265,6 +268,11 @@ function initVue(){
       },
       getClassifierAmount: function(){
         return Object.keys(inoutData.classifiers).length;
+      },
+      getTrainCount: function(){
+          $.get("/get/trainCount", function(data){
+            Vue.set(inoutData, "trainCount", data);
+          }, "json");
       }
     },
     computed:{
@@ -273,6 +281,7 @@ function initVue(){
       }
     }
   });
+  inputView.getTrainCount();
 
   classifierView = new Vue({
     el: '#classifiers',
@@ -440,7 +449,9 @@ function initVue(){
       },
       arrayColSum: function(array, i){
         if(typeof(array) !== "undefined")
-          return array.reduce(function(prevRow, actRow, actIndex) { return prevRow == 0 ? actRow[i] : parseInt(prevRow[i]) + parseInt(actRow[i]); 0});
+          return array.reduce(function(prevRow, actRow, actIndex) { 
+            return prevRow == 0 ? actRow[i] : parseInt(prevRow[i]) + parseInt(actRow[i]);
+          }, 0);
       },
       formatStats: function(stats){
         let attrs = {};
