@@ -112,7 +112,7 @@ class ClassificationModule:
         nb_right_pred = 0 # Number of right predictions
         class_count = np.zeros(7) # Number each class was found in data
         class_right_pred_count = np.zeros(7)
-        copyconfusionmatrix = np.zeros(shape=(9, 9))
+        copyconfusionmatrix = np.zeros(shape=(9, 9), dtype=np.float32)
 
         for sample in data:
             pred_out = self.predictLabelAndProbability(sample)

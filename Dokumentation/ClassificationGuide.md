@@ -89,12 +89,16 @@ category, for example, empty repositories
 > If repo is empty, 'OTHER' is the class to go with. Even if purpose of repo is obvious (e.g. repo-name is sth. like "XYZ.github.io").
 
 #### DOCS vs DATA
-> Look out for folder structure and filetypes ('.csv', ...)
-> [language-tag-extensions](https://github.com/ppKrauss/language-tag-extensions) is 'DATA'
+> Look out for folder structure and filetypes ('.csv', ...)  
+> **Example:** [language-tag-extensions](https://github.com/ppKrauss/language-tag-extensions) is 'DATA'  
+
+#### DEV vs DATA
+> [food-inspections-evaluation](https://github.com/Chicago/food-inspections-evaluation) is 'DEV'. # TODO: Explain why...
 
 #### Websites
 > Decision if Web or Dev depends on complexity of website.   
 > **Note:** We changed the official class-description from only _personal_ 'static website' to **just** 'static website'. This constraint didn't seem plausible.
+> [OpenDuka](https://github.com/OpenInstitute/OpenDuka) is 'DEV' as it compries a MVC-Model and acts as a Web-App rather than a static website.
 
 #### Collection of tips
 > **Example:** 'Collection of Android tips' is educational so 'EDU' is the way to go.
@@ -129,3 +133,10 @@ category, for example, empty repositories
 
 #### Example / showcase projects
 > EDU
+
+#### Websites for lectures
+> [CS231n](https://github.com/cs231n/cs231n.github.io) is a 'WEB'-repository as focus clearly is on presentation of information and not imporovement of them.
+
+#### 
+> java-tdd-challenge is HW as it is an excercise. But the informaticup-repo on the other hand probably isn't HW.
+

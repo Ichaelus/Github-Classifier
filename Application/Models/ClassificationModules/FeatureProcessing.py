@@ -10,6 +10,8 @@ import re
 from nltk.stem import PorterStemmer
 import numpy as np
 
+from gensim.models import Word2Vec
+
 # Constants
 
 # TODO: Update values
@@ -252,3 +254,19 @@ def lstmDecode(X):
 def getLstmCharLength():
     global chars
     return len(chars)
+
+def getWord2VecModel():
+    path= os.path.dirname(__file__) + "/../../Classifier_SavePoints/Word2Vec/"
+    modelName = 'GoogleNews-vectors-negative300.bin'
+    #if modelName not in os.listdir("../Classifier_SavePoints/Word2Vec"):
+    #    print "Word2Vec-Model not found, try downloading from source"
+    #    pass    # TODO: Actually implement downlaod
+    #    return None
+    return Word2Vec.load_word2vec_format(path + modelName, binary=True)
+
+
+
+
+
+
+
