@@ -82,11 +82,10 @@ def getFormulas():
 
 def formatSinglePrediction(data, results):
     """Missing DocString"""
-    repo = {'repoName':data['name'], 'repoAPILink':data["api_url"]}
     classifiers = {}
     for cresult in results:
         classifiers[cresult[0]] = {'probability':formatProbabilities(cresult[1])}
-    returndata = {'repo':repo, 'classifiersUnsure': True, 'classifiers':classifiers}
+    returndata = {'repo':formatRepo(data), 'classifiersUnsure': True, 'classifiers':classifiers}
     return json.dumps(returndata)
     #return '{"repoName": "rName", "classifierResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
 
@@ -112,7 +111,6 @@ def formatSinglePrediction(data, results):
 #hier fehlt noch die uncertainty von jedem classifier jeweils
 def formatStreamBasedALRound(sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results):
     """Missing DocString"""
-    repo = {'repoName':sample['name'], 'repoAPILink':sample['api_url']}
     semisupervised = {
         'SemiSupervisedSureEnough': bool(SemiSupervisedL),
         'SemiSupervisedLabel': SemiSupervisedLabel,
@@ -125,7 +123,7 @@ def formatStreamBasedALRound(sample, unsure, SemiSupervisedL, SemiSupervisedLabe
             'unsure':bool(cresult[3]),
             }
     returndata = {
-        'repo':repo,
+        'repo':formatRepo(sample),
         'classifiersUnsure':bool(unsure),
         'semisupervised':semisupervised,
         'classifiers':classifiers,
@@ -155,7 +153,6 @@ def formatStreamBasedALRound(sample, unsure, SemiSupervisedL, SemiSupervisedLabe
 
 #wollen wir hier von allen classifiern die uncertainties zum ausgewählten sample angeben?
 def formatPoolBasedALRound(sample, classifierasking, resultsForUserQuery):
-    repo = {'repoName':sample['name'], 'repoAPILink':sample['api_url']}
     classifiers = {}
     for cresult in resultsForUserQuery:
         classifiers[cresult[0]] = {
@@ -163,7 +160,7 @@ def formatPoolBasedALRound(sample, classifierasking, resultsForUserQuery):
             'uncertainty':float(cresult[2]),
             }
     returndata = {
-        'repo':repo,
+        'repo':formatRepo(sample),
         'classifierAsking':classifierasking.getName(),
         'classifiers':classifiers,
         'classifiersUnsure':True,
@@ -365,8 +362,17 @@ def formatClassifierAccuracy(classifieraccuracy):
     accuracies.append({'class':'OTHER', 'val':float(classifieraccuracy['OTHER'])})
     return accuracies
 
-def formatRepo(repo):
-    repo = {'repoName':sample['name'], 'repoAPILink':sample[api_url]}
+def formatRepo(sample):
+    repo = {
+        'repoName':sample['name'],
+        'repoAPILink':sample["api_url"], 
+        'author': sample['author'],
+        'description': sample['description'],
+        'file_count': sample['file_count'],
+        'folder_count': sample['folder_count'],
+        'commit_count': sample['commit_count'],
+        'language': sample['language_main']
+    }
     return repo
 
 def formatConfusionMatrix(matrix):

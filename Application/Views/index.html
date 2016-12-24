@@ -251,34 +251,48 @@
 
         <div class="row main"><!-- main -->
           <div id="input" class="col-xs-2"><!-- input -->
-            <div class="live-example">
-              <br/>
-              <br/>
-              <!-- ko if: showPreview -->
-              <iframe class="link-preview" data-bind="attr: {target: '_top', src: }" src="http://classifier.leimstaedtner.it/" sandbox='' scrolling="no"></iframe>
+            <div 
+                :class="'repoDetails ' + (getMode() == 'test' || state != 'showResult' ? 'hidden' : '')"
+            >
+              <h4><small>{{repo.author}} / </small>{{repo.repoName}}</h4>
+              <p>{{shortDesc}}</p>
+              <table class="table table-bordered table-striped measure_table"> 
+                <!-- Strings -->
+                <colgroup> <col class="col-xs-6"> <col class="col-xs-6"></colgroup>
+                <thead> <tr> <th>Feature</th> <th>Value</th> </tr> </thead>
+                <tbody> 
+                  <tr> <td scope="row">#Folders</td> <td><code>{{repo.folder_count}}</code></td></tr>
+                  <tr> <td scope="row">#Files</td> <td><code>{{repo.file_count}}</code></td></tr>
+                  <tr> <td scope="row">#Commits</td> <td><code>{{repo.commit_count}}</code></td></tr>
+                  <tr> <td scope="row">Language</td> <td><code>{{repo.language}}</code></td></tr>
+                </tbody>
+              </table>
             </div>
+            <h4 
+                :class="'text-center ' + (state == 'showResult' || state == 'empty' ? 'hidden' : '')"
+            >{{state}}</h4>
           </div><!-- /input -->
 
           <div class="col-xs-7">
             <div id="classifiers">
-              <div v-for="(c, index) in classifiers" :class="'classifier_row' + (c.active ? '' : ' inactive') ">
-                <div :class="'classifier ' + (isAsking(index) ? 'asking' : '')">
-                  <span class="name">{{index}}</span>
+              <div v-for="c in orderedClassifiers" :class="'classifier_row' + (c.active ? '' : ' inactive') ">
+                <div :class="'classifier ' + (isAsking(c.name) ? 'asking' : '')">
+                  <span class="name">{{c.name}}</span>
                   <div class="wrapper">
                     <span data-toggle="tooltip" data-placement="top" title="Current yield" class="stats">{{parseInt(c.yield * 100)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
-                    <span data-toggle="tooltip" data-placement="top" title="Show classifier details" v-on:click="showInfo(index)" class="glyphicon glyphicon-info-sign"></span>
-                    <span data-toggle="tooltip" data-placement="top" title="Enable classifier" v-on:click="switchState(index)" class="glyphicon glyphicon-ban-circle"></span>
-                    <span data-toggle="tooltip" data-placement="top" title="Disable classifier" v-on:click="switchState(index)" class="glyphicon glyphicon-ok-circle"></span>
+                    <span data-toggle="tooltip" data-placement="top" title="Show classifier details" v-on:click="showInfo(c.name)" class="glyphicon glyphicon-info-sign"></span>
+                    <span data-toggle="tooltip" data-placement="top" title="Enable classifier" v-on:click="switchState(c.name)" class="glyphicon glyphicon-ban-circle"></span>
+                    <span data-toggle="tooltip" data-placement="top" title="Disable classifier" v-on:click="switchState(c.name)" class="glyphicon glyphicon-ok-circle"></span>
                   </div>
                 </div>
                 <div class="arrow">=&gt;</div>
                 <div :class="'result_vector ' + (getMode() != 'test' ? 'hidden' : '')">
-                    <div v-for="(r, i) in c.accuracy" :class="'v ' + (getMax(index)  == r.val ? 'max' : '')">
+                    <div v-for="(r, i) in c.accuracy" :class="'v ' + (getMax(c.name)  == r.val ? 'max' : '')">
                       <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
                     </div>
                 </div>
                 <div :class="'result_vector ' + (getMode() == 'test' ? 'hidden' : '')">
-                    <div v-for="(r, i) in c.probability" :class="'v ' + (getMax(index)  == r.val ? 'max' : '')">
+                    <div v-for="(r, i) in c.probability" :class="'v ' + (getMax(c.name)  == r.val ? 'max' : '')">
                       <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
                     </div>
                 </div>
@@ -305,6 +319,7 @@
         </div><!-- /main -->
       </div><!-- /container -->
     </div><!-- /container-fluid -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/lodash/4.17.2/lodash.min.js"></script>
     <script type="text/javascript" src="https://unpkg.com/vue@2.0.3/dist/vue.js"></script>
     <script
     src="https://code.jquery.com/jquery-3.1.1.min.js"

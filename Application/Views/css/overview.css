@@ -475,3 +475,10 @@ button.control {
 #expression.other, #expression.error{
   background: url("../images/facial_expressions/KA.DI3.44.jpg");
 }
+.repoDetails h4{
+  text-align: center;
+}
+.repoDetails p{
+  font-style: italic;
+  padding: 10px 0;
+}

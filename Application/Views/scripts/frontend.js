@@ -9,16 +9,16 @@ let stateView, inputView, classifierView, outputView, wrapperView,
     poolSize: 0,
     trainInstantly: false
 	},
-	inoutData = {
+  inoutData = {
     classifierAsking: "",
     classifiersUnsure: false,
     manualClass: "?",
-    repoAPILink: "",
-    repoName: "Repository Name",
+    repo: {repoName: "",repoAPILink: "",author: "",description: "",file_count: 0,folder_count: 0,commit_count: 0, language: ""},
+    state: "empty", // empty, xy, showResult
     semisupervised: {"SemiSupervisedSureEnough" : true, "SemiSupervisedLabel": "None"},
     isPrediction: true,
-		classifiers: {} // name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
-	},
+    classifiers: {} // name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
+  },
 	wrapperData = {
     // Data used by the wrapper shown when displaying the detailed page
     currentName: "",
@@ -92,6 +92,7 @@ function initVue(){
         stateView.resetView();
         Vue.set(inoutData, "isPrediction", stateData.mode == 'test');
         outputView.switchMode(stateData.mode);
+        Vue.set(inoutData, "state", "empty");
       },
 		  singleStep: function(){
   			Vue.set(stateData, "action", "singleStep");
@@ -99,7 +100,7 @@ function initVue(){
         stateView.resetView();
         runGenerator(function *main(){
           // Fetch sample, display
-          Vue.set(inoutData, "repoName", "Searching..");
+          Vue.set(inoutData, "state", "Searching..");
           results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
           stateView.updateResults(results);
         });
@@ -115,7 +116,7 @@ function initVue(){
   			runGenerator(function *main(){
   				// Fetch sample, display then repeat until stateData has changed
   				while(stateData.action == "loop"){
-            Vue.set(inoutData, "repoName", "Searching..");
+            Vue.set(inoutData, "state", "Searching..");
   					results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
   					stateView.updateResults(results);
             if(results.classifiersUnsure)
@@ -129,8 +130,7 @@ function initVue(){
         assert(results != null, "Result is not well-formatted.");
 
         if(typeof(results.repo) != "undefined"){
-          Vue.set(inoutData, "repoName", results.repo.repoName);
-          Vue.set(inoutData, "repoAPILink", results.repo.repoAPILink);
+          Vue.set(inoutData, "repo", results.repo);
         }
         for(let key in {"classifiersUnsure" : 0, "semisupervised" : 0, "classifierAsking": 0}){
           // Adjust state variables
@@ -147,6 +147,7 @@ function initVue(){
 
         if(typeof(results.classifiers != "undefined"))
           stateView.updateClassifiers(results.classifiers);
+        Vue.set(inoutData, "state", "showResult");
   		},
       updateClassifiers: function(data){
         console.log("updating classifiers");
@@ -181,12 +182,12 @@ function initVue(){
         $('#predictionList_wrapper').fadeIn();
       },
       startTest: function(){
-        Vue.set(inoutData, "repoName", "Testing..");
+        Vue.set(inoutData, "state", "Testing..");
         runGenerator(function *main(){
           // Fetch sample, display
           results = yield jQGetPromise("/get/startTest", "json");
           stateView.updateResults(results);
-          Vue.set(inoutData, "repoName", "Test result");
+          Vue.set(inoutData, "state", "Test result");
         });
       },
       resetView: function(){
@@ -259,15 +260,19 @@ function initVue(){
     el: '#input',
     data: inoutData,
     methods:{
-      switchMode: function(type){
-
+      getMode: function(){
+        return stateData.mode;
       },
       getClassifierAmount: function(){
         return Object.keys(inoutData.classifiers).length;
       }
+    },
+    computed:{
+      shortDesc: function(){
+        return add3Dots(inoutData.repo.description, 200);
+      }
     }
   });
-
 
   classifierView = new Vue({
     el: '#classifiers',
@@ -310,6 +315,15 @@ function initVue(){
       isAsking: function(name){
         return stateData.mode == "pool" && inoutData.classifierAsking == name;
       }
+    },
+    computed:{
+      orderedClassifiers: function(){
+        let ordered = inoutData.classifiers;
+        // This is actualy not a copy but a referency, though no hurt is being done but adding stuff.
+        for(let c in inoutData.classifiers)
+          ordered[c].name = c;
+        return _.orderBy(ordered, "yield", "desc");
+      }
     }
   });
 
@@ -336,10 +350,9 @@ function initVue(){
       manualClassification: function(){
         if(inoutData.manualClass == '?')
           (function(window, undefined){
-              var win = window.open("/user_classification.html?popup=true&api_url="+inoutData.repoAPILink, '_blank');
+              var win = window.open("/user_classification.html?popup=true&api_url="+inoutData.repo.repoAPILink, '_blank');
               win.focus();
           })(window);
-          //window.open("/user_classification.html?popup=true&api_url="+inoutData.repoAPILink, "User decision", "channelmode=yes");
       }
     }
   });
@@ -484,6 +497,9 @@ function initVue(){
     }
   });
 }
+// name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
+
+
 function wait_async(time){
   return new Promise(function(resolve, reject){
     setTimeout(function(){
@@ -609,7 +625,15 @@ function isEmpty(str) {
   // Checks if str is empty or null
   return (!str || 0 === str.length);
 }
-
+function add3Dots(string, limit){
+  // Transforms string to stri...
+  var dots = "...";
+  if(string.length > limit)  {
+    // you can also use substr instead of substring
+    string = string.substring(0,limit) + dots;
+  }
+  return string;
+}
 function notify(title, note, duration = 1000){
   //Prompts a browser notification and/or requests permission to do
   var got_permission = false;
