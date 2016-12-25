@@ -271,7 +271,7 @@
               </table>
             </div>
             <div 
-              :class="trainCount">
+              :class="'trainCount '  + (getMode() != 'test' ? 'hidden' : '')">
               <h4 class="text-center">Train sample distribution</h4>
               <table class="table table-bordered table-striped measure_table"> 
                 <!-- Strings -->
@@ -322,6 +322,27 @@
             <!--<div :class="(getMode() == 'test' ? '' : 'hidden ')" 
                  :style="{top: 'calc( 0px + (-1 + '+getClassifierAmount()+') * 75px)'}"
                  id="testOuputChart"></div>-->
+             <div v-show="getMode() == 'test'">
+               <h4 class="text-center">Classifiers best accuracies</h4>
+               <table class="outputDistr table table-bordered table-striped measure_table">
+                <colgroup><col class="col-xs-2"> <col class="col-xs-10"></colgroup>
+                <thead><tr><th>Class</th> <th>#Best scores</th></tr></thead>
+                <tbody>
+                  <tr v-for="(x, i) in accuracyDistribution"><td scope="row">{{x.name}}</td> <td><div class="bar" :style="{width: x.percentage + '%'}">{{x.count}}</div></td></tr>
+                </tbody>
+              </table>
+            </div>
+             <div v-show="getMode() != 'test' && state == 'showResult'">
+               <h4 class="text-center">Most predicted classes</h4>
+               <table class="outputDistr table table-bordered table-striped measure_table">
+                <colgroup><col class="col-xs-2"> <col class="col-xs-10"></colgroup>
+                <thead><tr><th>Class</th> <th>#Predictions</th></tr></thead>
+                <tbody>
+                  <tr v-for="(x, i) in predictionDistribution"><td scope="row">{{x.name}}</td> <td><div class="bar" :style="{width: x.percentage + '%'}">{{x.count}}</div></td></tr>
+                </tbody>
+              </table>
+            </div>
+
             <div :class="(getMode() == 'test' ? '' : 'hidden ')" 
                  :style="{top: 'calc( -60px + (-1 + '+getClassifierAmount()+') * 75px)'}"
                  id="testOuputChart"></div>

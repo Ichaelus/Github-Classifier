@@ -362,6 +362,30 @@ function initVue(){
               var win = window.open("/user_classification.html?popup=true&api_url="+inoutData.repo.repoAPILink, '_blank');
               win.focus();
           })(window);
+      },
+      mapDistribution: function(data){
+        let maxProbs = _.values(_.mapValues(inoutData.classifiers,function(c){
+          // Returns only the maximum key value pair
+          return _.values(_.pick(_.maxBy(c[data], "val"), "class"))[0];
+        }));
+        let output = {}, total = 0;
+        for(let p in maxProbs){
+          if(typeof(output[maxProbs[p]]) == "undefined")
+            output[maxProbs[p]] = {count: 0, percentage: 0, name: maxProbs[p]};
+          output[maxProbs[p]].count ++;
+          total++;
+        }
+        for(let i in output)
+          output[i].percentage = total > 0 ? 100 * output[i].count / total : 0;
+        return _.orderBy(output, "count", "desc");
+      }
+    },
+    computed: {
+      predictionDistribution: function(){
+        return this.mapDistribution("probability");
+      },
+      accuracyDistribution: function(){
+        return this.mapDistribution("accuracy");
       }
     }
   });
