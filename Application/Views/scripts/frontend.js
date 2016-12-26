@@ -10,14 +10,15 @@ let stateView, inputView, classifierView, outputView, wrapperView,
     trainInstantly: false
 	},
   inoutData = {
+    classifiers: {}, // name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
     classifierAsking: "",
     classifiersUnsure: false,
+    isPrediction: true,
     manualClass: "?",
     repo: {repoName: "",repoAPILink: "",author: "",description: "",file_count: 0,folder_count: 0,commit_count: 0, language: ""},
-    state: "empty", // empty, xy, showResult
     semisupervised: {"SemiSupervisedSureEnough" : true, "SemiSupervisedLabel": "None"},
-    isPrediction: true,
-    classifiers: {}, // name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
+    selectedMeasure: "",
+    state: "empty", // empty, xy, showResult
     trainCount: [] // [{class, count},..]
   },
 	wrapperData = {
@@ -284,7 +285,7 @@ function initVue(){
   inputView.getTrainCount();
 
   classifierView = new Vue({
-    el: '#classifiers',
+    el: '#classifier_wrapper',
     data: inoutData,
     methods:{
       getMode: function(){
@@ -323,6 +324,9 @@ function initVue(){
     	},
       isAsking: function(name){
         return stateData.mode == "pool" && inoutData.classifierAsking == name;
+      },
+      changeMeasure: function(measure){
+        Vue.set(inoutData, "selectedMeasure", measure);
       }
     },
     computed:{
@@ -331,10 +335,19 @@ function initVue(){
         // This is actualy not a copy but a referency, though no hurt is being done but adding stuff.
         for(let c in inoutData.classifiers)
           ordered[c].name = c;
-        return _.orderBy(ordered, "yield", "desc");
+        return _.orderBy(ordered, function(o){
+          return o.confusionMatrix.measures[inoutData.selectedMeasure];
+        }, "desc");
+      },
+      measures: function(){
+        if(Object.keys(inoutData.classifiers).length > 0)
+          return Object.keys(inoutData.classifiers[Object.keys(inoutData.classifiers)[0]].confusionMatrix.measures);
+        else 
+          return ["Precision mu"];
       }
     }
   });
+  classifierView.changeMeasure(classifierView.measures[0]);
 
   outputView = new Vue({
     el: '#output',

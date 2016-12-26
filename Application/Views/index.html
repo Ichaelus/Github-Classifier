@@ -137,7 +137,7 @@
 
                   <td v-for="(r2, i2) in current.confusionMatrix.matrix[i]" 
                       :class="(i == i2 ? 'cell_own' : (i < i2 ? 'cell_classifier': 'cell_reference'))">
-                      {{parseInt(current.confusionMatrix.matrix[i][i2])}}</td>
+                      {{parseInt(current.confusionMatrix.matrix[i][i2] * 100) / 100}}</td>
 
                 </tr>
               </tbody>
@@ -252,7 +252,8 @@
         <div class="row main"><!-- main -->
           <div id="input" class="col-xs-2"><!-- input -->
             <h4 
-                :class="'text-center ' + (state == 'showResult' || state == 'empty' ? 'hidden' : '')"
+                class="subtitle"
+                v-show="state != 'showResult' && state != 'empty'"
             >{{state}}</h4>
             <div 
                 :class="'repoDetails ' + (getMode() == 'test' || state != 'showResult' ? 'hidden' : '')">
@@ -272,7 +273,7 @@
             </div>
             <div 
               :class="'trainCount '  + (getMode() != 'test' ? 'hidden' : '')">
-              <h4 class="text-center">Train sample distribution</h4>
+              <h4 class="subtitle">Train sample distribution</h4>
               <table class="table table-bordered table-striped measure_table"> 
                 <!-- Strings -->
                 <colgroup> <col class="col-xs-6"> <col class="col-xs-6"></colgroup>
@@ -285,45 +286,51 @@
           </div><!-- /input -->
 
           <div class="col-xs-7">
-            <div id="classifiers">
-              <div v-for="c in orderedClassifiers" :class="'classifier_row' + (c.active ? '' : ' inactive') ">
-                <div :class="'classifier ' + (isAsking(c.name) ? 'asking' : '')">
-                  <span class="name">{{c.name}}</span>
-                  <div class="wrapper">
-                    <span data-toggle="tooltip" data-placement="top" title="Current yield" class="stats">{{parseInt(c.yield * 100)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
-                    <span data-toggle="tooltip" data-placement="top" title="Show classifier details" v-on:click="showInfo(c.name)" class="glyphicon glyphicon-info-sign"></span>
-                    <span data-toggle="tooltip" data-placement="top" title="Enable classifier" v-on:click="switchState(c.name)" class="glyphicon glyphicon-ban-circle"></span>
-                    <span data-toggle="tooltip" data-placement="top" title="Disable classifier" v-on:click="switchState(c.name)" class="glyphicon glyphicon-ok-circle"></span>
+            <div id="classifier_wrapper">
+              <h4 class="subtitle"> Order classifiers by 
+                   <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      {{selectedMeasure}} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li v-for="measure in measures" v-on:click="changeMeasure(measure)"><a href="#">{{measure}}</a></li>
+                    </ul>
+                </div>
+              </h4>
+              <div id="classifiers">
+                <div v-for="c in orderedClassifiers" :class="'classifier_row' + (c.active ? '' : ' inactive') ">
+                  <div :class="'classifier ' + (isAsking(c.name) ? 'asking' : '')">
+                    <span class="name">{{c.name}}</span>
+                    <div class="wrapper">
+                      <span data-toggle="tooltip" data-placement="top" :data-original-title="'Current ' + selectedMeasure" class="stats">{{parseInt(c.confusionMatrix.measures[selectedMeasure] * 100)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
+                      <span data-toggle="tooltip" data-placement="top" title="Show classifier details" v-on:click="showInfo(c.name)" class="glyphicon glyphicon-info-sign"></span>
+                      <span data-toggle="tooltip" data-placement="top" title="Enable classifier" v-on:click="switchState(c.name)" class="glyphicon glyphicon-ban-circle"></span>
+                      <span data-toggle="tooltip" data-placement="top" title="Disable classifier" v-on:click="switchState(c.name)" class="glyphicon glyphicon-ok-circle"></span>
+                    </div>
+                  </div>
+                  <div class="arrow">=&gt;</div>
+                  <div :class="'result_vector ' + (getMode() != 'test' ? 'hidden' : '')">
+                      <div v-for="(r, i) in c.accuracy" :class="'v ' + (getMax(c.name)  == r.val ? 'max' : '')">
+                        <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
+                      </div>
+                  </div>
+                  <div :class="'result_vector ' + (getMode() == 'test' ? 'hidden' : '')">
+                      <div v-for="(r, i) in c.probability" :class="'v ' + (getMax(c.name)  == r.val ? 'max' : '')">
+                        <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
+                      </div>
+                  </div>
+                  <div data-toggle="tooltip" data-placement="top" title="Classifier uncertainty" :class="'uncertainty ' + (c.uncertainty > 0 ? '' : 'hidden ') + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'uncertain ' : 'certain ') : ' ')">
+                    {{parseInt(c.uncertainty * 100) / 100}}
                   </div>
                 </div>
-                <div class="arrow">=&gt;</div>
-                <div :class="'result_vector ' + (getMode() != 'test' ? 'hidden' : '')">
-                    <div v-for="(r, i) in c.accuracy" :class="'v ' + (getMax(c.name)  == r.val ? 'max' : '')">
-                      <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
-                    </div>
-                </div>
-                <div :class="'result_vector ' + (getMode() == 'test' ? 'hidden' : '')">
-                    <div v-for="(r, i) in c.probability" :class="'v ' + (getMax(c.name)  == r.val ? 'max' : '')">
-                      <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
-                    </div>
-                </div>
-                <div data-toggle="tooltip" data-placement="top" title="Classifier uncertainty" :class="'uncertainty ' + (c.uncertainty > 0 ? '' : 'hidden ') + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'uncertain ' : 'certain ') : ' ')">
-                  {{parseInt(c.uncertainty * 100) / 100}}
-                </div>
-              </div>
-            </div><!-- /classifiers -->
+              </div><!-- /classifiers -->
+            </div>
           </div>
 
           <div class="col-xs-3" id="output"><!-- output -->
-            <h2 v-on:click="manualClassification()"
-                :class="(getMode() != 'test' && classifiersUnsure ? '' : 'hidden ') + (manualClass == '?' ? 'uncertain' : '')" 
-                :style="{top: 'calc( 35px * (-1 + '+getClassifierAmount()+') * 75px)'}"
-                :title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass)}}</h2>
-            <!--<div :class="(getMode() == 'test' ? '' : 'hidden ')" 
-                 :style="{top: 'calc( 0px + (-1 + '+getClassifierAmount()+') * 75px)'}"
-                 id="testOuputChart"></div>-->
              <div v-show="getMode() == 'test'">
-               <h4 class="text-center">Classifiers best accuracies</h4>
+               <h4 class="subtitle">Classifiers best accuracy by class</h4>
+               
                <table class="outputDistr table table-bordered table-striped measure_table">
                 <colgroup><col class="col-xs-2"> <col class="col-xs-10"></colgroup>
                 <thead><tr><th>Class</th> <th>#Best scores</th></tr></thead>
@@ -333,7 +340,7 @@
               </table>
             </div>
              <div v-show="getMode() != 'test' && state == 'showResult'">
-               <h4 class="text-center">Most predicted classes</h4>
+               <h4 class="subtitle">Most predicted classes</h4>
                <table class="outputDistr table table-bordered table-striped measure_table">
                 <colgroup><col class="col-xs-2"> <col class="col-xs-10"></colgroup>
                 <thead><tr><th>Class</th> <th>#Predictions</th></tr></thead>
@@ -342,6 +349,13 @@
                 </tbody>
               </table>
             </div>
+            <h2 v-on:click="manualClassification()"
+                :class="(getMode() != 'test' && classifiersUnsure ? '' : 'hidden ') + (manualClass == '?' ? 'uncertain' : '')" 
+                :style="{top: 'calc( 35px * (-1 + '+getClassifierAmount()+') * 75px)'}"
+                :title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass)}}</h2>
+            <!--<div :class="(getMode() == 'test' ? '' : 'hidden ')" 
+                 :style="{top: 'calc( 0px + (-1 + '+getClassifierAmount()+') * 75px)'}"
+                 id="testOuputChart"></div>-->
 
             <div :class="(getMode() == 'test' ? '' : 'hidden ')" 
                  :style="{top: 'calc( -60px + (-1 + '+getClassifierAmount()+') * 75px)'}"
