@@ -95,5 +95,18 @@ def getStats(table, t):
     q = "" if t == "numerical"  else "&string_attrs=true"
     return api_call('stats'+q, tableString=table)
 
-def getTrainCount():
-    return api_call('class-count', tableString = "train")
+def getDistributionArray(table):
+    stats1 = api_call('class-count', tableString=table.lower())
+    stats2 = api_call('class-count', tableString="standard_"+table.lower()+"_samples")
+    stats = []
+    for val in stats1 + stats2:
+        to_append = True
+        for _t in stats:
+            # Looks badly like n². To be improved
+            if _t["class"] == val["class"]:
+                _t["count"] = int(_t["count"]) + int(val["count"])
+                to_append = False
+                break
+        if to_append:
+            stats.append(val)
+    return stats

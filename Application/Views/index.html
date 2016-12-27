@@ -273,13 +273,23 @@
             </div>
             <div 
               :class="'trainCount '  + (getMode() != 'test' ? 'hidden' : '')">
-              <h4 class="subtitle">Train sample distribution</h4>
+              <h4 class="subtitle">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{distribution}} <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li v-on:click="changeDistribution('Test')"><a href="#">Test</a></li>
+                    <li v-on:click="changeDistribution('Train')"><a href="#">Train</a></li>
+                  </ul>
+                </div>
+                sample distribution</h4>
               <table class="table table-bordered table-striped measure_table"> 
                 <!-- Strings -->
                 <colgroup> <col class="col-xs-6"> <col class="col-xs-6"></colgroup>
-                <thead> <tr> <th>Class</th> <th>#Train samples</th> </tr> </thead>
+                <thead> <tr> <th>Class</th> <th>#{{distribution}} samples</th> </tr> </thead>
                 <tbody> 
-                  <tr v-for="x in trainCount"> <td scope="row">{{x.class}}</td> <td><code>{{x.count}}</code></td></tr>
+                  <tr v-for="x in distributionArray"> <td scope="row">{{x.class}}</td> <td><code>{{x.count}}</code></td></tr>
                 </tbody>
               </table>
             </div>
@@ -288,13 +298,13 @@
           <div class="col-xs-7">
             <div id="classifier_wrapper">
               <h4 class="subtitle"> Order classifiers by 
-                   <div class="btn-group">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      {{selectedMeasure}} <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li v-for="measure in measures" v-on:click="changeMeasure(measure)"><a href="#">{{measure}}</a></li>
-                    </ul>
+                 <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{selectedMeasure}} <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li v-for="measure in measures" v-on:click="changeMeasure(measure)"><a href="#">{{measure}}</a></li>
+                  </ul>
                 </div>
               </h4>
               <div id="classifiers">
@@ -302,7 +312,7 @@
                   <div :class="'classifier ' + (isAsking(c.name) ? 'asking' : '')">
                     <span class="name">{{c.name}}</span>
                     <div class="wrapper">
-                      <span data-toggle="tooltip" data-placement="top" :data-original-title="'Current ' + selectedMeasure" class="stats">{{parseInt(c.confusionMatrix.measures[selectedMeasure] * 100)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
+                      <span data-toggle="tooltip" data-placement="top" :data-original-title="'Current ' + selectedMeasure" class="stats">{{getMeasure(c)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
                       <span data-toggle="tooltip" data-placement="top" title="Show classifier details" v-on:click="showInfo(c.name)" class="glyphicon glyphicon-info-sign"></span>
                       <span data-toggle="tooltip" data-placement="top" title="Enable classifier" v-on:click="switchState(c.name)" class="glyphicon glyphicon-ban-circle"></span>
                       <span data-toggle="tooltip" data-placement="top" title="Disable classifier" v-on:click="switchState(c.name)" class="glyphicon glyphicon-ok-circle"></span>

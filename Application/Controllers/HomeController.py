@@ -221,8 +221,8 @@ def api(key):
 		else:
 			return Models.JSONCommunication.formatStats(DC.getStats(getQueryValue("table"), "numerical"))
 			
-	elif(key == "trainCount"):
-		return Models.JSONCommunication.toJson(DC.getTrainCount())
+	elif(key == "distributionArray"):
+		return Models.JSONCommunication.toJson(DC.getDistributionArray(getQueryValue("table")))
 
 	else :
 		return "API call for: " + key

@@ -19,7 +19,8 @@ let stateView, inputView, classifierView, outputView, wrapperView,
     semisupervised: {"SemiSupervisedSureEnough" : true, "SemiSupervisedLabel": "None"},
     selectedMeasure: "",
     state: "empty", // empty, xy, showResult
-    trainCount: [] // [{class, count},..]
+    distribution: "Test", // Test, Train
+    distributionArray: [] // [{class, count},..]
   },
 	wrapperData = {
     // Data used by the wrapper shown when displaying the detailed page
@@ -96,7 +97,7 @@ function initVue(){
         outputView.switchMode(stateData.mode);
         Vue.set(inoutData, "state", "empty");
         if(stateData.mode == 'test')
-          inputView.getTrainCount();
+          inputView.getDistributionArray();
       },
 		  singleStep: function(){
   			Vue.set(stateData, "action", "singleStep");
@@ -270,10 +271,14 @@ function initVue(){
       getClassifierAmount: function(){
         return Object.keys(inoutData.classifiers).length;
       },
-      getTrainCount: function(){
-          $.get("/get/trainCount", function(data){
-            Vue.set(inoutData, "trainCount", data);
+      getDistributionArray: function(){
+          $.get("/get/distributionArray?table="+inoutData.distribution, function(data){
+            Vue.set(inoutData, "distributionArray", _.sortBy(data, "class"));
           }, "json");
+      },
+      changeDistribution: function(dist){
+        Vue.set(inoutData, "distribution", dist);
+        inputView.getDistributionArray();
       }
     },
     computed:{
@@ -282,7 +287,7 @@ function initVue(){
       }
     }
   });
-  inputView.getTrainCount();
+  inputView.getDistributionArray();
 
   classifierView = new Vue({
     el: '#classifier_wrapper',
@@ -327,6 +332,10 @@ function initVue(){
       },
       changeMeasure: function(measure){
         Vue.set(inoutData, "selectedMeasure", measure);
+      },
+      getMeasure: function(c){
+        let _measure = inoutData.selectedMeasure == "Preordered" ? "Precision mu" : inoutData.selectedMeasure;
+        return parseInt(c.confusionMatrix.measures[_measure] * 100);
       }
     },
     computed:{
@@ -335,15 +344,19 @@ function initVue(){
         // This is actualy not a copy but a referency, though no hurt is being done but adding stuff.
         for(let c in inoutData.classifiers)
           ordered[c].name = c;
-        return _.orderBy(ordered, function(o){
-          return o.confusionMatrix.measures[inoutData.selectedMeasure];
-        }, "desc");
-      },
+        if(inoutData.selectedMeasure == "Preordered")
+          // Don't change order
+          return _.values(ordered);
+        else
+          return _.orderBy(ordered, function(o){
+            return o.confusionMatrix.measures[inoutData.selectedMeasure];
+          }, "desc");
+        },
       measures: function(){
+        let _measures = ["Preordered"];
         if(Object.keys(inoutData.classifiers).length > 0)
-          return Object.keys(inoutData.classifiers[Object.keys(inoutData.classifiers)[0]].confusionMatrix.measures);
-        else 
-          return ["Precision mu"];
+          _measures = _measures.concat(Object.keys(inoutData.classifiers[Object.keys(inoutData.classifiers)[0]].confusionMatrix.measures));
+        return _measures;
       }
     }
   });
