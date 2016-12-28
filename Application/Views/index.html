@@ -160,7 +160,9 @@
           <div class="col-xs-4">
             <h1>Classification Overview</h1>
 
-              <div :class="'control_buttons ' + ((mode == 'stream' || mode == 'pool') ? '' : 'hidden')"><!--control-subgroup-->
+              <div
+                  v-show="(mode == 'stream' || mode == 'pool')" 
+                  :class="'control_buttons '"><!--control-subgroup-->
                   <span :class="(action == 'loop' ? 'active ' : '') + 'glyphicon glyphicon-play'" v-on:click="loop()" data-toggle="tooltip" data-placement="top" title="Train until paused"></span>
                   <span :class="(action == 'halt' ? 'active ' : '') + 'glyphicon glyphicon-pause'" v-on:click="halt()" data-toggle="tooltip" data-placement="top" title="Stop training"></span>
                   <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" data-toggle="tooltip" data-placement="top" title="Train a single sample">
@@ -197,21 +199,27 @@
             </div>
             <div id="right" :class="'col-xs-6 '"><!-- right side options -->
 
-              <div :class="'input-group ' + ((mode != 'stream' && mode != 'pool') ? 'hidden' : '')">
+              <div 
+                v-show="(mode != 'stream' && mode != 'pool')"
+                :class="'input-group '">
                 <span class="input-group-addon">
                   <input id="instant_train" v-model="trainInstantly" name="instant_train" type="checkbox">
                 </span>
                 <label for="instant_train" class="form-control">Classify instantly and train incrementaly</label>
               </div>   <!-- /input-group -->  
 
-              <div  :class="'input-group ' + (mode == 'stream' ? '' : 'hidden') ">
+              <div
+                  v-show="(mode == 'stream')"
+                  :class="'input-group '">
                 <span class="input-group-addon">
                   <input disabled="disabled" id="semi_supervised" v-model="isSemiSupervised" name="semi_supervised" type="checkbox">
                 </span>
                 <label for="semi_supervised" class="form-control">Semi-Supervised</label>
               </div>   <!-- /input-group -->  
 
-              <div :class="'input-group ' + ((mode != 'stream' && mode != 'pool') ? 'hidden' : '')">
+              <div 
+                  v-show="(mode == 'stream' || mode == 'pool')"
+                  :class="'input-group '">
                 <label id="formula" class="form-control">{{formula}}</label>
                 <div class="input-group-btn">
                   <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Uncertainty formula <span class="caret"></span></button>
@@ -221,18 +229,23 @@
                 </div><!-- /btn-group -->
               </div><!-- /input-group -->
               <input v-on:click="predictSingle('')"
-                    :class="'btn btn-primary control ' + ((mode == 'single') ? '' : 'hidden')" 
+                    v-show="(mode == 'single')"
+                    :class="'btn btn-primary control '" 
                     title="Predict single samples" value="Predict single" type="button">
               <input v-on:click="showListPrediction()"
-                    :class="'btn btn-primary control ' + ((mode == 'single') ? '' : 'hidden')" 
+                    v-show="(mode == 'single')"
+                    :class="'btn btn-primary control '" 
                     title="Predict a list of samples" value="Predict list" type="button">
               <input v-on:click="startTest()" 
-                    :class="'btn btn-primary control ' + ((mode == 'test') ? '' : 'hidden')" 
+                    v-show="(mode == 'test')"
+                    :class="'btn btn-primary control '" 
                     title="Test all Classifiers" value="Start testing" type="button">
               <input v-on:click="retrainAll()" value="Retrain and save all" 
-                    :class="'btn btn-primary ' + ((mode == 'test') ? '' : 'hidden')" type="button">
+                    v-show="(mode == 'test')"
+                    :class="'btn btn-primary '" type="button">
               <input v-on:click="showStats()" value="Display sample statistics" 
-                    :class="'btn btn-primary ' + ((mode == 'test') ? '' : 'hidden')" type="button">
+                    v-show="(mode == 'test')"
+                    :class="'btn btn-primary '" type="button">
             </div><!-- /right side options -->
           </div><!-- /controls -->
         </div><!-- /container -->
@@ -256,8 +269,9 @@
                 v-show="state != 'showResult' && state != 'empty'"
             >{{state}}</h4>
             <div 
-                :class="'repoDetails ' + (getMode() == 'test' || state != 'showResult' ? 'hidden' : '')">
-              <h4><small>{{repo.author}} / </small>{{repo.repoName}}</h4>
+                v-show="(getMode() != 'test' && state == 'showResult')"
+                :class="'repoDetails '">
+              <h4 class="subtitle"><small><a target="_blank" :href="'https://github.com/' + repo.author">{{repo.author}}</a> / </small><a target="_blank" :href="'https://github.com/' + repo.author + '/' + repo.repoName">{{repo.repoName}}</a></h4>
               <p>{{shortDesc}}</p>
               <table class="table table-bordered table-striped measure_table"> 
                 <!-- Strings -->
@@ -272,7 +286,8 @@
               </table>
             </div>
             <div 
-              :class="'trainCount '  + (getMode() != 'test' ? 'hidden' : '')">
+              v-show="(getMode() == 'test')"
+              :class="'trainCount '">
               <h4 class="subtitle">
                 <div class="btn-group">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -319,17 +334,23 @@
                     </div>
                   </div>
                   <div class="arrow">=&gt;</div>
-                  <div :class="'result_vector ' + (getMode() != 'test' ? 'hidden' : '')">
+                  <div
+                      v-show="(getMode() == 'test')"  
+                      :class="'result_vector'">
                       <div v-for="(r, i) in c.accuracy" :class="'v ' + (getMax(c.name)  == r.val ? 'max' : '')">
                         <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
                       </div>
                   </div>
-                  <div :class="'result_vector ' + (getMode() == 'test' ? 'hidden' : '')">
+                  <div
+                      v-show="(getMode() != 'test')" 
+                      :class="'result_vector ' + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'uncertain ' : 'certain ') : ' ')">
                       <div v-for="(r, i) in c.probability" :class="'v ' + (getMax(c.name)  == r.val ? 'max' : '')">
                         <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
                       </div>
                   </div>
-                  <div data-toggle="tooltip" data-placement="top" title="Classifier uncertainty" :class="'uncertainty ' + (c.uncertainty > 0 ? '' : 'hidden ') + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'uncertain ' : 'certain ') : ' ')">
+                  <div data-toggle="tooltip" data-placement="top" title="Classifier uncertainty" 
+                        v-show="(c.uncertainty > 0)"
+                       :class="'uncertainty ' + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'uncertain ' : 'certain ') : ' ')">
                     {{parseInt(c.uncertainty * 100) / 100}}
                   </div>
                 </div>
@@ -359,15 +380,20 @@
                 </tbody>
               </table>
             </div>
+            <h4 
+                v-show="(getMode() != 'test' && classifiersUnsure)"
+                class="outputText"
+                >The most accurate classifier says it's <strong>{{getOutputClass()}}</strong>. Because one or more module is uncertain, you can classify the sample manually.</h4>
             <h2 v-on:click="manualClassification()"
-                :class="(getMode() != 'test' && classifiersUnsure ? '' : 'hidden ') + (manualClass == '?' ? 'uncertain' : '')" 
+                v-show="(getMode() != 'test' && classifiersUnsure)"
+                :class="(manualClass == '?' ? 'uncertain' : '')" 
                 :style="{top: 'calc( 35px * (-1 + '+getClassifierAmount()+') * 75px)'}"
                 :title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass)}}</h2>
-            <!--<div :class="(getMode() == 'test' ? '' : 'hidden ')" 
+            <!--<div v-show="(getMode() == 'test')" 
                  :style="{top: 'calc( 0px + (-1 + '+getClassifierAmount()+') * 75px)'}"
                  id="testOuputChart"></div>-->
 
-            <div :class="(getMode() == 'test' ? '' : 'hidden ')" 
+            <div v-show="(getMode() == 'test')"
                  :style="{top: 'calc( -60px + (-1 + '+getClassifierAmount()+') * 75px)'}"
                  id="testOuputChart"></div>
           </div><!-- /output -->

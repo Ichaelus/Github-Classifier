@@ -392,7 +392,7 @@ function initVue(){
       mapDistribution: function(data){
         let maxProbs = _.values(_.mapValues(inoutData.classifiers,function(c){
           // Returns only the maximum key value pair
-          return _.values(_.pick(_.maxBy(c[data], "val"), "class"))[0];
+          return getClassifierMaximumClass(c[data]);
         }));
         let output = {}, total = 0;
         for(let p in maxProbs){
@@ -404,6 +404,9 @@ function initVue(){
         for(let i in output)
           output[i].percentage = total > 0 ? 100 * output[i].count / total : 0;
         return _.orderBy(output, "count", "desc");
+      },
+      getOutputClass: function(){
+       return getClassifierMaximumClass(classifierView.orderedClassifiers[0].probability);
       }
     },
     computed: {
@@ -415,6 +418,10 @@ function initVue(){
       }
     }
   });
+
+  function getClassifierMaximumClass(c){
+    return _.values(_.pick(_.maxBy(c, "val"), "class"))[0];
+  }
   outputView.switchMode(stateView.mode);
 
   wrapperView = new Vue({

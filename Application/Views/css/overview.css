@@ -232,6 +232,13 @@ button.control {
   color: #0000004d;
   font-weight: 100;
 }
+.result_vector.uncertain::before, .result_vector.uncertain::after{
+  color: #ff000080;
+}
+.result_vector.certain::before, .result_vector.certain::after{
+  color: #01962880;
+}
+
 .result_vector::after{
   content: "]";
   right: 0;
@@ -416,13 +423,14 @@ button.control {
   background: green;
   color: white;
   text-align: center;
-  margin-top: 50px;
   padding: 20px;
   border: white double;
   box-shadow: 0px 0px 1px green;
   height: 80px;
-  top: 35px;
   position: relative;
+}
+#putput .outputText{
+  padding: 20px 0;
 }
 #output h2.uncertain{
   background: #ff7738;
@@ -480,7 +488,7 @@ button.control {
 }
 .repoDetails p{
   font-style: italic;
-  padding: 10px 0;
+  padding: 0px 0;
 }
 .outputDistr .bar{
   display: block;
@@ -492,6 +500,9 @@ button.control {
   min-width: 15%;
 }
 .subtitle{
-  height: 48px;
+  height: 75px;
   text-align: center;
+  border-top: 1px dashed #00000080;
+  vertical-align: middle;
+  padding-top: 15px;
 }
