@@ -50,7 +50,7 @@ class nnall(ClassificationModule):
 
     def resetAllTraining(self):
         """Reset classification module to status before training"""
-        self.model.compile(metrics=['accuracy'], loss='categorical_crossentropy', optimizer=Adam())
+        resetWeights(self.model)
 
     def trainOnSample(self, sample, nb_epoch=1, shuffle=True, verbose=True):
         """Trainiere (inkrementell) mit Sample. Evtl zusätzlich mit best. Menge alter Daten, damit overfitten auf neue Daten verhindert wird."""

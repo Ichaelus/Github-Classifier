@@ -11,6 +11,7 @@ from nltk.stem import PorterStemmer
 import numpy as np
 
 from gensim.models import Word2Vec
+import keras
 
 # Constants
 
@@ -264,6 +265,17 @@ def getWord2VecModel():
     #    return None
     return Word2Vec.load_word2vec_format(path + modelName, binary=True)
 
+def resetWeights(kerasModel):
+    """Resets weight of keras model"""
+    assert type(kerasModel) == keras.models.Sequential, "Given object has to be of type Sequential."
+    neuralNetworkWeights = kerasModel.get_weights()
+    new_weights = []
+    for w_layer in neuralNetworkWeights:
+        m_shape = w_layer.shape
+        new_l = np.random.uniform(-0.05, 0.05, m_shape)
+        new_weights.append(new_l)
+    kerasModel.set_weights(new_weights)
+    
 
 
 
