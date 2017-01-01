@@ -7,7 +7,6 @@
 https://github.com/ChuntaoLu/Programming-Languages
 https://github.com/rilian/saas-homework
 https://github.com/alexcpsec/coursera-compinvesting1-hw
-https://github.com/yhyap/machine-learning-coursera
 https://github.com/petroav/6.828
 https://github.com/llvdl/m101x-mongo-mean
 https://github.com/w4111/hw1
@@ -26,7 +25,6 @@ https://github.com/kaleko/CourseraML
 https://github.com/anoopsarkar/nlp-class-hw
 https://github.com/vrdmr/Computational-Investing-pt-1
 https://github.com/emilmont/Artificial-Intelligence-and-Machine-Learning
-https://github.com/dataviscourse/2016-dataviscourse-homework
 https://github.com/tonyskn/coursera-scala
 https://github.com/yashtc/Algo1
 https://github.com/ckuhn203/DEV204X
@@ -39,36 +37,27 @@ https://github.com/MonicaG/oracle_java8_mooc
 
 ### Extracted via google serach result parser
 
-https://github.com/alexcpsec/coursera-compinvesting1-hw
 https://github.com/pkmital/CADL
-https://github.com/ChuntaoLu/Programming-Languages
+
 https://github.com/tpdi/MMDS-001-Homework
 https://github.com/dataviscourse/2015-dataviscourse-homework
-https://github.com/prakhar1989/awesome-courses
 https://github.com/yhyap/machine-learning-coursera
 https://github.com/mignev/python-homework
 https://github.com/dataviscourse/2016-dataviscourse-homework
-https://github.com/llvdl/m101x-mongo-mean
-https://github.com/cs109/content
 https://github.com/vgregory757/quantecon_nyu_2016_homework
 https://github.com/YuriyGuts/ios-course-homework
 https://github.com/diversario/coursera-proglang-003
-https://github.com/evansb/cis194-hw
 https://github.com/wangjohn/mit-courses
-https://github.com/hitalex/PR-homework
 https://github.com/boboppie/udacity-course-artificial_intelligence_cs373
 https://github.com/twd2/ProgrammingHomework
 https://gist.github.com/1827406
 https://github.com/artemmavrin/latex-homework
 https://github.com/amar47shah/cis-194
-https://github.com/rilian/saas-homework
 https://github.com/fedosejev/front-end-course/blob/master/week-01/day-01/homework.md
-https://github.com/justmarkham/DAT4
 https://github.com/Cysu/Network_HW
 https://github.com/iamvery/fp101x
 https://github.com/brannondorsey/ofTutoring
 https://github.com/jstol/BerkeleyX-CS169.1x-SaaS
-https://github.com/fmi/python-homework
 https://github.com/cthorey/CS231
 
 
@@ -82,13 +71,10 @@ https://github.com/w4111/syllabus
 https://github.com/williamdemeo/math244-fall2016
 https://github.com/advanced-js/syllabus
 https://github.com/mikeizbicki/ucr-cs100
-https://github.com/CSC-DevOps/Course
 
 
 
 ## HW/EDU
-https://github.com/pkmital/CADL
-https://github.com/wangjohn/mit-courses
 https://github.com/cs109/content
 https://github.com/JasonFreeberg/PythonTutorials
 https://github.com/CSC-DevOps/Course
@@ -117,7 +103,8 @@ https://github.com/olange/learning-mongodb
 https://github.com/prakhar1989/awesome-courses
 
 
-## Workshops (probably EDU and occasionally HW)
+## Interactive Workshops (Command-line interface Workshops)
+> We still gotta discuss if they're DEV or EDU  
 https://github.com/linclark/algorithms-101
 https://github.com/bulkan/async-you
 https://github.com/mikaelbr/bacon-love
