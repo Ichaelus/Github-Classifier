@@ -17,7 +17,7 @@ class bernoullinbreadmeonly(ClassificationModule):
     def __init__(self, text_corpus):
         ClassificationModule.__init__(self, "Readme Only Bernoulli Naive Bayes", "A Bernoulli Naive Bayes-Classifier")
         # Create vectorizer and fit on all available Descriptions
-        self.vectorizer = getTextVectorizer(5000) # Maximum of different columns
+        self.vectorizer = getTextVectorizer(9000) # Maximum of different columns
         corpus = []
         for description in text_corpus:
             corpus.append(process_text(description))

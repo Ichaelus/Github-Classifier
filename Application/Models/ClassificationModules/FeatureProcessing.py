@@ -39,9 +39,14 @@ possibleLanguages = ['JavaScript', 'Java', 'Python', 'C#', 'C++', 'Ruby',
                     'R', 'CSS', 'HTML']
 
 label_dict = {'DEV':0, 'HW':1, 'EDU':2, 'DOCS':3, 'WEB':4, 'DATA':5, 'OTHER':6}
+class_weights = {0:1, 1:3, 2:3, 3:3, 4:3, 5:2, 6: 2}
 
 # Save vectorizer so it doesnt have to be loaded from serialised file each time
 global_vectorizer = None
+
+def getClassWeights():
+    global class_weights
+    return class_weights
 
 #besser: evtl in getunlabeleddata und getlabeleddata und gettrainingsdata aufspalten?
 def getVectorsFromData(data, processText=True):
@@ -153,6 +158,16 @@ def getLanguagesLength():
     return len(possibleLanguages)
 
 
+def getFilenames(sample):
+    """Returns list of filenames"""
+    filenames = sample['files']
+    """
+    if filenames is not None:
+        filenames = filenames.split(' ')
+    else:
+        filenames = []
+        """
+    return filenames
 
 
 def getFileNameAndAuthorString(sample):

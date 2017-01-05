@@ -38,7 +38,7 @@ def getLabeledData():
     return api_call('all', tableString="labeled")
 
 def getUnlabeledData():
-    return api_call('all', tableString="unlabeled", limitString="200")
+    return api_call('all', tableString="unlabeled", limitString="400")
 
 def getUnlabeledSingleSample():
     return api_call('single', tableString="unlabeled")
@@ -81,6 +81,21 @@ def getAllReadmes():
             rm = ""
             try:
                 rm = base64.b64decode(sample['readme'])
+            except TypeError:
+                # If there was an error decoding the message, just ignore atm
+                pass
+            corpus.append(rm)
+    return corpus
+
+def getAllFilenames():
+    tables = ['standard_train_samples', 'train', 'to_classify']
+    corpus = []
+    for table in tables:
+        data = api_call("all", tableString=table)
+        for sample in data:
+            rm = ""
+            try:
+                rm = sample['files']
             except TypeError:
                 # If there was an error decoding the message, just ignore atm
                 pass

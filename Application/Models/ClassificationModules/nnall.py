@@ -13,7 +13,7 @@ from ClassificationModule import ClassificationModule
 class nnall(ClassificationModule):
     """A basic feedforward neural network"""
     
-    def __init__(self, text_corpus, num_hidden_layers=4):
+    def __init__(self, text_corpus, num_hidden_layers=2):
         ClassificationModule.__init__(self, "All NN", "A basic feedforward neural network")
         # Create vectorizer and fit on all available Descriptions
         self.vectorizer = getTextVectorizer(3000) # Maximum of different columns
@@ -68,7 +68,7 @@ class nnall(ClassificationModule):
             train_samples.append(formatted_sample)
             train_lables.append(oneHot(getLabelIndex(sample)))
         train_lables = np.asarray(train_lables)
-        return self.model.fit(train_samples, train_lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose)
+        return self.model.fit(train_samples, train_lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose, class_weight=getClassWeights())
 
     def predictLabel(self, sample):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""
