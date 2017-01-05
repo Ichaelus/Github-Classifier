@@ -42,7 +42,7 @@ class metaonlysvc(ClassificationModule):
             train_samples.append(formatted_sample)
             train_lables.append(getLabelIndex(sample))
         train_lables = np.asarray(train_lables)
-        return self.clf.fit(train_samples, train_lables)
+        return self.clf.fit(train_samples, train_lables, class_weight = 'auto')
 
     def predictLabel(self, sample):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""

@@ -15,7 +15,7 @@ from ClassificationModule import ClassificationModule
 class nnmetaonly(ClassificationModule):
     """A basic feedforward neural network"""
     
-    def __init__(self, num_hidden_layers=3):
+    def __init__(self, num_hidden_layers=1):
         ClassificationModule.__init__(self, "Meta Only NN", "A feedforward neural network which uses metadata (numerical features + used programming languages)")
 
         # Set input-size and output_size
@@ -63,7 +63,7 @@ class nnmetaonly(ClassificationModule):
             train_samples.append(formatted_sample)
             train_lables.append(oneHot(getLabelIndex(sample)))
         train_lables = np.asarray(train_lables)
-        return self.model.fit(train_samples, train_lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose)
+        return self.model.fit(train_samples, train_lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose, class_weight=getClassWeights())
 
     def predictLabel(self, sample):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""
