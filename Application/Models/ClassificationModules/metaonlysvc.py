@@ -18,7 +18,7 @@ class metaonlysvc(ClassificationModule):
         my_description = "Support Vector Classifier which uses Meta-Data (Programming-Languages, stars, watches, ...)\
                           Sklearn can't predict individual probabilities per class so one-hot encoding for these is used."
         ClassificationModule.__init__(self, "Meta Only Support Vector Classifier", my_description)
-        self.clf = SVC(C=1000.0)
+        self.clf = SVC(C=1000.0,  class_weight = 'auto')
         
         print "\t-", self.name
 
@@ -42,7 +42,7 @@ class metaonlysvc(ClassificationModule):
             train_samples.append(formatted_sample)
             train_lables.append(getLabelIndex(sample))
         train_lables = np.asarray(train_lables)
-        return self.clf.fit(train_samples, train_lables, class_weight = 'auto')
+        return self.clf.fit(train_samples, train_lables)
 
     def predictLabel(self, sample):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""

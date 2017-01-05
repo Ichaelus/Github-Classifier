@@ -25,7 +25,7 @@ class lrdescriptiononly(ClassificationModule):
             corpus.append(process_text(description))
         self.vectorizer.fit(corpus)
 
-        self.clf = LogisticRegression(multi_class='multinomial', solver='lbfgs')
+        self.clf = LogisticRegression(multi_class='multinomial', solver='lbfgs',  class_weight = 'auto')
         
         print "\t-", self.name
 
@@ -49,7 +49,7 @@ class lrdescriptiononly(ClassificationModule):
             train_samples.append(formatted_sample)
             train_lables.append(getLabelIndex(sample))
         train_lables = np.asarray(train_lables)
-        return self.clf.fit(train_samples, train_lables, class_weight = 'auto')
+        return self.clf.fit(train_samples, train_lables)
 
     def predictLabel(self, sample):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""

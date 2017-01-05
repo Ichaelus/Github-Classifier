@@ -17,7 +17,7 @@ class metaonlyrandomforest(ClassificationModule):
     def __init__(self):
         ClassificationModule.__init__(self, "Meta Only Random Forest", "Ensemble Learner with multiple Decision-Trees")
 
-        self.clf = RandomForestClassifier()
+        self.clf = RandomForestClassifier( class_weight = 'auto')
         
         print "\t-", self.name
 
@@ -41,7 +41,7 @@ class metaonlyrandomforest(ClassificationModule):
             train_samples.append(formatted_sample)
             train_lables.append(getLabelIndex(sample))
         train_lables = np.asarray(train_lables)
-        return self.clf.fit(train_samples, train_lables, class_weight = 'auto')
+        return self.clf.fit(train_samples, train_lables)
 
     def predictLabel(self, sample):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""
