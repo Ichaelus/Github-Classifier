@@ -23,7 +23,7 @@ class knnreadmeonly(ClassificationModule):
             corpus.append(process_text(description))
         self.vectorizer.fit(corpus)
 
-        self.clf = KNeighborsClassifier(n_neighbors=10) # TODO: Find optimal parameter
+        self.clf = KNeighborsClassifier(n_neighbors=10,  algorithm='auto') # TODO: Find optimal parameter
         print "\t-", self.name
 
 
