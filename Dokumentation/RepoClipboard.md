@@ -3,7 +3,7 @@
 > The hereby presented danger of overfitting on specific users or categories has to be kept in mind.  
 
 
-## HW
+## HW (Already put in train-table)
 https://github.com/ChuntaoLu/Programming-Languages
 https://github.com/rilian/saas-homework
 https://github.com/alexcpsec/coursera-compinvesting1-hw
@@ -35,10 +35,9 @@ https://github.com/Xiaodan/Coursera-R-Programming
 https://github.com/MonicaG/oracle_java8_mooc
 
 
-### Extracted via google serach result parser
+### Extracted via google search result parser
 
 https://github.com/pkmital/CADL
-
 https://github.com/tpdi/MMDS-001-Homework
 https://github.com/dataviscourse/2015-dataviscourse-homework
 https://github.com/yhyap/machine-learning-coursera
@@ -65,7 +64,7 @@ https://github.com/cthorey/CS231
 
 
 
-## EDU
+## EDU (already put in train-table)
 https://github.com/justmarkham/DAT4
 https://github.com/w4111/syllabus
 https://github.com/williamdemeo/math244-fall2016
@@ -150,8 +149,8 @@ https://github.com/swirldev/swirl
 https://github.com/tomgco/tapeshopper
 https://github.com/finnp/test-anything
 https://github.com/asbjornenge/thinking-in-react
+
 https://github.com/yosuke-furukawa/tower-of-babel
 https://github.com/substack/unix-adventure
-
 
 

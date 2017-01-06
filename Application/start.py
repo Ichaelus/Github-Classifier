@@ -22,6 +22,8 @@ from Models.ClassificationModules.metaonlyadaboost import metaonlyadaboost
 from Models.ClassificationModules.reponamelstm import reponamelstm
 from Models.ClassificationModules.readmelstm import readmelstm
 from Models.ClassificationModules.nnall import nnall
+from Models.ClassificationModules.knnreadmeonly import knnreadmeonly
+from Models.ClassificationModules.svcfilenamesonly import filenamesonlysvc
 import Models.DatabaseCommunication as DC
 
 print("Starting application..")
@@ -35,6 +37,7 @@ classifiercollection = ClassifierCollection()
 print 'Getting DB Data to be able to create vectorizers for classifiers that need it'
 descriptionCorpus = DC.getAllDescriptions()
 readmeCorpus = DC.getAllReadmes()
+filenameCorpus = DC.getAllFilenames()
 
 #Initialize Classifiers
 print 'Creating and adding Classifiers to Classifier Collection:'
@@ -43,18 +46,19 @@ lrdescription = lrdescriptiononly(descriptionCorpus)
 nnreadme = nnreadmeonly(readmeCorpus)
 lrreadme = lrreadmeonly(readmeCorpus)
 rfreadme = readmeonlyrandomforest(readmeCorpus)
+knnreadme = knnreadmeonly(readmeCorpus)
 mnbdescription = multinomialnbdescriptiononly(descriptionCorpus)
 mnbreadme = multinomialnbreadmeonly(readmeCorpus)
 bnbdescription = bernoullinbdescriptiononly(descriptionCorpus)
 bnbreadme = bernoullinbreadmeonly(readmeCorpus)
 nnall = nnall(readmeCorpus + descriptionCorpus)
+svcfilenames = filenamesonlysvc(filenameCorpus)
 nnmeta = nnmetaonly()
 rfmeta = metaonlyrandomforest()
 svcmeta = metaonlysvc()
 abmeta = metaonlyadaboost()
 lstmname = reponamelstm()
-lstmreadme = readmelstm()
-
+#lstmreadme = readmelstm()
 
 print 'Loading last checkpoint for classifiers if available:'
 
@@ -72,14 +76,16 @@ classifiercollection.addClassificationModuleWithLastSavePoint(rfmeta)
 classifiercollection.addClassificationModuleWithLastSavePoint(svcmeta)
 classifiercollection.addClassificationModuleWithLastSavePoint(abmeta)
 classifiercollection.addClassificationModuleWithLastSavePoint(lstmname)
-classifiercollection.addClassificationModuleWithLastSavePoint(lstmreadme)
+#classifiercollection.addClassificationModuleWithLastSavePoint(lstmreadme)
 classifiercollection.addClassificationModuleWithLastSavePoint(nnall)
+classifiercollection.addClassificationModuleWithLastSavePoint(knnreadme)
+classifiercollection.addClassificationModuleWithLastSavePoint(svcfilenames)
 
 # Pass ClassifierCollection to Controller
 homesetclassifiercollection(classifiercollection)
 
 # Wait a bit so website doesnt get called before it's ready
-time.sleep(2)
+time.sleep(3)
 
 print 'Done. Starting Bottle...'
 #Start Bottle

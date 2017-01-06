@@ -3,25 +3,29 @@
 from FeatureProcessing import *
 import sklearn
 from sklearn.svm import SVC
+from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 import abc
 from ClassificationModule import ClassificationModule
 
 
 
+def myTokenizer(s):
+    """Needed for CountVectorizer"""
+    return s.split(' ')
 
-
-class metaonlysvc(ClassificationModule):
+class filenamesonlysvc(ClassificationModule):
     """A basic SVC"""
 
-    def __init__(self):
-        my_description = "Support Vector Classifier which uses Meta-Data (Programming-Languages, stars, watches, ...)\
+    def __init__(self, filenameCorpus):
+        my_description = "Support Vector Classifier which uses filename - word-counts\
                           Sklearn can't predict individual probabilities per class so one-hot encoding for these is used."
-        ClassificationModule.__init__(self, "Meta Only Support Vector Classifier", my_description)
+        ClassificationModule.__init__(self, "Filenames Only Support Vector Classifier", my_description)
 
+        self.vectorizer = CountVectorizer(max_features=500, tokenizer=myTokenizer) # 500 different filenames should probably too much
+        self.vectorizer.fit(filenameCorpus)
 
-
-        self.clf = SVC(C=500.0, class_weight='auto')
+        self.clf = SVC(C=1000.0, class_weight=getClassWeights())
         
         print "\t-", self.name
 
@@ -60,8 +64,8 @@ class metaonlysvc(ClassificationModule):
 
     def formatInputData(self, sample):
         """Extract description and transform to vector"""
-        sd = getMetadataVector(sample)
+        sd = getFilenames(sample)
         # Returns numpy array which contains 1 array with features
-        return np.expand_dims(sd, axis=0)
+        return self.vectorizer.transform([sd]).toarray()
 
 

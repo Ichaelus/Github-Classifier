@@ -17,7 +17,7 @@ class lrreadmeonly(ClassificationModule):
     def __init__(self, text_corpus):
         ClassificationModule.__init__(self, "Readme Only Logistic Regressor", "A Logistic Regressor")
         # Create vectorizer and fit on all available Descriptions
-        self.vectorizer = getTextVectorizer(5000) # Maximum of different columns
+        self.vectorizer = getTextVectorizer(9000) # Maximum of different columns
         corpus = []
         for readme in text_corpus:
             corpus.append(process_text(readme))

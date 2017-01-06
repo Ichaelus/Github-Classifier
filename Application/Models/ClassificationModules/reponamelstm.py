@@ -3,7 +3,7 @@
 from FeatureProcessing import *
 from keras.models import Sequential
 from keras.layers import Activation, Dense, LSTM
-from keras.optimizers import Adam
+from keras.optimizers import Adam, SGD
 import numpy as np
 import abc
 from ClassificationModule import ClassificationModule
@@ -12,7 +12,7 @@ from ClassificationModule import ClassificationModule
 class reponamelstm(ClassificationModule):
     """A basic feedforward neural network"""
     
-    def __init__(self, num_hidden_layers=3):
+    def __init__(self, num_hidden_layers=1):
         ClassificationModule.__init__(self, "Repo-Name Only LSTM", "A LSTM reading the repository-name character by character")
 
         hidden_size = 128
@@ -33,7 +33,7 @@ class reponamelstm(ClassificationModule):
         model.add(Activation('softmax'))
 
         model.compile(loss='categorical_crossentropy',
-                    optimizer=Adam(),
+                    optimizer=SGD(),
                     metrics=['accuracy'])
 
         self.model = model
@@ -42,7 +42,7 @@ class reponamelstm(ClassificationModule):
 
     def resetAllTraining(self):
         """Reset classification module to status before training"""
-        self.model.compile(metrics=['accuracy'], loss='categorical_crossentropy', optimizer=Adam())
+        resetWeights(self.model)
 
     def trainOnSample(self, sample, nb_epoch=1, shuffle=True, verbose=True):
         """Trainiere (inkrementell) mit Sample. Evtl zusätzlich mit best. Menge alter Daten, damit overfitten auf neue Daten verhindert wird."""
@@ -51,7 +51,7 @@ class reponamelstm(ClassificationModule):
         label_one_hot = np.expand_dims(oneHot(label_index), axis=0) # [1, 0, 0, ..] -> [[1, 0, 0, ..]] Necessary for keras
         self.model.fit(readme_vec, label_one_hot, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose) # TODO: think about nb_epoch-value
 
-    def train(self, samples, nb_epoch=40, shuffle=True, verbose=True):
+    def train(self, samples, nb_epoch=15, shuffle=True, verbose=True):
         """Trainiere mit Liste von Daten. Evtl weitere Paramter nötig (nb_epoch, learning_rate, ...)"""
         train_samples = []
         train_lables = []

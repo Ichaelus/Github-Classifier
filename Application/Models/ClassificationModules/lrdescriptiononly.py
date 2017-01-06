@@ -19,7 +19,7 @@ class lrdescriptiononly(ClassificationModule):
         ClassificationModule.__init__(self, "Description Only Logistic Regressor", "Logistic Regressor")
 
         # Create vectorizer and fit on all available Descriptions
-        self.vectorizer = getTextVectorizer(5000) # Maximum of different words
+        self.vectorizer = getTextVectorizer(9000) # Maximum of different words
         corpus = []
         for description in text_corpus:
             corpus.append(process_text(description))

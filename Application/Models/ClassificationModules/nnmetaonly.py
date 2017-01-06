@@ -15,7 +15,7 @@ from ClassificationModule import ClassificationModule
 class nnmetaonly(ClassificationModule):
     """A basic feedforward neural network"""
     
-    def __init__(self, num_hidden_layers=3):
+    def __init__(self, num_hidden_layers=1):
         ClassificationModule.__init__(self, "Meta Only NN", "A feedforward neural network which uses metadata (numerical features + used programming languages)")
 
         # Set input-size and output_size
