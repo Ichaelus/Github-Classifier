@@ -23,6 +23,7 @@
         <div class="container">
           <h2>List prediction</h2>
           <hr>
+          <blockquote>Insert or upload a list of GitHub repository links in order to run our classifier against them. The output of <strong>{{topMostName}}</strong> will be shown next to the link on the right side.</blockquote>
           <div class="row">
             <div class="col-xs-6">
               <textarea placeholder="Insert one repository link per line" id="inputList"></textarea>
@@ -38,6 +39,7 @@
               class="btn btn-primary">Start prediction</button>
             </div>
           </div>
+          <!-- Fun but useless visualisation
           <div class="row">
             <div  :class="expression"
                   id="expression">
@@ -47,7 +49,7 @@
           <div class="row text-center" style="font-style:italic">
             <span><strong>{{exprState}}</strong></span><br>
             <span>Images taken from the <a href="http://www.kasrl.org/jaffe.html" target="_blank">jaffe</a> dataset.</span>
-          </div>
+          </div>-->
         </div>
       </div> <!-- /Overlay -->
       <div style="display:none" class="overlay_wrapper" id="stats_wrapper"> <!-- Overlay -->
@@ -134,12 +136,6 @@
             <span class="action btn btn-default" v-on:click="load()">Load version</span>
           </div>
           <h3>Performance Graphs</h3>
-          <!--
-          <div class="graph">
-          <hr>
-            <h4><strong>Per class accuracy</strong></h4>
-            <div id="class_accuarcy_chart"></div>
-          </div>-->
           <div class="graph">
             <h4><strong>Overall accuracy per version</strong></h4>
             <div id="version_accuarcy_chart"></div>
@@ -171,7 +167,7 @@
               <colgroup> <col class="col-xs-6"> <col class="col-xs-6"> </colgroup>
               <thead> <tr> <th>Measure</th> <th>Result</th> </tr> </thead>
               <tbody> 
-                <tr v-for="(val, m) in current.confusionMatrix.measures"> <td scope="row"> <code>{{m}}</code> </td> <td>{{val}}</td> </tr>
+                <tr v-for="(val, m) in current.confusionMatrix.measures"> <td scope="row"> <code>{{m}}</code> </td> <td>{{parseInt(val * 10000)/10000}} %</td> </tr>
               </tbody>
             </table>
           </div>
@@ -218,7 +214,7 @@
                 <span class="input-group-addon">
                   <input id="mode_4" v-on:change="switchMode()" value="single" v-model="mode" name="mode" type="radio">
                 </span>
-                <label for="mode_4" class="form-control">Predict single samples</label>
+                <label for="mode_4" class="form-control">Handle user input</label>
               </div>   <!-- /input-group -->  
             </div>
             <div id="right" :class="'col-xs-6 '"><!-- right side options -->
@@ -244,6 +240,16 @@
               </div>   <!-- /input-group -->  
 
               <div 
+                  v-show="mode == 'single'"
+                  :class="'input-group '"
+                  data-toggle="tooltip" data-placement="bottom" data-original-title="If disabled, the user might be asked to classify a sample manually">
+                <span class="input-group-addon">
+                  <input id="force_prediction" v-model="forcePrediction" name="force_prediction" type="checkbox">
+                </span>
+                <label for="force_prediction" class="form-control">Always force prediction</label>
+              </div><!-- /input-group -->
+
+              <div 
                   v-show="(mode == 'stream' || mode == 'pool')"
                   :class="'input-group '">
                 <label id="formula" class="form-control">{{formula}}</label>
@@ -254,6 +260,7 @@
                   </ul>
                 </div><!-- /btn-group -->
               </div><!-- /input-group -->
+
               <input v-on:click="predictSingle('')"
                     v-show="(mode == 'single')"
                     :class="'btn btn-primary control '" 
@@ -381,7 +388,17 @@
 
           <div class="col-xs-3" id="output"><!-- output -->
              <div v-show="getMode() == 'test'">
-               <h4 class="subtitle">Classifiers best accuracy by class</h4>
+               <h4 class="subtitle">Top-most ranked classifier performance</h4>
+              <p class="outputText">Final classifications are being made by <strong>{{topMostName}}</strong>. Its measures are listed below</p>
+              <table class="table table-bordered table-striped measure_table"> 
+                <colgroup> <col class="col-xs-8"> <col class="col-xs-4"> </colgroup>
+                <thead> <tr> <th>Measure</th> <th>Result</th> </tr> </thead>
+                <tbody> 
+                  <tr v-for="(val, m) in outputMeasures"> <td scope="row"> <code>{{m}}</code> </td> <td>{{parseInt(val * 100)/100}} %</td> </tr>
+                </tbody>
+              </table>
+              <hr>
+              <h4 class="text-center">Best accuracies of all classifiers</h4>
                
                <table class="outputDistr table table-bordered table-striped measure_table">
                 <colgroup><col class="col-xs-2"> <col class="col-xs-10"></colgroup>
@@ -401,22 +418,43 @@
                 </tbody>
               </table>
             </div>
-            <h4 
-                v-show="(getMode() != 'test' && classifiersUnsure)"
+            <p 
+                v-show="(getMode() != 'test' && state == 'showResult')"
                 class="outputText"
-                >The top-most ranked classifier says it's <strong>{{getOutputClass()}}</strong>. Because one or more module is uncertain, you can classify the sample manually.</h4>
+                >The top-most ranked classifier says it's <strong>{{getOutputClass()}}</strong>. 
+                <span
+                  v-show="(getMode() != 'test' && classifiersUnsure && !forcePrediction)"
+                >Because one or more module is uncertain about its output, you can classify the sample manually.</span>
+              </p>
             <h2 v-on:click="manualClassification()"
-                v-show="(getMode() != 'test' && classifiersUnsure)"
+                v-show="(getMode() != 'test' && state == 'showResult' && classifiersUnsure && !forcePrediction)"
                 :class="(manualClass == '?' ? 'uncertain' : '')" 
                 :style="{top: 'calc( 35px * (-1 + '+getClassifierAmount()+') * 75px)'}"
                 :title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass )}}</h2>
-            <div v-show="(getMode() == 'test')"
+            <!--This would display an overlapped radar chart of classifier accuracies
+                <div v-show="(getMode() == 'test')"
                  :style="{top: 'calc( -60px + (-1 + '+getClassifierAmount()+') * 75px)'}"
-                 id="testOuputChart"></div>
+                 id="testOuputChart"></div>-->
           </div><!-- /output -->
 
         </div><!-- /main -->
       </div><!-- /container -->
+      <footer>
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-4"><h4>Assignment for the <a href="http://informaticup.gi.de/" target="_blank">InformatiCup 2017</a></h4></div>
+            <div class="col-xs-2">
+              <h4>Team Augsburg</h4>
+            </div>
+            <div class="col-xs-6">
+              <div class="col-xs-6">Andreas Grafberger</div>
+              <div class="col-xs-6">Martin Keßler</div>
+              <div class="col-xs-6">Michael Leimstädtner</div>
+              <div class="col-xs-6">Stefan Grafberger</div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div><!-- /container-fluid -->
     <script type="text/javascript" src="scripts/lodash.min.js"></script>
     <script type="text/javascript" src="scripts/vue.min.js"></script>

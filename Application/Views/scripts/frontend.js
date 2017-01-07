@@ -2,6 +2,7 @@ console.log("Frontend started..");
 let stateView, inputView, classifierView, outputView, wrapperView,
 	stateData = {
 		action: "halt",
+    forcePrediction: true,
 		formula: "",
 		formulas: [],
     isSemiSupervised: false,
@@ -372,14 +373,15 @@ function initVue(){
     data: inoutData,
     methods:{
       switchMode: function(mode){
-        if(mode == "test"){
+        /* This would display an overlapped radar chart of classifier accuracies
+          if(mode == "test"){
           let data = [];
           for(let c in inoutData.classifiers){
             data.push(accuracyToGraphData(inoutData.classifiers[c].accuracy));
           }
           if(data.length > 0)
             RadarChart("#testOuputChart", data, getRadarConfig(350));
-        }
+        }*/
       },
       getClassifierAmount: function(type){
         return Object.keys(inoutData.classifiers).length;
@@ -417,6 +419,15 @@ function initVue(){
       },
       accuracyDistribution: function(){
         return this.mapDistribution("accuracy");
+      },
+      outputMeasures: function(){
+        return classifierView.orderedClassifiers[0].confusionMatrix.measures;
+      },
+      topMostName: function(){
+        return classifierView.orderedClassifiers[0].name;
+      },
+      forcePrediction: function(){
+        return stateView.forcePrediction;
       }
     }
   });
@@ -446,7 +457,7 @@ function initVue(){
               data.push(accuracyToGraphData(wrapperData.savePoints[sp].accuracy));
             }
             if(data.length > 0)
-              RadarChart("#version_accuarcy_chart", data, getRadarConfig(700));
+              RadarChart("#version_accuarcy_chart", data, getRadarConfig(600));
             else
               document.getElementById("version_accuarcy_chart").style.display = "none";
           }
@@ -577,6 +588,11 @@ function initVue(){
         Vue.set(wrapperData, "distribution", dist);
         wrapperView.getDistributionArray();
       }
+    },
+    computed: {
+      topMostName: function(){
+        return classifierView.orderedClassifiers[0].name;
+      },
     }
   });
   wrapperView.getDistributionArray();

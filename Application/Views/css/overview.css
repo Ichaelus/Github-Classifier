@@ -29,10 +29,17 @@ h1{
   width: 100%;
   top: 0;
   background-color: rgba(233, 233, 233, 0.4);
-  box-shadow: 0 0 1px rgba(0,0,0,0.25);
+  /*box-shadow: 0 0 1px rgba(0,0,0,0.25);*/
+  border-bottom: 1px dashed #00000080;
   transition: background-color 0.3s ease-in-out;
   padding: 10px 60px;
   z-index: 2;
+}
+footer{
+  padding: 25px 0;
+  border-top: 1px dashed black;
+  margin-top: 25px;
+  background: #F6F6F6;
 }
 .input-group{
   margin-bottom: 5px;
@@ -328,7 +335,8 @@ button.control {
 }
 #predictionList_wrapper textarea{
   width: 100%;
-  min-height: 200px;
+  height: 400px;
+  resize: vertical;
 }
 .action{
   width: 300px;
@@ -429,9 +437,6 @@ button.control {
   height: 80px;
   position: relative;
 }
-#putput .outputText{
-  padding: 20px 0;
-}
 #output h2.uncertain{
   background: #ff7738;
   box-shadow: 0px 0px 1px #ff7738;
@@ -442,6 +447,18 @@ button.control {
   top: 0px;
 }
 #output #testOuputChart > svg{
+  overflow: visible;
+}
+#output .outputText{
+  font-size: 17px;
+  text-align: justify;
+  padding: 0 10px;
+}
+
+#version_accuarcy_chart{
+  padding: 60px 0;
+}
+#version_accuarcy_chart > svg{
   overflow: visible;
 }
 
