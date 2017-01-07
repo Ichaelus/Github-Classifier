@@ -206,7 +206,7 @@ function initVue(){
         Vue.set(inoutData, "classifiersUnsure", false);
       },
       retrainAll: function(){
-        let all = confirm("Would you like to retrain every classifier (yes) or only untrained classifiers (abort)?");
+        let all = confirm("Would you like to retrain every classifier (OK) or only untrained classifiers (cancel)?");
         
         notify("Retrain all", "Training every untrained classifier. This may take a couple of minutes");
         for(let c in inoutData.classifiers)
@@ -534,8 +534,9 @@ function initVue(){
                 wrapperView.keepThinking();
                 repoLink = convertToApiLink(list[i]);
                 results = yield jQGetPromise("/get/PredictSingleSample?repoLink="+repoLink, "json");
+                stateView.updateResults(results);
                 Vue.set(wrapperData, "thinking", false);
-                to_append = repoLink + " " + "TODO\n";
+                to_append = repoLink + " " + outputView.getOutputClass();
                 Vue.set(wrapperData, "expression", "found");
               }catch(err){
                 Vue.set(wrapperData, "expression", "error");

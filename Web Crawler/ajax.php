@@ -594,8 +594,8 @@
             $query = "INSERT INTO `$table` ( $keys ) VALUES ( $values )";
             $iid = $db->insert($query);
             return $iid;
-        }else
-            throw new Exception("Duplicate Vector");
+        }/*else
+            throw new Exception("Duplicate Vector");*/
     }
 
     ?>

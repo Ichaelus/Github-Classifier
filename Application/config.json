@@ -1,5 +1,5 @@
 {
-	"backend": "http://classifier.leimstaedtner.it/",
+	"backend": "http://server.leimstaedtner.it/",
 	"classes": ["DEV", "HW", "EDU", "DOCS", "WEB", "DATA", "OTHER"],
 	"database_server": "localhost",
 	"database_name": "u51019db1",

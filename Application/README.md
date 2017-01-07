@@ -4,6 +4,7 @@
 * pip (module manager)
 * Firefox >= 50
 * Screen size >= (1280px x 600px)
+* RAM >= 2GB
 
 ## Notes
 
@@ -26,8 +27,23 @@ _Installed with the command `pip install xxx`_
 4. nltk
 5. selenium
 6. gensim
+7. demjson
+8. theano
 
 ## Other
 
 * (Microsoft Visual C++ Compiler for Python 2.7)[https://www.microsoft.com/en-us/download/details.aspx?id=44266]
 * (64bit g++ compiler)[http://deeplearning.net/software/theano/install_windows.html#gcc]
+* Keras has to be configured to use theano (instead of tensorflow). In Unix systems, this can be changed at ~/.keras/keras.json.
+
+## VirtualBox
+
+Instead of installing everything from above, you can also use the VM image. A virtualisation software such as Oracle VirtualBox is needed in this case.
+
+Login credentials are
+Username: informaticup
+Password: informaticup
+
+Git credentials are
+Username: InformatiCupClient
+Password: InformatiCupClient1

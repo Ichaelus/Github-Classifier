@@ -24,7 +24,8 @@
       files: "",
       readme: "",
       tagger: get_name_tag()
-    };
+    },
+    backend = "ajax.php";
 
 // Startup
 try {
@@ -35,8 +36,8 @@ try {
     addCustomRepo(getParameterByName("api-url"));
   }else{
     getRepos();
-    patchworkClassifications();
-    //sampleMining();
+    //patchworkClassifications();
+    sampleMining();
   }
 }catch(ex){
   console.log(ex);
@@ -44,16 +45,17 @@ try {
 
 function patchworkClassifications(){
   // Ask the server if there are old samples that need to be reclassified
-  $.get("ajax.php?key=api:patchwork&table=unlabeled").then(function(result){
+  $.get(backend+"?key=api:patchwork&table=train").then(function(result){
     result = JSON.parse(result);
-    if(typeof(result.Error) != "undefined"){
+    if(!result.success){
       // Maybe out of old classifications
-      console.log(result.Error);
+      console.log(result);
+      setTimeout(patchworkClassifications, 300000);
     }else{
       console.log(result);
       setTimeout(patchworkClassifications, 1000);
       /*
-      $.get("ajax.php?key=api:generate_sample&class="+result.class+"&api_url=" + result.url.replace("https://github.com/", "https://api.github.com/repos/"), function(res2){
+      $.get(backend+"?key=api:generate_sample&class="+result.class+"&api_url=" + result.url.replace("https://github.com/", "https://api.github.com/repos/"), function(res2){
         if(res2 != "")
           res2 = JSON.parse(res2);
         console.log(res2);
@@ -71,12 +73,12 @@ function patchworkClassifications(){
 function sampleMining(){
   // Requests the server to generate a random unlabeled sample. Once finished, request the next until no more API calls are available
   console.log("Mining unlabeled sample");
-  $.get("ajax.php?key=api:generate_sample").then(function(result){
+  $.get(backend+"?key=api:generate_sample").then(function(result){
     if( result != ""){
       result = JSON.parse(result);
       // Maybe out of old classifications
-      if(typeof(result.Error) != "undefined"){
-        console.log(result.Error);
+      if(result === false || !result.success){
+        console.log(result);
         // Keep mining, but wait 5 minutes (API calls may be over)
         setTimeout(sampleMining, 300000);
       }else
@@ -94,13 +96,13 @@ function getRepos(){
 
   runGenerator(function *main(){
     // Add pending repos to list
-    let repo = yield jQGetPromise('ajax.php?key=api:single&table=to_classify', "json");
-    if(typeof(repo.Error) == "undefined"){
-      allRepos.push(repo);
+    let repo = yield jQGetPromise(backend+'?key=api:single&table=to_classify', "json");
+    if(repo !== false && repo.success){
+      allRepos.push(repo.data);
       initialized = true;
     }else{
       notify(repo.Error, "There is no sample that needs to be classified.", 4000);
-      //yield jQGetPromise("ajax.php?key=api:generate_sample", "json");
+      //yield jQGetPromise(backend+"?key=api:generate_sample", "json");
       //setTimeout(getRepos, 5000);
     }
     console.log("UNLABELED repos: ");
@@ -113,8 +115,8 @@ function addCustomRepo(api_url){
   if(api_url != ""){
     runGenerator(function *main(){
       // Add pending repos to list
-      //yield jQGetPromise("ajax.php?key=api:generate_sample&api-url="+api_url, "json");
-      let res = yield jQGetPromise("ajax.php?key=api:unlabeled&filter="+btoa("api_url=" + api_url), "json");
+      //yield jQGetPromise(backend+"?key=api:generate_sample&api-url="+api_url, "json");
+      let res = yield jQGetPromise(backend+"?key=api:unlabeled&filter="+btoa("api_url=" + api_url), "json");
       if(res.length == 0 || res == "")
         throw new Error("There is no such sample.");
       let repo = res[0];
@@ -124,7 +126,7 @@ function addCustomRepo(api_url){
         initialized = true;
       }else{
         notify(repo.Error, "There is no sample that needs to be classified.", 4000);
-        //yield jQGetPromise("ajax.php?key=api:generate_sample", "json");
+        //yield jQGetPromise(backend+"?key=api:generate_sample", "json");
         //setTimeout(getRepos, 5000);
       }
     });
@@ -228,7 +230,7 @@ function classify(label, data = {}){
   postData.class = label;
   postData.table = getParameterByName("popup") == "true" ? "unlabeled" : "to_classify";
   console.log(postData);
-  $.post("/ajax.php", postData).then(
+  $.post(backend, postData).then(
     function(result){
       if(result.indexOf("Repository classified") >= 0){
         notify("Status", "Classification submitted.");
@@ -251,7 +253,7 @@ function classify(label, data = {}){
 function skipRepo(){
   // Skip current visible repository and fetch next one
   assert(isNotEmpty(postData.id), "Invalid repository ID");
-  $.post("/ajax.php", {key: "skip", id: postData.id}).then(
+  $.post(backend, {key: "skip", id: postData.id}).then(
     function(result){
       notify("Status", "Classification skipped.");
       // Keep at least three repos buffered + get next liveView
@@ -288,7 +290,7 @@ function getCount(className){
       counts = localStorage.getItem("class_count");
   if(timestamp == null || parseInt(timestamp) + 1000 * 10 < $.now()){
     localStorage.setItem("count_timestamp", $.now());
-    jQGetPromise("ajax.php?key=api:class-count&tagger="+repoData.tagger, "json").then(function(result){
+    jQGetPromise(backend+"?key=api:class-count&tagger="+repoData.tagger, "json").then(function(result){
       localStorage.setItem("class_count", JSON.stringify(result));
     });
   }

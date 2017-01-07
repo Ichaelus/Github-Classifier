@@ -118,7 +118,6 @@
           <div class="graph">
             <h4><strong>Overall accuracy per version</strong></h4>
             <div id="version_accuarcy_chart"></div>
-            <!--<img src="http://www.visualcinnamon.com/wp-content/uploads/2015/09/D3-radar-chart-New-version-Hover.png">-->
           </div>
           <div class="graph">
             <h4><strong>Confusion matrix</strong></h4>
@@ -370,9 +369,9 @@
                 </tbody>
               </table>
             </div>
-             <div v-show="getMode() != 'test' && state == 'showResult'">
-               <h4 class="subtitle">Most predicted classes</h4>
-               <table class="outputDistr table table-bordered table-striped measure_table">
+            <div v-show="getMode() != 'test' && state == 'showResult'">
+              <h4 class="subtitle">Most predicted classes</h4>
+              <table class="outputDistr table table-bordered table-striped measure_table">
                 <colgroup><col class="col-xs-2"> <col class="col-xs-10"></colgroup>
                 <thead><tr><th>Class</th> <th>#Predictions</th></tr></thead>
                 <tbody>
@@ -383,16 +382,12 @@
             <h4 
                 v-show="(getMode() != 'test' && classifiersUnsure)"
                 class="outputText"
-                >The most accurate classifier says it's <strong>{{getOutputClass()}}</strong>. Because one or more module is uncertain, you can classify the sample manually.</h4>
+                >The top-most ranked classifier says it's <strong>{{getOutputClass()}}</strong>. Because one or more module is uncertain, you can classify the sample manually.</h4>
             <h2 v-on:click="manualClassification()"
                 v-show="(getMode() != 'test' && classifiersUnsure)"
                 :class="(manualClass == '?' ? 'uncertain' : '')" 
                 :style="{top: 'calc( 35px * (-1 + '+getClassifierAmount()+') * 75px)'}"
-                :title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass)}}</h2>
-            <!--<div v-show="(getMode() == 'test')" 
-                 :style="{top: 'calc( 0px + (-1 + '+getClassifierAmount()+') * 75px)'}"
-                 id="testOuputChart"></div>-->
-
+                :title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass )}}</h2>
             <div v-show="(getMode() == 'test')"
                  :style="{top: 'calc( -60px + (-1 + '+getClassifierAmount()+') * 75px)'}"
                  id="testOuputChart"></div>
@@ -401,14 +396,14 @@
         </div><!-- /main -->
       </div><!-- /container -->
     </div><!-- /container-fluid -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/lodash/4.17.2/lodash.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/vue@2.0.3/dist/vue.js"></script>
+    <script type="text/javascript" src="scripts/lodash.min.js"></script>
+    <script type="text/javascript" src="scripts/vue.min.js"></script>
     <script
-    src="https://code.jquery.com/jquery-3.1.1.min.js"
+    src="scripts/jquery-3.1.1.min.js"
     integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
     crossorigin="anonymous"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
-    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="scripts/d3.v3.min.js"></script>
     <script src="scripts/radarChart.js"></script>
     <script type="text/javascript" src="scripts/frontend.js"></script>
   </body>

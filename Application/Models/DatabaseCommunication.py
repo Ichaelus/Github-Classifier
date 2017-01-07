@@ -10,7 +10,7 @@ def api_call(keyString, filterString="", tableString="", limitString=""):
     filterString = base64.b64encode(b'' + filterString)
     url = None
     data = None
-    url = 'http://classifier.leimstaedtner.it/ajax.php?key=api:' + keyString.decode("utf-8") + '&filter=' 
+    url = 'http://server.leimstaedtner.it/ajax.php?key=api:' + keyString.decode("utf-8") + '&filter=' 
     url += filterString.decode("utf-8") + '&table=' + tableString.decode("utf-8") + '&limit=' + limitString.decode("utf-8")
     request = Request(url)
     try:

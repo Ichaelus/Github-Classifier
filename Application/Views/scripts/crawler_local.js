@@ -24,7 +24,7 @@
       files: "",
       readme: ""
     },
-    server = "http://classifier.leimstaedtner.it/";
+    server = "http://server.leimstaedtner.it/";
 
 // Startup
 try {
