@@ -19,13 +19,14 @@ let stateView, inputView, classifierView, outputView, wrapperView,
     semisupervised: {"SemiSupervisedSureEnough" : true, "SemiSupervisedLabel": "None"},
     selectedMeasure: "",
     state: "empty", // empty, xy, showResult
-    distribution: "Test", // Test, Train
-    distributionArray: [] // [{class, count},..]
+    TestDistribution: [] // same as above, but fixed to test
   },
-	wrapperData = {
+  wrapperData = {
     // Data used by the wrapper shown when displaying the detailed page
     currentName: "",
-		current: {description: "", yield: 0, active: false, uncertainty: 0, confusionMatrix: {}, accuracy: {}, probability: {}},
+    current: {description: "", yield: 0, active: false, uncertainty: 0, confusionMatrix: {}, accuracy: {}, probability: {}},
+    distribution: "Test", // Test, Train
+    distributionArray: [], // [{class, count},..]
     expression: "neutral",
     exprState: "",
     thinking: false,
@@ -97,7 +98,7 @@ function initVue(){
         outputView.switchMode(stateData.mode);
         Vue.set(inoutData, "state", "empty");
         if(stateData.mode == 'test')
-          inputView.getDistributionArray();
+          wrapperView.getDistributionArray();
       },
 		  singleStep: function(){
   			Vue.set(stateData, "action", "singleStep");
@@ -206,12 +207,18 @@ function initVue(){
         Vue.set(inoutData, "classifiersUnsure", false);
       },
       retrainAll: function(){
-        let all = confirm("Would you like to retrain every classifier (OK) or only untrained classifiers (cancel)?");
-        
-        notify("Retrain all", "Training every untrained classifier. This may take a couple of minutes");
+        let all = !confirm("Would you like to retrain only untrained classifiers?");
+        let save = confirm("Would you like to save the retrained classifiers to the disk?");
+
+        notify("Retrain all classifers", "Retraining many classifiers. This may take a couple of minutes; you may keep an eye on the console output.");
         for(let c in inoutData.classifiers)
           if(all || inoutData.classifiers[c].yield <= 0)
-            wrapperView.retrain(c, true);
+            wrapperView.retrain(c, save);
+      },
+      saveAll: function(){
+        notify("Saving all classifiers", "Every classifier is being saved to disk.");
+        for(let c in inoutData.classifiers)
+          wrapperView.save(c);
       },
       showStats: function(){
         runGenerator(function *main(){
@@ -265,46 +272,30 @@ function initVue(){
     el: '#input',
     data: inoutData,
     methods:{
-      getMode: function(){
-        return stateData.mode;
-      },
       getClassifierAmount: function(){
         return Object.keys(inoutData.classifiers).length;
-      },
-      getDistributionArray: function(){
-          $.get("/get/distributionArray?table="+inoutData.distribution, function(data){
-            Vue.set(inoutData, "distributionArray", _.sortBy(data, "class"));
-          }, "json");
-      },
-      changeDistribution: function(dist){
-        Vue.set(inoutData, "distribution", dist);
-        inputView.getDistributionArray();
       }
     },
     computed:{
       shortDesc: function(){
         return add3Dots(inoutData.repo.description, 200);
-      }
+      },
     }
   });
-  inputView.getDistributionArray();
 
   classifierView = new Vue({
     el: '#classifier_wrapper',
     data: inoutData,
     methods:{
-      getMode: function(){
-        return stateData.mode;
-      },
-    	showInfo: function(name){
-    		wrapperView.setData(name);
+      showInfo: function(name){
+        wrapperView.setData(name);
         wrapperView.getSavePoints();
         //RadarChart("#class_accuarcy_chart", [accuracyToGraphData(wrapperData.current.accuracy)], getRadarConfig(700));
-    		$('.overlay_blur').fadeIn();
+        $('.overlay_blur').fadeIn();
         $('#details_wrapper').css("margin-top", window.scrollY - 50);
-    		$('#details_wrapper').fadeIn();
-    	},
-    	switchState: function(name){
+        $('#details_wrapper').fadeIn();
+      },
+      switchState: function(name){
         let c= inoutData.classifiers[name];
         c.active = !c.active;
         if(!c.active){
@@ -318,15 +309,15 @@ function initVue(){
                 throw new Error("Invalid server response");
           });
         }
-    	},
-    	getMax: function(id){
-    		let max = 0;
+      },
+      getMax: function(id){
+        let max = 0;
         array = stateData.mode == "test" ? "accuracy" : "probability";
         if(typeof(inoutData.classifiers[id][array]) != "undefined")
           for(let i = 0; i < inoutData.classifiers[id][array].length; i ++)
-      			max = Math.max(max, inoutData.classifiers[id][array][i].val);
-    		return max;
-    	},
+            max = Math.max(max, inoutData.classifiers[id][array][i].val);
+        return max;
+      },
       isAsking: function(name){
         return stateData.mode == "pool" && inoutData.classifierAsking == name;
       },
@@ -336,6 +327,20 @@ function initVue(){
       getMeasure: function(c){
         let _measure = inoutData.selectedMeasure == "Preordered" ? "Precision mu" : inoutData.selectedMeasure;
         return parseInt(c.confusionMatrix.measures[_measure] * 100);
+      },
+      getMeasureDescription: function(measure){
+        let descriptions = {"Preordered": "Internal order not sorted by any measure",
+                            "Precision mu": "Measure",
+                            "Fscore mu": "Measure",
+                            "Error Rate": "Measure",
+                            "Recall M": "Measure",
+                            "Average Accuracy": "Measure",
+                            "Recall mu": "Measure",
+                            "Fscore M": "Measure",
+                            "Precision M": "Measure"};
+        if(typeof(descriptions[measure]) !== "undefined")
+          return descriptions[measure];
+        return "";
       }
     },
     computed:{
@@ -366,7 +371,7 @@ function initVue(){
     el: '#output',
     data: inoutData,
     methods:{
-  		switchMode: function(mode){
+      switchMode: function(mode){
         if(mode == "test"){
           let data = [];
           for(let c in inoutData.classifiers){
@@ -375,12 +380,9 @@ function initVue(){
           if(data.length > 0)
             RadarChart("#testOuputChart", data, getRadarConfig(350));
         }
-  		},
+      },
       getClassifierAmount: function(type){
         return Object.keys(inoutData.classifiers).length;
-      },
-      getMode: function(){
-        return stateData.mode;
       },
       manualClassification: function(){
         if(inoutData.manualClass == '?')
@@ -428,10 +430,10 @@ function initVue(){
     el: '#wrappers',
     data: wrapperData,
     methods:{
-    	setData: function(i){
-    		Vue.set(wrapperData, "current", inoutData.classifiers[i]);
+      setData: function(i){
+        Vue.set(wrapperData, "current", inoutData.classifiers[i]);
         Vue.set(wrapperData, "currentName", i);
-    	},
+      },
       getSavePoints: function(){
         $.get("/get/savePoints?name="+wrapperData.currentName, function(resp){
           if(resp != ""){
@@ -453,8 +455,8 @@ function initVue(){
       setSavePoint: function(fileName){
         Vue.set(wrapperData, "selectedPoint", fileName);
       },
-  		retrain: function(name, save){
-  			console.log("Wrapper: "+name+" retraining.");
+      retrain: function(name, save){
+        console.log("Wrapper: "+name+" retraining.");
         notify("Retraining", "The classifier: "+name+" started retraining. This could take a while.", 2500);
         runGenerator(function *main(){
           let data = yield jQGetPromise("/get/retrain?name="+name);
@@ -468,22 +470,22 @@ function initVue(){
             notify("Error while retraining", data, 2500);
           }
         });
-  		},
-  		retrain_semi: function(){
-  			console.log("Wrapper: "+wrapperData.currentName+" semi retraining.");
+      },
+      retrain_semi: function(){
+        console.log("Wrapper: "+wrapperData.currentName+" semi retraining.");
         runGenerator(function *main(){
           notify("Retrained", yield jQGetPromise("/get/retrainSemiSupervised?name="+wrapperData.currentName), 2500);
         });
-  		},
-  		save: function(name){
-  			console.log("Wrapper: "+name+" saving.");
+      },
+      save: function(name){
+        console.log("Wrapper: "+name+" saving.");
         runGenerator(function *main(){
           notify("Saved", yield jQGetPromise("/get/save?name="+name), 2500);
           wrapperView.getSavePoints();
         });
-  		},
-  		load: function(){
-  			console.log("Wrapper: "+wrapperData.currentName+" loading.");
+      },
+      load: function(){
+        console.log("Wrapper: "+wrapperData.currentName+" loading.");
         runGenerator(function *main(){
           data = yield jQGetPromise("/get/load?name="+wrapperData.currentName + "&savepoint="+wrapperData.selectedPoint, "json");
           // data contains a name of the selected classifier and an accuracy array
@@ -494,7 +496,7 @@ function initVue(){
             notify("Loaded", "The classifier "+wrapperData.currentName+" has been loaded.", 2500);
           }
         });
-  		},
+      },
       getMatrixDiag: function(matrix){
         // Returns the elements on the diagonal of the confusion matrix
         if(typeof(matrix) !== "undefined")
@@ -562,12 +564,29 @@ function initVue(){
             else
               Vue.set(wrapperData, "expression", "thinking"+i%3)
         }, 1000);
+      },
+      getDistributionArray: function(){
+          $.get("/get/distributionArray?table="+wrapperData.distribution, function(data){
+            Vue.set(wrapperData, "distributionArray", _.sortBy(data, "class"));
+            if(wrapperData.distribution == "Test")
+              // Special variable because of permanent visibility in test mode
+              Vue.set(inoutData, "TestDistribution", _.sortBy(data, "class"));
+          }, "json");
+      },
+      changeDistribution: function(dist){
+        Vue.set(wrapperData, "distribution", dist);
+        wrapperView.getDistributionArray();
       }
     }
   });
+  wrapperView.getDistributionArray();
 }
 // name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
 
+
+function getMode(){
+  return stateData.mode;
+}
 
 function wait_async(time){
   return new Promise(function(resolve, reject){
@@ -578,8 +597,8 @@ function wait_async(time){
 }
 
 function hideInfo(){
-	// Hide any visible popup
-	$('.overlay_wrapper').fadeOut();
+  // Hide any visible popup
+  $('.overlay_wrapper').fadeOut();
 	$('.overlay_blur').fadeOut();
 }
 
