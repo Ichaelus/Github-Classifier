@@ -7,7 +7,6 @@ import Models.ClassifierCollection
 import Models.JSONCommunication
 import Models.DatabaseCommunication as DC
 
-
 abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Views')
 
 homebottle = Bottle()
@@ -81,6 +80,10 @@ def getBSf2(filename):
 def getBSf3(filename):
 	return static_file(filename, root=os.path.join(os.path.join(abspath, "bootstrap"), "fonts"), mimetype='application/x-font-ttf')
 
+@homebottle.get('/docs/<filename:re:.*\.md>')
+def getDocumentation(filename):
+	docsPath = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../'), '../Dokumentation')
+	return static_file(filename, root=docsPath, mimetype='text/plain')
 
 @homebottle.get('/get/<key>')
 def api(key):
@@ -223,6 +226,11 @@ def api(key):
 			
 	elif(key == "distributionArray"):
 		return Models.JSONCommunication.toJson(DC.getDistributionArray(getQueryValue("table")))
+
+	elif(key == "documentationNames"):
+		docsPath = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../'), '../Dokumentation')
+		docfiles = [f for f in os.listdir(docsPath) if os.path.isfile(os.path.join(docsPath, f)) and f.endswith(".md")]
+		return Models.JSONCommunication.toJson(docfiles)
 
 	else :
 		return "API call for: " + key

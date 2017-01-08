@@ -1,5 +1,5 @@
 {
-	"backend": "http://server.leimstaedtner.it/",
+	"backend": "http://67.209.116.156/",
 	"classes": ["DEV", "HW", "EDU", "DOCS", "WEB", "DATA", "OTHER"],
 	"database_server": "localhost",
 	"database_name": "u51019db1",

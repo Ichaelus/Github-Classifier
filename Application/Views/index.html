@@ -60,7 +60,7 @@
             <div 
               v-show="(getMode() == 'test')"
               :class="'trainCount '">
-              <h4 class="subtitle">
+              <h4>
                 <div class="btn-group">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{distribution}} <span class="caret"></span>
@@ -173,12 +173,31 @@
           </div>
         </div>
       </div> <!-- /Overlay -->
+       <div style="display:none" class="overlay_wrapper" id="docs_wrapper"> <!-- Overlay -->
+        <div class="container">
+          <h2>Documentation</h2>
+          <hr>
+          <div 
+            :class="'trainCount '">
+            <h4>
+              <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {{selectedDocumentation}} <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li v-for="d in documentations" v-on:click="changeDocumentation(d)"><a href="#">{{d}}</a></li>
+                </ul>
+              </div></h4>
+          </div>
+          <p v-html="documentationContent"></p>
+        </div>
+      </div> <!-- /Overlay -->
     </div> <!-- /Wrappers -->
     <div id="page" class="container-fluid" style="display:none;">
       <div id="header">
         <div class="container">
           <div class="col-xs-4">
-            <h1>Classification Overview</h1>
+            <h1>Classification Overview<span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Show documentation" v-on:click="showDocumentationWrapper()"></span></h1>
 
               <div
                   v-show="(mode == 'stream' || mode == 'pool')" 
@@ -423,11 +442,11 @@
                 class="outputText"
                 >The top-most ranked classifier says it's <strong>{{getOutputClass()}}</strong>. 
                 <span
-                  v-show="(getMode() != 'test' && classifiersUnsure && !forcePrediction)"
+                  v-show="(getMode() != 'test' && classifiersUnsure && (getMode() != 'single' || !forcePrediction)"
                 >Because one or more module is uncertain about its output, you can classify the sample manually.</span>
               </p>
             <h2 v-on:click="manualClassification()"
-                v-show="(getMode() != 'test' && state == 'showResult' && classifiersUnsure && !forcePrediction)"
+                v-show="(getMode() != 'test' && state == 'showResult' && classifiersUnsure && (getMode() != 'single' || !forcePrediction)"
                 :class="(manualClass == '?' ? 'uncertain' : '')" 
                 :style="{top: 'calc( 35px * (-1 + '+getClassifierAmount()+') * 75px)'}"
                 :title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass )}}</h2>
@@ -457,14 +476,12 @@
       </footer>
     </div><!-- /container-fluid -->
     <script type="text/javascript" src="scripts/lodash.min.js"></script>
+    <script type="text/javascript" src="scripts/showdown.min.js"></script>
     <script type="text/javascript" src="scripts/vue.min.js"></script>
-    <script
-    src="scripts/jquery-3.1.1.min.js"
-    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-    crossorigin="anonymous"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    <script src="scripts/d3.v3.min.js"></script>
-    <script src="scripts/radarChart.js"></script>
+    <script type="text/javascript" src="scripts/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="scripts/d3.v3.min.js"></script>
+    <script type="text/javascript" src="scripts/radarChart.js"></script>
     <script type="text/javascript" src="scripts/frontend.js"></script>
   </body>
 </html>

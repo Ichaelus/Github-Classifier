@@ -28,10 +28,13 @@ let stateView, inputView, classifierView, outputView, wrapperView,
     current: {description: "", yield: 0, active: false, uncertainty: 0, confusionMatrix: {}, accuracy: {}, probability: {}},
     distribution: "Test", // Test, Train
     distributionArray: [], // [{class, count},..]
+    documentationContent: "",
+    documentations: [], // ["filename1",..]
     expression: "neutral",
     exprState: "",
     thinking: false,
     savePoints: {}, // fileName: {yield, accuracy: [{class, val}, ..]}
+    selectedDocumentation: "Chose documentation",
     selectedPoint: "",
     numStats: {},
     strStats: {},
@@ -232,7 +235,12 @@ function initVue(){
           $('#stats_wrapper').css("margin-top", window.scrollY - 50);
           $('#stats_wrapper').fadeIn();
         });
-      }
+      },
+      showDocumentationWrapper: function(){
+        $('.overlay_blur').fadeIn();
+        $('#docs_wrapper').css("margin-top", window.scrollY - 50);
+        $('#docs_wrapper').fadeIn();
+      },
     }
   });
   stateView.getFormulas();
@@ -587,6 +595,19 @@ function initVue(){
       changeDistribution: function(dist){
         Vue.set(wrapperData, "distribution", dist);
         wrapperView.getDistributionArray();
+      },
+      changeDocumentation: function(docName){
+        Vue.set(wrapperData, "selectedDocumentation", docName);
+        $.get("/docs/"+docName, function(data){
+          let converter = new showdown.Converter();
+          Vue.set(wrapperData, "documentationContent", converter.makeHtml(data));
+        });
+      },
+      getDocumentationNames: function(){
+        $.get("/get/documentationNames", function(data){
+          Vue.set(wrapperData, "documentations", JSON.parse(data));
+          console.log(JSON.parse(data));
+        });
       }
     },
     computed: {
@@ -596,6 +617,7 @@ function initVue(){
     }
   });
   wrapperView.getDistributionArray();
+  wrapperView.getDocumentationNames();
 }
 // name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
 
