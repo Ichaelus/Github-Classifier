@@ -55,10 +55,10 @@ classifiers = []
 #classifiers.append(bernoullinbreadmeonly(readmeCorpus))
 #classifiers.append(nnall(readmeCorpus + descriptionCorpus))
 #classifiers.append(filenamesonlysvc(filenameCorpus))
-#classifiers.append(nnmetaonly())
+classifiers.append(nnmetaonly())
 #classifiers.append(metaonlyrandomforest())
 #classifiers.append(metaonlysvc())
-#classifiers.append(metaonlyadaboost())
+classifiers.append(metaonlyadaboost())
 classifiers.append(reponamelstm())
 #classifiers.append(readmelstm())
 

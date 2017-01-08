@@ -289,6 +289,9 @@ function initVue(){
       shortDesc: function(){
         return add3Dots(inoutData.repo.description, 200);
       },
+      mode: function(){
+        return stateData.mode;
+      }
     }
   });
 
@@ -371,6 +374,9 @@ function initVue(){
         if(Object.keys(inoutData.classifiers).length > 0)
           _measures = _measures.concat(Object.keys(inoutData.classifiers[Object.keys(inoutData.classifiers)[0]].confusionMatrix.measures));
         return _measures;
+      },
+      mode: function(){
+        return stateData.mode;
       }
     }
   });
@@ -436,6 +442,9 @@ function initVue(){
       },
       forcePrediction: function(){
         return stateView.forcePrediction;
+      },
+      mode: function(){
+        return stateData.mode;
       }
     }
   });
@@ -614,17 +623,15 @@ function initVue(){
       topMostName: function(){
         return classifierView.orderedClassifiers[0].name;
       },
+      mode: function(){
+        return stateData.mode;
+      }
     }
   });
   wrapperView.getDistributionArray();
   wrapperView.getDocumentationNames();
 }
 // name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
-
-
-function getMode(){
-  return stateData.mode;
-}
 
 function wait_async(time){
   return new Promise(function(resolve, reject){

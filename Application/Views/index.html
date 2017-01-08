@@ -58,7 +58,7 @@
           <hr>
 
             <div 
-              v-show="(getMode() == 'test')"
+              v-show="(mode == 'test')"
               :class="'trainCount '">
               <h4>
                 <div class="btn-group">
@@ -325,7 +325,7 @@
                 v-show="state != 'showResult' && state != 'empty'"
             >{{state}}</h4>
             <div 
-                v-show="(getMode() != 'test' && state == 'showResult')"
+                v-show="(mode != 'test' && state == 'showResult')"
                 :class="'repoDetails '">
               <h4 class="subtitle"><small><a target="_blank" :href="'https://github.com/' + repo.author">{{repo.author}}</a> / </small><a target="_blank" :href="'https://github.com/' + repo.author + '/' + repo.repoName">{{repo.repoName}}</a></h4>
               <p>{{shortDesc}}</p>
@@ -342,7 +342,7 @@
               </table>
             </div>
             <div 
-              v-show="(getMode() == 'test')"
+              v-show="(mode == 'test')"
               :class="'trainCount '">
               <h4 class="subtitle">
                 Test sample distribution</h4>
@@ -382,14 +382,14 @@
                   </div>
                   <div class="arrow">=&gt;</div>
                   <div
-                      v-show="(getMode() == 'test')"  
+                      v-show="(mode == 'test')"  
                       :class="'result_vector'">
                       <div v-for="(r, i) in c.accuracy" :class="'v ' + (getMax(c.name)  == r.val ? 'max' : '')">
                         <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
                       </div>
                   </div>
                   <div
-                      v-show="(getMode() != 'test')" 
+                      v-show="(mode != 'test')" 
                       :class="'result_vector ' + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'uncertain ' : 'certain ') : ' ')">
                       <div v-for="(r, i) in c.probability" :class="'v ' + (getMax(c.name)  == r.val ? 'max' : '')">
                         <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
@@ -404,9 +404,8 @@
               </div><!-- /classifiers -->
             </div>
           </div>
-
           <div class="col-xs-3" id="output"><!-- output -->
-             <div v-show="getMode() == 'test'">
+             <div v-show="mode == 'test'">
                <h4 class="subtitle">Top-most ranked classifier performance</h4>
               <p class="outputText">Final classifications are being made by <strong>{{topMostName}}</strong>. Its measures are listed below</p>
               <table class="table table-bordered table-striped measure_table"> 
@@ -427,7 +426,7 @@
                 </tbody>
               </table>
             </div>
-            <div v-show="getMode() != 'test' && state == 'showResult'">
+            <div v-show="(mode != 'test' && state == 'showResult')">
               <h4 class="subtitle">Most predicted classes</h4>
               <table class="outputDistr table table-bordered table-striped measure_table">
                 <colgroup><col class="col-xs-2"> <col class="col-xs-10"></colgroup>
@@ -438,20 +437,20 @@
               </table>
             </div>
             <p 
-                v-show="(getMode() != 'test' && state == 'showResult')"
+                v-show="(mode != 'test' && state == 'showResult')"
                 class="outputText"
                 >The top-most ranked classifier says it's <strong>{{getOutputClass()}}</strong>. 
                 <span
-                  v-show="(getMode() != 'test' && classifiersUnsure && (getMode() != 'single' || !forcePrediction)"
+                  v-show="(mode != 'test' && classifiersUnsure && (mode != 'single' || !forcePrediction) )"
                 >Because one or more module is uncertain about its output, you can classify the sample manually.</span>
-              </p>
+            </p>
             <h2 v-on:click="manualClassification()"
-                v-show="(getMode() != 'test' && state == 'showResult' && classifiersUnsure && (getMode() != 'single' || !forcePrediction)"
+                v-show="(mode != 'test' && state == 'showResult' && classifiersUnsure && (mode != 'single' || !forcePrediction))"
                 :class="(manualClass == '?' ? 'uncertain' : '')" 
                 :style="{top: 'calc( 35px * (-1 + '+getClassifierAmount()+') * 75px)'}"
                 :title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass )}}</h2>
             <!--This would display an overlapped radar chart of classifier accuracies
-                <div v-show="(getMode() == 'test')"
+                <div v-show="(mode == 'test')"
                  :style="{top: 'calc( -60px + (-1 + '+getClassifierAmount()+') * 75px)'}"
                  id="testOuputChart"></div>-->
           </div><!-- /output -->
