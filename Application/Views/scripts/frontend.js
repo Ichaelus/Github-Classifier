@@ -252,13 +252,13 @@ function initVue(){
       getQuote: function(){
         switch(stateData.mode){
           case "pool":
-            return "<strong>Pool Based Active Learning</strong> selects the sample with the highest uncerainty out of a pool of unlabeled data as input. The uncertainty is being calculated (in turns) by a single classifier, marked in blue. There are currently <strong>"+stateData.poolSize+"</strong> samples in this pool.";
+            return "<strong>Pool Based Active Learning</strong> selects the sample with the highest uncertainty out of a pool of unlabeled data as input. The uncertainty is being calculated (in turns) by a single classifier, marked in blue. There are currently <strong>"+stateData.poolSize+"</strong> samples in this pool.";
             break;
           case "test":
             return "The <strong>testing option</strong> runs each classifier against a predefined set of test samples, thus updating the confusion matrix and accuracy per class.";
             break;
           case "single":
-            return "The <strong>single sample prediction</strong> method is used to test the outcome of the classifiers for specified a repository (identified by it's URL).";
+            return "The <strong>single sample prediction</strong> method is used to test the outcome of the classifiers for specified a repository (identified by its URL).";
             break;
           default:
           case "stream": 

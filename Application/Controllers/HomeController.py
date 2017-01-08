@@ -82,7 +82,7 @@ def getBSf3(filename):
 
 @homebottle.get('/docs/<filename:re:.*\.md>')
 def getDocumentation(filename):
-	docsPath = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../'), '../Dokumentation')
+	docsPath = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../'), '../Documentation')
 	return static_file(filename, root=docsPath, mimetype='text/plain')
 
 @homebottle.get('/get/<key>')
@@ -228,7 +228,7 @@ def api(key):
 		return Models.JSONCommunication.toJson(DC.getDistributionArray(getQueryValue("table")))
 
 	elif(key == "documentationNames"):
-		docsPath = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../'), '../Dokumentation')
+		docsPath = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../'), '../Documentation')
 		docfiles = [f for f in os.listdir(docsPath) if os.path.isfile(os.path.join(docsPath, f)) and f.endswith(".md")]
 		return Models.JSONCommunication.toJson(docfiles)
 
