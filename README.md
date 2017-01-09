@@ -21,9 +21,9 @@
 * Liste aller Repositories ab Id:x https://api.github.com/repositories?since=<x>
   * Auswahl an Repos mit Watch + Star + Fork > 100 (e.g.)
 
-## Classification Scheme
+## Component Correlation
 
-<img src="https://github.com/Ichaelus/GithubClassificator/raw/master/classificator-skizze.png">
+<img src="https://raw.githubusercontent.com/Ichaelus/Github-Classifier/master/Documentation/component_correlation.png">
 
 ## Mögliche Classifier
 
