@@ -395,7 +395,7 @@
                     {{originalMeasureName(selectedMeasure)}} <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
-                    <li v-for="measure in measures" v-on:click="changeMeasure(measure)"><span data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(measure)">originalMeasureName(measure)}}</span></li>
+                    <li v-for="measure in measures" v-on:click="changeMeasure(measure)"><span data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(measure)">{{originalMeasureName(measure)}}</span></li>
                   </ul>
                 </div>
               </h4>
