@@ -1,8 +1,5 @@
+/* Note: This is only a draft, but not in use yet.*/
 {
 	"backend": "http://67.209.116.156/",
-	"classes": ["DEV", "HW", "EDU", "DOCS", "WEB", "DATA", "OTHER"],
-	"database_server": "localhost",
-	"database_name": "u51019db1",
-	"database_user": "u51019db1",
-	"database_password": "c99t6%3NSjte7eaub8iw7y1a!"
+	"classes": ["DEV", "HW", "EDU", "DOCS", "WEB", "DATA", "OTHER"]
 }

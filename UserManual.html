@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!--
+    Copyright 2017
+    Code by Michael Leimstädtner
+    -->
+    <meta charset="utf-8"/>
+    <title>User Manual</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta Name="description" content=""/>
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="Application/Views/bootstrap/css/bootstrap.min.css"></link>
+    <style type="text/css">
+      /* Inlining is bad.. bad this is a single file without folder structure */
+      #main, img{
+        max-width: 100%;
+      }
+      #header{
+        background: #F7F7F7;
+        border-bottom: 2px dashed #0000004d;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="page">
+      <div class="row" id="header">
+        <h1>User Manual
+          <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {{selectedFile}} <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="f in fileList" v-on:click="changeFile(f)"><a href="#">{{f}}</a></li>
+            </ul>
+          </div>
+        </h1>
+        Use this page to introduce yourself to the GitHub classification tool. Documentation files can be visualised by changing the selected dropdown element.
+        <br><br>
+      </div>
+      <div class="row" id="main">
+        <div v-html="markdown"></div>
+      </div>
+    </div>
+    <script type="text/javascript" src="Application/Views/scripts/vue.min.js"></script>
+    <script src="Application/Views/scripts/jquery-3.1.1.min.js"></script>
+    <script src="Application/Views/bootstrap/js/bootstrap.min.js"></script>
+    <script src="Application/Views/scripts/showdown.min.js"></script>
+
+    <script type="text/javascript">
+      /* Inlining is bad.. bad this is a single file without folder structure */
+      let data = {
+        markdown: "",
+        selectedFile: "README.md",
+        fileList: ["README.md", "Documentation/Installation Manual.md"]
+      };
+      let View = new Vue({
+        el: "#page",
+        data: data,
+        methods: {
+          changeFile: function(fileName){
+            Vue.set(data, "selectedFile", fileName);
+            $.get(fileName, function(md){
+              let converter = new showdown.Converter();
+              Vue.set(data, "markdown", converter.makeHtml(md).replace(/<table>/g, "<table class='table'>"));
+            }, "text");
+          }
+        }
+      });
+      View.changeFile(data.selectedFile);
+    </script>
+  </body>
+</html>

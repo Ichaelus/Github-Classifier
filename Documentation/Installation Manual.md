@@ -1,9 +1,19 @@
+# Installation Manual
+
+## Requirements
+
+* Python 2.7 64bit 
+* pip (module manager)
+* Firefox >= 50
+* Screen size >= (1280px x 600px)
+* RAM >= 4GB
+
 ## Notes
 
 This guide can be followed to get the frontend running on your local system. If you want to run the backend locally as well, please refer to the section `VirtualBox`. Though the recommended way is to keep the system in its usual state.
 
 Please make sure that the working / installation **directory** of python and the g++ compiler do **not contain special characters** such as umlauts.
-Keep in mind that installations with pip require **superuser rights**.
+Keep in mind that installations with pip require **super user rights**.
 
 ## Modules
 
@@ -27,11 +37,11 @@ _Installed with the command `pip install xxx`_
 
 * [Microsoft Visual C++ Compiler for Python 2.7](https://www.microsoft.com/en-us/download/details.aspx?id=44266)
 * [A 64bit g++ compiler](http://deeplearning.net/software/theano/install_windows.html#gcc)
-* Keras has to be configured to use theano (instead of tensorflow). In Unix systems, this can be changed at `~/.keras/keras.json`.
+* Keras has to be configured to use theano (instead of tensorflow). In UNIX systems, this can be changed at `~/.keras/keras.json`.
 
 ## When everything is said and done
 
-Now that every library and dependency is installed, you can open the **command shell** in the folder `Application`. Type `python start.py` and wait until the GUI is being openend in a new Tab in Firefox (this may take a couple of minutes). You can learn how to use the GUI in a seperate documentation file.
+Now that every library and dependency is installed, you can open the **command shell** in the folder `Application`. Type `python start.py` and wait until the GUI is being opened in a new Tab in Firefox (this may take a couple of minutes). You can learn how to use the GUI in a separate documentation file.
 
 _Note: If there are still packages missing that do not show up in the list, please install them via pip._
 

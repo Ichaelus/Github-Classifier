@@ -20,9 +20,9 @@ def homesetclassifiercollection(classifiercollection):
 def home():
     return static_file("index.html", root = abspath, mimetype='text/html')
 
-@homebottle.get('/user_classification.html')
-def home_c():
-    return static_file("user_classification.html", root = abspath, mimetype='text/html')
+@homebottle.get('/<filename:re:.*\.html>')
+def home_c(filename):
+    return static_file(filename, root = abspath, mimetype='text/html')
 
 @homebottle.get('/favicon.ico')
 def home_fi():
