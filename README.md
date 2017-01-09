@@ -23,7 +23,7 @@
 
 ## Component Correlation
 
-<img src="https://raw.githubusercontent.com/Ichaelus/Github-Classifier/master/Documentation/component_correlation.png">
+<img src="https://github.com/Ichaelus/Github-Classifier/raw/master/Documentation/component_correlation.png">
 
 ## Mögliche Classifier
 
