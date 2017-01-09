@@ -169,6 +169,27 @@ def getFilenames(sample):
         """
     return filenames
 
+def getFiletypes(sample):
+    filetypes = []
+    filenames = getFilenames(sample)
+    for filename in filenames.split(' '):
+        if '.' in filename:
+            filetypes.append(filename.split('.')[-1])
+    return list(set(filetypes))
+
+def getFiletypesString(sample):
+    str = ""
+    for filetype in getFiletypes(sample):
+        str += filetype + ' '
+    return str
+
+
+
+def getFoldernames(sample):
+    """Returns string containing all foldernames"""
+    foldernames = sample['folders']
+    return foldernames
+
 
 def getFileNameAndAuthorString(sample):
     assert  'files' in sample and 'author' in sample, "Data vector incomplete"

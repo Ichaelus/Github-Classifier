@@ -24,6 +24,7 @@ from Models.ClassificationModules.readmelstm import readmelstm
 from Models.ClassificationModules.nnall import nnall
 from Models.ClassificationModules.knnreadmeonly import knnreadmeonly
 from Models.ClassificationModules.svcfilenamesonly import filenamesonlysvc
+from Models.ClassificationModules.lrstacking import lrstacking
 import Models.DatabaseCommunication as DC
 
 print("Starting application..")
@@ -38,7 +39,7 @@ print 'Getting DB Data to be able to create vectorizers for classifiers that nee
 #descriptionCorpus = DC.getAllDescriptions()
 #readmeCorpus = DC.getAllReadmes()
 #filenameCorpus = DC.getAllFilenames()
-#descriptionCorpus, readmeCorpus, filenameCorpus = DC.getCorpi()
+descriptionCorpus, readmeCorpus, filenameCorpus, filetypeCorpus, foldernameCorpus = DC.getCorpi()
 
 #Initialize Classifiers
 print 'Creating and adding Classifiers to Classifier Collection:'
@@ -53,13 +54,14 @@ classifiers = []
 #classifiers.append(multinomialnbreadmeonly(readmeCorpus))
 #classifiers.append(bernoullinbdescriptiononly(descriptionCorpus))
 #classifiers.append(bernoullinbreadmeonly(readmeCorpus))
-#classifiers.append(nnall(readmeCorpus + descriptionCorpus))
+classifiers.append(nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus))
 #classifiers.append(filenamesonlysvc(filenameCorpus))
 classifiers.append(nnmetaonly())
 #classifiers.append(metaonlyrandomforest())
 #classifiers.append(metaonlysvc())
 classifiers.append(metaonlyadaboost())
 classifiers.append(reponamelstm())
+classifiers.append(lrstacking([nnmetaonly(), metaonlyadaboost(), reponamelstm()]))
 #classifiers.append(readmelstm())
 
 print 'Loading last checkpoint for classifiers if available:'

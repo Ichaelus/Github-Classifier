@@ -2,17 +2,17 @@
 # -*- coding: utf-8 -*-
 
 import base64
-from urllib2 import Request, urlopen, URLError
+from urllib2 import Request, urlopen, URLError, quote
 import json
+import ClassificationModules.FeatureProcessing as FP
 
 def api_call(keyString, filterString="", tableString="", limitString="", selector = "*"):
     """Get list of Repos-Data in json-format"""
     filterString = base64.b64encode(b'' + filterString)
     url = None
     data = None
-    url = 'http://67.209.116.156/ajax.php?key=api:' + keyString.decode("utf-8") + '&filter=' 
-    url += filterString.decode("utf-8") + '&table=' + tableString.decode("utf-8") + '&limit=' + limitString.decode("utf-8") + "&selector=" + selector.decode("utf-8")
-    print url
+    url = 'http://67.209.116.156/ajax.php?key=api:' + quote(keyString.decode("utf-8")) + '&filter=' 
+    url = url + quote(filterString.decode("utf-8") + '&table=' + tableString.decode("utf-8") + '&limit=' + limitString.decode("utf-8") + "&selector=" + selector.decode("utf-8"))
     request = Request(url)
     try:
         response = urlopen(request)
@@ -103,27 +103,39 @@ def getAllFilenames():
             corpus.append(rm)
     return corpus
 
+
+def getAllFiletypes():
+    tables = ['standard_train_samples', 'train', 'to_classify']
+    corpus = []
+    for table in tables:
+        data = api_call("all", tableString=table)
+        for sample in data:
+            corpus.append(FP.getFiletypesString(sample))
+    return corpus
+
 def getCorpi():
     # Same as above, but in one iteration
     tables = ['standard_train_samples', 'train', 'to_classify']
-    descriptionCorpus = []; readmeCorpus = []; filenameCorpus = []
+    descriptionCorpus = []; readmeCorpus = []; filenameCorpus = []; filetypeCorpus = []; foldernameCorpus = []
 
     for table in tables:
         data = api_call("all", tableString=table, selector = "readme, files, description")
         for sample in data:
-            rm = ""; fn = ""
+            rm = ""; fn = ""; fts = ""; fn = ""
             try:
                 rm = base64.b64decode(sample['readme'])
                 fn = sample['files']
+                fts = FP.getFiletypesString(sample)
+                fn = FP.getFoldernames(sample)
             except TypeError:
                 # If there was an error decoding the message, just ignore atm
                 pass
-
             descriptionCorpus.append(sample['description'])
             readmeCorpus.append(rm)
             filenameCorpus.append(fn)
-
-    return descriptionCorpus, readmeCorpus, filenameCorpus
+            filetypeCorpus.append(fts)
+            foldernameCorpus.append(fn)
+    return descriptionCorpus, readmeCorpus, filenameCorpus, filetypeCorpus, 
     
 def getInformationsForRepo(repolink):
     '''Nur dafür da wenn ein bestimmtes Repo klassifiziert werden soll dass noch nicht in DB ist'''

@@ -167,7 +167,7 @@
               <colgroup> <col class="col-xs-6"> <col class="col-xs-6"> </colgroup>
               <thead> <tr> <th>Measure</th> <th>Result</th> </tr> </thead>
               <tbody> 
-                <tr v-for="(val, m) in current.confusionMatrix.measures"> <td scope="row"> <code>{{m}}</code> </td> <td>{{parseInt(val * 10000)/10000}} %</td> </tr>
+                <tr v-for="(val, m) in current.confusionMatrix.measures"> <td scope="row"> <code>{{originalMeasureName(m)}}</code> </td> <td>{{parseInt(val * 10000)/10000}} %</td> </tr>
               </tbody>
             </table>
           </div>
@@ -362,10 +362,10 @@
               <h4 class="subtitle"> Order classifiers by 
                  <div class="btn-group">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {{selectedMeasure}} <span class="caret"></span>
+                    {{originalMeasureName(selectedMeasure)}} <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
-                    <li v-for="measure in measures" v-on:click="changeMeasure(measure)"><a data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(measure)" href="#">{{measure}}</a></li>
+                    <li v-for="measure in measures" v-on:click="changeMeasure(measure)"><a data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(measure)" href="#">{{originalMeasureName(measure)}}</a></li>
                   </ul>
                 </div>
               </h4>
@@ -374,7 +374,7 @@
                   <div :class="'classifier ' + (isAsking(c.name) ? 'asking' : '')">
                     <span class="name">{{c.name}}</span>
                     <div class="wrapper">
-                      <span data-toggle="tooltip" data-placement="top" :data-original-title="'Current ' + selectedMeasure" class="stats">{{getMeasure(c)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
+                      <span data-toggle="tooltip" data-placement="top" :data-original-title="'Current ' + originalMeasureName(selectedMeasure)" class="stats">{{getMeasure(c)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
                       <span data-toggle="tooltip" data-placement="top" title="Show classifier details" v-on:click="showInfo(c.name)" class="glyphicon glyphicon-info-sign"></span>
                       <span data-toggle="tooltip" data-placement="top" title="Enable classifier" v-on:click="switchState(c.name)" class="glyphicon glyphicon-ban-circle"></span>
                       <span data-toggle="tooltip" data-placement="top" title="Disable classifier" v-on:click="switchState(c.name)" class="glyphicon glyphicon-ok-circle"></span>
@@ -412,7 +412,7 @@
                 <colgroup> <col class="col-xs-8"> <col class="col-xs-4"> </colgroup>
                 <thead> <tr> <th>Measure</th> <th>Result</th> </tr> </thead>
                 <tbody> 
-                  <tr v-for="(val, m) in outputMeasures"> <td scope="row"> <code>{{m}}</code> </td> <td>{{parseInt(val * 100)/100}} %</td> </tr>
+                  <tr v-for="(val, m) in outputMeasures"> <td scope="row"> <code>{{originalMeasureName(m)}}</code> </td> <td>{{parseInt(val * 100)/100}} %</td> </tr>
                 </tbody>
               </table>
               <hr>

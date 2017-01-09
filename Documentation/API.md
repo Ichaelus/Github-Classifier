@@ -2,110 +2,118 @@
 
 ## Base url
 
-_Alle Abfragen werden via `GET` an den host `http://classifier.leimstaedtner.it/ajax.php` gesendet. Das Attribut `key` unterscheidet dann die gewünschte Grundmenge, `filter`, `limit` und `table` dienen zur Verfeinerung der Resultate._
+Queries with the need of database information are always sent via `GET` to the backend host, which is by default `http://67.209.116.156/ajax.php` (a small but stable database server). Services can be accessed with the attribute `key`, results can be refined using the additional attribute `filter`, `limit`. `selector` and `table`. The server response consists of a JSON object containing a Boolean `success` which determines the execution state and `data`, the query result.
 
-**Beispiel-Url:**
-`http://classifier.leimstaedtner.it/ajax.php?key=api:all&filter=Y2xhc3M9REVWfEhXLHN0YXJzPjM=`
+The backend host can be switched if every occurrence of the IP written above is being swapped, but database integrity must be guaranteed.
+
+**Sample-Query:**
+`http://67.209.116.156/ajax.php?key=api:all&table=train&limit=5`
+
+## Base Services
 
 ### ?key=api:all
 
-Gibt alle Datensätze der Tabelle `table` aus. (Attribute: `table`, `limit`(opt.), `filter` (opt.))
+Returns all rows of the table `table`. (Attributes: `table`, `limit`(opt.), `filter` (opt.), `selector` (opt.))
 
 ### ?key=api:train
 
-Gibt alle Datensätze der Tabelle train aus. (Attribute: `limit`(opt.), `filter` (opt.))
+Returns all rows of the table train. (Attributes: `limit`(opt.), `filter` (opt.), `selector` (opt.))
 
-### ?key=api:test
+Similar calls are possible for `api:train`,`api:test`,`api:unlabeled`,`api:to_classify`,`api:semi_supervised`,`api:standard_train_samples` and `api:standard_test_samples`.
 
-Gibt alle Datensätze der Tabelle test aus. (Attribute: `limit`(opt.), `filter` (opt.))
+## Additional Services
 
-### ?key=api:unlabeled
-
-Gibt alle Datensätze der Tabelle unlabeled aus. (Attribute: `limit`(opt.), `filter` (opt.))
-
-### ?key=api:to_classify
-
-Gibt alle Datensätze der Tabelle to_classify aus. (Attribute: `limit`(opt.), `filter` (opt.))
-
-### ?key=api:semi_supervised
-
-Gibt alle Datensätze der Tabelle semi_supervised aus. (Attribute: `limit`(opt.), `filter` (opt.))
-
-## Weitere Funktionen
-
-_Für viele der folgenden Funktionen kann ein Attribut `table` {train, test, unlabeled, to_classify, semi_supervised} bzw. das unten erläuterte `filter` Attribut gesetzt werden._
+_Attributes and its possibly states are being described in the following section._
 
 ### ?key=api:single
 
-Gibt einen zufälligen klassifizierten Datensatz zurück. (Attribute: `table`)
+Returns a random sample of the given `table`. (Attributes: `table`, `selector` (opt.))
 
 ### ?key=api:equal
 
-Gibt je Klasse gleich viele Datensätze zurück. (Attribute: `table`)
+Returns an equal amount of samples based on the class count of the given table. (Attributes: `table`)
 
 ### ?key=api:class
 
-Ein Shortcut for api:all mit entsprechenden Class Filter. (Attribute: `table`, `name`). Anwendung:
+Returns all samples of the given class `name`. (Attributes: `table`, `name`, `selector` (opt.)).
+
+Application:
 `/?key=api:class&name=CLASSNAME`
 
 ### ?key=api:count
 
-Liefert die Anzahl der betroffenen Datensätzen.(Attribute: `table`, `filter`)
+Returns the amount of rows affected by `table` and `filter`. (Attributes: `table`, `filter`)
 
 ### ?key=api:class-count
 
-Kombination der obigen. Liefert die Anzahl der Samples pro Klasse zurück.(Attribute: `table`, `filter`)
+Combination of the two above. Returns the a class-based row count. (Attributes: `table`, `filter`)
 
 ### ?key=api:tagger-class-count
 
-Liefert die Anzahl der Samples pro Klasse zurück, beschränkt auf einen angegebenen `tagger`. (Attribute: `table`, `tagger`)
-
-### ?key=api:generate_sample_url
-
-Gibt die API-Url eines **zufälligen** Github repositorys  zurück.
-
-`client_id` und `client_secret` können übergeben werden, ansonsten werden gespeicherte credentials verwendet.
-
-### ?key=api:generate_sample
-
-Diese Funktion ist vom Parameter `api-url` abhängig. Für das angegebene repository wird damit ein ungelabelter Datenbankeitnrag bzw. Klassifikationsvektor generiert und im JSON Format ausgegeben. Ist `api-url` leer oder nicht gesetzt, wird ein zufälliges sample generiert. Wird ein zweiter, auch optionaler, Paramter `class` übergeben, wird das sample direkt klassifiziert, ansonsten erhält es die Klasse `UNLABELED`.
-
-`client_id` und `client_secret` können übergeben werden, ansonsten werden gespeicherte credentials verwendet.
+Returns the class-based row count, limited to the given `tagger`. Used to see how many samples have been classified by a single person. (Attributes: `table`, `tagger`)
 
 ### ?key=api:move
 
-Verschiebt ein (durch Active learning als wertvoll befundenes) sample von der `from_table` in die `to_table` Tabelle. Als Identifier muss das Attribut `api-url` angegeben werden. Wird zudem `label` gesetzt, wird zugleich die Klasse des repositories verändert. (Attribute: `from_table`, `to_table`, `api-url`, `label` (opt.))
+Moves a repository, taken from the pool `from_table` to the pool `to_table`. If `label` is set, the label of the sample will be changed.
+The attribute `api-url` must be passed as an identifier. (Attributes: `from_table`, `to_table`, `api_url`, `label` (opt.))
+
+## Services dependent on the GitHub API
+
+### ?key=api:generate_sample_url
+
+Generates and returns the API-url of a **random** GitHub repository.
+
+Attributes `client_id` and `client_secret` can (but mustn't) be passed in order ot be used by the server. If they aren't, hardcoded credentials will be used with their limitation of 5000 API calls per minute.
+
+### ?key=api:generate_sample
+
+This service depends on the parameter `api_url`. Feature extraction and accordingly data dumping to the database is being made for the given repository. The unlabeled row is being saved and returned to the client.
+If the parameter `api-url` is empty, a random sample is being generated. The attribute `class` (opt.) leads to an instant classification of the sample, if empty the class `UNLABELED` is being used.
+
+Attributes `client_id` and `client_secret` can (but mustn't) be passed in order ot be used by the server.
 
 
-## Deprecated
+## Attributes
 
-### ?key=api:old
+The most essential attribute is `table`, its value defines the database table on which the query is being executed. Possible values are:
 
-Gibt alle **alten** Datensätze aus, d.h. jene mit beschränkt vielen Features.
+<table>
+	<thead>
+		<tr>
+			<th>Table Name</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr><td>unlabeled</td></tr>
+		<tr><td>train</td></tr>
+		<tr><td>test</td></tr>
+		<tr><td>to_classify</td></tr>
+		<tr><td>standard_train_samples</td></tr>
+		<tr><td>standard_test_samples</td></tr>
+	</tbody>
+</table>
 
-### ?key=api:to-reclassify
+To keep queries efficient, the attribute `selector` determines which columns should be returned. If empty, '*' will be used.
 
-Gibt einen Datensatz zurück, der in der alten Datenmenge vorhanden ist, aber noch nicht in der neuen.
+Example: `selector=class, api_url`
 
+SQL equivalent: `SELECT class, api_url FROM ...`
 
-## Filtern
+The parameter `limit` defines the maximum amount of result data samples, which are being chosen randomly.
 
-Der Paramter `limit` beschränkt das Resultat auf die angegebene Menge an Datensätzen, diese werden zufällig gewählt.
+The attribute `filter` can be set to (if supported by the service) a **base 64 encoded** array structured like `[attr1=val1,..]`. Operators available are `=`, `<`, `<=`, `>` and `>=`. Pairs of attribute specific filters can be separated either with `,`, which results in an **AND** conjunction or with `|` which forms an **OR** disjunction. (In our case, OR binds stronger(!) than AND).
 
-Das `filter` Attribut kann, wenn gesetzt, mit einem **base 64 encodierten** Array der Form [attribut1=wert1,...] gefüllt werden. Neben dem Operator `=` können, wenn sinnvoll, auch die Operatoren `<, <=, >, >=` verwendet werden.
-Werden verschiedene Attributfilter mit einem `,` getrennt, resultiert das in eine **AND** Verknüpfung. Will man hingegen eine **OR** Verknüfung, reicht es ein `|` Symbol anstelle des Kommas zu verwenden. (OR bindet hier stärker(!) als AND).
-
-**Beispiel**
+**Example**
 ```javascript 
 btoa("class=DEV|HW,stars>3");
 ```
-erzeugt den Filter-Wert der obigen Beispiel-Url. Das SQL Äquivalent ist:
+generates a possible `filter` value (in JS). The SQL equivalent is:
 
 ```sql
 SELECT ... WHERE  ( `class` = 'DEV' OR `class` = 'HW' ) AND  ( `stars` > '3' )
 ```
 
-Mögliche Filterattribute:
+Possible filter attributes (Or: the general table structure):
 <table>
 	<thead>
 		<tr>
