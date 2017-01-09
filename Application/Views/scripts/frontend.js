@@ -342,14 +342,14 @@ function initVue(){
       },
       getMeasureDescription: function(measure){
         let descriptions = {"Preordered": "Internal order not sorted by any measure",
-                            "Precision mu": "Measure",
-                            "Fscore mu": "Measure",
-                            "Error Rate": "Measure",
-                            "Recall M": "Measure",
-                            "Average Accuracy": "Measure",
-                            "Recall mu": "Measure",
-                            "Fscore M": "Measure",
-                            "Precision M": "Measure"};
+                            "Precision mu": "Agreement of the data class labels with those of a classifiers if calculated from sums of per-text decisions",
+                            "Fscore mu": "Relations between data’s positive labels and those given by a classifier based on sums of per-text decisions",
+                            "Error Rate": "The average per-class classification error",
+                            "Recall M": "An average per-class effectiveness of a classifier to identify class labels",
+                            "Average Accuracy": "The average per-class effectiveness of a classifier",
+                            "Recall mu": "Effectiveness of a classifier to identify class labels if calculated from sums of per-text decisions",
+                            "Fscore M": "Relations between data’s positive labels and those given by a classifier based on a per-class average",
+                            "Precision M": "An average per-class agreement of the data class labels with those of a classifiers"};
         if(typeof(descriptions[measure]) !== "undefined")
           return descriptions[measure];
         return "";
@@ -609,7 +609,7 @@ function initVue(){
         Vue.set(wrapperData, "selectedDocumentation", docName);
         $.get("/docs/"+docName, function(data){
           let converter = new showdown.Converter();
-          Vue.set(wrapperData, "documentationContent", converter.makeHtml(data));
+          Vue.set(wrapperData, "documentationContent", converter.makeHtml(data).replace(/<table>/g, "<table class='table'>"));
         });
       },
       getDocumentationNames: function(){
@@ -669,6 +669,10 @@ function convertToApiLink(repoLink){
   }else{
     throw new Error("RepoLink invalid");
   }
+}
+
+function originalMeasureName(m){
+  return m.replace(" mu", " μ");
 }
 
 function accuracyToGraphData(res){

@@ -2,9 +2,9 @@
 
 ## Base url
 
-_Queries with the need of database information are always sent via `GET` to the backend host, which is by default `http://67.209.116.156/ajax.php` (a small but stable database server). Services can be accessed with the attribute `key`, results can be refined using the additional attribute `filter`, `limit`. `selector` and `table`. The server response consists of a JSON object containing a boolean `success` which determines the execution state and `data`, the query result.
+Queries with the need of database information are always sent via `GET` to the backend host, which is by default `http://67.209.116.156/ajax.php` (a small but stable database server). Services can be accessed with the attribute `key`, results can be refined using the additional attribute `filter`, `limit`. `selector` and `table`. The server response consists of a JSON object containing a Boolean `success` which determines the execution state and `data`, the query result.
 
-THe backend host can be switched if every occurence of the IP written above is being swapped, but database integrity must be guaranteed._
+The backend host can be switched if every occurrence of the IP written above is being swapped, but database integrity must be guaranteed.
 
 **Sample-Query:**
 `http://67.209.116.156/ajax.php?key=api:all&table=train&limit=5`
@@ -13,13 +13,13 @@ THe backend host can be switched if every occurence of the IP written above is b
 
 ### ?key=api:all
 
-Returns all rows of the table `table`. (attributes: `table`, `limit`(opt.), `filter` (opt.), `selector` (opt.))
+Returns all rows of the table `table`. (Attributes: `table`, `limit`(opt.), `filter` (opt.), `selector` (opt.))
 
 ### ?key=api:train
 
-Returns all rows of the table train. (attributes: `limit`(opt.), `filter` (opt.), `selector` (opt.))
+Returns all rows of the table train. (Attributes: `limit`(opt.), `filter` (opt.), `selector` (opt.))
 
-Similar calls are possibily for `api:train`,`api:test`,`api:unlabeled`,`api:to_classify`,`api:semi_supervised`,`api:standard_train_samples` and `api:standard_test_samples`.
+Similar calls are possible for `api:train`,`api:test`,`api:unlabeled`,`api:to_classify`,`api:semi_supervised`,`api:standard_train_samples` and `api:standard_test_samples`.
 
 ## Additional Services
 
@@ -27,37 +27,37 @@ _Attributes and its possibly states are being described in the following section
 
 ### ?key=api:single
 
-Returns a random sample of the given `table`. (attributes: `table`. `selector` (opt.))
+Returns a random sample of the given `table`. (Attributes: `table`, `selector` (opt.))
 
 ### ?key=api:equal
 
-Returns an equal amount of samples based on the class count of the given table. (attributes: `table`)
+Returns an equal amount of samples based on the class count of the given table. (Attributes: `table`)
 
 ### ?key=api:class
 
-Returns all samples of the given class `name`. (attributes: `table`, `name`, `selector` (opt.)).
+Returns all samples of the given class `name`. (Attributes: `table`, `name`, `selector` (opt.)).
 
 Application:
 `/?key=api:class&name=CLASSNAME`
 
 ### ?key=api:count
 
-Returns the amount of rows affected by `table` and `filter`. (attributes: `table`, `filter`)
+Returns the amount of rows affected by `table` and `filter`. (Attributes: `table`, `filter`)
 
 ### ?key=api:class-count
 
-Combination of the two above. Returns the a class-based row count. (attributes: `table`, `filter`)
+Combination of the two above. Returns the a class-based row count. (Attributes: `table`, `filter`)
 
 ### ?key=api:tagger-class-count
 
-Returns the a class-based row count, limitated to the given `tagger`. Used to see how many samples have been classified by a single person. (attributes: `table`, `tagger`)
+Returns the class-based row count, limited to the given `tagger`. Used to see how many samples have been classified by a single person. (Attributes: `table`, `tagger`)
 
 ### ?key=api:move
 
 Moves a repository, taken from the pool `from_table` to the pool `to_table`. If `label` is set, the label of the sample will be changed.
-The attribute `api-url` must be passed as an identifier. (attributes: `from_table`, `to_table`, `api_url`, `label` (opt.))
+The attribute `api-url` must be passed as an identifier. (Attributes: `from_table`, `to_table`, `api_url`, `label` (opt.))
 
-## Services dependend on the GitHub API
+## Services dependent on the GitHub API
 
 ### ?key=api:generate_sample_url
 
@@ -93,15 +93,15 @@ The most essential attribute is `table`, its value defines the database table on
 	</tbody>
 </table>
 
-To keep queries efficient, the attribute `selector` determines which columns should be returned. If emty, '*' will be used.
+To keep queries efficient, the attribute `selector` determines which columns should be returned. If empty, '*' will be used.
 
 Example: `selector=class, api_url`
 
 SQL equivalent: `SELECT class, api_url FROM ...`
 
-The paramter `limit` defines the maximum amount of result data samples, which are being chosen randomly.
+The parameter `limit` defines the maximum amount of result data samples, which are being chosen randomly.
 
-The attribute `filter` can be set to (if supported by the service) a **base 64 encoded** array structured like `[attr1=val1,..]`. Operators available are `=`, `<`, `<=`, `>` and `>=`. Pairs of attribute specific filters can be seperated either with `,`, which results in an **AND** conjunction or with `|` which forms an **OR** disjunction. (In our case, OR binds stronger(!) than AND).
+The attribute `filter` can be set to (if supported by the service) a **base 64 encoded** array structured like `[attr1=val1,..]`. Operators available are `=`, `<`, `<=`, `>` and `>=`. Pairs of attribute specific filters can be separated either with `,`, which results in an **AND** conjunction or with `|` which forms an **OR** disjunction. (In our case, OR binds stronger(!) than AND).
 
 **Example**
 ```javascript 
