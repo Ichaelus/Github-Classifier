@@ -371,7 +371,8 @@
               </h4>
               <div id="classifiers">
                 <div v-for="c in orderedClassifiers" :class="'classifier_row' + (c.active ? '' : ' inactive') ">
-                  <div :class="'classifier ' + (isAsking(c.name) ? 'asking' : '')">
+                  <div  :class="'classifier ' + (isAsking(c.name) ? 'asking' : '')"
+                        :title="(isAsking(c.name) ? 'This module selected this sample because of a high uncertainty.' : '')">
                     <span class="name">{{c.name}}</span>
                     <div class="wrapper">
                       <span data-toggle="tooltip" data-placement="top" :data-original-title="'Current ' + originalMeasureName(selectedMeasure)" class="stats">{{getMeasure(c)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
