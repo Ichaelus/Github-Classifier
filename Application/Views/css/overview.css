@@ -47,6 +47,9 @@ footer{
   margin-top: 25px;
   background: #F6F6F6;
 }
+footer .member{
+  cursor: pointer;
+}
 .input-group{
   margin-bottom: 5px;
 }
@@ -177,6 +180,9 @@ button.control {
 }
 .wrapper .glyphicon:hover {
   color: #719EED;
+}
+.asking .wrapper .glyphicon:hover {
+  color: white;
 }
 .classifier{
   display: inline-block;
@@ -529,4 +535,32 @@ button.control {
   border-top: 1px dashed #00000080;
   vertical-align: middle;
   padding-top: 15px;
+}
+.portrait{
+  height: 200px;
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 0 30px;
+  border: 1px solid black;
+  opacity: .3;
+  cursor: pointer;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.portrait:hover, .portrait.selected{
+  opacity: 1;
+}
+.defaultCursor{
+  cursor: default;
+}
+.dropdown-menu > li > span{
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: normal;
+  line-height: 1.42857143;
+  color: #333;
+  white-space: nowrap;
+  cursor: pointer;
 }

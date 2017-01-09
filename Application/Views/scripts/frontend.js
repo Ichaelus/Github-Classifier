@@ -1,5 +1,5 @@
 console.log("Frontend started..");
-let stateView, inputView, classifierView, outputView, wrapperView,
+let stateView, inputView, classifierView, outputView, wrapperView, footerView,
 	stateData = {
 		action: "halt",
     forcePrediction: true,
@@ -24,6 +24,7 @@ let stateView, inputView, classifierView, outputView, wrapperView,
   },
   wrapperData = {
     // Data used by the wrapper shown when displaying the detailed page
+    activeMember: "andreas",
     currentName: "",
     current: {description: "", yield: 0, active: false, uncertainty: 0, confusionMatrix: {}, accuracy: {}, probability: {}},
     distribution: "Test", // Test, Train
@@ -35,10 +36,37 @@ let stateView, inputView, classifierView, outputView, wrapperView,
     thinking: false,
     savePoints: {}, // fileName: {yield, accuracy: [{class, val}, ..]}
     selectedDocumentation: "Chose documentation",
-    selectedPoint: "",
+    selectedPoint: "Version",
     numStats: {},
     strStats: {},
-		id: 0
+    id: 0
+  },
+  footerData = {
+    andreas: {
+      degree: "Computer Science and Multimedia Computing BSC",
+      expertise: "",
+      name: "Andreas Grafberger",
+      term: "3."
+    },
+    martin: {
+      degree: "Computer Science and Mathematics BSC",
+      expertise: "",
+      name: "Martin Keßler",
+      term: "5."
+    },
+    michael: {
+      degree: "Computer Science and Multimedia Computing BSC",
+      expertise: "Web stack, Frontend development and server maintenance",
+      name: "Michael Leimstädtner",
+      term: "5."
+    },
+    stefan:{
+      degree: "Computer Science and Mathematics BSC",
+      expertise: "",
+      name: "Stefan Grafberger",
+      term: "5."
+    }
+
   };
 
 try{
@@ -187,9 +215,7 @@ function initVue(){
         }
       },
       showListPrediction: function(){
-        $('.overlay_blur').fadeIn();
-        $('#predictionList_wrapper').css("margin-top", window.scrollY - 50);
-        $('#predictionList_wrapper').fadeIn();
+        showWrapper("#predictionList_wrapper");
       },
       startTest: function(){
         Vue.set(inoutData, "state", "Testing..");
@@ -231,16 +257,12 @@ function initVue(){
           strStats = yield jQGetPromise("/get/stats?table=unlabeled&string_attrs=true", "json");
           Vue.set(wrapperData, "numStats", numStats);
           Vue.set(wrapperData, "strStats", strStats);
-          $('.overlay_blur').fadeIn();
-          $('#stats_wrapper').css("margin-top", window.scrollY - 50);
-          $('#stats_wrapper').fadeIn();
+          showWrapper('#stats_wrapper');
         });
       },
       showDocumentationWrapper: function(){
-        $('.overlay_blur').fadeIn();
-        $('#docs_wrapper').css("margin-top", window.scrollY - 50);
-        $('#docs_wrapper').fadeIn();
-      },
+        showWrapper('#docs_wrapper');
+      }
     }
   });
   stateView.getFormulas();
@@ -303,9 +325,7 @@ function initVue(){
         wrapperView.setData(name);
         wrapperView.getSavePoints();
         //RadarChart("#class_accuarcy_chart", [accuracyToGraphData(wrapperData.current.accuracy)], getRadarConfig(700));
-        $('.overlay_blur').fadeIn();
-        $('#details_wrapper').css("margin-top", window.scrollY - 50);
-        $('#details_wrapper').fadeIn();
+        showWrapper('#details_wrapper');
       },
       switchState: function(name){
         let c= inoutData.classifiers[name];
@@ -425,7 +445,8 @@ function initVue(){
       },
       getOutputClass: function(){
        return getClassifierMaximumClass(classifierView.orderedClassifiers[0].probability);
-      }
+      },
+      getMeasureDescription: function(m){ return classifierView.getMeasureDescription(m);}
     },
     computed: {
       predictionDistribution: function(){
@@ -477,6 +498,7 @@ function initVue(){
               RadarChart("#version_accuarcy_chart", data, getRadarConfig(600));
             else
               document.getElementById("version_accuarcy_chart").style.display = "none";
+            $('[data-toggle="tooltip"]').tooltip();
           }
         });
       },
@@ -617,7 +639,9 @@ function initVue(){
           Vue.set(wrapperData, "documentations", JSON.parse(data));
           console.log(JSON.parse(data));
         });
-      }
+      },
+      getMeasureDescription: function(m){ return classifierView.getMeasureDescription(m);},
+      showTeam: function(member){footerView.showTeam(member);}
     },
     computed: {
       topMostName: function(){
@@ -625,9 +649,27 @@ function initVue(){
       },
       mode: function(){
         return stateData.mode;
-      }
+      },
+      degree: function() { return footerData[wrapperData.activeMember].degree;},
+      expertise: function() { return footerData[wrapperData.activeMember].expertise;},
+      name: function() { return footerData[wrapperData.activeMember].name;},
+      term: function() { return footerData[wrapperData.activeMember].term;}
     }
   });
+  
+  footerView = new Vue({
+    el: 'footer',
+    data: footerData,
+    methods: {
+      showTeam: function(member){
+        Vue.set(wrapperData, "activeMember", member);
+        showWrapper('#team_wrapper');
+      }
+    },
+    computed:{
+    }
+  });
+  
   wrapperView.getDistributionArray();
   wrapperView.getDocumentationNames();
 }
@@ -645,6 +687,14 @@ function hideInfo(){
   // Hide any visible popup
   $('.overlay_wrapper').fadeOut();
 	$('.overlay_blur').fadeOut();
+}
+
+function showWrapper(elem){
+  if(document.querySelector('.overlay_blur').style.display == "none"){
+    $('.overlay_blur').fadeIn();
+    $(elem).css("margin-top", window.scrollY - 50);
+    $(elem).fadeIn();
+  }
 }
 
 function HandlePopupResult(result) {
