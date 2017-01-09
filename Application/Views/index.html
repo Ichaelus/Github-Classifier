@@ -66,8 +66,8 @@
                     {{distribution}} <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
-                    <li v-on:click="changeDistribution('Test')"><a href="#">Test</a></li>
-                    <li v-on:click="changeDistribution('Train')"><a href="#">Train</a></li>
+                    <li v-on:click="changeDistribution('Test')"><span>Test</span></li>
+                    <li v-on:click="changeDistribution('Train')"><span>Train</span></li>
                   </ul>
                 </div>
                 sample distribution</h4>
@@ -86,7 +86,7 @@
             <colgroup> <col class="col-xs-4"> <col class="col-xs-2"><col class="col-xs-2"><col class="col-xs-2"><col class="col-xs-2"> </colgroup>
             <thead> <tr> <th>Numerical Attribute</th> <th>Avg</th> <th>Min</th> <th>Max</th> <th>Sum</th> </tr> </thead>
             <tbody> 
-              <tr v-for="(val, m) in formatStats(numStats)"> <td scope="row"> <code>{{m}}</code> </td> <td><b>{{parseInt(parseFloat(val['AVG'])*100)/100}}</b></td> <td>{{val['MIN']}}</td> <td>{{val['MAX']}}</td> <td>{{val['SUM']}}</td> </tr>
+              <tr v-for="(val, m) in formatStats(numStats)"> <td scope="row"> <code>{{m}}</code> </td> <td><b>{{Math.round(parseFloat(val['AVG'])*100)/100}}</b></td> <td>{{val['MIN']}}</td> <td>{{val['MAX']}}</td> <td>{{val['SUM']}}</td> </tr>
             </tbody>
           </table>
           <table class="table table-bordered table-striped measure_table"> 
@@ -94,7 +94,7 @@
             <colgroup> <col class="col-xs-6"> <col class="col-xs-6"></colgroup>
             <thead> <tr> <th>String Attribute</th> <th>Avg length</th> </tr> </thead>
             <tbody> 
-              <tr v-for="(val, m) in formatStats(strStats)"> <td scope="row"> <code>{{m}}</code> </td> <td><b>{{parseInt(parseFloat(val['AVG'])*100)/100}}</b></td></tr>
+              <tr v-for="(val, m) in formatStats(strStats)"> <td scope="row"> <code>{{m}}</code> </td> <td><b>{{Math.round(parseFloat(val['AVG'])*100)/100}}</b></td></tr>
             </tbody>
           </table>
         </div>
@@ -114,7 +114,7 @@
             </div>
             <div class="row attribute">
               <div class="col-xs-3">Yield</div>
-              <div class="col-xs-9">{{parseInt(current.yield * 100)}}%</div>
+              <div class="col-xs-9">{{Math.round(current.yield * 100)}}%</div>
             </div>
             <div class="row attribute">
               <div class="col-xs-3">Currently enabled</div>
@@ -128,9 +128,9 @@
           <span class="action btn btn-default" v-on:click="save(currentName)">Save current image</span>
           <div class="version_wrapper">
             <div class="input-group-btn select">
-                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b>{{selectedPoint == '' ? 'Version' : selectedPoint}}</b> <span class="caret"></span></button>
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b>{{selectedPoint}}</b> <span class="caret"></span></button>
                   <ul class="dropdown-menu" style="margin: 0px auto;">
-                    <li v-for="(sp, fileName) in savePoints"><a v-on:click="setSavePoint(fileName)" href="#">{{fileName}} <b>({{parseInt(sp.yield * 100)+'%'}}</b>)</a></li>
+                    <li v-for="(sp, fileName) in savePoints"><span v-on:click="setSavePoint(fileName)">{{fileName}} <b>({{Math.round(sp.yield * 100)+'%'}}</b>)</span></li>
                   </ul>
             </div>
             <span class="action btn btn-default" v-on:click="load()">Load version</span>
@@ -157,7 +157,7 @@
 
                   <td v-for="(r2, i2) in current.confusionMatrix.matrix[i]" 
                       :class="(i == i2 ? 'cell_own' : (i < i2 ? 'cell_classifier': 'cell_reference'))">
-                      {{parseInt(current.confusionMatrix.matrix[i][i2] * 100) / 100}}</td>
+                      {{Math.round(current.confusionMatrix.matrix[i][i2] * 100) / 100}}</td>
 
                 </tr>
               </tbody>
@@ -167,7 +167,7 @@
               <colgroup> <col class="col-xs-6"> <col class="col-xs-6"> </colgroup>
               <thead> <tr> <th>Measure</th> <th>Result</th> </tr> </thead>
               <tbody> 
-                <tr v-for="(val, m) in current.confusionMatrix.measures"> <td scope="row"> <code>{{originalMeasureName(m)}}</code> </td> <td>{{parseInt(val * 10000)/10000}} %</td> </tr>
+                <tr v-for="(val, m) in current.confusionMatrix.measures"> <td scope="row"> <code class="defaultCursor" data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(m)">{{originalMeasureName(m)}}</code> </td> <td>{{Math.round(val * 10000)/10000}} %</td> </tr>
               </tbody>
             </table>
           </div>
@@ -185,11 +185,41 @@
                   {{selectedDocumentation}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li v-for="d in documentations" v-on:click="changeDocumentation(d)"><a href="#">{{d}}</a></li>
+                  <li v-for="d in documentations" v-on:click="changeDocumentation(d)"><span>{{d}}</span></li>
                 </ul>
               </div></h4>
           </div>
           <p v-html="documentationContent"></p>
+        </div>
+      </div> <!-- /Overlay -->
+       <div style="display:none" class="overlay_wrapper" id="team_wrapper"> <!-- Overlay -->
+        <div class="container">
+          <h2>Our team</h2>
+          <hr>
+          <div class="row">
+            <div v-on:click="showTeam('stefan')"
+            :class="'col-xs-2 portrait ' + (activeMember == 'stefan' ? 'selected' : '')" style="background-image: url('images/michael.jpg')"></div>
+            <div v-on:click="showTeam('michael')"
+            :class="'col-xs-2 portrait ' + (activeMember == 'michael' ? 'selected' : '')" style="background-image: url('images/michael.jpg')"></div>
+            <div v-on:click="showTeam('martin')"
+            :class="'col-xs-2 portrait ' + (activeMember == 'martin' ? 'selected' : '')" style="background-image: url('images/michael.jpg')"></div>
+            <div v-on:click="showTeam('andreas')"
+            :class="'col-xs-2 portrait ' + (activeMember == 'andreas' ? 'selected' : '')" style="background-image: url('images/michael.jpg')"></div>
+          </div>
+          <hr>
+          <h2>{{name}}</h2>
+          <div class="row">
+            <div class="col-xs-4">Degree programme</div>
+            <div class="col-xs-8">{{degree}}</div>
+          </div>
+          <div class="row">
+            <div class="col-xs-4">Term</div>
+            <div class="col-xs-8">{{term}}</div>
+          </div>
+          <div class="row">
+            <div class="col-xs-4">Expertise</div>
+            <div class="col-xs-8">{{expertise}}</div>
+          </div>
         </div>
       </div> <!-- /Overlay -->
     </div> <!-- /Wrappers -->
@@ -275,7 +305,7 @@
                 <div class="input-group-btn">
                   <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Uncertainty formula <span class="caret"></span></button>
                   <ul class="dropdown-menu dropdown-menu-right">
-                    <li v-for="f in formulas"><a v-on:click="setFormula(f)" href="#">{{f}}</a></li>
+                    <li v-for="f in formulas"><span v-on:click="setFormula(f)">{{f}}</span></li>
                   </ul>
                 </div><!-- /btn-group -->
               </div><!-- /input-group -->
@@ -365,14 +395,14 @@
                     {{originalMeasureName(selectedMeasure)}} <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
-                    <li v-for="measure in measures" v-on:click="changeMeasure(measure)"><a data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(measure)" href="#">{{originalMeasureName(measure)}}</a></li>
+                    <li v-for="measure in measures" v-on:click="changeMeasure(measure)"><span data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(measure)">originalMeasureName(measure)}}</span></li>
                   </ul>
                 </div>
               </h4>
               <div id="classifiers">
                 <div v-for="c in orderedClassifiers" :class="'classifier_row' + (c.active ? '' : ' inactive') ">
                   <div  :class="'classifier ' + (isAsking(c.name) ? 'asking' : '')"
-                        :title="(isAsking(c.name) ? 'This module selected this sample because of a high uncertainty.' : '')">
+                        data-toggle="tooltip" data-placement="bottom" :data-original-title="(isAsking(c.name) ? 'This module selected the sample because of a high uncertainty.' : '')">
                     <span class="name">{{c.name}}</span>
                     <div class="wrapper">
                       <span data-toggle="tooltip" data-placement="top" :data-original-title="'Current ' + originalMeasureName(selectedMeasure)" class="stats">{{getMeasure(c)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
@@ -399,7 +429,7 @@
                   <div data-toggle="tooltip" data-placement="top" title="Classifier uncertainty" 
                         v-show="(c.uncertainty > 0)"
                        :class="'uncertainty ' + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'uncertain ' : 'certain ') : ' ')">
-                    {{parseInt(c.uncertainty * 100) / 100}}
+                    {{Math.round(c.uncertainty * 100) / 100}}
                   </div>
                 </div>
               </div><!-- /classifiers -->
@@ -413,7 +443,7 @@
                 <colgroup> <col class="col-xs-8"> <col class="col-xs-4"> </colgroup>
                 <thead> <tr> <th>Measure</th> <th>Result</th> </tr> </thead>
                 <tbody> 
-                  <tr v-for="(val, m) in outputMeasures"> <td scope="row"> <code>{{originalMeasureName(m)}}</code> </td> <td>{{parseInt(val * 100)/100}} %</td> </tr>
+                  <tr v-for="(val, m) in outputMeasures"> <td scope="row"> <code class="defaultCursor" data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(m)">{{originalMeasureName(m)}}</code> </td> <td>{{Math.round(val * 100)/100}} %</td> </tr>
                 </tbody>
               </table>
               <hr>
@@ -466,10 +496,10 @@
               <h4>Team Augsburg</h4>
             </div>
             <div class="col-xs-6">
-              <div class="col-xs-6">Andreas Grafberger</div>
-              <div class="col-xs-6">Martin Keßler</div>
-              <div class="col-xs-6">Michael Leimstädtner</div>
-              <div class="col-xs-6">Stefan Grafberger</div>
+              <div class="col-xs-6 member" v-on:click="showTeam('andreas')">Andreas Grafberger</div>
+              <div class="col-xs-6 member" v-on:click="showTeam('martin')">Martin Keßler</div>
+              <div class="col-xs-6 member" v-on:click="showTeam('michael')">Michael Leimstädtner</div>
+              <div class="col-xs-6 member" v-on:click="showTeam('stefan')">Stefan Grafberger</div>
             </div>
           </div>
         </div>

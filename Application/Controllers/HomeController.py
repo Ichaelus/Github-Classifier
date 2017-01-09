@@ -36,6 +36,10 @@ def home_fp():
 def home_loading():
     return static_file("loading.gif", root = abspath, mimetype='image/gif')
 
+@homebottle.get('/images/<filename:re:.*\.jpg>')
+def image(filename):
+    return static_file(filename, root=os.path.join(abspath, "images"), mimetype='image/jpg')
+
 @homebottle.get('/images/facial_expressions/<filename:re:.*\.jpg>')
 def facial_expressions(filename):
     return static_file(filename, root=os.path.join(os.path.join(abspath, "images"), "facial_expressions"), mimetype='image/jpg')
