@@ -28,10 +28,13 @@ let stateView, inputView, classifierView, outputView, wrapperView,
     current: {description: "", yield: 0, active: false, uncertainty: 0, confusionMatrix: {}, accuracy: {}, probability: {}},
     distribution: "Test", // Test, Train
     distributionArray: [], // [{class, count},..]
+    documentationContent: "",
+    documentations: [], // ["filename1",..]
     expression: "neutral",
     exprState: "",
     thinking: false,
     savePoints: {}, // fileName: {yield, accuracy: [{class, val}, ..]}
+    selectedDocumentation: "Chose documentation",
     selectedPoint: "",
     numStats: {},
     strStats: {},
@@ -232,7 +235,12 @@ function initVue(){
           $('#stats_wrapper').css("margin-top", window.scrollY - 50);
           $('#stats_wrapper').fadeIn();
         });
-      }
+      },
+      showDocumentationWrapper: function(){
+        $('.overlay_blur').fadeIn();
+        $('#docs_wrapper').css("margin-top", window.scrollY - 50);
+        $('#docs_wrapper').fadeIn();
+      },
     }
   });
   stateView.getFormulas();
@@ -244,13 +252,13 @@ function initVue(){
       getQuote: function(){
         switch(stateData.mode){
           case "pool":
-            return "<strong>Pool Based Active Learning</strong> selects the sample with the highest uncerainty out of a pool of unlabeled data as input. The uncertainty is being calculated (in turns) by a single classifier, marked in blue. There are currently <strong>"+stateData.poolSize+"</strong> samples in this pool.";
+            return "<strong>Pool Based Active Learning</strong> selects the sample with the highest uncertainty out of a pool of unlabeled data as input. The uncertainty is being calculated (in turns) by a single classifier, marked in blue. There are currently <strong>"+stateData.poolSize+"</strong> samples in this pool.";
             break;
           case "test":
             return "The <strong>testing option</strong> runs each classifier against a predefined set of test samples, thus updating the confusion matrix and accuracy per class.";
             break;
           case "single":
-            return "The <strong>single sample prediction</strong> method is used to test the outcome of the classifiers for specified a repository (identified by it's URL).";
+            return "The <strong>single sample prediction</strong> method is used to test the outcome of the classifiers for specified a repository (identified by its URL).";
             break;
           default:
           case "stream": 
@@ -281,6 +289,9 @@ function initVue(){
       shortDesc: function(){
         return add3Dots(inoutData.repo.description, 200);
       },
+      mode: function(){
+        return stateData.mode;
+      }
     }
   });
 
@@ -363,6 +374,9 @@ function initVue(){
         if(Object.keys(inoutData.classifiers).length > 0)
           _measures = _measures.concat(Object.keys(inoutData.classifiers[Object.keys(inoutData.classifiers)[0]].confusionMatrix.measures));
         return _measures;
+      },
+      mode: function(){
+        return stateData.mode;
       }
     }
   });
@@ -428,6 +442,9 @@ function initVue(){
       },
       forcePrediction: function(){
         return stateView.forcePrediction;
+      },
+      mode: function(){
+        return stateData.mode;
       }
     }
   });
@@ -587,22 +604,34 @@ function initVue(){
       changeDistribution: function(dist){
         Vue.set(wrapperData, "distribution", dist);
         wrapperView.getDistributionArray();
+      },
+      changeDocumentation: function(docName){
+        Vue.set(wrapperData, "selectedDocumentation", docName);
+        $.get("/docs/"+docName, function(data){
+          let converter = new showdown.Converter();
+          Vue.set(wrapperData, "documentationContent", converter.makeHtml(data));
+        });
+      },
+      getDocumentationNames: function(){
+        $.get("/get/documentationNames", function(data){
+          Vue.set(wrapperData, "documentations", JSON.parse(data));
+          console.log(JSON.parse(data));
+        });
       }
     },
     computed: {
       topMostName: function(){
         return classifierView.orderedClassifiers[0].name;
       },
+      mode: function(){
+        return stateData.mode;
+      }
     }
   });
   wrapperView.getDistributionArray();
+  wrapperView.getDocumentationNames();
 }
 // name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
-
-
-function getMode(){
-  return stateData.mode;
-}
 
 function wait_async(time){
   return new Promise(function(resolve, reject){

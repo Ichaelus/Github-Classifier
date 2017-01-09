@@ -24,7 +24,7 @@
       files: "",
       readme: ""
     },
-    server = "http://server.leimstaedtner.it/";
+    server = "http://67.209.116.156/";
 
 // Startup
 try {

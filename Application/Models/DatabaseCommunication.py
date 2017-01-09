@@ -5,13 +5,14 @@ import base64
 from urllib2 import Request, urlopen, URLError
 import json
 
-def api_call(keyString, filterString="", tableString="", limitString=""):
+def api_call(keyString, filterString="", tableString="", limitString="", selector = "*"):
     """Get list of Repos-Data in json-format"""
     filterString = base64.b64encode(b'' + filterString)
     url = None
     data = None
-    url = 'http://server.leimstaedtner.it/ajax.php?key=api:' + keyString.decode("utf-8") + '&filter=' 
-    url += filterString.decode("utf-8") + '&table=' + tableString.decode("utf-8") + '&limit=' + limitString.decode("utf-8")
+    url = 'http://67.209.116.156/ajax.php?key=api:' + keyString.decode("utf-8") + '&filter=' 
+    url += filterString.decode("utf-8") + '&table=' + tableString.decode("utf-8") + '&limit=' + limitString.decode("utf-8") + "&selector=" + selector.decode("utf-8")
+    print url
     request = Request(url)
     try:
         response = urlopen(request)
@@ -102,6 +103,28 @@ def getAllFilenames():
             corpus.append(rm)
     return corpus
 
+def getCorpi():
+    # Same as above, but in one iteration
+    tables = ['standard_train_samples', 'train', 'to_classify']
+    descriptionCorpus = []; readmeCorpus = []; filenameCorpus = []
+
+    for table in tables:
+        data = api_call("all", tableString=table, selector = "readme, files, description")
+        for sample in data:
+            rm = ""; fn = ""
+            try:
+                rm = base64.b64decode(sample['readme'])
+                fn = sample['files']
+            except TypeError:
+                # If there was an error decoding the message, just ignore atm
+                pass
+
+            descriptionCorpus.append(sample['description'])
+            readmeCorpus.append(rm)
+            filenameCorpus.append(fn)
+
+    return descriptionCorpus, readmeCorpus, filenameCorpus
+    
 def getInformationsForRepo(repolink):
     '''Nur dafür da wenn ein bestimmtes Repo klassifiziert werden soll dass noch nicht in DB ist'''
     return api_call('generate_sample&api_url=' + repolink)

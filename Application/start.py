@@ -24,8 +24,6 @@ from Models.ClassificationModules.readmelstm import readmelstm
 from Models.ClassificationModules.nnall import nnall
 from Models.ClassificationModules.knnreadmeonly import knnreadmeonly
 from Models.ClassificationModules.svcfilenamesonly import filenamesonlysvc
-from Models.ClassificationModules.svmall import svmall
-from Models.ClassificationModules.lrstacking import lrstacking
 import Models.DatabaseCommunication as DC
 
 print("Starting application..")
@@ -37,61 +35,36 @@ classifiercollection = ClassifierCollection()
 
 #Initialize ClassificationModules
 print 'Getting DB Data to be able to create vectorizers for classifiers that need it'
-descriptionCorpus = DC.getAllDescriptions()
-readmeCorpus = DC.getAllReadmes()
-filenameCorpus = DC.getAllFilenames()
+#descriptionCorpus = DC.getAllDescriptions()
+#readmeCorpus = DC.getAllReadmes()
+#filenameCorpus = DC.getAllFilenames()
+#descriptionCorpus, readmeCorpus, filenameCorpus = DC.getCorpi()
 
 #Initialize Classifiers
 print 'Creating and adding Classifiers to Classifier Collection:'
-
-
-nndescription = nndescriptiononly(descriptionCorpus)
-lrdescription = lrdescriptiononly(descriptionCorpus)
-nnreadme = nnreadmeonly(readmeCorpus)
-lrreadme = lrreadmeonly(readmeCorpus)
-rfreadme = readmeonlyrandomforest(readmeCorpus)
-knnreadme = knnreadmeonly(readmeCorpus)
-mnbdescription = multinomialnbdescriptiononly(descriptionCorpus)
-mnbreadme = multinomialnbreadmeonly(readmeCorpus)
-bnbdescription = bernoullinbdescriptiononly(descriptionCorpus)
-bnbreadme = bernoullinbreadmeonly(readmeCorpus)
-nnmeta = nnmetaonly()
-rfmeta = metaonlyrandomforest()
-#lstmreadme = readmelstm()
-
-abmeta = metaonlyadaboost()
-svcmeta = metaonlysvc()
-svcfilenames = filenamesonlysvc(filenameCorpus)
-nnall = nnall(readmeCorpus + descriptionCorpus)
-allsvm = svmall(readmeCorpus + descriptionCorpus)
-lstmname = reponamelstm()
-
-stackinglr = lrstacking([nnall, lstmname, allsvm, svcmeta, svcfilenames, nnreadme, nndescription, rfreadme, mnbreadme, rfmeta, abmeta])
+classifiers = []
+#classifiers.append(nndescriptiononly(descriptionCorpus))
+#classifiers.append(lrdescriptiononly(descriptionCorpus))
+#classifiers.append(nnreadmeonly(readmeCorpus))
+#classifiers.append(lrreadmeonly(readmeCorpus))
+#classifiers.append(readmeonlyrandomforest(readmeCorpus))
+#classifiers.append(knnreadmeonly(readmeCorpus))
+#classifiers.append(multinomialnbdescriptiononly(descriptionCorpus))
+#classifiers.append(multinomialnbreadmeonly(readmeCorpus))
+#classifiers.append(bernoullinbdescriptiononly(descriptionCorpus))
+#classifiers.append(bernoullinbreadmeonly(readmeCorpus))
+#classifiers.append(nnall(readmeCorpus + descriptionCorpus))
+#classifiers.append(filenamesonlysvc(filenameCorpus))
+classifiers.append(nnmetaonly())
+#classifiers.append(metaonlyrandomforest())
+#classifiers.append(metaonlysvc())
+classifiers.append(metaonlyadaboost())
+classifiers.append(reponamelstm())
+#classifiers.append(readmelstm())
 
 print 'Loading last checkpoint for classifiers if available:'
-
-"""
-classifiercollection.addClassificationModuleWithLastSavePoint(nndescription)
-classifiercollection.addClassificationModuleWithLastSavePoint(nnreadme)
-classifiercollection.addClassificationModuleWithLastSavePoint(lrreadme)
-classifiercollection.addClassificationModuleWithLastSavePoint(rfreadme)
-classifiercollection.addClassificationModuleWithLastSavePoint(lrdescription)
-classifiercollection.addClassificationModuleWithLastSavePoint(mnbdescription)
-classifiercollection.addClassificationModuleWithLastSavePoint(mnbreadme)
-classifiercollection.addClassificationModuleWithLastSavePoint(bnbdescription)
-classifiercollection.addClassificationModuleWithLastSavePoint(bnbreadme)
-classifiercollection.addClassificationModuleWithLastSavePoint(nnmeta)
-classifiercollection.addClassificationModuleWithLastSavePoint(rfmeta)
-classifiercollection.addClassificationModuleWithLastSavePoint(svcmeta)
-classifiercollection.addClassificationModuleWithLastSavePoint(abmeta)
-#classifiercollection.addClassificationModuleWithLastSavePoint(lstmreadme)
-classifiercollection.addClassificationModuleWithLastSavePoint(knnreadme)
-classifiercollection.addClassificationModuleWithLastSavePoint(svcfilenames)
-"""
-classifiercollection.addClassificationModuleWithLastSavePoint(nnall)
-classifiercollection.addClassificationModuleWithLastSavePoint(allsvm)
-classifiercollection.addClassificationModuleWithLastSavePoint(lstmname)
-classifiercollection.addClassificationModuleWithLastSavePoint(stackinglr)
+for c in classifiers:
+	classifiercollection.addClassificationModuleWithLastSavePoint(c)
 
 # Pass ClassifierCollection to Controller
 homesetclassifiercollection(classifiercollection)

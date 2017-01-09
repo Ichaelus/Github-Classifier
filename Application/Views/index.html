@@ -58,9 +58,9 @@
           <hr>
 
             <div 
-              v-show="(getMode() == 'test')"
+              v-show="(mode == 'test')"
               :class="'trainCount '">
-              <h4 class="subtitle">
+              <h4>
                 <div class="btn-group">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{distribution}} <span class="caret"></span>
@@ -173,12 +173,31 @@
           </div>
         </div>
       </div> <!-- /Overlay -->
+       <div style="display:none" class="overlay_wrapper" id="docs_wrapper"> <!-- Overlay -->
+        <div class="container">
+          <h2>Documentation</h2>
+          <hr>
+          <div 
+            :class="'trainCount '">
+            <h4>
+              <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {{selectedDocumentation}} <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li v-for="d in documentations" v-on:click="changeDocumentation(d)"><a href="#">{{d}}</a></li>
+                </ul>
+              </div></h4>
+          </div>
+          <p v-html="documentationContent"></p>
+        </div>
+      </div> <!-- /Overlay -->
     </div> <!-- /Wrappers -->
     <div id="page" class="container-fluid" style="display:none;">
       <div id="header">
         <div class="container">
           <div class="col-xs-4">
-            <h1>Classification Overview</h1>
+            <h1>Classification Overview<span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Show documentation" v-on:click="showDocumentationWrapper()"></span></h1>
 
               <div
                   v-show="(mode == 'stream' || mode == 'pool')" 
@@ -306,7 +325,7 @@
                 v-show="state != 'showResult' && state != 'empty'"
             >{{state}}</h4>
             <div 
-                v-show="(getMode() != 'test' && state == 'showResult')"
+                v-show="(mode != 'test' && state == 'showResult')"
                 :class="'repoDetails '">
               <h4 class="subtitle"><small><a target="_blank" :href="'https://github.com/' + repo.author">{{repo.author}}</a> / </small><a target="_blank" :href="'https://github.com/' + repo.author + '/' + repo.repoName">{{repo.repoName}}</a></h4>
               <p>{{shortDesc}}</p>
@@ -323,7 +342,7 @@
               </table>
             </div>
             <div 
-              v-show="(getMode() == 'test')"
+              v-show="(mode == 'test')"
               :class="'trainCount '">
               <h4 class="subtitle">
                 Test sample distribution</h4>
@@ -363,14 +382,14 @@
                   </div>
                   <div class="arrow">=&gt;</div>
                   <div
-                      v-show="(getMode() == 'test')"  
+                      v-show="(mode == 'test')"  
                       :class="'result_vector'">
                       <div v-for="(r, i) in c.accuracy" :class="'v ' + (getMax(c.name)  == r.val ? 'max' : '')">
                         <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
                       </div>
                   </div>
                   <div
-                      v-show="(getMode() != 'test')" 
+                      v-show="(mode != 'test')" 
                       :class="'result_vector ' + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'uncertain ' : 'certain ') : ' ')">
                       <div v-for="(r, i) in c.probability" :class="'v ' + (getMax(c.name)  == r.val ? 'max' : '')">
                         <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
@@ -385,9 +404,8 @@
               </div><!-- /classifiers -->
             </div>
           </div>
-
           <div class="col-xs-3" id="output"><!-- output -->
-             <div v-show="getMode() == 'test'">
+             <div v-show="mode == 'test'">
                <h4 class="subtitle">Top-most ranked classifier performance</h4>
               <p class="outputText">Final classifications are being made by <strong>{{topMostName}}</strong>. Its measures are listed below</p>
               <table class="table table-bordered table-striped measure_table"> 
@@ -408,7 +426,7 @@
                 </tbody>
               </table>
             </div>
-            <div v-show="getMode() != 'test' && state == 'showResult'">
+            <div v-show="(mode != 'test' && state == 'showResult')">
               <h4 class="subtitle">Most predicted classes</h4>
               <table class="outputDistr table table-bordered table-striped measure_table">
                 <colgroup><col class="col-xs-2"> <col class="col-xs-10"></colgroup>
@@ -419,20 +437,20 @@
               </table>
             </div>
             <p 
-                v-show="(getMode() != 'test' && state == 'showResult')"
+                v-show="(mode != 'test' && state == 'showResult')"
                 class="outputText"
                 >The top-most ranked classifier says it's <strong>{{getOutputClass()}}</strong>. 
                 <span
-                  v-show="(getMode() != 'test' && classifiersUnsure && !forcePrediction)"
+                  v-show="(mode != 'test' && classifiersUnsure && (mode != 'single' || !forcePrediction) )"
                 >Because one or more module is uncertain about its output, you can classify the sample manually.</span>
-              </p>
+            </p>
             <h2 v-on:click="manualClassification()"
-                v-show="(getMode() != 'test' && state == 'showResult' && classifiersUnsure && !forcePrediction)"
+                v-show="(mode != 'test' && state == 'showResult' && classifiersUnsure && (mode != 'single' || !forcePrediction))"
                 :class="(manualClass == '?' ? 'uncertain' : '')" 
                 :style="{top: 'calc( 35px * (-1 + '+getClassifierAmount()+') * 75px)'}"
                 :title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass )}}</h2>
             <!--This would display an overlapped radar chart of classifier accuracies
-                <div v-show="(getMode() == 'test')"
+                <div v-show="(mode == 'test')"
                  :style="{top: 'calc( -60px + (-1 + '+getClassifierAmount()+') * 75px)'}"
                  id="testOuputChart"></div>-->
           </div><!-- /output -->
@@ -457,14 +475,12 @@
       </footer>
     </div><!-- /container-fluid -->
     <script type="text/javascript" src="scripts/lodash.min.js"></script>
+    <script type="text/javascript" src="scripts/showdown.min.js"></script>
     <script type="text/javascript" src="scripts/vue.min.js"></script>
-    <script
-    src="scripts/jquery-3.1.1.min.js"
-    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-    crossorigin="anonymous"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    <script src="scripts/d3.v3.min.js"></script>
-    <script src="scripts/radarChart.js"></script>
+    <script type="text/javascript" src="scripts/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="scripts/d3.v3.min.js"></script>
+    <script type="text/javascript" src="scripts/radarChart.js"></script>
     <script type="text/javascript" src="scripts/frontend.js"></script>
   </body>
 </html>
