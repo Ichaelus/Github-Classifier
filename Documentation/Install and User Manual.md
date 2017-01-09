@@ -1,10 +1,5 @@
-# Requirements
+Your application should come with an install and user manual.
 
-* python 2.7 (coding language) 64bit
-* pip (module manager)
-* Firefox >= 50
-* Screen size >= (1280px x 600px)
-* RAM >= 2GB
 
 ## Notes
 
