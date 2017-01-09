@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import base64
-from urllib2 import Request, urlopen, URLError
+from urllib2 import Request, urlopen, URLError, quote
 import json
 
 def api_call(keyString, filterString="", tableString="", limitString="", selector = "*"):
@@ -10,9 +10,8 @@ def api_call(keyString, filterString="", tableString="", limitString="", selecto
     filterString = base64.b64encode(b'' + filterString)
     url = None
     data = None
-    url = 'http://67.209.116.156/ajax.php?key=api:' + keyString.decode("utf-8") + '&filter=' 
-    url += filterString.decode("utf-8") + '&table=' + tableString.decode("utf-8") + '&limit=' + limitString.decode("utf-8") + "&selector=" + selector.decode("utf-8")
-    print url
+    url = 'http://67.209.116.156/ajax.php?key=api:' + quote(keyString.decode("utf-8")) + '&filter=' 
+    url = url + quote(filterString.decode("utf-8") + '&table=' + tableString.decode("utf-8") + '&limit=' + limitString.decode("utf-8") + "&selector=" + selector.decode("utf-8"))
     request = Request(url)
     try:
         response = urlopen(request)
