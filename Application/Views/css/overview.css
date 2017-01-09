@@ -512,6 +512,7 @@ button.control {
 .repoDetails p{
   font-style: italic;
   padding: 0px 0;
+  word-wrap: break-word;
 }
 .outputDistr .bar{
   display: block;

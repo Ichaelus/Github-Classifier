@@ -11,8 +11,7 @@ def api_call(keyString, filterString="", tableString="", limitString="", selecto
     filterString = base64.b64encode(b'' + filterString)
     url = None
     data = None
-    url = 'http://67.209.116.156/ajax.php?key=api:' + quote(keyString.decode("utf-8")) + '&filter=' 
-    url = url + quote(filterString.decode("utf-8") + '&table=' + tableString.decode("utf-8") + '&limit=' + limitString.decode("utf-8") + "&selector=" + selector.decode("utf-8"))
+    url = 'http://67.209.116.156/ajax.php?key=api:' + keyString.decode("utf-8") + '&filter=' + quote(filterString.decode("utf-8")) + '&table=' + quote(tableString.decode("utf-8")) + '&limit=' + quote(limitString.decode("utf-8")) + "&selector=" + quote(selector.decode("utf-8"))
     request = Request(url)
     try:
         response = urlopen(request)
@@ -25,15 +24,15 @@ def api_call(keyString, filterString="", tableString="", limitString="", selecto
     return data["data"] # dict
 
 def moveRepoFromUnlabeledToToClassify(api_url):
-    return api_call('move&from_table=unlabeled&to_table=to_classify&api_url=' + api_url)
+    return api_call('move&from_table=unlabeled&to_table=to_classify&api_url=' + quote(api_url))
 
 def moveRepoFromToClassifyToTrain(api_url, label):
     # moves <api_url> to train and assigns the given label
-    return api_call('move&from_table=to_classify&to_table=train&api_url=' + api_url + '&label=' + label)
+    return api_call('move&from_table=to_classify&to_table=train&api_url=' + quote(api_url) + '&label=' + quote(label))
 
 def moveRepoFromUnlabeledToSemiSupervised(api_url, label):
     #label muss großgeschriebener String sein
-    return api_call('move&from_table=unlabeled&to_table=semisupervised&api_url=' + api_url + '&label=' + label)
+    return api_call('move&from_table=unlabeled&to_table=semisupervised&api_url=' + quote(api_url) + '&label=' + quote(label))
 
 def getLabeledData():
     return api_call('all', tableString="labeled")
@@ -137,9 +136,9 @@ def getCorpi():
             foldernameCorpus.append(fn)
     return descriptionCorpus, readmeCorpus, filenameCorpus, filetypeCorpus, 
     
-def getInformationsForRepo(repolink):
+def getInformationsForRepo(repoApiUrl):
     '''Nur dafür da wenn ein bestimmtes Repo klassifiziert werden soll dass noch nicht in DB ist'''
-    return api_call('generate_sample&api_url=' + repolink)
+    return api_call('generate_sample&api_url=' + quote(repoApiUrl))
 
 def getStats(table, t):
     q = "" if t == "numerical"  else "&string_attrs=true"
