@@ -61,7 +61,7 @@ classifiers.append(nnmetaonly())
 #classifiers.append(metaonlysvc())
 classifiers.append(metaonlyadaboost())
 classifiers.append(reponamelstm())
-classifiers.append(lrstacking([nnmetaonly(), metaonlyadaboost(), reponamelstm()]))
+classifiers.append(lrstacking([nnmetaonly(), metaonlyadaboost(), reponamelstm(), nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus)]))
 #classifiers.append(readmelstm())
 
 print 'Loading last checkpoint for classifiers if available:'

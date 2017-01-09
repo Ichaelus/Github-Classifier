@@ -118,7 +118,7 @@ def getCorpi():
     descriptionCorpus = []; readmeCorpus = []; filenameCorpus = []; filetypeCorpus = []; foldernameCorpus = []
 
     for table in tables:
-        data = api_call("all", tableString=table, selector = "readme, files, description")
+        data = api_call("all", tableString=table, selector = "readme, files, description, folders")
         for sample in data:
             rm = ""; fn = ""; fts = ""; fn = ""
             try:
@@ -134,7 +134,7 @@ def getCorpi():
             filenameCorpus.append(fn)
             filetypeCorpus.append(fts)
             foldernameCorpus.append(fn)
-    return descriptionCorpus, readmeCorpus, filenameCorpus, filetypeCorpus, 
+    return descriptionCorpus, readmeCorpus, filenameCorpus, filetypeCorpus, foldernameCorpus
     
 def getInformationsForRepo(repoApiUrl):
     '''Nur dafür da wenn ein bestimmtes Repo klassifiziert werden soll dass noch nicht in DB ist'''

@@ -183,11 +183,9 @@ def getFiletypesString(sample):
         str += filetype + ' '
     return str
 
-
-
 def getFoldernames(sample):
     """Returns string containing all foldernames"""
-    foldernames = sample['folders']
+    foldernames = sample.get('folders', '') # Returns FolderNames or empty string if not available
     return foldernames
 
 
