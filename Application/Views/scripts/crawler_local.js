@@ -271,7 +271,7 @@ function initButtons(){
     components: {
       'cbutton': {
         props: ['vclick', 'vtitle', 'vname'],
-        template: '<div><a v-bind:data-label="vname" v-bind:data-type="vclick" onClick="handleButton(this)" :title="vtitle">{{ vname }} <span class="badge">{{ count }}</span></a></div>',
+        template: '<div><a v-bind:data-label="vname" v-bind:data-type="vclick" onClick="handleButton(this)" :title="vtitle">{{ vname }}</a></div>',
         methods: {
         },
         data: function(){

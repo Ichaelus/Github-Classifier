@@ -148,12 +148,12 @@
                   <th>▼ Class. \ Reference ► </th>
                   <th v-for="(c, i) in current.confusionMatrix.order">{{c}}</th>
                   <th>Total</th>
-                  <th>Precision (%)</th>
+                  <th>Precision</th>
                 </tr>
                 <tr v-for="(r, i) in current.confusionMatrix.matrix"
                     :class="(i >= current.confusionMatrix.order.length ? 'total' : '') ">
                   <td>
-                      {{(i <  current.confusionMatrix.order.length ? current.confusionMatrix.order[i] : (current.confusionMatrix.order.length == i ? 'Total' : 'Recall (%)'))}}</td>
+                      {{(i <  current.confusionMatrix.order.length ? current.confusionMatrix.order[i] : (current.confusionMatrix.order.length == i ? 'Total' : 'Recall'))}}</td>
 
                   <td v-for="(r2, i2) in current.confusionMatrix.matrix[i]" 
                       :class="(i == i2 ? 'cell_own' : (i < i2 ? 'cell_classifier': 'cell_reference'))">
@@ -232,9 +232,9 @@
               <div
                   v-show="(mode == 'stream' || mode == 'pool')" 
                   :class="'control_buttons '"><!--control-subgroup-->
-                  <span :class="(action == 'loop' ? 'active ' : '') + 'glyphicon glyphicon-play'" v-on:click="loop()" data-toggle="tooltip" data-placement="top" title="Train until paused"></span>
-                  <span :class="(action == 'halt' ? 'active ' : '') + 'glyphicon glyphicon-pause'" v-on:click="halt()" data-toggle="tooltip" data-placement="top" title="Stop training"></span>
-                  <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" data-toggle="tooltip" data-placement="top" title="Train a single sample">
+                  <span :class="(action == 'loop' ? 'active ' : '') + 'glyphicon glyphicon-play'" v-on:click="loop()" data-toggle="tooltip" data-placement="top" title="Classify random samples until paused"></span>
+                  <span :class="(action == 'halt' ? 'active ' : '') + 'glyphicon glyphicon-pause'" v-on:click="halt()" data-toggle="tooltip" data-placement="top" title="Stop classifying"></span>
+                  <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" data-toggle="tooltip" data-placement="top" title="Classify a single random sample">
                   </span>
               </div><!-- /control-subgroup -->
 

@@ -27,7 +27,7 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
     // Data used by the wrapper shown when displaying the detailed page
     activeMember: "andreas",
     currentName: "",
-    current: {description: "", yield: 0, active: false, uncertainty: 0, confusionMatrix: {}, precision: {}, probability: {}},
+    current: {description: "", active: false, uncertainty: 0, confusionMatrix: {}, precision: {}, probability: {}},
     distribution: "Test", // Test, Train
     distributionArray: [], // [{class, count},..]
     documentationContent: "",
@@ -35,7 +35,7 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
     expression: "neutral",
     exprState: "",
     thinking: false,
-    savePoints: {}, // fileName: {yield, precision: [{class, val}, ..]}
+    savePoints: {}, // fileName: {precision: [{class, val}, ..]}
     selectedDocumentation: "Chose documentation",
     selectedPoint: "Version",
     numStats: {},
@@ -245,7 +245,7 @@ function initVue(){
 
         notify("Retrain all classifers", "Retraining many classifiers. This may take a couple of minutes; you may keep an eye on the console output.");
         for(let c in inoutData.classifiers)
-          if(all || inoutData.classifiers[c].yield <= 0)
+          if(all || inoutData.classifiers[c].confusionMatrix.measures[classifierView.getMeasureName()] <= 0)
             wrapperView.retrain(c, save);
       },
       saveAll: function(){
@@ -505,7 +505,7 @@ function initVue(){
             }
             if(data.length > 0){
               RadarChart("#version_precision_chart", data, getRadarConfig(600));
-              $('#version_chart_header').fadeIn();
+              document.getElementById('version_chart_header').style.display = "block";
             }else
               document.getElementById("version_precision_chart").style.display = "none";
               document.getElementById("version_chart_header").style.display = "none";
@@ -695,7 +695,7 @@ function initVue(){
   wrapperView.getDistributionArray();
   wrapperView.getDocumentationNames();
 }
-// name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},precision: [{class, val},..], probability : [{class, val},..]}
+// name : {description, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},precision: [{class, val},..], probability : [{class, val},..]}
 
 function wait_async(time){
   return new Promise(function(resolve, reject){
@@ -731,12 +731,11 @@ function HandlePopupResult(result) {
   if(!result.skipped)
     $.get("/get/ALclassification"+getStateQuery()+"api_url="+result["api_url"]+"&label="+result.label, function(data){
       console.log(data);
-      if(stateData.action == "halt_loop")
-        stateView.loop();
     });
-  else
+  setTimeout(function(){
     if(stateData.action == "halt_loop")
       stateView.loop();
+  }, 1000);
 }
 function convertToApiLink(repoLink){
   // Converts a repo link to an api link. E.g. https://github.com/Ichaelus/Githubclassifier/ -> https://api.github.com/repos/Ichaelus/Githubclassifier/
