@@ -8,7 +8,8 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
     isSemiSupervised: false,
     mode: "test", // stream, pool, test, single
     poolSize: 0,
-    trainInstantly: false
+    trainInstantly: false,
+    useExtendedTestSet: false
 	},
   inoutData = {
     classifiers: {}, // name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
@@ -221,7 +222,7 @@ function initVue(){
         Vue.set(inoutData, "state", "Testing..");
         runGenerator(function *main(){
           // Fetch sample, display
-          results = yield jQGetPromise("/get/startTest", "json");
+          results = yield jQGetPromise("/get/startTest?useExtendedTestSet="+stateData.useExtendedTestSet, "json");
           stateView.updateResults(results);
           Vue.set(inoutData, "state", "Test result");
         });
@@ -262,9 +263,13 @@ function initVue(){
       },
       showDocumentationWrapper: function(){
         showWrapper('#docs_wrapper');
+      },
+      changeExtendedSet: function(){
+        Vue.set(wrapperData, "distribution","Test");
+        wrapperView.getDistributionArray();
       }
     }
-  });
+  });/* stateView */
   stateView.getFormulas();
 
   titleView = new Vue({
@@ -296,7 +301,7 @@ function initVue(){
         });
       }
     }
-  });
+  }); /* titleView */
   titleView.getPoolsize();
 
   inputView = new Vue({
@@ -315,7 +320,7 @@ function initVue(){
         return stateData.mode;
       }
     }
-  });
+  });/* inputView */
 
   classifierView = new Vue({
     el: '#classifier_wrapper',
@@ -399,7 +404,7 @@ function initVue(){
         return stateData.mode;
       }
     }
-  });
+  });/* classifierView */
   classifierView.changeMeasure(classifierView.measures[0]);
 
   outputView = new Vue({
@@ -468,7 +473,7 @@ function initVue(){
         return stateData.mode;
       }
     }
-  });
+  });/* outputView */
 
   function getClassifierMaximumClass(c){
     return _.values(_.pick(_.maxBy(c, "val"), "class"))[0];
@@ -509,7 +514,7 @@ function initVue(){
         console.log("Wrapper: "+name+" retraining.");
         notify("Retraining", "The classifier: "+name+" started retraining. This could take a while.", 2500);
         runGenerator(function *main(){
-          let data = yield jQGetPromise("/get/retrain?name="+name);
+          let data = yield jQGetPromise("/get/retrain?name="+name + "&useExtendedTestSet="+stateData.useExtendedTestSet);
           if(JSON.parse(data) != false){
             data = JSON.parse(data);
             stateView.updateClassifiers(data.classifiers);
@@ -524,7 +529,7 @@ function initVue(){
       retrain_semi: function(){
         console.log("Wrapper: "+wrapperData.currentName+" semi retraining.");
         runGenerator(function *main(){
-          notify("Retrained", yield jQGetPromise("/get/retrainSemiSupervised?name="+wrapperData.currentName), 2500);
+          notify("Retrained", yield jQGetPromise("/get/retrainSemiSupervised?name="+wrapperData + "&useExtendedTestSet="+stateData.useExtendedTestSet.currentName), 2500);
         });
       },
       save: function(name){
@@ -537,7 +542,7 @@ function initVue(){
       load: function(){
         console.log("Wrapper: "+wrapperData.currentName+" loading.");
         runGenerator(function *main(){
-          data = yield jQGetPromise("/get/load?name="+wrapperData.currentName + "&savepoint="+wrapperData.selectedPoint, "json");
+          data = yield jQGetPromise("/get/load?name="+wrapperData.currentName + "&savepoint="+wrapperData.selectedPoint + "=useExtendedTestSet="+stateData.useExtendedTestSet, "json");
           // data contains a name of the selected classifier and an accuracy array
           if(typeof(data.Error) != "undefined"){
             notify("Error", data.Error, 2500);
@@ -616,7 +621,7 @@ function initVue(){
         }, 1000);
       },
       getDistributionArray: function(){
-          $.get("/get/distributionArray?table="+wrapperData.distribution, function(data){
+          $.get("/get/distributionArray?table="+wrapperData.distribution + "&useExtendedTestSet="+stateData.useExtendedTestSet, function(data){
             Vue.set(wrapperData, "distributionArray", _.sortBy(data, "class"));
             if(wrapperData.distribution == "Test")
               // Special variable because of permanent visibility in test mode
@@ -655,7 +660,7 @@ function initVue(){
       name: function() { return footerData[wrapperData.activeMember].name;},
       term: function() { return footerData[wrapperData.activeMember].term;}
     }
-  });
+  });/* outputView */
   
   footerView = new Vue({
     el: 'footer',
@@ -668,7 +673,7 @@ function initVue(){
     },
     computed:{
     }
-  });
+  });/* footerView */
   
   wrapperView.getDistributionArray();
   wrapperView.getDocumentationNames();

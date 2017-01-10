@@ -318,17 +318,27 @@
                     v-show="(mode == 'single')"
                     :class="'btn btn-primary control '" 
                     title="Predict a list of samples" value="Predict list" type="button">
-              <!-- Tests are being run by the classifiers. The only case where this would be useful is when the test samples have changed remotely
+              <!-- Tests are being run by the classifiers. The only case where this would be useful is when the test samples have changed remotely-->
+              <input v-on:click="retrainAll()" value="Retrain all classifers" 
+                    v-show="(mode == 'test')"
+                    :class="'btn btn-primary '" style="width: 49.55%;" type="button">
+              <input v-on:click="saveAll()" value="Save all classifers"
+                    v-show="(mode == 'test')"
+                    :class="'btn btn-primary '" style="width: 49.55%;" type="button">
+
+              <div 
+                  v-show="mode == 'test'" :class="'input-group '"
+                  data-toggle="tooltip" data-placement="bottom" data-original-title="The extended test set contains samples classified by ourself.">
+                <span class="input-group-addon">
+                  <input v-on:change="changeExtendedSet()" id="useExtendedTestSet" v-model="useExtendedTestSet" name="useExtendedTestSet" type="checkbox">
+                </span>
+                <label for="useExtendedTestSet" class="form-control">Use extended test set</label>
+              </div><!-- /input-group -->
+
               <input v-on:click="startTest()" 
                     v-show="(mode == 'test')"
                     :class="'btn btn-primary control '" 
-                    title="Test all Classifiers" value="Start testing" type="button">-->
-              <input v-on:click="retrainAll()" value="Retrain all classifers" 
-                    v-show="(mode == 'test')"
-                    :class="'btn btn-primary '" type="button">
-              <input v-on:click="saveAll()" value="Save all classifers"
-                    v-show="(mode == 'test')"
-                    :class="'btn btn-primary '" type="button">
+                    title="Test all Classifiers" value="Test classifiers" type="button">
               <input v-on:click="showStats()" value="Statistics" 
                     v-show="(mode == 'test')"
                     :class="'btn btn-primary '" type="button">

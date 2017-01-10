@@ -163,9 +163,9 @@ class ClassifierCollection:
             moved = True
         return userquery, classifierasking, resultsForUserQuery
 
-    def TestAllClassificationModules(self):
+    def TestAllClassificationModules(self, useExtendedTestSet):
         """Tests all classification modules, they do that by themselves and return results to this function"""
-        data = DC.getTestData()
+        data = DC.getTestData(useExtendedTestSet)
         results = []
         for classifier in self.classificationmodules:
             classifierresult = [classifier.getName(), classifier.testModule(data)]
