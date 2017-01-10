@@ -17,18 +17,41 @@ def myTokenizer(s):
 class svmall(ClassificationModule):
     """A basic SVC"""
 
-    def __init__(self, text_corpus):
+    def __init__(self, text_corpus, filetype_corpus, foldername_corpus, reponame_lstm):
         my_description = "All SVC\
                           Sklearn can't predict individual probabilities per class so one-hot encoding for these is used."
         ClassificationModule.__init__(self, "ALL Support Vector Classifier", my_description)
 
+        # Create vectorizer and fit on all available Corpi
         self.vectorizer = getTextVectorizer(1000) # Maximum of different columns
+        self.filetypeVectorizer = getTextVectorizer(30) # TODO: Find better number
+        self.foldernameVectorizer = getTextVectorizer(30) # TODO: Find better number
+
+        # Vectorizer for descriptions and/or readmes
         corpus = []
         for text in text_corpus:
             corpus.append(process_text(text))
         self.vectorizer.fit(corpus)
 
-        self.clf = SVC(C=1000.0, class_weight=getClassWeights())
+        # Vectorizer for filetypes
+        corpus = []
+        for type in filetype_corpus:
+            corpus.append(type)
+        self.filetypeVectorizer.fit(corpus)
+
+        # Vectorizer for foldernames
+        corpus = []
+        for folder in foldername_corpus:
+            corpus.append(folder)
+        self.foldernameVectorizer.fit(corpus)
+        
+        # Setup lstm for repository-name
+        self.reponamelstm = reponame_lstm.loadClassificationModuleSavePoint("lastused")
+        if (self.reponamelstm is None):
+            self.reponamelstm = reponame_lstm
+
+        # Create classifier
+        self.clf = SVC(C=1000.0, class_weight='auto', probability=True) # TODO: Find better C, gamma
         
         print "\t-", self.name
 
@@ -63,7 +86,7 @@ class svmall(ClassificationModule):
         """Return the probability the module assignes each label"""
         sample = self.formatInputData(sample)
         prediction = self.clf.predict(sample)[0]
-        return ([prediction] + oneHot(prediction).tolist())
+        return ([prediction] + self.clf.predict_proba(sample)[0])
 
     def formatInputData(self, sample):
         """Extract description and transform to vector"""
@@ -71,7 +94,9 @@ class svmall(ClassificationModule):
         rm = getReadme(sample)
         arr = list(self.vectorizer.transform([sd, rm]).toarray()[0])
         arr += getMetadataVector(sample)
-        # Returns numpy array which contains 1 array with features
+        arr += list(self.filetypeVectorizer.transform([getFiletypesString(sample)]).toarray()[0])
+        arr += list(self.foldernameVectorizer.transform([getFoldernames(sample)]).toarray()[0])
+        arr += self.reponamelstm.predictLabelAndProbability(sample)[1:]
         return np.asarray([arr])
 
 

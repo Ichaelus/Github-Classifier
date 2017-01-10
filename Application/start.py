@@ -25,6 +25,7 @@ from Models.ClassificationModules.nnall import nnall
 from Models.ClassificationModules.knnreadmeonly import knnreadmeonly
 from Models.ClassificationModules.svcfilenamesonly import filenamesonlysvc
 from Models.ClassificationModules.lrstacking import lrstacking
+from Models.ClassificationModules.svmall import svmall
 import Models.DatabaseCommunication as DC
 
 print("Starting application..")
@@ -54,14 +55,15 @@ classifiers = []
 #classifiers.append(multinomialnbreadmeonly(readmeCorpus))
 #classifiers.append(bernoullinbdescriptiononly(descriptionCorpus))
 #classifiers.append(bernoullinbreadmeonly(readmeCorpus))
-classifiers.append(nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus))
+classifiers.append(nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm()))
+classifiers.append(svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm()))
 #classifiers.append(filenamesonlysvc(filenameCorpus))
 classifiers.append(nnmetaonly())
 #classifiers.append(metaonlyrandomforest())
 #classifiers.append(metaonlysvc())
 classifiers.append(metaonlyadaboost())
 classifiers.append(reponamelstm())
-classifiers.append(lrstacking([nnmetaonly(), metaonlyadaboost(), reponamelstm(), nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus)]))
+#classifiers.append(lrstacking([nnmetaonly(), metaonlyadaboost(), reponamelstm(), nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm())]))
 #classifiers.append(readmelstm())
 
 print 'Loading last checkpoint for classifiers if available:'

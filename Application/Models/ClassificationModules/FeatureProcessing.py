@@ -19,18 +19,21 @@ import keras
 max_stars = 1000
 max_forks =  100
 max_watches = 10
-max_folder_count = 100
+max_folder_count = 50
 max_treeDepth = 10
 max_branch_count = 10
-max_forks = 100
+max_forks = 50
 max_commit_interval_avg = 10
 max_contributors_count = 10
 max_open_issues_count = 10
 max_avg_commit_length = 100
-max_file_count = 100
-max_commit_interval_max = 10
-max_commit_count = 100
-max_readme_length = 1000
+max_file_count = 150
+max_commit_interval_max = 20
+max_commit_count = 200
+max_readme_length = 1000 # TODO: What to do with this?
+max_lev_files = 10 # Maximal Levenshtein distance
+max_lev_folders = 10
+
 
 max_vectorizer_word_count = 3000
 
@@ -125,6 +128,8 @@ def getMetadataVector(sample):
     vec.append(min(1., float(sample['isFork'])))
     vec.append(min(1., float(sample['commit_count']) / max_commit_count))
     vec.append(min(1., float(getReadmeLength(sample) / max_readme_length)))
+    vec.append(min(1., float(avgLev(sample['folders']) / max_lev_folders)))
+    vec.append(min(1., float(avgLev(sample['files']) / max_lev_files)))
     vec = vec + getLanguageVector(sample)
     return vec
 
@@ -311,6 +316,21 @@ def resetWeights(kerasModel):
     kerasModel.set_weights(new_weights)
     
 
+def avgLev(nameString):
+    if nameString is None or len(nameString) < 2:
+        return 0
+    words = nameString.split(' ')
+    dist = 0.0
+    for i in xrange(len(words) - 1):
+        dist += lev(words[i], words[i + 1])
+    return dist / (len(words) - 1)
+
+
+def lev(a, b):
+    """ Taken from https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Python """
+    if not a: return len(b)
+    if not b: return len(a)
+    return min(lev(a[1:], b[1:])+(a[0] != b[0]), lev(a[1:], b)+1, lev(a, b[1:])+1)
 
 
 

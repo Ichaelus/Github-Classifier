@@ -13,29 +13,39 @@ from ClassificationModule import ClassificationModule
 
 class nnall(ClassificationModule):
     """A basic feedforward neural network"""
-    def __init__(self, text_corpus, filetype_corpus, foldername_corpus, num_hidden_layers=1):
+    def __init__(self, text_corpus, filetype_corpus, foldername_corpus, reponame_lstm, num_hidden_layers=1):
         ClassificationModule.__init__(self, "All NN", "A basic feedforward neural network")
-        # Create vectorizer and fit on all available Descriptions
+
         self.vectorizer = getTextVectorizer(1000) # Maximum of different columns
         self.filetypeVectorizer = getTextVectorizer(30) # TODO: Find better number
         self.foldernameVectorizer = getTextVectorizer(30) # TODO: Find better number
+
+        # Vectorizer for descriptions and/or readmes
         corpus = []
         for text in text_corpus:
             corpus.append(process_text(text))
         self.vectorizer.fit(corpus)
+
+        # Vectorizer for filetypes
         corpus = []
         for type in filetype_corpus:
             corpus.append(type)
         self.filetypeVectorizer.fit(corpus)
+
+        # Vectorizer for foldernames
         corpus = []
         for folder in foldername_corpus:
             corpus.append(folder)
         self.foldernameVectorizer.fit(corpus)
         
+        # Setup lstm for repository-name
+        self.reponamelstm = reponame_lstm.loadClassificationModuleSavePoint("lastused")
+        if (self.reponamelstm is None):
+            self.reponamelstm = reponame_lstm
         
-
         # Set input-size and output_size
         self.input_size = len(self.vectorizer.get_feature_names()) + getMetadataLength() + len(self.filetypeVectorizer.get_feature_names()) + len(self.foldernameVectorizer.get_feature_names())
+        self.input_size += 7 # Reponame-lstm-output
         self.output_size = 7 # Hardcoded for 7 classes
 
         # Create model
@@ -101,5 +111,5 @@ class nnall(ClassificationModule):
         arr += getMetadataVector(sample)
         arr += list(self.filetypeVectorizer.transform([getFiletypesString(sample)]).toarray()[0])
         arr += list(self.foldernameVectorizer.transform([getFoldernames(sample)]).toarray()[0])
+        arr += self.reponamelstm.predictLabelAndProbability(sample)[1:]
         return np.asarray([arr])
-
