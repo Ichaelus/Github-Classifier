@@ -17,7 +17,7 @@ class metaonlyrandomforest(ClassificationModule):
     def __init__(self):
         ClassificationModule.__init__(self, "Meta Only Random Forest", "Ensemble Learner with multiple Decision-Trees")
 
-        self.clf = RandomForestClassifier( class_weight = 'auto')
+        self.clf = RandomForestClassifier(n_estimators=200, class_weight = 'auto')
         
         print "\t-", self.name
 

@@ -109,7 +109,7 @@ def getReadmeLength(sample):
     return len(readme)
 
 def getMetadataVector(sample):
-    # Get metadata
+    """ Get metadata """
     vec = []
     vec.append(min(1., float(sample['hasDownloads'])))
     vec.append(min(1., float(sample['watches']) / max_watches))
@@ -136,8 +136,8 @@ def getMetadataVector(sample):
 
 def getMetadataLength():
     """Get length of Metadata Vector"""
-    # TODO: Remove hardcoded answer in case more Features get added
-    return 17 + getLanguagesLength()
+    # TODO: Remove hardcoded answer
+    return 19 + getLanguagesLength()
 
 def getLanguageVector(sample):
     """Get vector of used languages"""
@@ -317,22 +317,52 @@ def resetWeights(kerasModel):
     
 
 def avgLev(nameString):
-    if nameString is None or len(nameString) < 2:
+    if nameString is None:
         return 0
     words = nameString.split(' ')
+    if len(words) < 2:
+        return 0
     dist = 0.0
     for i in xrange(len(words) - 1):
         dist += lev(words[i], words[i + 1])
+    #print "Got one average distance!"
     return dist / (len(words) - 1)
 
 
-def lev(a, b):
+def lev(source, target):
     """ Taken from https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Python """
-    if not a: return len(b)
-    if not b: return len(a)
-    return min(lev(a[1:], b[1:])+(a[0] != b[0]), lev(a[1:], b)+1, lev(a, b[1:])+1)
+    if len(source) < len(target):
+        return lev(target, source)
 
+    # So now we have len(source) >= len(target).
+    if len(target) == 0:
+        return len(source)
 
+    # We call tuple() to force strings to be used as sequences
+    # ('c', 'a', 't', 's') - numpy uses them as values by default.
+    source = np.array(tuple(source))
+    target = np.array(tuple(target))
 
+    # We use a dynamic programming algorithm, but with the
+    # added optimization that we only need the last two rows
+    # of the matrix.
+    previous_row = np.arange(target.size + 1)
+    for s in source:
+        # Insertion (target grows longer than source):
+        current_row = previous_row + 1
 
+        # Substitution or matching:
+        # Target and source items are aligned, and either
+        # are different (cost of 1), or are the same (cost of 0).
+        current_row[1:] = np.minimum(
+                current_row[1:],
+                np.add(previous_row[:-1], target != s))
 
+        # Deletion (target grows shorter than source):
+        current_row[1:] = np.minimum(
+                current_row[1:],
+                current_row[0:-1] + 1)
+
+        previous_row = current_row
+
+    return previous_row[-1]
