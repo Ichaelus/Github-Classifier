@@ -254,22 +254,22 @@ def formatSingleClassificationTest(classifier, result):
     #
     classifiers = {}
     measures = {
-        'Average Accuracy': CM.avg_accuracy(result[2]),
-        'Error Rate': CM.err_rate(result[2]),
-        'Precision mu': CM.precision_mu(result[2]),
-        'Recall mu': CM.recall_mu(result[2]),
-        'Fscore mu': CM.fscore_mu(result[2], 0.125),
-        'Precision M': CM.precision(result[2]),
-        'Recall M': CM.recall(result[2]),
-        'Fscore M': CM.fscore(result[2], 0.125),
+        'Average Accuracy': CM.avg_accuracy(result[1]),
+        'Error Rate': CM.err_rate(result[1]),
+        'Precision mu': CM.precision_mu(result[1]),
+        'Recall mu': CM.recall_mu(result[1]),
+        'Fscore mu': CM.fscore_mu(result[1], 0.125),
+        'Precision M': CM.precision(result[1]),
+        'Recall M': CM.recall(result[1]),
+        'Fscore M': CM.fscore(result[1], 0.125),
         }
     confusionMatrix = {
-        'matrix': formatConfusionMatrix(result[2]),
+        'matrix': formatConfusionMatrix(result[1]),
         'measures': measures,
         'order': ["DEV", "HW", "EDU", "DOCS", "WEB", "DATA", "OTHER"],
         }
     classifiers[classifier.getName()] = {
-        'precision':formatClassifierPrecision(result[1]),
+        'precision':formatClassifierPrecision(result[0]),
         'confusionMatrix': confusionMatrix
         }
     returndata = {'classifiers':classifiers}
