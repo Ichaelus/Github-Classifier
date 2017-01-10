@@ -1,6 +1,6 @@
 # GitHub Classifier
 
-_Note: Open UserManual.html for a better Markdown representation._
+_Note: Open [UserManual.html](UserManual.html) for a better Markdown representation._
 
 
 ## Introduction
@@ -13,5 +13,20 @@ Over the last couple of months, we tried to develop an easy to use and - whereve
 
 ## Component Correlation
 
+Because of the need of a shared information based and the dependency on the [GitHub API](https://developer.github.com/v3/), we decided to encapsulate a few main concepts and connect them through a few well defined interfaces.
 
 <img src="Documentation/component_correlation.png">
+
+### The Backend
+
+Whenever we gather information for a repository, about 10-100 of the GitHub `API-calls` (limited to 5000) are being used. In order to get along with this limitation we decided to set up an isolated remove [LAMP](https://en.wikipedia.org/wiki/LAMP_(software_bundle)) server which is able to _mine_ and store random repositories in a dedicated `MySQL database`. This gives us the freedom to work on and extend the same information base while running different clients. More about the database tables and PHP services can be read in **Documentation/API.md**.
+
+### The Client Application
+
+The software actually containing the classification modules and GUI representation is located inside the  `./Application` folder and can be run OS-independent on your local machine. It is designed following the [MVC](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) principle with Python running the heartbeat and [Bottle](https://en.wikipedia.org/wiki/Bottle_(web_framework)) offering services and files to the Frontend. The best of all: New classifiers can be easily added to the system just by being added to `Models/ClassificationModules`.
+
+The frontend is what we are proud about the most, so don't hesitate following the Installation Guideline - there is an introduction to the GUI as well in **Documentation/Frontend Manual.md**.
+
+### Client Installation
+
+Please select **Documentation/Installation Manual.md** on top of the page to get the Frontend running.
