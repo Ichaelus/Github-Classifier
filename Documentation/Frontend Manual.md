@@ -1,6 +1,8 @@
 # Frontend Manual
 
-## Modis Overview
+The User Interface is designed to serve both for training and testing purposes. To keep them sepearated there are four different modi that can be selected in the header, each with its own behaviour.
+
+## Modi Overview
 1. Stream Based Active Learning 
 2. Pool Based Active Learning
 3. Test All Classifiers
@@ -8,26 +10,21 @@
 
 ### 1. Stream Based Active Learning
 <img src="StreamBasedAL.jpg" height=300 alt="Image Stream Based Active Learing">
-&nbsp; 
 
-This mode selects a random sample out of your pool of unlabeled data, if a classifier is uncertain, 
-so you will be asked and you can categorize it to one of the classes. 
-After doing this the sample will shift to a labeled pool used for the training of the classifiers. 
-For starting press the 'PLAY'-Button and you will be asked until you click on the 'PAUSE'-Button. 
-For a single classification use the 'SKIP NEXT'-Button.
+Selecting this or one of the other **AL** modis will display three buttons on the left side of the header. They are used to control the stream of input repositories. If you are done classifying repositories, either press the `pause` button or simply switch mode.
+
+**Stream Based Active Learning** means that a random sample out of our pool of unlabeled data is being selected and classified by every classification module in the list. If one or more modules are uncertain about their output, you will be asked to classify the sample by your own. Otherwise the sample will be skipped.
+Manual classified samples will then be transfered to the labeled pool of training samples that are used to increase the classifier precision. Skipped samples could be transfered to the semi-supervised training pool, though we decided to disable this feature because of its current negative outcome.
+
+In order to calculate their uncertainty, the classifiers are using the selected uncertainty formula.
 
 ### 2. Pool Based Active Learning
 <img src="PoolBasedAL.jpg" height=300>
-&nbsp;
 
-This mode picks a sample with the highest uncertainty for one classifier (blue marked one) out of the pool of unlabed data. 
-Uncertainty will be computed via one of the selected formulas.
-For starting press the 'PLAY'-Button and you will be asked until you click on the 'PAUSE'-Button. 
-For a single classification use the 'SKIP NEXT'-Button.
+This variation works similar to Stream Based AI: it picks in turn a single classifier (marked in blue) which determines the sample with the highest uncertainty out of a random partition of the unlabed sample pool. Because of its nature of choosing the most uncertain sample, it will always ask for user classification.
 
 ### 3. Test All Classifiers
 <img src="Test.jpg" height=150>
-&nbsp;
 
 Here you can refresh the statistics as well as a shortcut for retraining and saving all classifiers.
 'Test classifiers' lets all classifiers categorize a pool of testdata given by Informaticup 2017 
