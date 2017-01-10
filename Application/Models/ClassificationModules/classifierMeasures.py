@@ -5,9 +5,8 @@ def avg_accuracy(confusion_matrix):
     result = 0
     for i in xrange(len(confusion_matrix)-2):
         denominator = (confusion_matrix[i, 7] + confusion_matrix[7, i] - confusion_matrix[i, i])
-        if denominator == 0:
-            return 0
-        result += confusion_matrix[7, i] / denominator
+        if denominator != 0:
+            result += confusion_matrix[7, i] / denominator
     return result / (len(confusion_matrix)-2)
 
 def err_rate(confusion_matrix):
@@ -15,9 +14,8 @@ def err_rate(confusion_matrix):
     result = 0
     for i in xrange(len(confusion_matrix)-2):
         denominator = (confusion_matrix[i, 7] + confusion_matrix[7, i] - confusion_matrix[i, i])
-        if denominator == 0:
-            return 0
-        result += confusion_matrix[i, 7] / denominator
+        if denominator != 0:
+            result += confusion_matrix[i, 7] / denominator
     return result / (len(confusion_matrix)-2)
 
 def precision_mu(confusion_matrix):
