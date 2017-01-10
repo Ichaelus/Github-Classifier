@@ -130,11 +130,13 @@ def api(key):
 
 	elif(key == "startTest"):
 		# Runs the classifiers agains a predefined testset
-		result = homeclassifiercollection.TestAllClassificationModules()
+		useExtendedTestSet = getQueryValue("useExtendedTestSet") == "true"
+		result = homeclassifiercollection.TestAllClassificationModules(useExtendedTestSet)
 		return Models.JSONCommunication.formatMultipleClassificationTests(result)
 
 	elif(key == "retrain"):
 		ClassifierName = getQueryValue("name")
+		useExtendedTestSet = getQueryValue("useExtendedTestSet") == "true"
 		#try:
 			# Get data to train on
 		train_data = Models.DatabaseCommunication.getTrainData()
@@ -143,13 +145,14 @@ def api(key):
 		classifier.train(train_data)
 
 		# Test classifier
-		test_data = Models.DatabaseCommunication.getTestData()
+		test_data = Models.DatabaseCommunication.getTestData(useExtendedTestSet)
 		return Models.JSONCommunication.formatSingleClassificationTest(classifier, classifier.testModule(test_data))
 		#except:
 		#	return "The classifier "+ClassifierName+" has been retrained."
 
 	elif(key == "retrainSemiSupervised"):
 		ClassifierName = getQueryValue("name")
+		useExtendedTestSet = getQueryValue("useExtendedTestSet") == "true"
 		try:
 			"""
 			# Get data to train on
@@ -159,7 +162,7 @@ def api(key):
 			classifier.train(train_data)
 
 			# Test classifier
-			test_data = DC.getTestData()
+			test_data = DC.getTestData(useExtendedTestSet)
 			return classifier.testModule(train_data)
 			"""
 			return "NotImplemented"
@@ -177,10 +180,11 @@ def api(key):
 
 	elif(key == "load"):
 		ClassifierName = getQueryValue("name")
+		useExtendedTestSet = getQueryValue("useExtendedTestSet") == "true"
 		#try:
 		newModule = homeclassifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint(getQueryValue("savepoint"))
 		homeclassifiercollection.setClassificationModule(ClassifierName, newModule)
-		test_data = Models.DatabaseCommunication.getTestData()
+		test_data = Models.DatabaseCommunication.getTestData(useExtendedTestSet)
 		return Models.JSONCommunication.formatSingleClassificationTest(newModule, newModule.testModule(test_data))
 		#except:
 		#	return('{"Error": "Error loading classifier"}')
@@ -229,7 +233,8 @@ def api(key):
 			return Models.JSONCommunication.formatStats(DC.getStats(getQueryValue("table"), "numerical"))
 			
 	elif(key == "distributionArray"):
-		return Models.JSONCommunication.toJson(DC.getDistributionArray(getQueryValue("table")))
+		useExtendedTestSet = getQueryValue("useExtendedTestSet") == "true"
+		return Models.JSONCommunication.toJson(DC.getDistributionArray(getQueryValue("table"), useExtendedTestSet))
 
 	elif(key == "documentationNames"):
 		docsPath = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../'), '../Documentation')

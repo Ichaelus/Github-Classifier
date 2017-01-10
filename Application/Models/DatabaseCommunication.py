@@ -43,8 +43,11 @@ def getUnlabeledData():
 def getUnlabeledSingleSample():
     return api_call('single', tableString="unlabeled")
 
-def getTestData():
-    return api_call('all', tableString="test") + api_call('all', tableString="standard_test_samples") #+ api_call('all', tableString="_old_test")
+def getTestData(useExtendedTestSet):
+    testSet = api_call('all', tableString="standard_test_samples")
+    if(useExtendedTestSet):
+        testSet += api_call('all', tableString="test")
+    return testSet
 
 def getLabeledCount():
     return api_call('count', tableString="labeled")
@@ -52,8 +55,11 @@ def getLabeledCount():
 def getUnlabeledCount():
     return  api_call('count', tableString="unlabeled")
 
-def getTestCount():
-    return api_call('count', tableString="test")  + api_call('count', tableString="standard_test_samples") #+ api_call('count', tableString="_old_test")
+def getTestCount(useExtendedTestSet):
+    testCount = api_call('count', tableString="standard_test_samples")
+    if(useExtendedTestSet):
+        testCount += api_call('count', tableString="test")
+    return testCount
 
 def getTrainData():
     return api_call('all', tableString="train") + api_call('all', tableString="standard_train_samples")
@@ -144,18 +150,20 @@ def getStats(table, t):
     q = "" if t == "numerical"  else "&string_attrs=true"
     return api_call('stats'+q, tableString=table)
 
-def getDistributionArray(table):
-    stats1 = api_call('class-count', tableString=table.lower())
-    stats2 = api_call('class-count', tableString="standard_"+table.lower()+"_samples")
-    stats = []
-    for val in stats1 + stats2:
-        to_append = True
-        for _t in stats:
-            # Looks badly like n². To be improved
-            if _t["class"] == val["class"]:
-                _t["count"] = int(_t["count"]) + int(val["count"])
-                to_append = False
-                break
-        if to_append:
-            stats.append(val)
-    return stats
+def getDistributionArray(table, useExtendedTestSet):
+    stats1 = api_call('class-count', tableString="standard_"+table.lower()+"_samples")
+    if(table.lower() != 'test' or useExtendedTestSet):
+        stats2 = api_call('class-count', tableString=table.lower())
+        stats = []
+        for val in stats1 + stats2:
+            to_append = True
+            for _t in stats:
+                # Looks badly like n². To be improved
+                if _t["class"] == val["class"]:
+                    _t["count"] = int(_t["count"]) + int(val["count"])
+                    to_append = False
+                    break
+            if to_append:
+                stats.append(val)
+        return stats
+    return stats1

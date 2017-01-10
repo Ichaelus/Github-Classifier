@@ -113,8 +113,8 @@
               <div class="col-xs-9">{{current.description}}</div>
             </div>
             <div class="row attribute">
-              <div class="col-xs-3">Yield</div>
-              <div class="col-xs-9">{{Math.round(current.yield * 100)}}%</div>
+              <div class="col-xs-3">{{originalMeasureName(getMeasureName())}}</div>
+              <div class="col-xs-9">{{formatMeasure(current.confusionMatrix.measures[getMeasureName()])}}</div>
             </div>
             <div class="row attribute">
               <div class="col-xs-3">Currently enabled</div>
@@ -130,7 +130,7 @@
             <div class="input-group-btn select">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b>{{selectedPoint}}</b> <span class="caret"></span></button>
                   <ul class="dropdown-menu" style="margin: 0px auto;">
-                    <li v-for="(sp, fileName) in savePoints"><span v-on:click="setSavePoint(fileName)">{{fileName}} <b>({{Math.round(sp.yield * 100)+'%'}}</b>)</span></li>
+                    <li v-for="(sp, fileName) in savePoints"><span v-on:click="setSavePoint(fileName)">{{formatFileName(fileName)}}</span></li>
                   </ul>
             </div>
             <span class="action btn btn-default" v-on:click="load()">Load version</span>
@@ -148,12 +148,12 @@
                   <th>▼ Class. \ Reference ► </th>
                   <th v-for="(c, i) in current.confusionMatrix.order">{{c}}</th>
                   <th>Total</th>
-                  <th>C.A. (%)</th>
+                  <th>Precision (%)</th>
                 </tr>
                 <tr v-for="(r, i) in current.confusionMatrix.matrix"
                     :class="(i >= current.confusionMatrix.order.length ? 'total' : '') ">
                   <td>
-                      {{(i <  current.confusionMatrix.order.length ? current.confusionMatrix.order[i] : (current.confusionMatrix.order.length == i ? 'Total' : 'P.A. (%)'))}}</td>
+                      {{(i <  current.confusionMatrix.order.length ? current.confusionMatrix.order[i] : (current.confusionMatrix.order.length == i ? 'Total' : 'Recall (%)'))}}</td>
 
                   <td v-for="(r2, i2) in current.confusionMatrix.matrix[i]" 
                       :class="(i == i2 ? 'cell_own' : (i < i2 ? 'cell_classifier': 'cell_reference'))">
@@ -167,7 +167,7 @@
               <colgroup> <col class="col-xs-6"> <col class="col-xs-6"> </colgroup>
               <thead> <tr> <th>Measure</th> <th>Result</th> </tr> </thead>
               <tbody> 
-                <tr v-for="(val, m) in current.confusionMatrix.measures"> <td scope="row"> <code class="defaultCursor" data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(m)">{{originalMeasureName(m)}}</code> </td> <td>{{Math.round(val * 10000)/10000}} %</td> </tr>
+                <tr v-for="(val, m) in current.confusionMatrix.measures"> <td scope="row"> <code class="defaultCursor" data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(m)">{{originalMeasureName(m)}}</code> </td> <td>{{Math.round(val * 10000)/100}} %</td> </tr>
               </tbody>
             </table>
           </div>
@@ -198,13 +198,13 @@
           <hr>
           <div class="row">
             <div v-on:click="showTeam('stefan')"
-            :class="'col-xs-2 portrait ' + (activeMember == 'stefan' ? 'selected' : '')" style="background-image: url('images/michael.jpg')"></div>
-            <div v-on:click="showTeam('michael')"
+            :class="'col-xs-2 portrait ' + (activeMember == 'stefan' ? 'selected' : '')" style="background-image: url('images/stefan.jpg')"></div>
+            <div v-on:click="showTeam('stefan')"
             :class="'col-xs-2 portrait ' + (activeMember == 'michael' ? 'selected' : '')" style="background-image: url('images/michael.jpg')"></div>
             <div v-on:click="showTeam('martin')"
-            :class="'col-xs-2 portrait ' + (activeMember == 'martin' ? 'selected' : '')" style="background-image: url('images/michael.jpg')"></div>
+            :class="'col-xs-2 portrait ' + (activeMember == 'martin' ? 'selected' : '')" style="background-image: url('images/martin.jpg')"></div>
             <div v-on:click="showTeam('andreas')"
-            :class="'col-xs-2 portrait ' + (activeMember == 'andreas' ? 'selected' : '')" style="background-image: url('images/michael.jpg')"></div>
+            :class="'col-xs-2 portrait ' + (activeMember == 'andreas' ? 'selected' : '')" style="background-image: url('images/andreas.jpg')"></div>
           </div>
           <hr>
           <h2>{{name}}</h2>
@@ -318,17 +318,27 @@
                     v-show="(mode == 'single')"
                     :class="'btn btn-primary control '" 
                     title="Predict a list of samples" value="Predict list" type="button">
-              <!-- Tests are being run by the classifiers. The only case where this would be useful is when the test samples have changed remotely
+              <!-- Tests are being run by the classifiers. The only case where this would be useful is when the test samples have changed remotely-->
+              <input v-on:click="retrainAll()" value="Retrain all classifers" 
+                    v-show="(mode == 'test')"
+                    :class="'btn btn-primary '" style="width: 49.55%;" type="button">
+              <input v-on:click="saveAll()" value="Save all classifers"
+                    v-show="(mode == 'test')"
+                    :class="'btn btn-primary '" style="width: 49.55%;" type="button">
+
+              <div 
+                  v-show="mode == 'test'" :class="'input-group '"
+                  data-toggle="tooltip" data-placement="bottom" data-original-title="The extended test set contains samples classified by ourself.">
+                <span class="input-group-addon">
+                  <input v-on:change="changeExtendedSet()" id="useExtendedTestSet" v-model="useExtendedTestSet" name="useExtendedTestSet" type="checkbox">
+                </span>
+                <label for="useExtendedTestSet" class="form-control">Use extended test set</label>
+              </div><!-- /input-group -->
+
               <input v-on:click="startTest()" 
                     v-show="(mode == 'test')"
                     :class="'btn btn-primary control '" 
-                    title="Test all Classifiers" value="Start testing" type="button">-->
-              <input v-on:click="retrainAll()" value="Retrain all classifers" 
-                    v-show="(mode == 'test')"
-                    :class="'btn btn-primary '" type="button">
-              <input v-on:click="saveAll()" value="Save all classifers"
-                    v-show="(mode == 'test')"
-                    :class="'btn btn-primary '" type="button">
+                    title="Test all Classifiers" value="Test classifiers" type="button">
               <input v-on:click="showStats()" value="Statistics" 
                     v-show="(mode == 'test')"
                     :class="'btn btn-primary '" type="button">
@@ -343,7 +353,7 @@
           <div class="col-xs-2"><h3>Input</h3></div>
           <div class="col-xs-7">
             <div class="col-xs-4"><h3>Classifiers</h3></div>
-            <div class="col-xs-7 col-xs-offset-1"><h3>{{(mode != 'test' ? 'Classification results' : 'Accuracy per class')}}</h3></div>
+            <div class="col-xs-7 col-xs-offset-1"><h3>{{(mode != 'test' ? 'Classification results' : '    Precision per class')}}</h3></div>
           </div>
           <div class="col-xs-3"><h3>Output</h3></div>
         </div><!-- /titles -->
@@ -372,7 +382,7 @@
               </table>
             </div>
             <div 
-              v-show="(mode == 'test')"
+              v-show="(mode == 'test' && (state == 'showResult' || state == 'empty'))"
               :class="'trainCount '">
               <h4 class="subtitle">
                 Test sample distribution</h4>
@@ -405,7 +415,7 @@
                         data-toggle="tooltip" data-placement="bottom" :data-original-title="(isAsking(c.name) ? 'This module selected the sample because of a high uncertainty.' : '')">
                     <span class="name">{{c.name}}</span>
                     <div class="wrapper">
-                      <span data-toggle="tooltip" data-placement="top" :data-original-title="'Current ' + originalMeasureName(selectedMeasure)" class="stats">{{getMeasure(c)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
+                      <span data-toggle="tooltip" data-placement="top" :data-original-title="'Current ' + originalMeasureName(getMeasureName())" class="stats">{{getMeasure(c)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
                       <span data-toggle="tooltip" data-placement="top" title="Show classifier details" v-on:click="showInfo(c.name)" class="glyphicon glyphicon-info-sign"></span>
                       <span data-toggle="tooltip" data-placement="top" title="Enable classifier" v-on:click="switchState(c.name)" class="glyphicon glyphicon-ban-circle"></span>
                       <span data-toggle="tooltip" data-placement="top" title="Disable classifier" v-on:click="switchState(c.name)" class="glyphicon glyphicon-ok-circle"></span>
@@ -443,7 +453,7 @@
                 <colgroup> <col class="col-xs-8"> <col class="col-xs-4"> </colgroup>
                 <thead> <tr> <th>Measure</th> <th>Result</th> </tr> </thead>
                 <tbody> 
-                  <tr v-for="(val, m) in outputMeasures"> <td scope="row"> <code class="defaultCursor" data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(m)">{{originalMeasureName(m)}}</code> </td> <td>{{Math.round(val * 100)/100}} %</td> </tr>
+                  <tr v-for="(val, m) in outputMeasures"> <td scope="row"> <code class="defaultCursor" data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(m)">{{originalMeasureName(m)}}</code> </td> <td>{{formatMeasure(val)}}</td> </tr>
                 </tbody>
               </table>
               <hr>

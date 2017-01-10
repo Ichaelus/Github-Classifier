@@ -6,7 +6,7 @@
 * pip (module manager)
 * Firefox >= 50
 * Screen size >= (1280px x 600px)
-* RAM >= 4GB
+* RAM >= 6GB
 
 ## Notes
 
