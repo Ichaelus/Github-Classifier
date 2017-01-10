@@ -22,29 +22,55 @@
       }
       #header{
         background: #F7F7F7;
-        border-bottom: 2px dashed #0000004d;
+        border-bottom: 1px dashed black;
+      } 
+      footer{
+        padding: 25px 0;
+        border-top: 1px dashed black;
+        margin-top: 25px;
+        background: #F6F6F6;
       }
     </style>
   </head>
   <body>
-    <div class="container" id="page">
-      <div class="row" id="header">
-        <h1>User Manual
-          <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              {{selectedFile}} <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu">
-              <li v-for="f in fileList" v-on:click="changeFile(f)"><a href="#">{{f}}</a></li>
-            </ul>
+    <div id="page">
+      <div id="header">
+        <div class="container">
+          <h1>User Manual
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{selectedFile}} <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li v-for="f in fileList" v-on:click="changeFile(f)"><a href="#">{{f}}</a></li>
+              </ul>
+            </div>
+          </h1>
+          Use this page to introduce yourself to the GitHub classification tool. Documentation files can be visualised by changing the selected dropdown element.
+          <br><br>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row" id="main">
+          <div v-html="markdown"></div>
+        </div>
+      </div>
+      <footer>
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-4"><h4>Assignment for the <a href="http://informaticup.gi.de/" target="_blank">InformatiCup 2017</a></h4></div>
+            <div class="col-xs-2">
+              <h4>Team Augsburg</h4>
+            </div>
+            <div class="col-xs-6">
+              <div class="col-xs-6 member">Andreas Grafberger</div>
+              <div class="col-xs-6 member">Martin Keßler</div>
+              <div class="col-xs-6 member">Michael Leimstädtner</div>
+              <div class="col-xs-6 member">Stefan Grafberger</div>
+            </div>
           </div>
-        </h1>
-        Use this page to introduce yourself to the GitHub classification tool. Documentation files can be visualised by changing the selected dropdown element.
-        <br><br>
-      </div>
-      <div class="row" id="main">
-        <div v-html="markdown"></div>
-      </div>
+        </div>
+      </footer>
     </div>
     <script type="text/javascript" src="Application/Views/scripts/vue.min.js"></script>
     <script src="Application/Views/scripts/jquery-3.1.1.min.js"></script>
