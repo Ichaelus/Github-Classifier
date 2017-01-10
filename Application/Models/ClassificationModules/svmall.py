@@ -51,7 +51,7 @@ class svmall(ClassificationModule):
             self.reponamelstm = reponame_lstm
 
         # Create classifier
-        self.clf = SVC(C=1000.0, class_weight='auto', probability=True) # TODO: Find better C, gamma
+        self.clf = SVC(C=1000.0, class_weight='balanced', probability=True) # TODO: Find better C, gamma
         
         print "\t-", self.name
 
@@ -62,9 +62,9 @@ class svmall(ClassificationModule):
 
     def trainOnSample(self, sample, nb_epoch=10, shuffle=True, verbose=True):
         """Trainiere (inkrementell) mit Sample. Evtl zusätzlich mit best. Menge alter Daten, damit overfitten auf neue Daten verhindert wird."""
-        readme_vec = self.formatInputData(sample)
+        vec = self.formatInputData(sample)
         label_index = getLabelIndex(sample)
-        return self.clf.fit(readme_vec, np.expand_dims(label_index, axis=0))
+        return self.clf.fit(vec, np.expand_dims(label_index, axis=0))
 
     def train(self, samples, nb_epoch=10, shuffle=True, verbose=True):
         """Trainiere mit Liste von Daten. Evtl weitere Paramter nötig (nb_epoch, learning_rate, ...)"""
@@ -85,8 +85,8 @@ class svmall(ClassificationModule):
     def predictLabelAndProbability(self, sample):
         """Return the probability the module assignes each label"""
         sample = self.formatInputData(sample)
-        prediction = self.clf.predict(sample)[0]
-        return ([prediction] + self.clf.predict_proba(sample)[0])
+        prediction = self.clf.predict_proba(sample)[0]
+        return [np.argmax(prediction)] + list(prediction) 
 
     def formatInputData(self, sample):
         """Extract description and transform to vector"""

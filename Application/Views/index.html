@@ -148,12 +148,12 @@
                   <th>▼ Class. \ Reference ► </th>
                   <th v-for="(c, i) in current.confusionMatrix.order">{{c}}</th>
                   <th>Total</th>
-                  <th>C.A. (%)</th>
+                  <th>Accuracy (%)</th>
                 </tr>
                 <tr v-for="(r, i) in current.confusionMatrix.matrix"
                     :class="(i >= current.confusionMatrix.order.length ? 'total' : '') ">
                   <td>
-                      {{(i <  current.confusionMatrix.order.length ? current.confusionMatrix.order[i] : (current.confusionMatrix.order.length == i ? 'Total' : 'P.A. (%)'))}}</td>
+                      {{(i <  current.confusionMatrix.order.length ? current.confusionMatrix.order[i] : (current.confusionMatrix.order.length == i ? 'Total' : 'Recall (%)'))}}</td>
 
                   <td v-for="(r2, i2) in current.confusionMatrix.matrix[i]" 
                       :class="(i == i2 ? 'cell_own' : (i < i2 ? 'cell_classifier': 'cell_reference'))">
@@ -198,13 +198,13 @@
           <hr>
           <div class="row">
             <div v-on:click="showTeam('stefan')"
-            :class="'col-xs-2 portrait ' + (activeMember == 'stefan' ? 'selected' : '')" style="background-image: url('images/michael.jpg')"></div>
-            <div v-on:click="showTeam('michael')"
+            :class="'col-xs-2 portrait ' + (activeMember == 'stefan' ? 'selected' : '')" style="background-image: url('images/stefan.jpg')"></div>
+            <div v-on:click="showTeam('stefan')"
             :class="'col-xs-2 portrait ' + (activeMember == 'michael' ? 'selected' : '')" style="background-image: url('images/michael.jpg')"></div>
             <div v-on:click="showTeam('martin')"
-            :class="'col-xs-2 portrait ' + (activeMember == 'martin' ? 'selected' : '')" style="background-image: url('images/michael.jpg')"></div>
+            :class="'col-xs-2 portrait ' + (activeMember == 'martin' ? 'selected' : '')" style="background-image: url('images/martin.jpg')"></div>
             <div v-on:click="showTeam('andreas')"
-            :class="'col-xs-2 portrait ' + (activeMember == 'andreas' ? 'selected' : '')" style="background-image: url('images/michael.jpg')"></div>
+            :class="'col-xs-2 portrait ' + (activeMember == 'andreas' ? 'selected' : '')" style="background-image: url('images/andreas.jpg')"></div>
           </div>
           <hr>
           <h2>{{name}}</h2>
@@ -382,7 +382,7 @@
               </table>
             </div>
             <div 
-              v-show="(mode == 'test')"
+              v-show="(mode == 'test' && (state == 'showResult' || state == 'empty'))"
               :class="'trainCount '">
               <h4 class="subtitle">
                 Test sample distribution</h4>

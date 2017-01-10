@@ -48,7 +48,7 @@ print 'Creating and adding Classifiers to Classifier Collection:'
 classifiers = []
 #classifiers.append(nndescriptiononly(descriptionCorpus))
 #classifiers.append(lrdescriptiononly(descriptionCorpus))
-#classifiers.append(nnreadmeonly(readmeCorpus))
+classifiers.append(nnreadmeonly(readmeCorpus))
 #classifiers.append(lrreadmeonly(readmeCorpus))
 #classifiers.append(readmeonlyrandomforest(readmeCorpus))
 #classifiers.append(knnreadmeonly(readmeCorpus))
@@ -56,7 +56,7 @@ classifiers = []
 #classifiers.append(multinomialnbreadmeonly(readmeCorpus))
 #classifiers.append(bernoullinbdescriptiononly(descriptionCorpus))
 #classifiers.append(bernoullinbreadmeonly(readmeCorpus))
-classifiers.append(nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus))
+#classifiers.append(nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm()))
 #classifiers.append(filenamesonlysvc(filenameCorpus))
 #classifiers.append(nnmetaonly())
 #classifiers.append(metaonlyrandomforest())
@@ -88,8 +88,8 @@ try:
     data, result = None, None
     classes = ['DEV', 'HW', 'EDU', 'DOCS', 'WEB', 'DATA', 'OTHER']
     for line in linkFile:
-        print line.rstrip()
-        data = DC.getInformationsForRepo(line.rstrip())
+        print line.rstrip().replace("https://github.com", "https://api.github.com/repos")
+        data = DC.getInformationsForRepo(line.rstrip().replace("https://github.com", "https://api.github.com/repos"))
         prediction = classifiers[0].predictLabelAndProbability(data)
         resultFile.write(line.rstrip() + ' ' + classes[prediction[0]] + '\n')
     linkFile.close()
