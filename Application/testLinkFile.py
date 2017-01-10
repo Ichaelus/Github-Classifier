@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import time
+import sys
 from bottle import Bottle
 import webbrowser
 from Controllers.HomeController import homebottle, homesetclassifiercollection
@@ -25,10 +26,10 @@ from Models.ClassificationModules.nnall import nnall
 from Models.ClassificationModules.knnreadmeonly import knnreadmeonly
 from Models.ClassificationModules.svcfilenamesonly import filenamesonlysvc
 from Models.ClassificationModules.lrstacking import lrstacking
-from Models.ClassificationModules.svmall import svmall
 import Models.DatabaseCommunication as DC
+import Models.JSONCommunication
 
-print("Starting application..")
+
 
 rootApp = Bottle()
 
@@ -47,7 +48,7 @@ print 'Creating and adding Classifiers to Classifier Collection:'
 classifiers = []
 #classifiers.append(nndescriptiononly(descriptionCorpus))
 #classifiers.append(lrdescriptiononly(descriptionCorpus))
-#classifiers.append(nnreadmeonly(readmeCorpus))
+classifiers.append(nnreadmeonly(readmeCorpus))
 #classifiers.append(lrreadmeonly(readmeCorpus))
 #classifiers.append(readmeonlyrandomforest(readmeCorpus))
 #classifiers.append(knnreadmeonly(readmeCorpus))
@@ -55,15 +56,14 @@ classifiers = []
 #classifiers.append(multinomialnbreadmeonly(readmeCorpus))
 #classifiers.append(bernoullinbdescriptiononly(descriptionCorpus))
 #classifiers.append(bernoullinbreadmeonly(readmeCorpus))
-classifiers.append(nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm()))
-classifiers.append(svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm()))
+#classifiers.append(nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm()))
 #classifiers.append(filenamesonlysvc(filenameCorpus))
-classifiers.append(nnmetaonly())
+#classifiers.append(nnmetaonly())
+#classifiers.append(metaonlyrandomforest())
 #classifiers.append(metaonlysvc())
-classifiers.append(metaonlyadaboost())
-classifiers.append(metaonlyrandomforest())
-classifiers.append(reponamelstm())
-#classifiers.append(lrstacking([nnmetaonly(), metaonlyadaboost(), reponamelstm(), nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm())]))
+#classifiers.append(metaonlyadaboost())
+#classifiers.append(reponamelstm())
+#classifiers.append(lrstacking([nnmetaonly(), metaonlyadaboost(), reponamelstm(), nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus)]))
 #classifiers.append(readmelstm())
 
 print 'Loading last checkpoint for classifiers if available:'
@@ -76,9 +76,23 @@ homesetclassifiercollection(classifiercollection)
 # Wait a bit so website doesnt get called before it's ready
 time.sleep(3)
 
-print 'Done. Starting Bottle...'
-#Start Bottle
-if __name__ == '__main__':
-    webbrowser.open("http://localhost:8080/")
-    rootApp.merge(homebottle)
-    rootApp.run(server='paste', debug=True)
+#if __name__ == '__main__':
+    #webbrowser.open("http://localhost:8080/")
+    #rootApp.merge(homebottle)
+    #rootApp.run(server='paste', debug=True)
+if len(sys.argv) <= 1:
+    sys.exit()
+try:
+    linkFile = open(sys.argv[1], "r")
+    resultFile = open('classification_result.txt', "w")
+    data, result = None, None
+    classes = ['DEV', 'HW', 'EDU', 'DOCS', 'WEB', 'DATA', 'OTHER']
+    for line in linkFile:
+        print line.rstrip().replace("https://github.com", "https://api.github.com/repos")
+        data = DC.getInformationsForRepo(line.rstrip().replace("https://github.com", "https://api.github.com/repos"))
+        prediction = classifiers[0].predictLabelAndProbability(data)
+        resultFile.write(line.rstrip() + ' ' + classes[prediction[0]] + '\n')
+    linkFile.close()
+    resultFile.close()
+except IOError:
+    print "Der Kommandozeilenparameter war keine Datei", sys.exc_info()[0]
