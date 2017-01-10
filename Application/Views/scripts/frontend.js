@@ -156,12 +156,16 @@ function initVue(){
         stateView.resetView();
   			runGenerator(function *main(){
   				// Fetch sample, display then repeat until stateData has changed
-  				while(stateData.action == "loop"){
-            Vue.set(inoutData, "state", "Searching..");
+          let skipped = 0;
+          Vue.set(inoutData, "state", "Searching..");
+          while(stateData.action == "loop"){
+            skipped++;
   					results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
   					stateView.updateResults(results);
             if(results.classifiersUnsure)
               Vue.set(stateData, "action", "halt_loop");
+            else
+              Vue.set(inoutData, "state", "Skipped " + skipped + " samples.");
   				}
   			});
   		},
