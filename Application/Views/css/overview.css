@@ -467,10 +467,10 @@ button.control {
   padding: 0 10px;
 }
 
-#version_accuarcy_chart{
+#version_precision_chart{
   padding: 60px 0;
 }
-#version_accuarcy_chart > svg{
+#version_precision_chart > svg{
   overflow: visible;
 }
 

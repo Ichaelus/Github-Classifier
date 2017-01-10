@@ -12,7 +12,7 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
     useExtendedTestSet: false
 	},
   inoutData = {
-    classifiers: {}, // name : {description, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
+    classifiers: {}, // name : {description, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},precision: [{class, val},..], probability : [{class, val},..]}
     classifierAsking: "",
     classifiersUnsure: false,
     isPrediction: true,
@@ -27,7 +27,7 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
     // Data used by the wrapper shown when displaying the detailed page
     activeMember: "andreas",
     currentName: "",
-    current: {description: "", yield: 0, active: false, uncertainty: 0, confusionMatrix: {}, accuracy: {}, probability: {}},
+    current: {description: "", yield: 0, active: false, uncertainty: 0, confusionMatrix: {}, precision: {}, probability: {}},
     distribution: "Test", // Test, Train
     distributionArray: [], // [{class, count},..]
     documentationContent: "",
@@ -35,7 +35,7 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
     expression: "neutral",
     exprState: "",
     thinking: false,
-    savePoints: {}, // fileName: {yield, accuracy: [{class, val}, ..]}
+    savePoints: {}, // fileName: {yield, precision: [{class, val}, ..]}
     selectedDocumentation: "Chose documentation",
     selectedPoint: "Version",
     numStats: {},
@@ -88,10 +88,10 @@ try{
 function setInititalProbability(){
   let cd = inoutData.classifiers;
   for(let c in cd){
-    assert(typeof(cd[c].accuracy) != "undefined", "Object missing");
+    assert(typeof(cd[c].precision) != "undefined", "Object missing");
     cd[c].probability = [];
-    for(let j = 0; j < cd[c].accuracy.length; j++){
-      cd[c].probability[j] = {class : cd[c].accuracy[j].class, val : 0.0};
+    for(let j = 0; j < cd[c].precision.length; j++){
+      cd[c].probability[j] = {class : cd[c].precision[j].class, val : 0.0};
     }
   }
 }
@@ -230,7 +230,7 @@ function initVue(){
         });
       },
       resetView: function(){
-        // Reset classifiers, but keep accuracy
+        // Reset classifiers, but keep precision
         for(let c in inoutData.classifiers){ // c => classifier name
             cf = inoutData.classifiers[c];
             for(let i in cf.probability)
@@ -284,7 +284,7 @@ function initVue(){
             return "<strong>Pool Based Active Learning</strong> selects the sample with the highest uncertainty out of a pool of unlabeled data as input. The uncertainty is being calculated (in turns) by a single classifier, marked in blue. There are currently <strong>"+stateData.poolSize+"</strong> samples in this pool.";
             break;
           case "test":
-            return "The <strong>testing option</strong> runs each classifier against a predefined set of test samples, thus updating the confusion matrix and accuracy per class.";
+            return "The <strong>testing option</strong> runs each classifier against a predefined set of test samples, thus updating the confusion matrix and precision per class.";
             break;
           case "single":
             return "The <strong>single sample prediction</strong> method is used to test the outcome of the classifiers for specified a repository (identified by its URL).";
@@ -331,7 +331,7 @@ function initVue(){
       showInfo: function(name){
         wrapperView.setData(name);
         wrapperView.getSavePoints();
-        //RadarChart("#class_accuarcy_chart", [accuracyToGraphData(wrapperData.current.accuracy)], getRadarConfig(700));
+        //RadarChart("#class_accuarcy_chart", [precisionToGraphData(wrapperData.current.precision)], getRadarConfig(700));
         showWrapper('#details_wrapper');
       },
       switchState: function(name){
@@ -351,7 +351,7 @@ function initVue(){
       },
       getMax: function(id){
         let max = 0;
-        array = stateData.mode == "test" ? "accuracy" : "probability";
+        array = stateData.mode == "test" ? "precision" : "probability";
         if(typeof(inoutData.classifiers[id][array]) != "undefined")
           for(let i = 0; i < inoutData.classifiers[id][array].length; i ++)
             max = Math.max(max, inoutData.classifiers[id][array][i].val);
@@ -420,7 +420,7 @@ function initVue(){
           if(mode == "test"){
           let data = [];
           for(let c in inoutData.classifiers){
-            data.push(accuracyToGraphData(inoutData.classifiers[c].accuracy));
+            data.push(precisionToGraphData(inoutData.classifiers[c].precision));
           }
           if(data.length > 0)
             RadarChart("#testOuputChart", data, getRadarConfig(350));
@@ -461,8 +461,8 @@ function initVue(){
       predictionDistribution: function(){
         return this.mapDistribution("probability");
       },
-      accuracyDistribution: function(){
-        return this.mapDistribution("accuracy");
+      precisionDistribution: function(){
+        return this.mapDistribution("precision");
       },
       outputMeasures: function(){
         return classifierView.orderedClassifiers[0].confusionMatrix.measures;
@@ -501,12 +501,14 @@ function initVue(){
             Vue.set(wrapperData, "savePoints", resp.savepoints);
             let data = [];
             for(let sp in wrapperData.savePoints){
-              data.push(accuracyToGraphData(wrapperData.savePoints[sp].accuracy));
+              data.push(precisionToGraphData(wrapperData.savePoints[sp].precision));
             }
-            if(data.length > 0)
-              RadarChart("#version_accuarcy_chart", data, getRadarConfig(600));
-            else
-              document.getElementById("version_accuarcy_chart").style.display = "none";
+            if(data.length > 0){
+              RadarChart("#version_precision_chart", data, getRadarConfig(600));
+              $('#version_chart_header').fadeIn();
+            }else
+              document.getElementById("version_precision_chart").style.display = "none";
+              document.getElementById("version_chart_header").style.display = "none";
             $('[data-toggle="tooltip"]').tooltip();
           }
         });
@@ -547,7 +549,7 @@ function initVue(){
         console.log("Wrapper: "+wrapperData.currentName+" loading.");
         runGenerator(function *main(){
           data = yield jQGetPromise("/get/load?name="+wrapperData.currentName + "&savepoint="+wrapperData.selectedPoint + "=useExtendedTestSet="+stateData.useExtendedTestSet, "json");
-          // data contains a name of the selected classifier and an accuracy array
+          // data contains a name of the selected classifier and an precision array
           if(typeof(data.Error) != "undefined"){
             notify("Error", data.Error, 2500);
            }else{ 
@@ -693,7 +695,7 @@ function initVue(){
   wrapperView.getDistributionArray();
   wrapperView.getDocumentationNames();
 }
-// name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
+// name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},precision: [{class, val},..], probability : [{class, val},..]}
 
 function wait_async(time){
   return new Promise(function(resolve, reject){
@@ -749,7 +751,7 @@ function originalMeasureName(m){
   return m.replace(" mu", " μ");
 }
 
-function accuracyToGraphData(res){
+function precisionToGraphData(res){
   // Converts a result array to a radar data array
   assert(typeof(res) == "object" && res.length > 0, "Invalid input data");
   let data = [];
