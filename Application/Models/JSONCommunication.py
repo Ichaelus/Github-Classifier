@@ -10,7 +10,7 @@ def ConvertClassifierCollectionToJSON(classificationModules):
     """Not there"""
     classifiers = OrderedDict()
     for c in classificationModules:
-        accuracy = formatClassifierAccuracy(c.getAccuracy())
+        Precision = formatClassifierPrecision(c.getPrecision())
         matrix = c.getConfusionMatrix()
         measures = {
             'Average Accuracy': CM.avg_accuracy(matrix),
@@ -28,10 +28,9 @@ def ConvertClassifierCollectionToJSON(classificationModules):
             'order': ["DEV", "HW", "EDU", "DOCS", "WEB", "DATA", "OTHER"],
             }
         classifiers[c.getName()] = {
-            'accuracy':accuracy,
+            'precision':Precision,
             'description':c.getDescription(),
             'confusionMatrix':confusionMatrix,
-            'yield':c.getYield(),
             'active': not c.isMuteClassificationModule()}
     returndata = {'classifiers': classifiers}
     return json.dumps(returndata)
@@ -208,9 +207,8 @@ def formatMultipleClassificationTests(results):
             'order': ["DEV", "HW", "EDU", "DOCS", "WEB", "DATA", "OTHER"],
             }
         classifiers[result[0]] = {
-            'accuracy':formatClassifierAccuracy(result[1][1]),
+            'precision':formatClassifierPrecision(result[1][1]),
             'confusionMatrix': confusionMatrix,
-            'yield':float(result[1][0]),
             }
     returndata = {'classifiers':classifiers}
     return json.dumps(returndata)	
@@ -271,9 +269,8 @@ def formatSingleClassificationTest(classifier, result):
         'order': ["DEV", "HW", "EDU", "DOCS", "WEB", "DATA", "OTHER"],
         }
     classifiers[classifier.getName()] = {
-        'accuracy':formatClassifierAccuracy(result[1]),
-        'confusionMatrix': confusionMatrix,
-        'yield':float(result[0]),
+        'precision':formatClassifierPrecision(result[1]),
+        'confusionMatrix': confusionMatrix
         }
     returndata = {'classifiers':classifiers}
     return json.dumps(returndata)
@@ -317,8 +314,7 @@ def formatSavePoints(savePoints):
     savePointsOutput = {}
     for savePoint in savePoints:
         savePointsOutput[savePoint[0]] = {
-            'accuracy':formatClassifierAccuracy(savePoint[1]),
-            'yield':savePoint[2],
+            'precision':formatClassifierPrecision(savePoint[1])
             }
     returndata = {'savepoints': savePointsOutput}
     return json.dumps(returndata)
@@ -351,16 +347,16 @@ def formatProbabilities(results):
     cprobabilities.append({'class':'OTHER', 'val': float(results[7])})
     return cprobabilities
 
-def formatClassifierAccuracy(classifieraccuracy):
-    accuracies = []
-    accuracies.append({'class':'DEV', 'val':float(classifieraccuracy['DEV'])})
-    accuracies.append({'class':'HW', 'val':float(classifieraccuracy['HW'])})
-    accuracies.append({'class':'EDU', 'val':float(classifieraccuracy['EDU'])})
-    accuracies.append({'class':'DOCS', 'val':float(classifieraccuracy['DOCS'])})
-    accuracies.append({'class':'WEB', 'val':float(classifieraccuracy['WEB'])})
-    accuracies.append({'class':'DATA', 'val':float(classifieraccuracy['DATA'])})
-    accuracies.append({'class':'OTHER', 'val':float(classifieraccuracy['OTHER'])})
-    return accuracies
+def formatClassifierPrecision(classifierprecision):
+    precision = []
+    precision.append({'class':'DEV', 'val':float(classifierprecision['DEV'])})
+    precision.append({'class':'HW', 'val':float(classifierprecision['HW'])})
+    precision.append({'class':'EDU', 'val':float(classifierprecision['EDU'])})
+    precision.append({'class':'DOCS', 'val':float(classifierprecision['DOCS'])})
+    precision.append({'class':'WEB', 'val':float(classifierprecision['WEB'])})
+    precision.append({'class':'DATA', 'val':float(classifierprecision['DATA'])})
+    precision.append({'class':'OTHER', 'val':float(classifierprecision['OTHER'])})
+    return precision
 
 def formatRepo(sample):
     repo = {

@@ -25,23 +25,18 @@ class ClassificationModule:
         self.name = name
         self.muted = False
         self.binary = False
-        self.Yield = 0.0
-        self.Accuracy = {"DEV":0.0, "HW":0.0, "EDU":0.0, "DOCS":0.0, "WEB":0.0, "DATA":0.0, "OTHER":0.0}
+        self.Precision = {"DEV":0.0, "HW":0.0, "EDU":0.0, "DOCS":0.0, "WEB":0.0, "DATA":0.0, "OTHER":0.0}
         self.confusionmatrix = np.zeros(shape=(9,9))
 
     
     def getDescription(self):
         """Return the description"""
         return self.description
-
-    def getYield(self):
-        """Return the Yield"""
-        return self.Yield
     
 
-    def getAccuracy(self):
-        """Return the Accuracy"""
-        return self.Accuracy.copy()
+    def getPrecision(self):
+        """Return the Precision"""
+        return self.Precision.copy()
 
 
     def setName(self, name):
@@ -107,12 +102,12 @@ class ClassificationModule:
         self.binary = bin
 
     def testModule(self, data):
-        """Module tests itself, refreshes yield and accuracy 
+        """Module tests itself, refreshes confusion matrix and precision 
         and returns data about these thests to the ClassifierCollection"""
         nb_right_pred = 0 # Number of right predictions
         class_count = np.zeros(7) # Number each class was found in data
         class_right_pred_count = np.zeros(7)
-        copyconfusionmatrix = np.zeros(shape=(9, 9), dtype=np.float32)
+        copyconfusionmatrix = np.zeros(shape=(9, 9), dtype=np.float)
 
         for sample in data:
             pred_out = self.predictLabelAndProbability(sample)
@@ -155,22 +150,21 @@ class ClassificationModule:
             #computation of total samples
             copyconfusionmatrix[l-2, l-2] += copyconfusionmatrix[7, i]
         #overall accurency
-        if nb_right_pred != 0:
-            copyconfusionmatrix[l-1, l-1] = copyconfusionmatrix[l-2, l-2] / nb_right_pred
+        if copyconfusionmatrix[l-2, l-2] != 0:
+            copyconfusionmatrix[l-1, l-1] = nb_right_pred / copyconfusionmatrix[l-2, l-2] 
+        else:
+            copyconfusionmatrix[l-1, l-1] = 0
         self.confusionmatrix = copyconfusionmatrix
 
-        if len(data) != 0:
-            self.Yield = float(nb_right_pred) / len(data)
-            class_acc = (class_right_pred_count / class_count) if np.all(class_count > 0) else 0
-            # looks to much hardcoded, could produce errors..
-            self.Accuracy['DEV'] = class_acc[0]
-            self.Accuracy['HW'] = class_acc[1]
-            self.Accuracy['EDU'] = class_acc[2]
-            self.Accuracy['DOCS'] = class_acc[3]
-            self.Accuracy['WEB'] = class_acc[4]
-            self.Accuracy['DATA'] = class_acc[5]
-            self.Accuracy['OTHER'] = class_acc[6]
-        return [self.getYield(), self.getAccuracy(), self.getConfusionMatrix()]
+        #precision to show it in frontend
+        self.Precision['DEV'] = self.confusionmatrix[0][8]
+        self.Precision['HW'] = self.confusionmatrix[1][8]
+        self.Precision['EDU'] = self.confusionmatrix[2][8]
+        self.Precision['DOCS'] = self.confusionmatrix[3][8]
+        self.Precision['WEB'] = self.confusionmatrix[4][8]
+        self.Precision['DATA'] = self.confusionmatrix[5][8]
+        self.Precision['OTHER'] = self.confusionmatrix[6][8]
+        return [self.getPrecision(), self.getConfusionMatrix()]
 
     def calculatePoolBasedQuery(self,formula, data):
         """Module goes trough each sample, calculates the uncertainty for it and returns the sample with the highest uncertainty"""
@@ -224,11 +218,9 @@ class ClassificationModule:
         year.text = str(today.year)
         #SubElement can only handle dicts out of strings => transformation necessary
         stringdict = {}
-        for key, value in self.Accuracy.iteritems():
+        for key, value in self.Precision.iteritems():
             stringdict[str(key)] = str(value)
-        ET.SubElement(entry, 'accuracy', stringdict)
-        elementyield = ET.SubElement(entry, 'yield')
-        elementyield.text = str(self.Yield)
+        ET.SubElement(entry, 'Precision', stringdict)
         #save XML-File
         tree.write(xmlpath)
         return None
@@ -245,10 +237,10 @@ class ClassificationModule:
         root = tree.getroot()
         savepoints = []
         for child in root:
-            moduleaccuracy = {}
-            for i in xrange(0, len(child.find('accuracy').attrib.keys())):
-                moduleaccuracy[child.find('accuracy').attrib.keys()[i]] = float(child.find('accuracy').attrib.values()[i])
-            savepoints.append([child.attrib.values()[0], moduleaccuracy, float(child.find('yield').text)])
+            modulePrecision = {}
+            for i in xrange(0, len(child.find('Precision').attrib.keys())):
+                modulePrecision[child.find('Precision').attrib.keys()[i]] = float(child.find('Precision').attrib.values()[i])
+            savepoints.append([child.attrib.values()[0], modulePrecision])
         #return: list of lists of element0: filename, element1: dict for Accuracy and element2: yield
         #       [['2016-11-28T183810.221000.pkl', {"DEV":0.0, "HW":0.0, ...}, 90.93], ...]
         return savepoints
