@@ -45,6 +45,12 @@ descriptionCorpus, readmeCorpus, filenameCorpus, filetypeCorpus, foldernameCorpu
 #Initialize Classifiers
 print 'Creating and adding Classifiers to Classifier Collection:'
 classifiers = []
+
+creponamelstm = reponamelstm()
+cnnall = nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, creponamelstm)
+cnnmetaonly = nnmetaonly()
+cmetaonlyadaboost = metaonlyadaboost()
+
 #classifiers.append(nndescriptiononly(descriptionCorpus))
 #classifiers.append(lrdescriptiononly(descriptionCorpus))
 #classifiers.append(nnreadmeonly(readmeCorpus))
@@ -55,16 +61,17 @@ classifiers = []
 #classifiers.append(multinomialnbreadmeonly(readmeCorpus))
 #classifiers.append(bernoullinbdescriptiononly(descriptionCorpus))
 #classifiers.append(bernoullinbreadmeonly(readmeCorpus))
-classifiers.append(nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm()))
-classifiers.append(svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm()))
-#classifiers.append(filenamesonlysvc(filenameCorpus))
-classifiers.append(nnmetaonly())
-#classifiers.append(metaonlysvc())
-classifiers.append(metaonlyadaboost())
-classifiers.append(metaonlyrandomforest())
-classifiers.append(reponamelstm())
-#classifiers.append(lrstacking([nnmetaonly(), metaonlyadaboost(), reponamelstm(), nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm())]))
 #classifiers.append(readmelstm())
+#classifiers.append(svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, creponamelstm))
+#classifiers.append(filenamesonlysvc(filenameCorpus))
+#classifiers.append(metaonlyrandomforest())
+#classifiers.append(metaonlysvc())
+
+classifiers.append(cnnall)
+classifiers.append(cnnmetaonly)
+classifiers.append(cmetaonlyadaboost)
+classifiers.append(creponamelstm)
+classifiers.append(lrstacking([cnnmetaonly, cmetaonlyadaboost, creponamelstm, cnnall]))
 
 print 'Loading last checkpoint for classifiers if available:'
 for c in classifiers:
