@@ -38,10 +38,13 @@ class nnall(ClassificationModule):
             corpus.append(folder)
         self.foldernameVectorizer.fit(corpus)
         
-        # Setup lstm for repository-name
+        # Setup lstm for repository-name 
+        """ Commented out as this is currently done in start.py already
         self.reponamelstm = reponame_lstm.loadClassificationModuleSavePoint("lastused")
         if (self.reponamelstm is None):
             self.reponamelstm = reponame_lstm
+        """
+        self.reponamelstm = reponame_lstm
         
         # Set input-size and output_size
         self.input_size = len(self.vectorizer.get_feature_names()) + getMetadataLength() + len(self.filetypeVectorizer.get_feature_names()) + len(self.foldernameVectorizer.get_feature_names())
@@ -79,7 +82,7 @@ class nnall(ClassificationModule):
         readme_vec = self.formatInputData(sample)
         label_index = getLabelIndex(sample)
         label_one_hot = np.expand_dims(oneHot(label_index), axis=0) # [1, 0, 0, ..] -> [[1, 0, 0, ..]] Necessary for keras
-        self.model.fit(readme_vec, label_one_hot, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose) # TODO: think about nb_epoch-value
+        self.model.fit(readme_vec, label_one_hot, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose)
 
     def train(self, samples, nb_epoch=20, shuffle=True, verbose=True):
         """Trainiere mit Liste von Daten. Evtl weitere Paramter nötig (nb_epoch, learning_rate, ...)"""

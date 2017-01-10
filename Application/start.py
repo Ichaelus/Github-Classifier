@@ -35,40 +35,51 @@ rootApp = Bottle()
 # Initialize ClassifierCollection
 classifiercollection = ClassifierCollection()
 
-#Initialize ClassificationModules
 print 'Getting DB Data to be able to create vectorizers for classifiers that need it'
-#descriptionCorpus = DC.getAllDescriptions()
-#readmeCorpus = DC.getAllReadmes()
-#filenameCorpus = DC.getAllFilenames()
 descriptionCorpus, readmeCorpus, filenameCorpus, filetypeCorpus, foldernameCorpus = DC.getCorpi()
+
 
 #Initialize Classifiers
 print 'Creating and adding Classifiers to Classifier Collection:'
-classifiers = []
-#classifiers.append(nndescriptiononly(descriptionCorpus))
-#classifiers.append(lrdescriptiononly(descriptionCorpus))
-#classifiers.append(nnreadmeonly(readmeCorpus))
-#classifiers.append(lrreadmeonly(readmeCorpus))
-#classifiers.append(readmeonlyrandomforest(readmeCorpus))
-#classifiers.append(knnreadmeonly(readmeCorpus))
-#classifiers.append(multinomialnbdescriptiononly(descriptionCorpus))
-#classifiers.append(multinomialnbreadmeonly(readmeCorpus))
-#classifiers.append(bernoullinbdescriptiononly(descriptionCorpus))
-#classifiers.append(bernoullinbreadmeonly(readmeCorpus))
-classifiers.append(nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm()))
-classifiers.append(svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm()))
-#classifiers.append(filenamesonlysvc(filenameCorpus))
-classifiers.append(nnmetaonly())
-#classifiers.append(metaonlysvc())
-classifiers.append(metaonlyadaboost())
-classifiers.append(metaonlyrandomforest())
-classifiers.append(reponamelstm())
-#classifiers.append(lrstacking([nnmetaonly(), metaonlyadaboost(), reponamelstm(), nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm())]))
-#classifiers.append(readmelstm())
 
-print 'Loading last checkpoint for classifiers if available:'
+# First load all classifiers which don't need other classifiers as parameter
+
+standaloneClassifiers = [] # Keep track, which classifiers have be loaded or such attempt has been made
+
+classifiers = {}
+classifiers['filenamesonlysvc'] = filenamesonlysvc(filenameCorpus)
+classifiers['nnmetaonly'] = nnmetaonly()
+classifiers['metaonlysvc'] = metaonlysvc()
+classifiers['metaonlyadaboost'] = metaonlyadaboost()
+classifiers['metaonlyrandomforest'] = metaonlyrandomforest()
+classifiers['reponamelstm'] = reponamelstm()
+classifiers['readmelstm'] = readmelstm()
+
+
+for classifier in classifiers:
+    loaded_classifier = classifiers[classifier].loadClassificationModuleSavePoint(filename="lastused")
+    if loaded_classifier is not None:
+        classifiers[classifier] = loaded_classifier
+    standaloneClassifiers.append(classifier)
+
+# Now all classifiers should have been loaded from last savepoint, if available
+# Use these loaded classifiers by giving them to all ensemble-Models
+
+classifiers['nnall'] = nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
+classifiers['svmall'] = svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
+
+for classifier in classifiers:
+    if classifier not in standaloneClassifiers:
+        loaded_classifier = classifiers[classifier].loadClassificationModuleSavePoint(filename="lastused")
+        if loaded_classifier is not None:
+            classifiers[classifier] = loaded_classifier
+
+
+#classifiers.append(lrstacking([nnmetaonly(), metaonlyadaboost(), reponamelstm(), nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm())]))
+
+#print 'Loading last checkpoint for classifiers if available:'
 for c in classifiers:
-	classifiercollection.addClassificationModuleWithLastSavePoint(c)
+	classifiercollection.addClassificationModule(classifiers[c])
 
 # Pass ClassifierCollection to Controller
 homesetclassifiercollection(classifiercollection)
