@@ -15,7 +15,7 @@ class readmelstm(ClassificationModule):
     def __init__(self, num_hidden_layers=1):
         ClassificationModule.__init__(self, "Readme Only LSTM", "A LSTM reading the Readme character by character")
 
-        hidden_size = 300
+        hidden_size = 200
         self.maxlen = 1000 # TODO: Find better number
 
         # Set output_size

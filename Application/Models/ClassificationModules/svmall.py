@@ -45,10 +45,13 @@ class svmall(ClassificationModule):
             corpus.append(folder)
         self.foldernameVectorizer.fit(corpus)
         
-        # Setup lstm for repository-name
+        # Setup lstm for repository-name 
+        """ Commented out as this is currently done in start.py already
         self.reponamelstm = reponame_lstm.loadClassificationModuleSavePoint("lastused")
         if (self.reponamelstm is None):
             self.reponamelstm = reponame_lstm
+        """
+        self.reponamelstm = reponame_lstm
 
         # Create classifier
         self.clf = SVC(C=1000.0, class_weight='balanced', probability=True) # TODO: Find better C, gamma
