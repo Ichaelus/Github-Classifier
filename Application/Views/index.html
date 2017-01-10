@@ -113,8 +113,8 @@
               <div class="col-xs-9">{{current.description}}</div>
             </div>
             <div class="row attribute">
-              <div class="col-xs-3">Yield</div>
-              <div class="col-xs-9">{{Math.round(current.yield * 100)}}%</div>
+              <div class="col-xs-3">{{originalMeasureName(getMeasureName())}}</div>
+              <div class="col-xs-9">{{formatMeasure(current.confusionMatrix.measures[getMeasureName()])}}</div>
             </div>
             <div class="row attribute">
               <div class="col-xs-3">Currently enabled</div>
@@ -130,7 +130,7 @@
             <div class="input-group-btn select">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b>{{selectedPoint}}</b> <span class="caret"></span></button>
                   <ul class="dropdown-menu" style="margin: 0px auto;">
-                    <li v-for="(sp, fileName) in savePoints"><span v-on:click="setSavePoint(fileName)">{{fileName}} <b>({{Math.round(sp.yield * 100)+'%'}}</b>)</span></li>
+                    <li v-for="(sp, fileName) in savePoints"><span v-on:click="setSavePoint(fileName)">{{formatFileName(fileName)}}</span></li>
                   </ul>
             </div>
             <span class="action btn btn-default" v-on:click="load()">Load version</span>
@@ -148,7 +148,7 @@
                   <th>▼ Class. \ Reference ► </th>
                   <th v-for="(c, i) in current.confusionMatrix.order">{{c}}</th>
                   <th>Total</th>
-                  <th>Accuracy (%)</th>
+                  <th>Precision (%)</th>
                 </tr>
                 <tr v-for="(r, i) in current.confusionMatrix.matrix"
                     :class="(i >= current.confusionMatrix.order.length ? 'total' : '') ">
@@ -167,7 +167,7 @@
               <colgroup> <col class="col-xs-6"> <col class="col-xs-6"> </colgroup>
               <thead> <tr> <th>Measure</th> <th>Result</th> </tr> </thead>
               <tbody> 
-                <tr v-for="(val, m) in current.confusionMatrix.measures"> <td scope="row"> <code class="defaultCursor" data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(m)">{{originalMeasureName(m)}}</code> </td> <td>{{Math.round(val * 10000)/10000}} %</td> </tr>
+                <tr v-for="(val, m) in current.confusionMatrix.measures"> <td scope="row"> <code class="defaultCursor" data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(m)">{{originalMeasureName(m)}}</code> </td> <td>{{Math.round(val * 10000)/100}} %</td> </tr>
               </tbody>
             </table>
           </div>
@@ -353,7 +353,7 @@
           <div class="col-xs-2"><h3>Input</h3></div>
           <div class="col-xs-7">
             <div class="col-xs-4"><h3>Classifiers</h3></div>
-            <div class="col-xs-7 col-xs-offset-1"><h3>{{(mode != 'test' ? 'Classification results' : 'Accuracy per class')}}</h3></div>
+            <div class="col-xs-7 col-xs-offset-1"><h3>{{(mode != 'test' ? 'Classification results' : '    Precision per class')}}</h3></div>
           </div>
           <div class="col-xs-3"><h3>Output</h3></div>
         </div><!-- /titles -->
@@ -415,7 +415,7 @@
                         data-toggle="tooltip" data-placement="bottom" :data-original-title="(isAsking(c.name) ? 'This module selected the sample because of a high uncertainty.' : '')">
                     <span class="name">{{c.name}}</span>
                     <div class="wrapper">
-                      <span data-toggle="tooltip" data-placement="top" :data-original-title="'Current ' + originalMeasureName(selectedMeasure)" class="stats">{{getMeasure(c)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
+                      <span data-toggle="tooltip" data-placement="top" :data-original-title="'Current ' + originalMeasureName(getMeasureName())" class="stats">{{getMeasure(c)}}%<!-- <span title="Accuracy of previous version" class="old">/ 79%</span>--></span>
                       <span data-toggle="tooltip" data-placement="top" title="Show classifier details" v-on:click="showInfo(c.name)" class="glyphicon glyphicon-info-sign"></span>
                       <span data-toggle="tooltip" data-placement="top" title="Enable classifier" v-on:click="switchState(c.name)" class="glyphicon glyphicon-ban-circle"></span>
                       <span data-toggle="tooltip" data-placement="top" title="Disable classifier" v-on:click="switchState(c.name)" class="glyphicon glyphicon-ok-circle"></span>
@@ -453,7 +453,7 @@
                 <colgroup> <col class="col-xs-8"> <col class="col-xs-4"> </colgroup>
                 <thead> <tr> <th>Measure</th> <th>Result</th> </tr> </thead>
                 <tbody> 
-                  <tr v-for="(val, m) in outputMeasures"> <td scope="row"> <code class="defaultCursor" data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(m)">{{originalMeasureName(m)}}</code> </td> <td>{{Math.round(val * 100)/100}} %</td> </tr>
+                  <tr v-for="(val, m) in outputMeasures"> <td scope="row"> <code class="defaultCursor" data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(m)">{{originalMeasureName(m)}}</code> </td> <td>{{formatMeasure(val)}}</td> </tr>
                 </tbody>
               </table>
               <hr>

@@ -12,7 +12,7 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
     useExtendedTestSet: false
 	},
   inoutData = {
-    classifiers: {}, // name : {description, yield, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
+    classifiers: {}, // name : {description, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},accuracy: [{class, val},..], probability : [{class, val},..]}
     classifierAsking: "",
     classifiersUnsure: false,
     isPrediction: true,
@@ -74,6 +74,8 @@ try{
 	runGenerator(function *main(){
 		let initData = yield jQGetPromise("/get/classifiers", "json");
     Vue.set(inoutData, "classifiers", initData.classifiers);
+    if(Object.keys(initData.classifiers).length > 0)
+      Vue.set(wrapperData, "current", initData.classifiers[Object.keys(initData.classifiers)[0]]); // Set "current" to dummy variables
     setInititalProbability();
 		initVue();
     $("#page").fadeIn();
@@ -361,9 +363,11 @@ function initVue(){
       changeMeasure: function(measure){
         Vue.set(inoutData, "selectedMeasure", measure);
       },
+      getMeasureName: function(){
+        return inoutData.selectedMeasure == "Preordered" ? "Precision mu" : inoutData.selectedMeasure;
+      },
       getMeasure: function(c){
-        let _measure = inoutData.selectedMeasure == "Preordered" ? "Precision mu" : inoutData.selectedMeasure;
-        return parseInt(c.confusionMatrix.measures[_measure] * 100);
+        return Math.round(c.confusionMatrix.measures[this.getMeasureName()] * 100);
       },
       getMeasureDescription: function(measure){
         let descriptions = {"Preordered": "Internal order not sorted by any measure",
@@ -646,7 +650,18 @@ function initVue(){
         });
       },
       getMeasureDescription: function(m){ return classifierView.getMeasureDescription(m);},
-      showTeam: function(member){footerView.showTeam(member);}
+      showTeam: function(member){footerView.showTeam(member);},
+      getMeasureName: function(){return classifierView.getMeasureName();},
+      getMeasure: function(c){return classifierView.getMeasure(c);},
+      formatFileName: function(fn){
+        try{
+          // "2017-01-09T192504.535000.pkl" => "2017-01-09T19:25:04"
+          let d = new Date(fn.substr(0, 13) + ":" + fn.substr(13, 2) + ":" + fn.substr(15, 2));
+          return d.toLocaleString();
+        }catch(ex){
+          return fn;
+        }
+      }
     },
     computed: {
       topMostName: function(){
@@ -700,6 +715,10 @@ function showWrapper(elem){
     $(elem).css("margin-top", window.scrollY - 50);
     $(elem).fadeIn();
   }
+}
+
+function formatMeasure(m){
+  return Math.round(m * 1000)/10 + "%";
 }
 
 function HandlePopupResult(result) {
