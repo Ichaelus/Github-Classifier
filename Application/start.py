@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+###################################
+# Initialization and startup file #
+###################################
+
 import time
 from bottle import Bottle
 import webbrowser
@@ -85,7 +89,7 @@ for classifier in classifiers:
         if loaded_classifier is not None:
             classifiers[classifier] = loaded_classifier
 
-classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest']])
+#classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest']])
 
 #print 'Loading last checkpoint for classifiers if available:'
 for c in classifiers:

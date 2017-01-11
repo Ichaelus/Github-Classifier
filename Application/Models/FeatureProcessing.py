@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+################################################
+# Convert repository information into features #
+################################################
+
 import cPickle as pickle
 import os
 import base64
@@ -91,8 +96,9 @@ def text_from_base64(text):
         text += b'='* (4 - missing_padding)
     try:
         text = base64.b64decode(text)
-    except TypeError:
-        print "Error decoding readme"
+    except TypeError as e:
+        print e
+        print "Error decoding readme " + str(e)
         return ""
     return text
 

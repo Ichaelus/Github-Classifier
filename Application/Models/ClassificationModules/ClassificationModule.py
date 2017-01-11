@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+################################################
+# A meta class for every classification module #
+################################################
+
 from abc import ABCMeta, abstractmethod
 import cPickle as pickle
 from datetime import datetime, date, time
 import ActiveLearningSpecific as AL
-from FeatureProcessing import getLabelIndex
+from Models.FeatureProcessing import getLabelIndex
 import numpy as np
 import re
 import copy
@@ -79,7 +83,7 @@ class ClassificationModule:
 
     @abstractmethod
     def formatInputData(self):
-        """Format data into the form the given classifier needs it, using functions from FeatureProcessing.py"""
+        """Format data into the form the given classifier needs it, using functions from Models.FeatureProcessing.py"""
         pass
 
     def muteClassificationModule(self):

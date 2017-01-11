@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+########################################################
+# A collection of Python -> JSON conversion  functions #
+########################################################
+
 from collections import OrderedDict
 import json
 import demjson
 import Models.ClassificationModules.ClassificationModule
-import Models.ClassificationModules.classifierMeasures as CM
+import Models.classifierMeasures as CM
 
 def ConvertClassifierCollectionToJSON(classificationModules):
     """Not there"""
@@ -86,11 +91,9 @@ def formatSinglePrediction(data, results):
         classifiers[cresult[0]] = {'probability':formatProbabilities(cresult[1])}
     returndata = {'repo':formatRepo(data), 'classifiersUnsure': True, 'classifiers':classifiers}
     return json.dumps(returndata)
-    #return '{"repoName": "rName", "classifierResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
-
         # EXAMPLE
     # {
-    #	"repo":	{repoName: "repoName","repoAPILink":""},
+    #	"repo":	{repoName: "repoName","repoAPILink":"",..},
     #	"classifiers":{
     # 	"<ModuleName>" : {
     #		probability:[

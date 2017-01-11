@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from FeatureProcessing import *
+from Models.FeatureProcessing import *
 from keras.models import Sequential
 from keras.layers import Activation, Dense
 from keras.optimizers import Adam

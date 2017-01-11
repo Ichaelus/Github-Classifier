@@ -1,5 +1,5 @@
 from DatabaseCommunication import getLabeledData, getUnlabeledData
-from Models.FeatureProcessing import getVectorsFromData, getMetaAttMax
+from FeatureProcessing import getVectorsFromData, getMetaAttMax
 
 import random
 

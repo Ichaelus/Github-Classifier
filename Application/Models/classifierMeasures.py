@@ -1,3 +1,7 @@
+##############################################################################
+# A collection of functions that generate measures out of a confusion matrix #
+##############################################################################
+
 """Measures for multi-class classification"""
 
 def avg_accuracy(confusion_matrix):

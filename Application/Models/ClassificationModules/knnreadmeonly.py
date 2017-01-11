@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from FeatureProcessing import *
+from Models.FeatureProcessing import *
 import sklearn
 from sklearn.neighbors import KNeighborsClassifier
 import numpy as np

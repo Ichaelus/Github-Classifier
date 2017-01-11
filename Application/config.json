@@ -1,4 +1,6 @@
-/* Note: This is only a draft, but not in use yet.*/
+//##################################################
+//# Note: This is only a draft, but not in use yet #
+//##################################################
 {
 	"backend": "http://67.209.116.156/",
 	"classes": ["DEV", "HW", "EDU", "DOCS", "WEB", "DATA", "OTHER"]

@@ -1,5 +1,7 @@
 # API
 
+_This file describes the services provided by /Backend/ajax.php_
+
 ## Base url
 
 Queries with the need of database information are always sent via `GET` to the backend host, which is by default `http://67.209.116.156/ajax.php` (a small but stable database server). Services can be accessed with the attribute `key`, results can be refined using the additional attribute `filter`, `limit`. `selector` and `table`. The server response consists of a JSON object containing a Boolean `success` which determines the execution state and `data`, the query result.

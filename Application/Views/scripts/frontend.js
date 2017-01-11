@@ -1,13 +1,18 @@
+
+//########################################
+//# GUI rendering and interaction engine #
+//########################################
+
 console.log("Frontend started..");
 let stateView, inputView, classifierView, outputView, wrapperView, footerView,
 	stateData = {
 		action: "halt",
-    forcePrediction: true,
 		formula: "",
 		formulas: [],
     isSemiSupervised: false,
     mode: "test", // stream, pool, test, single
     poolSize: 0,
+    predictionHandling: "predict", // predict | feedback
     trainInstantly: false,
     useExtendedTestSet: false
 	},
@@ -38,6 +43,8 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
     savePoints: {}, // fileName: {precision: [{class, val}, ..]}
     selectedDocumentation: "Chose documentation",
     selectedPoint: "Version",
+    selectedTable: 'unlabeled',
+    tableList: ["semi_supervised", "standard_test_samples", "standard_train_samples", "test", "to_classify", "train", "unlabeled"],
     numStats: {},
     strStats: {},
     id: 0
@@ -214,6 +221,8 @@ function initVue(){
             runGenerator(function *main(){
               // Fetch sample, display
               results = yield jQGetPromise("/get/PredictSingleSample?repoLink="+repoLink, "json");
+              if(typeof(results.error) !== 'undefined')
+                notify("Error predicting sample", results.error, 2500);
               stateView.updateResults(results);
             });
           }catch(ex){
@@ -226,11 +235,13 @@ function initVue(){
       },
       startTest: function(){
         Vue.set(inoutData, "state", "Testing..");
+        notify("Testing", "Every module is being tested on the selected test set. This may take a while.", 3000);
         runGenerator(function *main(){
           // Fetch sample, display
           results = yield jQGetPromise("/get/startTest?useExtendedTestSet="+stateData.useExtendedTestSet, "json");
           stateView.updateResults(results);
-          Vue.set(inoutData, "state", "Test result");
+          notify("Testing", "Test results are available now.", 3000);
+          Vue.set(inoutData, "state", "showResult");
         });
       },
       resetView: function(){
@@ -257,13 +268,18 @@ function initVue(){
         for(let c in inoutData.classifiers)
           wrapperView.save(c);
       },
-      showStats: function(){
+      getStats: function(callback){
         runGenerator(function *main(){
-          // Fetch sample, display
-          numStats = yield jQGetPromise("/get/stats?table=unlabeled&string_attrs=false", "json");
-          strStats = yield jQGetPromise("/get/stats?table=unlabeled&string_attrs=true", "json");
+          numStats = yield jQGetPromise("/get/stats?table="+wrapperData.selectedTable+"&string_attrs=false", "json");
+          strStats = yield jQGetPromise("/get/stats?table="+wrapperData.selectedTable+"&string_attrs=true", "json");
           Vue.set(wrapperData, "numStats", numStats);
           Vue.set(wrapperData, "strStats", strStats);
+          callback();
+        });
+      },
+      showStats: function(){
+        // Fetch sample, display
+        stateView.getStats(function(){
           showWrapper('#stats_wrapper');
         });
       },
@@ -474,8 +490,8 @@ function initVue(){
       topMostName: function(){
         return classifierView.orderedClassifiers[0].name;
       },
-      forcePrediction: function(){
-        return stateView.forcePrediction;
+      predictionHandling: function(){
+        return stateView.predictionHandling;
       },
       mode: function(){
         return stateData.mode;
@@ -592,6 +608,7 @@ function initVue(){
         let to_append = "\n";
         document.querySelector("#outputList").value = "";
         runGenerator(function *main(){
+          notify("List prediction", "List prediction started. Results will soon show up.")
           for (var i = 0; i < list.length; i++) {
             if(list[i].length > 0){
               Vue.set(wrapperData, "exprState", "Processing " + list[i]);
@@ -601,14 +618,20 @@ function initVue(){
                 wrapperView.keepThinking();
                 repoLink = convertToApiLink(list[i]);
                 results = yield jQGetPromise("/get/PredictSingleSample?repoLink="+repoLink, "json");
-                stateView.updateResults(results);
-                Vue.set(wrapperData, "thinking", false);
-                to_append = repoLink + " " + outputView.getOutputClass();
-                Vue.set(wrapperData, "expression", "found");
+
+                if(typeof(results.error) !== 'undefined'){
+                  notify("Error predicting sample", results.error, 2500);
+                  throw new Error(results.error);
+                }else{
+                  stateView.updateResults(results);
+                  Vue.set(wrapperData, "thinking", false);
+                  to_append = list[i] + " " + outputView.getOutputClass() + "\n";
+                  Vue.set(wrapperData, "expression", "found");
+                }
               }catch(err){
                 Vue.set(wrapperData, "expression", "error");
                 Vue.set(wrapperData, "thinking", false);
-                to_append = "Invalid Repository url\n";
+                to_append = "Invalid repository url or internal error\n";
                 console.log(err);
               };
               document.querySelector("#outputList").value += to_append;
@@ -667,6 +690,10 @@ function initVue(){
         }catch(ex){
           return fn;
         }
+      },
+      selectTable: function(t){
+        Vue.set(wrapperData, "selectedTable", t);
+        stateView.getStats(function(){});
       }
     },
     computed: {
@@ -699,9 +726,9 @@ function initVue(){
   wrapperView.getDistributionArray();
   wrapperView.getDocumentationNames();
 }
-// name : {description, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},precision: [{class, val},..], probability : [{class, val},..]}
 
 function wait_async(time){
+  // Wait <time> milliseconds before continuing
   return new Promise(function(resolve, reject){
     setTimeout(function(){
       resolve();
@@ -716,6 +743,7 @@ function hideInfo(){
 }
 
 function showWrapper(elem){
+  // Fades in the selected overlay
   if(document.querySelector('.overlay_blur').style.display == "none"){
     $('.overlay_blur').fadeIn();
     $(elem).css("margin-top", window.scrollY - 50);
@@ -724,6 +752,7 @@ function showWrapper(elem){
 }
 
 function formatMeasure(m){
+  // 0.03 => 3.0 %)
   return Math.round(m * 1000)/10 + "%";
 }
 
@@ -762,7 +791,7 @@ function precisionToGraphData(res){
     data.push({axis: res[i].class, value: res[i].val});
   return data;
 }
-
+1
 function getRadarConfig(size){
   let radarChartOptions = {
     // Defines the standard configuration of radar graphs
@@ -783,6 +812,7 @@ function jQGetPromise(url, datatype = ""){
   return new Promise(function(resolve, reject){
     $.get(url, function(data){resolve(data)},datatype)
     .fail(function(data){
+      notify("Internal exception", "Error getting data from url " + url, 3000);
       reject("Error getting data from url " + url);
     });
   }).then(function(data){
