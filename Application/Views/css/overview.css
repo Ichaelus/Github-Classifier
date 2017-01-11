@@ -20,7 +20,7 @@ html, body{
   
 }
 h1{
-  line-height: 152px;
+  line-height: 40px;
   margin: 0;
   font-size: 33px;
 }
@@ -29,6 +29,9 @@ h1 span{
   font-size: 16.5px;
   margin-left: 10px;
   cursor: pointer;
+}
+#header .note{
+ font-style: italic; 
 }
 #header{
   position: relative;

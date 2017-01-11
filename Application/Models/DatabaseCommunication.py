@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+####################################################
+# The interface between Python and the backend API #
+####################################################
+
 import base64
 from urllib2 import Request, urlopen, URLError, quote
 import json
-import ClassificationModules.FeatureProcessing as FP
+import Models.FeatureProcessing as FP
 
 def api_call(keyString, filterString="", tableString="", limitString="", selector = "*"):
     """Get list of Repos-Data in json-format"""
@@ -18,7 +22,7 @@ def api_call(keyString, filterString="", tableString="", limitString="", selecto
         data = json.load(response)
         if not isinstance(data, dict):
             return data # int, string, whatever
-        assert data["success"] == True, "Database error: " + data["message"] + "\nwith query url:" + url
+        assert data["success"] == True, "Database error: " + data["message"]# + "\nwith query url:" + url
     except URLError, e:
         print 'Error with api call', e
     return data["data"] # dict

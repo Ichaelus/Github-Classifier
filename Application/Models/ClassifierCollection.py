@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+####################################################
+# A collection classification modules that inherit #
+# from the meta class ClassificationModule.py      #
+####################################################
+
 import Models.ClassificationModules.ClassificationModule
 import DatabaseCommunication as DC
 import ClassificationModules.ActiveLearningSpecific as AL

@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+#############################
+# GUI <-> Python Controller #
+#############################
+
 from bottle import Bottle, route, run, static_file, request
 import os
 import Models.ClassifierCollection
@@ -11,6 +15,8 @@ abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Views')
 
 homebottle = Bottle()
 homeclassifiercollection = None
+
+# Server static files at given paths
 
 def homesetclassifiercollection(classifiercollection):
 	global homeclassifiercollection
@@ -89,9 +95,16 @@ def getDocumentation(filename):
 	docsPath = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../'), '../Documentation')
 	return static_file(filename, root=docsPath, mimetype='text/plain')
 
+@homebottle.get('/Documentation/<filename:re:.*\.jpg>')
+def getDocumentationImage(filename):
+	docsPath = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../'), '../Documentation')
+	return static_file(filename, root=docsPath, mimetype='image/jpg')
+
+
+
 @homebottle.get('/get/<key>')
 def api(key):
-	# Handle frontend to backend requests
+	# Handle Frontend to Python requests
 
 	if (key == "formulas"):
 		# Return a string list of available uncertainty formulas
@@ -121,12 +134,12 @@ def api(key):
 	elif(key == "PredictSingleSample"):
 		# Returns classifier prediction for a given `repoLink`
 		data, result = None, None
-		#try:
-		data, result = homeclassifiercollection.PredictSingleSample(getQueryValue("repoLink"))
-		#except Exception, e:
-		#	print e
-		#	return e
-		return Models.JSONCommunication.formatSinglePrediction(data, result)
+		try:
+			data, result = homeclassifiercollection.PredictSingleSample(getQueryValue("repoLink"))
+			return Models.JSONCommunication.formatSinglePrediction(data, result)
+		except Exception as e:
+			print e
+			return Models.JSONCommunication.toJson({'error': str(e)})
 
 	elif(key == "startTest"):
 		# Runs the classifiers agains a predefined testset
@@ -135,6 +148,7 @@ def api(key):
 		return Models.JSONCommunication.formatMultipleClassificationTests(result)
 
 	elif(key == "retrain"):
+		# Retrains a single classifier identified by <name>
 		ClassifierName = getQueryValue("name")
 		useExtendedTestSet = getQueryValue("useExtendedTestSet") == "true"
 		#try:
@@ -151,6 +165,7 @@ def api(key):
 		#	return "The classifier "+ClassifierName+" has been retrained."
 
 	elif(key == "retrainSemiSupervised"):
+		# Retrains a single classifier identified by <name> including semi-supervised data
 		ClassifierName = getQueryValue("name")
 		useExtendedTestSet = getQueryValue("useExtendedTestSet") == "true"
 		try:
@@ -170,6 +185,7 @@ def api(key):
 			return "The classifier "+ClassifierName+" has been retrained with semi-supervised data."
 
 	elif(key == "save"):
+		# Saves a classifier snapshot to disk
 		ClassifierName = getQueryValue("name")
 		#try:
 		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
@@ -179,6 +195,7 @@ def api(key):
 		#	return "Error while saving classifier."
 
 	elif(key == "load"):
+		# Loads and retests a classifier snapshot
 		ClassifierName = getQueryValue("name")
 		useExtendedTestSet = getQueryValue("useExtendedTestSet") == "true"
 		#try:
@@ -190,6 +207,7 @@ def api(key):
 		#	return('{"Error": "Error loading classifier"}')
 
 	elif(key == "savePoints"):
+		# Returns a list of savepoint filenames for classifier <name>
 		ClassifierName = getQueryValue("name")
 		try:
 			savePoints = homeclassifiercollection.getClassificationModule(ClassifierName).getSavePointsForClassificationModules()
@@ -198,7 +216,7 @@ def api(key):
 			return('Name error')
 
 	elif(key == "ALclassification"):
-		# Save user classification
+		# Save user classification <label> for a repository <api_url>
 		if("api_url" == ""):
 			return "API url is empty"
 		data = DC.moveRepoFromToClassifyToTrain(getQueryValue("api_url"), getQueryValue("label"))
@@ -206,6 +224,7 @@ def api(key):
 			homeclassifiercollection.ALTrainInstantlyAllClassificationModules(data)
 
 	elif(key == "mute"):
+		# Mutes a module <name>
 		try:
 			homeclassifiercollection.getClassificationModule(getQueryValue("name")).muteClassificationModule()
 			return "success"
@@ -214,6 +233,7 @@ def api(key):
 
 
 	elif(key == "unmute"):
+		# Unmutes a module <name>
 		try:
 			homeclassifiercollection.getClassificationModule(getQueryValue("name")).unmuteClassificationModule()
 			return "success"
@@ -221,22 +241,26 @@ def api(key):
 			return('Module not found')
 
 	elif(key == "matrix"):
+		# Returns the confusion matrix for module <name>
 		try:
 			return Models.JSONCommunication.formatxfusionMatrix(homeclassifiercollection.getClassificationModule(getQueryValue("name")).getConfusionMatrix())
 		except NameError as err:
 			return('Module not found')
 
 	elif(key == "stats"):
+		# Get database statistics for <table>
 		if(getQueryValue("string_attrs") == "true"):
 			return Models.JSONCommunication.formatStats(DC.getStats(getQueryValue("table"), "string"))
 		else:
 			return Models.JSONCommunication.formatStats(DC.getStats(getQueryValue("table"), "numerical"))
 			
 	elif(key == "distributionArray"):
+		# Returns the class distribution for the table <table>. Flag for using extended set or not
 		useExtendedTestSet = getQueryValue("useExtendedTestSet") == "true"
 		return Models.JSONCommunication.toJson(DC.getDistributionArray(getQueryValue("table"), useExtendedTestSet))
 
 	elif(key == "documentationNames"):
+		# Returns a list of .md documentation files
 		docsPath = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../'), '../Documentation')
 		docfiles = [f for f in os.listdir(docsPath) if os.path.isfile(os.path.join(docsPath, f)) and f.endswith(".md")]
 		return Models.JSONCommunication.toJson(docfiles)
@@ -244,16 +268,8 @@ def api(key):
 	else :
 		return "API call for: " + key
 
-@homebottle.post('/post/<key>')
-def api(key):
-	if (key == "click"):
-		return "Click event called"
-	elif(key == "test"):
-		return "backend connected!"
-	else:
-		return "API call for: " + key
-
 def getQueryValue(q):
+	# Returns a query <q> value passed to /get/ 
 	queries = request.query.decode()
 	if(q in queries):
 		return queries[q]

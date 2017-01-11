@@ -54,3 +54,5 @@ First Try/modelrmanddescr5epoch
 Classifier_SavePoints/Basic Neural Network/Basic Neural Network.xml
 *.xml
 *.sql
+*.zip.*
+*.ova

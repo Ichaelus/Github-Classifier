@@ -2,7 +2,7 @@
 <html>
   <head>
     <!--
-    Copyright 2016
+    Copyright 2017
     Code by Michael Leimstädtner
     -->
     <meta charset="utf-8"/>
@@ -199,7 +199,7 @@
           <div class="row">
             <div v-on:click="showTeam('stefan')"
             :class="'col-xs-2 portrait ' + (activeMember == 'stefan' ? 'selected' : '')" style="background-image: url('images/stefan.jpg')"></div>
-            <div v-on:click="showTeam('stefan')"
+            <div v-on:click="showTeam('michael')"
             :class="'col-xs-2 portrait ' + (activeMember == 'michael' ? 'selected' : '')" style="background-image: url('images/michael.jpg')"></div>
             <div v-on:click="showTeam('martin')"
             :class="'col-xs-2 portrait ' + (activeMember == 'martin' ? 'selected' : '')" style="background-image: url('images/martin.jpg')"></div>
@@ -226,17 +226,17 @@
     <div id="page" class="container-fluid" style="display:none;">
       <div id="header">
         <div class="container">
-          <div class="col-xs-4">
+          <div class="col-xs-4" style="height:156px;">
             <h1>Classification Overview<span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="Show documentation" v-on:click="showDocumentationWrapper()"></span></h1>
-
-              <div
-                  v-show="(mode == 'stream' || mode == 'pool')" 
-                  :class="'control_buttons '"><!--control-subgroup-->
-                  <span :class="(action == 'loop' ? 'active ' : '') + 'glyphicon glyphicon-play'" v-on:click="loop()" data-toggle="tooltip" data-placement="top" title="Classify random samples until paused"></span>
-                  <span :class="(action == 'halt' ? 'active ' : '') + 'glyphicon glyphicon-pause'" v-on:click="halt()" data-toggle="tooltip" data-placement="top" title="Stop classifying"></span>
-                  <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" data-toggle="tooltip" data-placement="top" title="Classify a single random sample">
-                  </span>
-              </div><!-- /control-subgroup -->
+            <span class="note">Note: Altough we list more than one classification module, only the top listed preordered module should be considered as our submission.</span>
+            <div
+                v-show="(mode == 'stream' || mode == 'pool')" 
+                :class="'control_buttons '"><!--control-subgroup-->
+                <span :class="(action == 'loop' ? 'active ' : '') + 'glyphicon glyphicon-play'" v-on:click="loop()" data-toggle="tooltip" data-placement="top" title="Classify random samples until paused"></span>
+                <span :class="(action == 'halt' ? 'active ' : '') + 'glyphicon glyphicon-pause'" v-on:click="halt()" data-toggle="tooltip" data-placement="top" title="Stop classifying"></span>
+                <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" data-toggle="tooltip" data-placement="top" title="Classify a single random sample">
+                </span>
+            </div><!-- /control-subgroup -->
 
           </div>
           <div class="col-xs-8">
@@ -278,6 +278,7 @@
                 <label for="instant_train" class="form-control">Classify instantly and train incrementaly</label>
               </div>-->
 
+              <!-- Active Learning controls -->
               <div
                   v-show="(mode == 'stream')"
                   :class="'input-group '"
@@ -287,16 +288,6 @@
                 </span>
                 <label for="semi_supervised" class="form-control">Semi-Supervised</label>
               </div>   <!-- /input-group -->  
-
-              <div 
-                  v-show="mode == 'single'"
-                  :class="'input-group '"
-                  data-toggle="tooltip" data-placement="bottom" data-original-title="If disabled, the user might be asked to classify a sample manually">
-                <span class="input-group-addon">
-                  <input id="force_prediction" v-model="forcePrediction" name="force_prediction" type="checkbox">
-                </span>
-                <label for="force_prediction" class="form-control">Always force prediction</label>
-              </div><!-- /input-group -->
 
               <div 
                   v-show="(mode == 'stream' || mode == 'pool')"
@@ -310,15 +301,37 @@
                 </div><!-- /btn-group -->
               </div><!-- /input-group -->
 
+              <!-- Handle user input controls -->
+              <div 
+                  v-show="mode == 'single'"
+                  :class="'input-group '"
+                  data-toggle="tooltip" data-placement="bottom" data-original-title="If disabled, the user might be asked to classify a sample manually">
+                <span class="input-group-addon">
+                  <input id="pH1" name="predictionHandling" v-model="predictionHandling" value="predict" type="radio">
+                </span>
+                <label for="pH1" class="form-control">Always show prediction</label>
+              </div><!-- /input-group -->
+
+              <div 
+                  v-show="mode == 'single'"
+                  :class="'input-group '"
+                  data-toggle="tooltip" data-placement="bottom" data-original-title="If disabled, the user might be asked to classify a sample manually">
+                <span class="input-group-addon">
+                  <input id="pH2" name="predictionHandling" v-model="predictionHandling" value="feedback" type="radio">
+                </span>
+                <label for="pH2" class="form-control">Always require user feedback</label>
+              </div><!-- /input-group -->
+
               <input v-on:click="predictSingle('')"
                     v-show="(mode == 'single')"
-                    :class="'btn btn-primary control '" 
+                    :class="'btn btn-primary control '" style="width: 49.55%;"
                     title="Predict single samples" value="Predict single" type="button">
               <input v-on:click="showListPrediction()"
                     v-show="(mode == 'single')"
-                    :class="'btn btn-primary control '" 
+                    :class="'btn btn-primary control '" style="width: 49.55%;"
                     title="Predict a list of samples" value="Predict list" type="button">
-              <!-- Tests are being run by the classifiers. The only case where this would be useful is when the test samples have changed remotely-->
+
+              <!-- Test controls -->
               <input v-on:click="retrainAll()" value="Retrain all classifers" 
                     v-show="(mode == 'test')"
                     :class="'btn btn-primary '" style="width: 49.55%;" type="button">
@@ -482,11 +495,11 @@
                 class="outputText"
                 >The top-most ranked classifier says it's <strong>{{getOutputClass()}}</strong>. 
                 <span
-                  v-show="(mode != 'test' && classifiersUnsure && (mode != 'single' || !forcePrediction) )"
+                  v-show="(mode != 'test' && classifiersUnsure && (mode != 'single' || predictionHandling == 'feedback') )"
                 >Because one or more module is uncertain about its output, you can classify the sample manually.</span>
             </p>
             <h2 v-on:click="manualClassification()"
-                v-show="(mode != 'test' && state == 'showResult' && classifiersUnsure && (mode != 'single' || !forcePrediction))"
+                v-show="(mode != 'test' && state == 'showResult' && classifiersUnsure && (mode != 'single' || predictionHandling == 'feedback'))"
                 :class="(manualClass == '?' ? 'uncertain' : '')" 
                 :style="{top: 'calc( 35px * (-1 + '+getClassifierAmount()+') * 75px)'}"
                 :title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass )}}</h2>

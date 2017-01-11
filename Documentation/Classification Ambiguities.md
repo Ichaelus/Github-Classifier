@@ -26,7 +26,7 @@
 > Decision if Web or Dev depends on complexity of website.   
 > **Note:** We changed the official class-description from only _personal_ 'static website' to **just** 'static website'. This constraint didn't seem plausible.
 > [OpenDuka](https://github.com/OpenInstitute/OpenDuka) is 'DEV' as it compries a MVC-Model and acts as a Web-App rather than a static website.
-
+> > This question has been officialy answered: https://github.com/InformatiCup/InformatiCup2017/issues/8
 ### Collection of tips
 > **Example:** 'Collection of Android tips' is educational so 'EDU' is the way to go.
 
@@ -46,6 +46,7 @@
 ### DOCS vs EDU
 > A bug reproduction description that does not contain the solution (no educational value) -> DOCS
 > **Example** [Bug description](https://api.github.com/repos/GrahamDennis/spark-kryo-serialisation)
+> This question has been officialy answered: https://github.com/InformatiCup/InformatiCup2017/issues/9
 
 ### DOCS vs DEV
 > A repository containing a project structure always tends to be DEV. Only if the readme implies to be categorised as DOCS, it should be classified as such.

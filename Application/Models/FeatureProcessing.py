@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+################################################
+# Convert repository information into features #
+################################################
+
 import cPickle as pickle
 import os
 import base64
