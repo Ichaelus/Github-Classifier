@@ -94,6 +94,7 @@ def getLabelName(index):
     
 def text_from_base64(text):
     """Convert text back from base64"""
+    text = str(text)
     missing_padding = len(text) % 4
     if missing_padding != 0:
         text += b'='* (4 - missing_padding)

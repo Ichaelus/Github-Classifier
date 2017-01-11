@@ -82,7 +82,7 @@
       let data = {
         markdown: "",
         selectedFile: "README.md",
-        fileList: ["README.md", "Documentation/Installation Manual.md", "Documentation/Frontend Manual.md","Documentation/API.md"]
+        fileList: ["README.md", "Documentation/Installation Manual.md", "Documentation/Frontend Manual.md","Documentation/Documentation.md", "Documentation/API.md"]
       };
       let View = new Vue({
         el: "#page",
@@ -92,7 +92,8 @@
             Vue.set(data, "selectedFile", fileName);
             $.get(fileName, function(md){
               let converter = new showdown.Converter();
-              Vue.set(data, "markdown", converter.makeHtml(md).replace(/<table>/g, "<table class='table'>"));
+              // Format tables and adjust image paths
+              Vue.set(data, "markdown", converter.makeHtml(md).replace(/<table>/g, "<table class='table'>").replace(/\/Documentation\//g, "Documentation/"));
             }, "text");
           }
         }
