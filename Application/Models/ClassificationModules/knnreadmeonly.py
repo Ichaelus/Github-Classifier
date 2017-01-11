@@ -46,15 +46,21 @@ class knnreadmeonly(ClassificationModule):
             train_samples.append(formatted_sample)
             train_lables.append(getLabelIndex(sample))
         train_lables = np.asarray(train_lables)
-        return self.clf.fit(train_samples, train_lables)
+        train_result = self.clf.fit(train_samples, train_lables)
+        self.isTrained = True
+        return train_result
 
     def predictLabel(self, sample):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""
+        if not self.isTrained:
+            return 0
         sample = self.formatInputData(sample)
         return self.clf.predict(sample)[0]
     
     def predictLabelAndProbability(self, sample):
         """Return the probability the module assignes each label"""
+        if not self.isTrained:
+            return [0, 0, 0, 0, 0, 0, 0, 0]
         sample = self.formatInputData(sample)
         prediction = self.clf.predict_proba(sample)[0]
         return [np.argmax(prediction)] + list(prediction) 

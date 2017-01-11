@@ -70,15 +70,22 @@ class nndescriptiononly(ClassificationModule):
             train_samples.append(formatted_sample)
             train_lables.append(oneHot(getLabelIndex(sample)))
         train_lables = np.asarray(train_lables)
-        return self.model.fit(train_samples, train_lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose, class_weight=getClassWeights())
+        train_result = self.model.fit(train_samples, train_lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose, class_weight=getClassWeights())
+        self.isTrained = True
+        return train_result
+
 
     def predictLabel(self, sample):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""
+        if not self.isTrained:
+            return 0
         sample = self.formatInputData(sample)
         return np.argmax(self.model.predict(sample))
     
     def predictLabelAndProbability(self, sample):
         """Return the probability the module assignes each label"""
+        if not self.isTrained:
+            return [0, 0, 0, 0, 0, 0, 0, 0]
         sample = self.formatInputData(sample)
         prediction = self.model.predict(sample)[0]
         return [np.argmax(prediction)] + list(prediction) 

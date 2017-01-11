@@ -52,12 +52,14 @@ class bernoullinbdescriptiononly(ClassificationModule):
 
     def predictLabel(self, sample):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""
+        if not self.isTrained:
+            return 0
         sample = self.formatInputData(sample)
         return self.clf.predict(sample)[0]
     
     def predictLabelAndProbability(self, sample):
         """Return the probability the module assignes each label"""
-        if self.isTrained is False:
+        if not self.isTrained:
             return [0, 0, 0, 0, 0, 0, 0, 0]
         sample = self.formatInputData(sample)
         prediction = self.clf.predict_proba(sample)[0]

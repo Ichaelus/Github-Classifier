@@ -43,27 +43,35 @@ class lrstacking(EnsembleClassifier):
         train_samples = []
         train_lables = []
         for sample in samples:
-            formatted_sample = self.formatInputData(sample)[0].tolist()
+            formatted_sample = self.formatInputData(sample, trainingData=samples)[0].tolist()
             train_samples.append(formatted_sample)
             train_lables.append(getLabelIndex(sample))
         train_lables = np.asarray(train_lables)
-        return self.clf.fit(train_samples, train_lables)
+        train_result = self.clf.fit(train_samples, train_lables)
+        self.isTrained = True
+        return train_result
 
     def predictLabel(self, sample):
         """Gibt zurück, wie der Klassifikator ein gegebenes Sample klassifizieren würde"""
+        if not self.isTrained:
+            return 0
         sample = self.formatInputData(sample)
         return self.clf.predict(sample)[0]
     
     def predictLabelAndProbability(self, sample):
         """Return the probability the module assignes each label"""
+        if not self.isTrained:
+            return [0, 0, 0, 0, 0, 0, 0, 0]
         sample = self.formatInputData(sample)
         prediction = self.clf.predict(sample)[0]
         return ([prediction] + oneHot(prediction).tolist())
 
-    def formatInputData(self, sample):
+    def formatInputData(self, sample, trainingData=None):
         """Extract description and transform to vector"""
         predictions = []
         for classifier in self.subclassifiers:
+            if (not classifier.isTrained) and (trainingData is not None):
+                classifier.train(trainingData)
             prediction = classifier.predictLabelAndProbability(sample)[1:]
             predictions += prediction
             """
