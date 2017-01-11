@@ -43,6 +43,7 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
     savePoints: {}, // fileName: {precision: [{class, val}, ..]}
     selectedDocumentation: "Chose documentation",
     selectedPoint: "Version",
+    selectedTable: 'unlabeled',
     tableList: ["semi_supervised", "standard_test_samples", "standard_train_samples", "test", "to_classify", "train", "unlabeled"],
     numStats: {},
     strStats: {},
@@ -267,13 +268,18 @@ function initVue(){
         for(let c in inoutData.classifiers)
           wrapperView.save(c);
       },
-      showStats: function(){
+      getStats: function(callback){
         runGenerator(function *main(){
-          // Fetch sample, display
-          numStats = yield jQGetPromise("/get/stats?table=unlabeled&string_attrs=false", "json");
-          strStats = yield jQGetPromise("/get/stats?table=unlabeled&string_attrs=true", "json");
+          numStats = yield jQGetPromise("/get/stats?table="+wrapperData.selectedTable+"&string_attrs=false", "json");
+          strStats = yield jQGetPromise("/get/stats?table="+wrapperData.selectedTable+"&string_attrs=true", "json");
           Vue.set(wrapperData, "numStats", numStats);
           Vue.set(wrapperData, "strStats", strStats);
+          callback();
+        });
+      },
+      showStats: function(){
+        // Fetch sample, display
+        stateView.getStats(function(){
           showWrapper('#stats_wrapper');
         });
       },
@@ -684,6 +690,10 @@ function initVue(){
         }catch(ex){
           return fn;
         }
+      },
+      selectTable: function(t){
+        Vue.set(wrapperData, "selectedTable", t);
+        stateView.getStats(function(){});
       }
     },
     computed: {

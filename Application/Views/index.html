@@ -60,7 +60,7 @@
             <div 
               v-show="(mode == 'test')"
               :class="'trainCount '">
-              <h4>
+              <h4><strong>Sample distribution: 
                 <div class="btn-group">
                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{distribution}} <span class="caret"></span>
@@ -70,7 +70,7 @@
                     <li v-on:click="changeDistribution('Train')"><span>Train</span></li>
                   </ul>
                 </div>
-                sample distribution</h4>
+                </strong></h4>
               <table class="table table-bordered table-striped measure_table"> 
                 <!-- Strings -->
                 <colgroup> <col class="col-xs-6"> <col class="col-xs-6"></colgroup>
@@ -80,8 +80,18 @@
                 </tbody>
               </table>
             </div>
+          <hr>
 
-          <h4><strong>Table `unlabeled`</strong></h4>
+          <h4><strong>View insights for table 
+            <div class="btn-group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{selectedTable}} <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li v-for="t in tableList" v-on:click="selectTable(t)"><span>{{t}}</span></li>
+              </ul>
+            </div></strong></h4>
+
           <table class="table table-bordered table-striped measure_table"> 
             <colgroup> <col class="col-xs-4"> <col class="col-xs-2"><col class="col-xs-2"><col class="col-xs-2"><col class="col-xs-2"> </colgroup>
             <thead> <tr> <th>Numerical Attribute</th> <th>Avg</th> <th>Min</th> <th>Max</th> <th>Sum</th> </tr> </thead>
