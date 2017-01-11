@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from FeatureProcessing import *
 import sklearn
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 import numpy as np
 import abc
 from ClassificationModule import ClassificationModule
@@ -11,44 +11,31 @@ from ClassificationModule import ClassificationModule
 
 
 
-class allrandomforest(ClassificationModule):
-    """A basic Random Forest Classifier"""
+class gbrtfilesandfolders(ClassificationModule):
+    """A Gradient Tree Boosting Classifier """
 
-    def __init__(self, text_corpus, filetype_corpus, foldername_corpus, reponame_lstm, n_estimators=200):
-        ClassificationModule.__init__(self, "All Random Forest", "Ensemble Learner with multiple Decision-Trees")
+    def __init__(self, file_corpus, foldername_corpus, n_estimators=150):
+        description = "Gradient Tree Boosting or Gradient Boosted Regression Trees (GBRT) is a generalization of boosting to arbitrary differentiable loss functions. GBRT is an accurate and effective off-the-shelf procedure that can be used for both regression and classification problems. Gradient "
+        description += "Tree Boosting models are used in a variety of areas including Web search ranking and ecology."
 
-        self.vectorizer = getTextVectorizer(1000) # Maximum of different columns
-        self.filetypeVectorizer = getTextVectorizer(30) # TODO: Find better number
-        self.foldernameVectorizer = getTextVectorizer(30) # TODO: Find better number
+        ClassificationModule.__init__(self, "Files and Folders Gradient Tree Boosting", description)
 
-        # Vectorizer for descriptions and/or readmes
-        corpus = []
-        for text in text_corpus:
-            corpus.append(process_text(text))
-        self.vectorizer.fit(corpus)
+        self.fileVectorizer = getTextVectorizer(50) # TODO: Find better number
+        self.foldernameVectorizer = getTextVectorizer(50) # TODO: Find better number
 
         # Vectorizer for filetypes
         corpus = []
-        for type in filetype_corpus:
+        for type in file_corpus:
             corpus.append(type)
-        self.filetypeVectorizer.fit(corpus)
+        self.fileVectorizer.fit(corpus)
 
         # Vectorizer for foldernames
         corpus = []
         for folder in foldername_corpus:
             corpus.append(folder)
         self.foldernameVectorizer.fit(corpus)
-        
-        # Setup lstm for repository-name 
-        """ Commented out as this is currently done in start.py already
-        self.reponamelstm = reponame_lstm.loadClassificationModuleSavePoint("lastused")
-        if (self.reponamelstm is None):
-            self.reponamelstm = reponame_lstm
-        """
-        self.reponamelstm = reponame_lstm
 
-        self.clf = RandomForestClassifier(n_estimators=n_estimators, class_weight='auto')
-        
+        self.clf = GradientBoostingClassifier(n_estimators=n_estimators)
         print "\t-", self.name
 
 
@@ -86,14 +73,10 @@ class allrandomforest(ClassificationModule):
 
     def formatInputData(self, sample):
         """Extract description and transform to vector"""
-        sd = getDescription(sample)
-        rm = getReadme(sample)
-        arr = list(self.vectorizer.transform([sd, rm]).toarray()[0])
-        arr += getMetadataVector(sample)
-        arr += list(self.filetypeVectorizer.transform([getFiletypesString(sample)]).toarray()[0])
+        sd = getReadme(sample)
+        arr = list(self.fileVectorizer.transform([getFiletypesString(sample)]).toarray()[0])
         arr += list(self.foldernameVectorizer.transform([getFoldernames(sample)]).toarray()[0])
-        arr += self.reponamelstm.predictLabelAndProbability(sample)[1:]
+        # Returns numpy array which contains 1 array with features
         return np.asarray([arr])
-
 
 
