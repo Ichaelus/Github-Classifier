@@ -21,6 +21,7 @@ class ClassificationModule:
     __metaclass__ = ABCMeta
 
     def __init__(self, name, description):
+        self.isTrained = False
         self.description = description
         self.name = name
         self.muted = False
