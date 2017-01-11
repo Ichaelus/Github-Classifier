@@ -43,6 +43,9 @@ class ClassificationModule:
         """Return the Precision"""
         return self.Precision.copy()
 
+    def getTrained(self):
+        """Return the attribute isTrained"""
+        return self.isTrained
 
     def setName(self, name):
         """Set name"""

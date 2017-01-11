@@ -17,7 +17,7 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
     useExtendedTestSet: false
 	},
   inoutData = {
-    classifiers: {}, // name : {description, active, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},precision: [{class, val},..], probability : [{class, val},..]}
+    classifiers: {}, //{name : {active, description, isTrained, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},precision: [{class, val},..], probability : [{class, val},..]}, ...}
     classifierAsking: "",
     classifiersUnsure: false,
     isPrediction: true,
@@ -260,7 +260,7 @@ function initVue(){
 
         notify("Retrain all classifers", "Retraining many classifiers. This may take a couple of minutes; you may keep an eye on the console output.");
         for(let c in inoutData.classifiers)
-          if(all || inoutData.classifiers[c].confusionMatrix.measures[classifierView.getMeasureName()] <= 0)
+          if(all || !inoutData.classifiers[c].isTrained)
             wrapperView.retrain(c, save);
       },
       saveAll: function(){

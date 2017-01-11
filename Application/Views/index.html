@@ -91,7 +91,7 @@
                 <li v-for="t in tableList" v-on:click="selectTable(t)"><span>{{t}}</span></li>
               </ul>
             </div></strong></h4>
-
+          <h5 style="font-style: italic;">Note: Samples from `unlabeled` are most representative for average samples on GitHub</h5>
           <table class="table table-bordered table-striped measure_table"> 
             <colgroup> <col class="col-xs-4"> <col class="col-xs-2"><col class="col-xs-2"><col class="col-xs-2"><col class="col-xs-2"> </colgroup>
             <thead> <tr> <th>Numerical Attribute</th> <th>Avg</th> <th>Min</th> <th>Max</th> <th>Sum</th> </tr> </thead>
@@ -204,7 +204,7 @@
       </div> <!-- /Overlay -->
        <div style="display:none" class="overlay_wrapper" id="team_wrapper"> <!-- Overlay -->
         <div class="container">
-          <h2>Our team</h2>
+          <h2>The team</h2>
           <hr>
           <div class="row">
             <div v-on:click="showTeam('stefan')"
@@ -526,7 +526,7 @@
           <div class="row">
             <div class="col-xs-4"><h4>Assignment for the <a href="http://informaticup.gi.de/" target="_blank">InformatiCup 2017</a></h4></div>
             <div class="col-xs-2">
-              <h4>Team Augsburg</h4>
+              <h4 class="member" v-on:click="showTeam('stefan')">Team Augsburg</h4>
             </div>
             <div class="col-xs-6">
               <div class="col-xs-6 member" v-on:click="showTeam('andreas')">Andreas Grafberger</div>

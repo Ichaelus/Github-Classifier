@@ -8,19 +8,18 @@
 from bottle import Bottle, route, run, static_file, request
 import os
 import Models.ClassifierCollection
-import Models.JSONCommunication
+import Models.JSONCommunication as JS
 import Models.DatabaseCommunication as DC
 
-abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Views')
-
+abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Views') # The default OS independent path
 homebottle = Bottle()
-homeclassifiercollection = None
+CC = None # Classifier Collection
 
 # Server static files at given paths
 
 def homesetclassifiercollection(classifiercollection):
-	global homeclassifiercollection
-	homeclassifiercollection = classifiercollection
+	global CC
+	CC = classifiercollection
 
 @homebottle.get('/')
 def home():
@@ -108,7 +107,7 @@ def api(key):
 
 	if (key == "formulas"):
 		# Return a string list of available uncertainty formulas
-		return Models.JSONCommunication.getFormulas()
+		return JS.getFormulas()
 
 	elif(key == "poolSize"):
 		# Return the amount of unlabeled samples
@@ -116,18 +115,18 @@ def api(key):
 
 	elif(key == "classifiers"):
 		# get classifiers
-		classifiers = homeclassifiercollection.getAllClassificationModules()
-		return Models.JSONCommunication.ConvertClassifierCollectionToJSON(classifiers)
+		classifiers = CC.getAllClassificationModules()
+		return JS.ConvertClassifierCollectionToJSON(classifiers)
 
 	elif(key == "doSingleStep"):
 		# Perform a single step based on the current stateData
 		if(getQueryValue("mode") == "stream"):
-			sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results = homeclassifiercollection.doStreamBasedALRound(getQueryValue("formula"), getQueryValue("isSemiSupervised") == 'true')
-			return Models.JSONCommunication.formatStreamBasedALRound(sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results)
+			sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results = CC.doStreamBasedALRound(getQueryValue("formula"), getQueryValue("isSemiSupervised") == 'true')
+			return JS.formatStreamBasedALRound(sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results)
 
 		elif(getQueryValue("mode") == "pool"):
-			sample, classifierasking, propabilitiesForUserQuery = homeclassifiercollection.doPoolBasedALRound(getQueryValue("formula"), getQueryValue("isSemiSupervised") == 'true')
-			return Models.JSONCommunication.formatPoolBasedALRound(sample, classifierasking, propabilitiesForUserQuery)
+			sample, classifierasking, propabilitiesForUserQuery = CC.doPoolBasedALRound(getQueryValue("formula"), getQueryValue("isSemiSupervised") == 'true')
+			return JS.formatPoolBasedALRound(sample, classifierasking, propabilitiesForUserQuery)
 		else:
 			return "Invalid arguments"
 
@@ -135,17 +134,17 @@ def api(key):
 		# Returns classifier prediction for a given `repoLink`
 		data, result = None, None
 		try:
-			data, result = homeclassifiercollection.PredictSingleSample(getQueryValue("repoLink"))
-			return Models.JSONCommunication.formatSinglePrediction(data, result)
+			data, result = CC.PredictSingleSample(getQueryValue("repoLink"))
+			return JS.formatSinglePrediction(data, result)
 		except Exception as e:
 			print e
-			return Models.JSONCommunication.toJson({'error': str(e)})
+			return JS.toJson({'error': str(e)})
 
 	elif(key == "startTest"):
 		# Runs the classifiers agains a predefined testset
 		useExtendedTestSet = getQueryValue("useExtendedTestSet") == "true"
-		result = homeclassifiercollection.TestAllClassificationModules(useExtendedTestSet)
-		return Models.JSONCommunication.formatMultipleClassificationTests(result)
+		result = CC.TestAllClassificationModules(useExtendedTestSet)
+		return JS.formatMultipleClassificationTests(result)
 
 	elif(key == "retrain"):
 		# Retrains a single classifier identified by <name>
@@ -153,14 +152,14 @@ def api(key):
 		useExtendedTestSet = getQueryValue("useExtendedTestSet") == "true"
 		#try:
 			# Get data to train on
-		train_data = Models.DatabaseCommunication.getTrainData()
-		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
+		train_data = DC.getTrainData()
+		classifier = CC.getClassificationModule(ClassifierName)
 		classifier.resetAllTraining()
 		classifier.train(train_data)
 
 		# Test classifier
-		test_data = Models.DatabaseCommunication.getTestData(useExtendedTestSet)
-		return Models.JSONCommunication.formatSingleClassificationTest(classifier, classifier.testModule(test_data))
+		test_data = DC.getTestData(useExtendedTestSet)
+		return JS.formatSingleClassificationTest(classifier, classifier.testModule(test_data))
 		#except:
 		#	return "The classifier "+ClassifierName+" has been retrained."
 
@@ -172,7 +171,7 @@ def api(key):
 			"""
 			# Get data to train on
 			train_data = DC.getSemiSupervisedData()
-			classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
+			classifier = CC.getClassificationModule(ClassifierName)
 			classifier.resetAllTraining()
 			classifier.train(train_data)
 
@@ -188,7 +187,7 @@ def api(key):
 		# Saves a classifier snapshot to disk
 		ClassifierName = getQueryValue("name")
 		#try:
-		classifier = homeclassifiercollection.getClassificationModule(ClassifierName)
+		classifier = CC.getClassificationModule(ClassifierName)
 		classifier.saveModule()
 		return "The classifier "+ClassifierName+" has been saved."
 		#except:
@@ -199,10 +198,10 @@ def api(key):
 		ClassifierName = getQueryValue("name")
 		useExtendedTestSet = getQueryValue("useExtendedTestSet") == "true"
 		#try:
-		newModule = homeclassifiercollection.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint(getQueryValue("savepoint"))
-		homeclassifiercollection.setClassificationModule(ClassifierName, newModule)
-		test_data = Models.DatabaseCommunication.getTestData(useExtendedTestSet)
-		return Models.JSONCommunication.formatSingleClassificationTest(newModule, newModule.testModule(test_data))
+		newModule = CC.getClassificationModule(ClassifierName).loadClassificationModuleSavePoint(getQueryValue("savepoint"))
+		CC.setClassificationModule(ClassifierName, newModule)
+		test_data = DC.getTestData(useExtendedTestSet)
+		return JS.formatSingleClassificationTest(newModule, newModule.testModule(test_data))
 		#except:
 		#	return('{"Error": "Error loading classifier"}')
 
@@ -210,8 +209,8 @@ def api(key):
 		# Returns a list of savepoint filenames for classifier <name>
 		ClassifierName = getQueryValue("name")
 		try:
-			savePoints = homeclassifiercollection.getClassificationModule(ClassifierName).getSavePointsForClassificationModules()
-			return Models.JSONCommunication.formatSavePoints(savePoints)
+			savePoints = CC.getClassificationModule(ClassifierName).getSavePointsForClassificationModules()
+			return JS.formatSavePoints(savePoints)
 		except NameError as err:
 			return('Name error')
 
@@ -221,12 +220,12 @@ def api(key):
 			return "API url is empty"
 		data = DC.moveRepoFromToClassifyToTrain(getQueryValue("api_url"), getQueryValue("label"))
 		if(getQueryValue("trainInstantly") == "true"):
-			homeclassifiercollection.ALTrainInstantlyAllClassificationModules(data)
+			CC.ALTrainInstantlyAllClassificationModules(data)
 
 	elif(key == "mute"):
 		# Mutes a module <name>
 		try:
-			homeclassifiercollection.getClassificationModule(getQueryValue("name")).muteClassificationModule()
+			CC.getClassificationModule(getQueryValue("name")).muteClassificationModule()
 			return "success"
 		except NameError as err:
 			return('Module not found')
@@ -235,7 +234,7 @@ def api(key):
 	elif(key == "unmute"):
 		# Unmutes a module <name>
 		try:
-			homeclassifiercollection.getClassificationModule(getQueryValue("name")).unmuteClassificationModule()
+			CC.getClassificationModule(getQueryValue("name")).unmuteClassificationModule()
 			return "success"
 		except NameError as err:
 			return('Module not found')
@@ -243,27 +242,27 @@ def api(key):
 	elif(key == "matrix"):
 		# Returns the confusion matrix for module <name>
 		try:
-			return Models.JSONCommunication.formatxfusionMatrix(homeclassifiercollection.getClassificationModule(getQueryValue("name")).getConfusionMatrix())
+			return JS.formatxfusionMatrix(CC.getClassificationModule(getQueryValue("name")).getConfusionMatrix())
 		except NameError as err:
 			return('Module not found')
 
 	elif(key == "stats"):
 		# Get database statistics for <table>
 		if(getQueryValue("string_attrs") == "true"):
-			return Models.JSONCommunication.formatStats(DC.getStats(getQueryValue("table"), "string"))
+			return JS.formatStats(DC.getStats(getQueryValue("table"), "string"))
 		else:
-			return Models.JSONCommunication.formatStats(DC.getStats(getQueryValue("table"), "numerical"))
+			return JS.formatStats(DC.getStats(getQueryValue("table"), "numerical"))
 			
 	elif(key == "distributionArray"):
 		# Returns the class distribution for the table <table>. Flag for using extended set or not
 		useExtendedTestSet = getQueryValue("useExtendedTestSet") == "true"
-		return Models.JSONCommunication.toJson(DC.getDistributionArray(getQueryValue("table"), useExtendedTestSet))
+		return JS.toJson(DC.getDistributionArray(getQueryValue("table"), useExtendedTestSet))
 
 	elif(key == "documentationNames"):
 		# Returns a list of .md documentation files
 		docsPath = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../'), '../Documentation')
 		docfiles = [f for f in os.listdir(docsPath) if os.path.isfile(os.path.join(docsPath, f)) and f.endswith(".md")]
-		return Models.JSONCommunication.toJson(docfiles)
+		return JS.toJson(docfiles)
 
 	else :
 		return "API call for: " + key

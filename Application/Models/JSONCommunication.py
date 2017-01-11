@@ -26,17 +26,19 @@ def ConvertClassifierCollectionToJSON(classificationModules):
             'Precision M': CM.precision(matrix),
             'Recall M': CM.recall(matrix),
             'Fscore M': CM.fscore(matrix, 0.125),
-            }
+        }
         confusionMatrix = {
             'matrix': formatConfusionMatrix(matrix),
             'measures': measures,
             'order': ["DEV", "HW", "EDU", "DOCS", "WEB", "DATA", "OTHER"],
-            }
+        }
         classifiers[c.getName()] = {
-            'precision':Precision,
-            'description':c.getDescription(),
+            'active': not c.isMuteClassificationModule(),
             'confusionMatrix':confusionMatrix,
-            'active': not c.isMuteClassificationModule()}
+            'description':c.getDescription(),
+            'isTrained': c.isTrained,
+            'precision':Precision,
+        }
     returndata = {'classifiers': classifiers}
     return json.dumps(returndata)
     #return '{"classifiers": {"Neural network1": {"description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","yield":0.81,"active":true,"uncertainty": 0.5,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]},"Neural network2":{"description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","yield":0.55,"uncertainty": 0.5,"active":false,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]},"Neural network3":{"description":"A neuronal network with 3x2000 fully connected neurons. Only Readme, Description and Filenames are being used as input.","yield":0.90,"uncertainty": 0.5,"active":true,"result":[{"class":"DEV","val":0.0},{"class":"HW","val":0.0},{"class":"EDU","val":0.0},{"class":"DOCS","val":0.0},{"class":"WEB","val":0.0},{"class":"DATA","val":0.0},{"class":"OTHER","val":0.0}]}}}'
@@ -272,8 +274,9 @@ def formatSingleClassificationTest(classifier, result):
         'order': ["DEV", "HW", "EDU", "DOCS", "WEB", "DATA", "OTHER"],
         }
     classifiers[classifier.getName()] = {
+        'confusionMatrix': confusionMatrix,
+        'isTrained': classifier.isTrained,
         'precision':formatClassifierPrecision(result[0]),
-        'confusionMatrix': confusionMatrix
         }
     returndata = {'classifiers':classifiers}
     return json.dumps(returndata)

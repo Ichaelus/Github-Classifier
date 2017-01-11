@@ -53,6 +53,7 @@ class_weights = {0:1, 1:3, 2:3, 3:3, 4:3, 5:2, 6: 2}
 global_vectorizer = None
 
 def getClassWeights():
+    """ Class Weight getter"""
     global class_weights
     return class_weights
 
@@ -79,11 +80,13 @@ def getVectorsFromData(data, processText=True):
     return (features, labels, label_names)
 
 def getLabelIndex(sample):
+    """Returns the index for the class of a given sample"""
     assert  'class' in sample, "Data vector incomplete"
     global label_dict
     return label_dict[sample['class']]
 
 def getLabelName(index):
+    """Locates and returns the label for a given index"""
     for label in label_dict:
         if label_dict[label] == index:
             return label
@@ -103,14 +106,17 @@ def text_from_base64(text):
     return text
 
 def getReadme(data):
+    """Converts the base64 encoded readme into a text string"""
     assert  'readme' in data, "Data vector incomplete"
     return text_from_base64(data['readme'])
 
 def getDescription(data):
+    """Description value getter"""
     assert  'description' in data, "Data vector incomplete"
     return data['description']
 
 def getReadmeLength(sample):
+    """Returns the string length of the readme"""
     readme = getReadme(sample)
     return len(readme)
 
@@ -181,6 +187,7 @@ def getFilenames(sample):
     return filenames
 
 def getFiletypes(sample):
+    """Returns a list of filetypes"""
     filetypes = []
     filenames = getFilenames(sample)
     for filename in filenames.split(' '):
@@ -189,6 +196,7 @@ def getFiletypes(sample):
     return list(set(filetypes))
 
 def getFiletypesString(sample):
+    """Converts the filetypes into a space separated string"""
     str = ""
     for filetype in getFiletypes(sample):
         str += filetype + ' '
@@ -221,6 +229,7 @@ def getTextVectorizer(max_features, vectorizer_name="vectorizer.bin"):
 
 
 def process_text(text, remove_url=True, remove_code=True, remove_punctuation=True, stem=True):
+    """Preprocess text (removing urls, punctuation etc.) bevore stemming and returning it"""
     # Process string
     readme_codefree = ""
     readme = ""
@@ -270,6 +279,7 @@ def getMetaAttMax(data):
             continue
     
 def oneHot(index):
+    """Returns an array of 7 zeros and a 1 at index <index> """
     arr = np.zeros(7)
     arr[index] = 1
     return arr
