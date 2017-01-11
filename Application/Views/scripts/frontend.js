@@ -234,11 +234,13 @@ function initVue(){
       },
       startTest: function(){
         Vue.set(inoutData, "state", "Testing..");
+        notify("Testing", "Every module is being tested on the selected test set. This may take a while.", 3000);
         runGenerator(function *main(){
           // Fetch sample, display
           results = yield jQGetPromise("/get/startTest?useExtendedTestSet="+stateData.useExtendedTestSet, "json");
           stateView.updateResults(results);
-          Vue.set(inoutData, "state", "Test result");
+          notify("Testing", "Test results are available now.", 3000);
+          Vue.set(inoutData, "state", "showResult");
         });
       },
       resetView: function(){

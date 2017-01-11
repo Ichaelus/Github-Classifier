@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from FeatureProcessing import *
+from Models.FeatureProcessing import *
 import sklearn
 from sklearn.ensemble import GradientBoostingClassifier
 import numpy as np
