@@ -63,5 +63,3 @@ class metaonlysvc(ClassificationModule):
         sd = getMetadataVector(sample)
         # Returns numpy array which contains 1 array with features
         return np.expand_dims(sd, axis=0)
-
-

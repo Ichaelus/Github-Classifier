@@ -26,6 +26,7 @@ from Models.ClassificationModules.knnreadmeonly import knnreadmeonly
 from Models.ClassificationModules.svcfilenamesonly import filenamesonlysvc
 from Models.ClassificationModules.lrstacking import lrstacking
 from Models.ClassificationModules.svmall import svmall
+from Models.ClassificationModules.rfall import allrandomforest
 import Models.DatabaseCommunication as DC
 
 print("Starting application..")
@@ -53,7 +54,7 @@ classifiers['metaonlysvc'] = metaonlysvc()
 classifiers['metaonlyadaboost'] = metaonlyadaboost()
 classifiers['metaonlyrandomforest'] = metaonlyrandomforest()
 classifiers['reponamelstm'] = reponamelstm()
-classifiers['readmelstm'] = readmelstm()
+#classifiers['readmelstm'] = readmelstm()
 
 
 for classifier in classifiers:
@@ -67,6 +68,7 @@ for classifier in classifiers:
 
 classifiers['nnall'] = nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
 classifiers['svmall'] = svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
+classifiers['allrandomforest'] = allrandomforest(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
 
 for classifier in classifiers:
     if classifier not in standaloneClassifiers:
@@ -74,8 +76,7 @@ for classifier in classifiers:
         if loaded_classifier is not None:
             classifiers[classifier] = loaded_classifier
 
-
-#classifiers.append(lrstacking([nnmetaonly(), metaonlyadaboost(), reponamelstm(), nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm())]))
+classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest']])
 
 #print 'Loading last checkpoint for classifiers if available:'
 for c in classifiers:

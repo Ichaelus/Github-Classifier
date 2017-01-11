@@ -11,13 +11,43 @@ from ClassificationModule import ClassificationModule
 
 
 
-class metaonlyrandomforest(ClassificationModule):
+class allrandomforest(ClassificationModule):
     """A basic Random Forest Classifier"""
 
-    def __init__(self, n_estimators=250):
-        ClassificationModule.__init__(self, "Meta Only Random Forest", "Ensemble Learner with multiple Decision-Trees")
+    def __init__(self, text_corpus, filetype_corpus, foldername_corpus, reponame_lstm, n_estimators=200):
+        ClassificationModule.__init__(self, "All Random Forest", "Ensemble Learner with multiple Decision-Trees")
 
-        self.clf = RandomForestClassifier(n_estimators=n_estimators, class_weight = 'auto')
+        self.vectorizer = getTextVectorizer(1000) # Maximum of different columns
+        self.filetypeVectorizer = getTextVectorizer(30) # TODO: Find better number
+        self.foldernameVectorizer = getTextVectorizer(30) # TODO: Find better number
+
+        # Vectorizer for descriptions and/or readmes
+        corpus = []
+        for text in text_corpus:
+            corpus.append(process_text(text))
+        self.vectorizer.fit(corpus)
+
+        # Vectorizer for filetypes
+        corpus = []
+        for type in filetype_corpus:
+            corpus.append(type)
+        self.filetypeVectorizer.fit(corpus)
+
+        # Vectorizer for foldernames
+        corpus = []
+        for folder in foldername_corpus:
+            corpus.append(folder)
+        self.foldernameVectorizer.fit(corpus)
+        
+        # Setup lstm for repository-name 
+        """ Commented out as this is currently done in start.py already
+        self.reponamelstm = reponame_lstm.loadClassificationModuleSavePoint("lastused")
+        if (self.reponamelstm is None):
+            self.reponamelstm = reponame_lstm
+        """
+        self.reponamelstm = reponame_lstm
+
+        self.clf = RandomForestClassifier(n_estimators=n_estimators)
         
         print "\t-", self.name
 
@@ -56,8 +86,14 @@ class metaonlyrandomforest(ClassificationModule):
 
     def formatInputData(self, sample):
         """Extract description and transform to vector"""
-        sd = getMetadataVector(sample)
-        # Returns numpy array which contains 1 array with features
-        return np.expand_dims(sd, axis=0)
+        sd = getDescription(sample)
+        rm = getReadme(sample)
+        arr = list(self.vectorizer.transform([sd, rm]).toarray()[0])
+        arr += getMetadataVector(sample)
+        arr += list(self.filetypeVectorizer.transform([getFiletypesString(sample)]).toarray()[0])
+        arr += list(self.foldernameVectorizer.transform([getFoldernames(sample)]).toarray()[0])
+        arr += self.reponamelstm.predictLabelAndProbability(sample)[1:]
+        return np.asarray([arr])
+
 
 
