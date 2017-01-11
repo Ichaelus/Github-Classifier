@@ -28,8 +28,9 @@ from Models.ClassificationModules.lrstacking import lrstacking
 from Models.ClassificationModules.svmall import svmall
 from Models.ClassificationModules.rfall import allrandomforest
 from Models.ClassificationModules.gbrtmetaonly import gbrtmetaonly
-#from Models.ClassificationModules.gbrtreadmeonly import gbrtreadmeonly
+from Models.ClassificationModules.gbrtreadmeonly import gbrtreadmeonly
 from Models.ClassificationModules.gbrtfilesandfolders import gbrtfilesandfolders
+from Models.ClassificationModules.gbrtdescriptionmeta import gbrtdescriptionmeta
 import Models.DatabaseCommunication as DC
 
 print("Starting application..")
@@ -57,9 +58,10 @@ classifiers['metaonlysvc'] = metaonlysvc()
 classifiers['metaonlyadaboost'] = metaonlyadaboost()
 classifiers['metaonlyrandomforest'] = metaonlyrandomforest()
 classifiers['reponamelstm'] = reponamelstm()
-#classifiers['gbrtreadmeonly'] = gbrtreadmeonly(readmeCorpus)
+classifiers['gbrtreadmeonly'] = gbrtreadmeonly(readmeCorpus)
 classifiers['gbrtfilesandfolders'] = gbrtfilesandfolders(filenameCorpus, foldernameCorpus)
 classifiers['gbrtmetaonly'] = gbrtmetaonly()
+classifiers['gbrtdescriptionmeta'] = gbrtdescriptionmeta(descriptionCorpus)
 
 #classifiers['readmelstm'] = readmelstm()
 
