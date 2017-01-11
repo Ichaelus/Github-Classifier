@@ -52,14 +52,14 @@ print 'Creating and adding Classifiers to Classifier Collection:'
 standaloneClassifiers = [] # Keep track, which classifiers have be loaded or such attempt has been made
 
 classifiers = {}
-classifiers['filenamesonlysvc'] = filenamesonlysvc(filenameCorpus)
+#classifiers['filenamesonlysvc'] = filenamesonlysvc(filenameCorpus)
 classifiers['nnmetaonly'] = nnmetaonly()
 classifiers['metaonlysvc'] = metaonlysvc()
 classifiers['metaonlyadaboost'] = metaonlyadaboost()
 classifiers['metaonlyrandomforest'] = metaonlyrandomforest()
 classifiers['reponamelstm'] = reponamelstm()
 classifiers['gbrtreadmeonly'] = gbrtreadmeonly(readmeCorpus)
-classifiers['gbrtfilesandfolders'] = gbrtfilesandfolders(filenameCorpus, foldernameCorpus)
+#classifiers['gbrtfilesandfolders'] = gbrtfilesandfolders(filenameCorpus, foldernameCorpus)
 classifiers['gbrtmetaonly'] = gbrtmetaonly()
 classifiers['gbrtdescriptionmeta'] = gbrtdescriptionmeta(descriptionCorpus)
 
@@ -85,7 +85,7 @@ for classifier in classifiers:
         if loaded_classifier is not None:
             classifiers[classifier] = loaded_classifier
 
-classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest']])
+#classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest']])
 
 #print 'Loading last checkpoint for classifiers if available:'
 for c in classifiers:
