@@ -99,6 +99,11 @@ def getDocumentationImage(filename):
 	docsPath = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../'), '../Documentation')
 	return static_file(filename, root=docsPath, mimetype='image/jpg')
 
+@homebottle.get('/Documentation/<filename:re:.*\.png>')
+def getDocumentationPng(filename):
+	docsPath = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../'), '../Documentation')
+	return static_file(filename, root=docsPath, mimetype='image/png')
+
 
 
 @homebottle.get('/get/<key>')

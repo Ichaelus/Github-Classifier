@@ -142,7 +142,7 @@ button.control {
 */
 
 #classifiers{
-  padding: 50px 20px 20px 20px;
+  padding: 00px 20px 20px 20px;
   box-shadow: 0 0 1px rgba(0,0,0,0.25);
   margin: 0 0 20px 0;
   border-radius: 5px;
@@ -157,8 +157,9 @@ button.control {
   font-size: 25px;
 }*/
 .classifier_row{
-  margin-bottom: 50px;
+  margin-bottom: 40px;
   position: relative;
+  padding-top: 10px;
 }
 .classifier_row:last-child {
   margin-bottom: 0;
