@@ -22,7 +22,7 @@ class filenamesonlysvc(ClassificationModule):
                           Sklearn can't predict individual probabilities per class so one-hot encoding for these is used."
         ClassificationModule.__init__(self, "Filenames Only Support Vector Classifier", my_description)
 
-        self.vectorizer = CountVectorizer(max_features=500, tokenizer=myTokenizer) # 500 different filenames should probably too much
+        self.vectorizer = getTextVectorizer(500)
         self.vectorizer.fit(filenameCorpus)
 
         self.clf = SVC(C=1000.0, class_weight=getClassWeights())
