@@ -16,7 +16,7 @@ class reponamelstm(ClassificationModule):
         ClassificationModule.__init__(self, "Repo-Name Only LSTM", "A LSTM reading the repository-name character by character")
 
         hidden_size = 200
-        self.maxlen = 50
+        self.maxlen = 15
 
         # Set output_size
         self.output_size = 7 # Hardcoded for 7 classes
