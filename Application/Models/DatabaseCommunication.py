@@ -8,7 +8,7 @@
 import base64
 from urllib2 import Request, urlopen, URLError, quote
 import json
-import Models.FeatureProcessing as FP
+import FeatureProcessing as FP
 
 def api_call(keyString, filterString="", tableString="", limitString="", selector = "*"):
     """Get list of Repos-Data in json-format"""

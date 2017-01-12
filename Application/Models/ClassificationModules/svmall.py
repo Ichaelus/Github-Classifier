@@ -17,15 +17,15 @@ def myTokenizer(s):
 class svmall(ClassificationModule):
     """A basic SVC"""
 
-    def __init__(self, text_corpus, filetype_corpus, foldername_corpus, reponame_lstm):
+    def __init__(self, text_corpus, filetype_corpus, filename_corpus, foldername_corpus):
         my_description = "All SVC\
                           Sklearn can't predict individual probabilities per class so one-hot encoding for these is used."
         ClassificationModule.__init__(self, "ALL Support Vector Classifier", my_description)
 
-        # Create vectorizer and fit on all available Corpi
-        self.vectorizer = getTextVectorizer(1000) # Maximum of different columns
+        self.vectorizer = getTextVectorizer(6000) # Maximum of different columns
         self.filetypeVectorizer = getTextVectorizer(30) # TODO: Find better number
-        self.foldernameVectorizer = getTextVectorizer(30) # TODO: Find better number
+        self.foldernameVectorizer = getTextVectorizer(100) # TODO: Find better number
+        self.filenameVectorizer = getTextVectorizer(200) # TODO: Find better number
 
         # Vectorizer for descriptions and/or readmes
         corpus = []
@@ -39,19 +39,17 @@ class svmall(ClassificationModule):
             corpus.append(type)
         self.filetypeVectorizer.fit(corpus)
 
+        # Vectorizer for filenames
+        corpus = []
+        for type in filename_corpus:
+            corpus.append(type)
+        self.filenameVectorizer.fit(corpus)
+
         # Vectorizer for foldernames
         corpus = []
         for folder in foldername_corpus:
             corpus.append(folder)
         self.foldernameVectorizer.fit(corpus)
-        
-        # Setup lstm for repository-name 
-        """ Commented out as this is currently done in start.py already
-        self.reponamelstm = reponame_lstm.loadClassificationModuleSavePoint("lastused")
-        if (self.reponamelstm is None):
-            self.reponamelstm = reponame_lstm
-        """
-        self.reponamelstm = reponame_lstm
 
         # Create classifier
         self.clf = SVC(C=1000.0, class_weight='balanced', probability=True) # TODO: Find better C, gamma
@@ -106,7 +104,6 @@ class svmall(ClassificationModule):
         arr += getMetadataVector(sample)
         arr += list(self.filetypeVectorizer.transform([getFiletypesString(sample)]).toarray()[0])
         arr += list(self.foldernameVectorizer.transform([getFoldernames(sample)]).toarray()[0])
-        arr += self.reponamelstm.predictLabelAndProbability(sample)[1:]
+        arr += list(self.filenameVectorizer.transform([getFilenames(sample)]).toarray()[0])
         return np.asarray([arr])
-
 

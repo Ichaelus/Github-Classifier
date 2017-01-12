@@ -43,7 +43,7 @@ max_lev_folders = 10
 max_vectorizer_word_count = 3000
 
 possibleLanguages = ['JavaScript', 'Java', 'Python', 'C#', 'C++', 'Ruby', 
-                    'CSS', 'C', 'Objective-C', 'Shell', 'Perl', 
+                    'CSS', 'C', 'Objective-C', 'Shell', 'Perl', 'PHP',
                     'R', 'CSS', 'HTML']
 
 label_dict = {'DEV':0, 'HW':1, 'EDU':2, 'DOCS':3, 'WEB':4, 'DATA':5, 'OTHER':6}
@@ -177,7 +177,7 @@ def getLanguagesLength():
 
 
 def getFilenames(sample):
-    """Returns list of filenames"""
+    """Returns string containing all filenames"""
     filenames = sample['files']
     """
     if filenames is not None:

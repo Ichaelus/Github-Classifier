@@ -12,11 +12,11 @@ from ClassificationModule import ClassificationModule
 class reponamelstm(ClassificationModule):
     """A basic feedforward neural network"""
     
-    def __init__(self, num_hidden_layers=1):
+    def __init__(self, num_hidden_layers=3):
         ClassificationModule.__init__(self, "Repo-Name Only LSTM", "A LSTM reading the repository-name character by character")
 
-        hidden_size = 200
-        self.maxlen = 15
+        hidden_size = 128
+        self.maxlen = 30
 
         # Set output_size
         self.output_size = 7 # Hardcoded for 7 classes
