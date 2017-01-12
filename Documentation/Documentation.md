@@ -7,6 +7,7 @@ algorithms, data structures and software development tools and practices."
 
 ### Our Strategy to get our train data
 * Api-Call Limit, erste Website
+
 Uns wurde schon recht bald bewusst, dass wir möglichst viele Datensätze von Repositories brauchen.
 Da zudem das Problem eines Limits an API-Calls besteht, um an diese Daten heranzukommen,
 erstellten wir eine Datenbank um diese Daten erstmal einfach nur ohne Zugangsbeschränkungen zur Verfügung zu haben.
@@ -21,6 +22,7 @@ nicht weiter verwendet werden konnten wegen der hohen Diversität.
 ### First Data Set Impressions
 * Erste Versuche mit ersten Classifiern/Entdecken des Majority Class Problems
 * Erste Überlegungen zu den Features
+
 Erste Versuche starteten wir mit neuronalen Netzwerken und Support Vector Maschines (zu finden unter **First Trys**).
 Theoretische Überlegungen waren uns zu diesem Zeitpunkt aber wichtiger. Eine war:
 "Inwiefern beeinflusst das Majority Class Problem unseren Klassifizierer"
@@ -74,6 +76,7 @@ liefern können.
 
 Konfusionsmatrix
 <img src="/Documentation/Konfusionsmatrix.png" height=350>
+
 Kreisdiagramm
 <img src="/Documentation/Kreisdiagramm.png" height=350>
 
@@ -86,13 +89,23 @@ eine Darstellung im Browser mittels HTML entschieden. Maschinelles Lernen besitz
 klar war auf schon vorhandene Bibiotheken angewiesen zu sein. Da ein Teammitglied schon in Python bewandert war, 
 insbesondere in diesem Bereich, viel die Wahl sofort auf Python für unsere Logikschicht.
 
+Genaueres zur Installation des Python-Teils der Anwendung: **Installation Manual.md**
+
 ### Python application
+Eine GUI-Beschreibung mit allen Funktionalitäten findet sich in: **Frontend Manual.md**
+
+Dokumentation der Plannung des Frameworks in: **Active Learning Framework Planning Phase.md**
+
+
+
 ### Webserver
+Der Webserver stellt einen Zugang zu allen gesammelten Datensätzen bereit und zusätzlich einige Filter, 
+sowie noch Zählfunktionalitäten. Genaue Funktionsweisen finden sich in der API Dokumentation: **API.md**
 
 ## Data Exploration and Prediction Model
 ### Features
 * hier kommen unsere Überlegungen zu den Features rein
-
+#### Genutzte:
 
 #### Rausgefallene:
 
