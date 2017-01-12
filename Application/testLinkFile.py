@@ -47,14 +47,14 @@ print 'Creating and adding Classifiers to Classifier Collection:'
 
 # First load all classifiers which don't need other classifiers as parameter
 
-standaloneClassifiers = [] # Keep track, which classifiers have be loaded or such attempt has been made
+loadedClassifiers = [] # Keep track, which classifiers have be loaded or such attempt has been made
 
 classifiers = {}
 #classifiers['filenamesonlysvc'] = filenamesonlysvc(filenameCorpus)
 #classifiers['nnmetaonly'] = nnmetaonly()
-#classifiers['metaonlysvc'] = metaonlysvc()
+classifiers['metaonlysvc'] = metaonlysvc()
 #classifiers['metaonlyadaboost'] = metaonlyadaboost()
-#classifiers['metaonlyrandomforest'] = metaonlyrandomforest()
+classifiers['metaonlyrandomforest'] = metaonlyrandomforest()
 classifiers['reponamelstm'] = reponamelstm()
 #classifiers['gbrtreadmeonly'] = gbrtreadmeonly(readmeCorpus)
 #classifiers['gbrtfilesandfolders'] = gbrtfilesandfolders(filenameCorpus, foldernameCorpus)
@@ -68,22 +68,32 @@ for classifier in classifiers:
     loaded_classifier = classifiers[classifier].loadClassificationModuleSavePoint(filename="lastused")
     if loaded_classifier is not None:
         classifiers[classifier] = loaded_classifier
-    standaloneClassifiers.append(classifier)
+    loadedClassifiers.append(classifier)
 
 # Now all classifiers should have been loaded from last savepoint, if available
 # Use these loaded classifiers by giving them to all ensemble-Models
 
 classifiers['nnall'] = nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
-#classifiers['svmall'] = svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
-#classifiers['allrandomforest'] = allrandomforest(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
+classifiers['svmall'] = svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
+classifiers['allrandomforest'] = allrandomforest(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
 
 for classifier in classifiers:
-    if classifier not in standaloneClassifiers:
+    if classifier not in loadedClassifiers:
+        loaded_classifier = classifiers[classifier].loadClassificationModuleSavePoint(filename="lastused")
+        if loaded_classifier is not None:
+            classifiers[classifier] = loaded_classifier
+        loadedClassifiers.append(classifier)
+
+classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest']])
+
+# Finally load all meta-models such as lrstacking
+
+for classifier in classifiers:
+    if classifier not in loadedClassifiers:
         loaded_classifier = classifiers[classifier].loadClassificationModuleSavePoint(filename="lastused")
         if loaded_classifier is not None:
             classifiers[classifier] = loaded_classifier
 
-#classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest']])
 
 #print 'Loading last checkpoint for classifiers if available:'
 for c in classifiers:
@@ -105,7 +115,7 @@ try:
     classes = ['DEV', 'HW', 'EDU', 'DOCS', 'WEB', 'DATA', 'OTHER']
     for line in linkFile:
         data = DC.getInformationsForRepo(line.rstrip().replace("https://github.com", "https://api.github.com/repos"))
-        prediction = classifiers['nnall'].predictLabelAndProbability(data)
+        prediction = classifiers['lrstacking'].predictLabelAndProbability(data)
         resultFile.write(line.rstrip() + ' ' + classes[prediction[0]] + '\n')
     linkFile.close()
     resultFile.close()
