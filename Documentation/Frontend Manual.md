@@ -90,4 +90,4 @@ The `test` output on the hand is non-interactive, its purpose is to present a su
 
 ## The Footer
 
-TODO
+You can find a link to the competition website at the very bottom of the GUI along with the names of every team member. Clicking on one of us will display a wrapper containing some information about him.
