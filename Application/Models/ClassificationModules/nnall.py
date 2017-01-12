@@ -46,7 +46,7 @@ class nnall(ClassificationModule):
         self.foldernameVectorizer.fit(corpus)
         
         # Set input-size and output_size
-        self.input_size = len(self.vectorizer.get_feature_names()) + getMetadataLength() + len(self.filetypeVectorizer.get_feature_names()) + len(self.foldernameVectorizer.get_feature_names())
+        self.input_size = len(self.vectorizer.get_feature_names()) + getMetadataLength() + len(self.filetypeVectorizer.get_feature_names()) + len(self.foldernameVectorizer.get_feature_names()) + len(self.filenameVectorizer.get_feature_names())
         self.output_size = 7 # Hardcoded for 7 classes
 
         # Create model
