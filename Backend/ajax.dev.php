@@ -1,6 +1,8 @@
-    <?php
+<?php
+    header("Access-Control-Allow-Origin: *");
     require('mysqli_class.php');
     require("GitHandler.class.php");
+    date_default_timezone_set('Europe/Berlin');
 
     $db = new MYSQL();
     if(!$db->init()){ throw new Exception("Could not connect to the database");}
@@ -54,20 +56,20 @@
     function handleGET($getkey){
         global $apihandler, $db;
         $table = get_attr("table") != "" ? get_attr("table") : "train";
+        $selector = getSelector();
+        $limitation = getLimitation();
         $attrs = "`class`, `api_calls`, `api_url`, `author`, `avg_commit_length`, `branch_count`, `commit_count`, `commit_interval_avg`, `commit_interval_max`, `contributors_count`, `description`, `file_count`, `files`, `folders`, `folder_count`, `forks`, `hasDownloads`, `hasWiki`, `isFork`, `open_issues_count`, `language_main`, `language_array`, `name`, `readme`, `stars`, `tagger`, `treeArray`, `treeDepth`, `url`, `watches`";
         switch ($getkey) {
             case "api:old":
                 // To be removed: returns the content of the old train set.
                 $filter = generate_filter("(class != 'SKIPPED'  AND class != 'UNSURE') AND");
-                $limitation = getLimitation();
-                $data = $db->select("SELECT * FROM `_depr_samples` $filter $limitation");
+                $data = $db->select("SELECT $selector FROM `_depr_samples` $filter $limitation");
                 reportIf($data !== false, $data, "Database error.");
                 break;
             case "api:all":
                 // Return every sample of <table>
                 $filter = generate_filter("(class != 'SKIPPED'  AND class != 'UNSURE') AND");
-                $limitation = getLimitation();
-                $data = $db->select("SELECT * FROM `$table` $filter $limitation");
+                $data = $db->select("SELECT $selector FROM `$table` $filter $limitation");
                 reportIf($data !== false, $data, "Database error.");
                 break;
             case "api:train":
@@ -80,15 +82,14 @@
                 // Returns a list of train samples
                 $filter = generate_filter("(class != 'SKIPPED'  AND class != 'UNSURE') AND");
                 $t = substr($getkey, 4);
-                $limitation = getLimitation();
-                $data = $db->select("SELECT * FROM `$t` $filter $limitation");
-               // print "SELECT * FROM `train` $filter";
+                $data = $db->select("SELECT $selector FROM `$t` $filter $limitation");
+               // print "SELECT $selector FROM `train` $filter";
                 reportIf($data !== false, $data, "Database error.");
                 break;
 
             case "api:single":
                 // Returns a random sample of the given <table>
-                $data = $db->select("SELECT * FROM `$table` WHERE class != 'SKIPPED'  AND class != 'UNSURE'  ORDER BY RAND() LIMIT 0, 1");
+                $data = $db->select("SELECT $selector FROM `$table` WHERE class != 'SKIPPED'  AND class != 'UNSURE'  ORDER BY RAND() LIMIT 0, 1");
                 reportIf($data !== false && count($data) > 0, $data[0], "There is no classified sample.");
                 break;
             case "api:equal":
@@ -118,7 +119,7 @@
             case "api:class":
                 // Returns all samples of the given class <name>
                 $class = get_attr("name");
-                $data = $db->select("SELECT * FROM `$table` WHERE `class` = '$class'");
+                $data = $db->select("SELECT $selector FROM `$table` WHERE `class` = '$class'");
                 reportIf($data !== false, $data, "Database error");
                 break;
             case "api:count":
@@ -142,11 +143,14 @@
                 reportIf($data !== false, $data, "Database error");
                 break;
             case "api:generate_sample_url":
+                // Generates and returns the API-url of a **random** GitHub repository.
                 $credentials = $apihandler->getAPItoken(get_attr("client_id"), get_attr("client_secret"));
                 // Either use passed credentials or rotate through the list
                 reportIf($credentials !== false, generateSampleUrl(), "API token missing.");
                 break;
             case "api:generate_sample":
+                //This service depends on the parameter `api_url`. Feature extraction and accordingly data dumping to the database is being made for the given repository. The unlabeled row is being saved and returned to the client.
+                //If the parameter `api-url` is empty, a random sample is being generated. The attribute `class` (opt.) leads to an instant classification of the sample, if empty the class `UNLABELED` is being used.
                 $credentials = $apihandler->getAPItoken(get_attr("client_id"), get_attr("client_secret"));
                 // Either use passed credentials or rotate through the list
                 if($credentials == false){
@@ -171,22 +175,26 @@
                 // Move a repo, taken from the pool <from_table> to the pool <table2>. If <label> is set, overwrite label
                 $t1 = strtolower(get_attr("from_table")); $t2 = strtolower(get_attr("to_table")); $l = strtoupper(get_attr("label")); $api_url = get_attr("api_url");
                 if(isValidTable($t1) && isValidTable($t2) && isValidApiUrl($api_url)){
-                    $qID = $db->select("SELECT id FROM `$t1` WHERE `api_url` = '$api_url'");
-                    if(count($qID) != 0 && $t1 != "train"){
+                    $fromTableRows = $db->select("SELECT id FROM `$t1` WHERE `api_url` = '$api_url'");
+                    $toTableRows = $db->select("SELECT id FROM `$t2` WHERE `api_url` = '$api_url'");
+                    if(count($fromTableRows) != 0 && $t1 != "train"){
+
+                        if(count($toTableRows) == 0)
+                            // Target table has no row for this repository
+                            $iid = $db->insert("INSERT INTO `$t2` ($attrs) SELECT $attrs FROM `$t1` WHERE `api_url` = '$api_url'");
                         if($l != ""){ // Update label
                             if(!isValidLabel($l))
-                                throw new Exception("Invalid lable");
-                            $db->query("UPDATE `$t1` SET `class` = '$l' WHERE `api_url` = '$api_url'");
+                                throw new Exception("Invalid label");
+                            $db->query("UPDATE `$t2` SET `class` = '$l' WHERE `api_url` = '$api_url'");
                         }
-                        $iid = $db->insert("INSERT INTO `$t2` ($attrs) SELECT $attrs FROM `$t1` WHERE `api_url` = '$api_url'");
-                        if($iid){
+                        if($iid || count($toTableRows) > 0){
                             $db->query("DELETE FROM `$t1` WHERE `api_url` = '$api_url'");
                             $data = $db->select("SELECT * FROM `$t2` WHERE `api_url` = '$api_url'");
                             reportIf($data !== false && count($data) > 0, $data[0], "Database error");
                         }else
                             throw new Exception("Error moving row");
                     }else
-                        throw new Exception("Sample not generated");
+                        throw new Exception("Sample has not been generated yet");
                 }else
                     throw new Exception("Invalid Parameters");
                 break;
@@ -203,15 +211,42 @@
                     $data = $db->select("SELECT api_url FROM `$table` WHERE `patchworked` = false LIMIT 0, 1");
                     if($data && count($data) > 0){
                         $api_url = $data[0]['api_url'];
-                        $lm = getLanguageMain($api_url);
-                        $folders = getFolderList($api_url);
-                        $db->query("UPDATE `$table` SET `language_main` = '$lm',`folders` = '$folders', `patchworked` = true WHERE `api_url` = '$api_url'");
+                        $repo = $apihandler->getJSON($api_url . "?" . $apihandler->getAPItoken(), false);
+                        if(isEmptyRepo($repo)){
+                            $db->query("DELETE FROM `$table` WHERE `api_url` = '$api_url'");
+                            throw new Exception("Repository is empty.");
+                        }
+                        $git_refs = getGitRefs($repo);
+                        $treeObj = getTreeObj($repo, $git_refs);
+                        $filesAndFolders = getFilesAndFolders($treeObj);
+                        $folders = $filesAndFolders["folders"];
+                        $db->query("UPDATE `$table` SET `folders` = '$folders', `patchworked` = true WHERE `api_url` = '$api_url'");
                         report(true, "Sample patchworked.");
                     }else{
                         report(false, "There is no sample that needs to be patchworked");
                     }
                 }else
                     report(false, "Invalid table");
+                break;
+            case "api:stats":
+                // Gets a list of per <table> statistics
+                if(get_attr("string_based") === ""){
+                    $numerical_attrs = array("api_calls", "avg_commit_length", "branch_count", "commit_count", "commit_interval_avg", "commit_interval_max", "contributors_count", "file_count", "folder_count", "forks", "open_issues_count", "stars", "treeDepth", "watches");
+                    $selector = "";
+                    foreach ($numerical_attrs as $na)
+                        $selector .= " ROUND(SUM($na)), ROUND(AVG($na)), ROUND(MIN($na)), ROUND(MAX($na)),";
+                    $selector = trim($selector, ",");
+                    $data = $db->select("SELECT $selector FROM `$table`");
+                    reportIf($data !== false && count($data) == 1, $data[0], "Error while generating numerical stats for < $table >");
+                }else{
+                    $string_attrs = array("class", "api_url", "author", "description", "files", "folders", "language_main", "language_array", "name", "readme", "tagger", "treeArray", "url");
+                    $selector = "";
+                    foreach ($string_attrs as $sa)
+                        $selector .= "  ROUND(AVG(CHAR_LENGTH($sa))),";
+                    $selector = trim($selector, ",");
+                    $data = $db->select("SELECT $selector FROM `$table`");
+                    reportIf($data !== false && count($data) == 1, $data[0], "Error while generating string stats for < $table >");
+                }
                 break;
 
             default:
@@ -350,6 +385,13 @@
         return "";
     }
 
+    function getSelector(){
+        $selector = get_attr("selector");
+        if($selector == "")
+            return " * ";
+        return $selector;
+    }
+
     function generateSampleUrl(){
         // Get the API Url for a random Github repository
         global $apihandler, $db;
@@ -390,9 +432,9 @@
               "folders" => $filesAndFolders["folders"],// String representation
               "folder_count" => $treeData["folder_count"],
               "forks" =>  $repo["forks_count"],
-              "hasDownloads" => $repo["has_downloads"],
-              "hasWiki" => $repo["has_wiki"],
-              "isFork" => $repo["fork"],
+              "hasDownloads" => $repo["has_downloads"] ? 1 : 0,
+              "hasWiki" => $repo["has_wiki"] ? 1: 0,
+              "isFork" => $repo["fork"] ? 1 : 0,
               "open_issues_count" => $repo["open_issues_count"],
               "language_main" => $languages["main"],
               "language_array" =>  $languages["string_array"],
@@ -406,8 +448,8 @@
             );
            return $vector;
         }catch(Exception $ex){
-            var_dump($ex);
-            throw new Exception("Error while generating sample vector: ". $ex->getMessage);
+            //var_dump($ex);
+            throw new Exception("Error while generating sample vector ($api_url): ". $ex->getMessage());
         }
     }
 
@@ -550,68 +592,10 @@
 
     function isEmptyRepo($repo){
         if(isset($repo["documentation_url"]) && isset($repo["message"]))
-            if($repo["message"] == "Moved Permanently" || $repo["message"] == "Git Repository is empty.")
+            if($repo["message"] == "Moved Permanently" || $repo["message"] == "Git Repository is empty." || $repo["message"] == "Not Found")
                 return true;
         return false;
     }
-
-
-    function getLanguageMain($repo, $api_url){
-        // PATCHWORK ONLY
-        // Get only the main language of a repo
-        global $db, $apihandler;
-        try{
-            $repo = $apihandler->getJSON($api_url . "?" . $apihandler->getAPItoken());
-            if(isset($repo["Error"])) return "";
-            $languages = array_keys($apihandler -> getJSON($repo["languages_url"]. "?" . $apihandler->getAPItoken()));
-            if($languages == null || isset($languages["Error"]))
-                return $repo["language"] != null ? $db->check($repo["language"]) : (count($languages) == 0 ? "" : $db->check($languages[0]));
-        }catch(Exception $ex){
-            throw new Exception("Error while getting main language for $api_url: ". $ex->getMessage);
-        }
-    }
-
-    function getFolderList($api_url){
-        // PATCHWORK ONLY
-        // Get only the folder list of a repo
-        global $db, $apihandler;
-        $repo = $apihandler->getJSON($api_url . "?" . $apihandler->getAPItoken());
-        if(!isEmptyRepo($repo)){
-            $ref_url_base = explode("{", $repo["git_refs_url"]);
-            $git_refs = $apihandler -> getJSON($ref_url_base[0] . "?" . $apihandler->getAPItoken());
-            if(isset($git_refs["Error"])) return "";
-            try{
-                $ref_url = "";
-                for($i = 0; $i < count($git_refs); $i++){
-                  if(strpos($git_refs[$i]["ref"], $repo["default_branch"]) >= 0){
-                    $ref_url = $git_refs[$i]["object"]["url"];
-                    break;
-                  }
-                }
-
-                if(trim($ref_url) == "")
-                  // Default branch is not available
-                  $ref_url = $git_refs[0]["object"]["url"];
-                $branch =  $apihandler -> getJSON($ref_url . "?" . $apihandler->getAPItoken());
-                if(isset($branch["Error"])) return "";
-                $treeObj = $apihandler -> getJSON($branch["tree"]["url"] . "?" . $apihandler->getAPItoken());
-                if(isset($treeObj["Error"])) return "";
-
-
-                $folders = array();
-                for($i = 0; $i < count($treeObj["tree"]); $i++)
-                    if($treeObj["tree"][$i]["type"] != "blob")
-                        $folders[] = $db->check($treeObj["tree"][$i]["path"]);
-
-                  return join(" ", $folders);
-            }catch(Exception $ex){
-                //var_dump($ex);
-                //throw new Exception("Error while getting folder list: ". $ex->getMessage());
-            }
-        }
-        return "";
-    }
-
 
     function saveVector(&$vector){
         // Save the feature vector as a new repository in the database
@@ -623,10 +607,11 @@
             $keys =  "`" . join("`, `", array_keys($vector)) . "`";
             $values = "'" . join("', '", $vector) . "'";
             $query = "INSERT INTO `$table` ( $keys ) VALUES ( $values )";
+
+            print("\n$query");
             $iid = $db->insert($query);
             return $iid;
-        }else
-            throw new Exception("Duplicate Vector");
+        }/*else
+            throw new Exception("Duplicate Vector");*/
     }
-
-    ?>
+?>

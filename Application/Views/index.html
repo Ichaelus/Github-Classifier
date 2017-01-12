@@ -177,7 +177,7 @@
               <colgroup> <col class="col-xs-6"> <col class="col-xs-6"> </colgroup>
               <thead> <tr> <th>Measure</th> <th>Result</th> </tr> </thead>
               <tbody> 
-                <tr v-for="(val, m) in current.confusionMatrix.measures"> <td scope="row"> <code class="defaultCursor" data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(m)">{{originalMeasureName(m)}}</code> </td> <td>{{Math.round(val * 10000)/100}} %</td> </tr>
+                <tr v-for="val in orderMeasures(current.confusionMatrix.measures)"> <td scope="row"> <code class="defaultCursor" data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(val[0])">{{originalMeasureName(val[0])}}</code> </td> <td>{{Math.round(val[1] * 10000)/100}} %</td> </tr>
               </tbody>
             </table>
           </div>
@@ -476,11 +476,11 @@
                 <colgroup> <col class="col-xs-8"> <col class="col-xs-4"> </colgroup>
                 <thead> <tr> <th>Measure</th> <th>Result</th> </tr> </thead>
                 <tbody> 
-                  <tr v-for="(val, m) in outputMeasures"> <td scope="row"> <code class="defaultCursor" data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(m)">{{originalMeasureName(m)}}</code> </td> <td>{{formatMeasure(val)}}</td> </tr>
+                  <tr v-for="val in orderMeasures(outputMeasures)"> <td scope="row"> <code class="defaultCursor" data-toggle="tooltip" data-placement="top" :data-original-title="getMeasureDescription(val[0])">{{originalMeasureName(val[0])}}</code> </td> <td>{{formatMeasure(val[1])}}</td> </tr>
                 </tbody>
               </table>
               <hr>
-              <h4 class="text-center">Best accuracies of all classifiers</h4>
+              <h4 class="text-center">Best precision of each classifiers</h4>
                
                <table class="outputDistr table table-bordered table-striped measure_table">
                 <colgroup><col class="col-xs-2"> <col class="col-xs-10"></colgroup>

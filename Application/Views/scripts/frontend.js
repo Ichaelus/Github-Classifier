@@ -14,7 +14,7 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
     poolSize: 0,
     predictionHandling: "predict", // predict | feedback
     trainInstantly: false,
-    useExtendedTestSet: false
+    useExtendedTestSet: true
 	},
   inoutData = {
     classifiers: {}, //{name : {active, description, isTrained, uncertainty, confusionMatrix: {matrix:[[],..], order: [class1,..n]},precision: [{class, val},..], probability : [{class, val},..]}, ...}
@@ -384,19 +384,19 @@ function initVue(){
         Vue.set(inoutData, "selectedMeasure", measure);
       },
       getMeasureName: function(){
-        return inoutData.selectedMeasure == "Preordered" ? "Precision mu" : inoutData.selectedMeasure;
+        return inoutData.selectedMeasure == "Preordered" ? "Precision M" : inoutData.selectedMeasure;
       },
       getMeasure: function(c){
         return Math.round(c.confusionMatrix.measures[this.getMeasureName()] * 100);
       },
       getMeasureDescription: function(measure){
         let descriptions = {"Preordered": "Internal order not sorted by any measure",
-                            "Precision mu": "Agreement of the data class labels with those of a classifiers if calculated from sums of per-text decisions",
-                            "Fscore mu": "Relations between data’s positive labels and those given by a classifier based on sums of per-text decisions",
+                            "Precision mu": "Agreement of the data class labels with those of a classifiers if calculated from sums of per-sample decisions",
+                            "Fscore mu": "Relations between data’s positive labels and those given by a classifier based on sums of per-sample decisions",
                             "Error Rate": "The average per-class classification error",
                             "Recall M": "An average per-class effectiveness of a classifier to identify class labels",
                             "Average Accuracy": "The average per-class effectiveness of a classifier",
-                            "Recall mu": "Effectiveness of a classifier to identify class labels if calculated from sums of per-text decisions",
+                            "Recall mu": "Effectiveness of a classifier to identify class labels if calculated from sums of per-sample decisions",
                             "Fscore M": "Relations between data’s positive labels and those given by a classifier based on a per-class average",
                             "Precision M": "An average per-class agreement of the data class labels with those of a classifiers"};
         if(typeof(descriptions[measure]) !== "undefined")
@@ -420,8 +420,9 @@ function initVue(){
         },
       measures: function(){
         let _measures = ["Preordered"];
-        if(Object.keys(inoutData.classifiers).length > 0)
-          _measures = _measures.concat(Object.keys(inoutData.classifiers[Object.keys(inoutData.classifiers)[0]].confusionMatrix.measures));
+        _measures = _measures.concat(['Precision M','Recall M','Fscore M','Average Accuracy','Error Rate','Precision mu','Recall mu','Fscore mu']); // Hardcoded but with proper order
+        /*if(Object.keys(inoutData.classifiers).length > 0)
+          _measures = _measures.concat(Object.keys(inoutData.classifiers[Object.keys(inoutData.classifiers)[0]].confusionMatrix.measures));*/
         return _measures;
       },
       mode: function(){
@@ -783,6 +784,14 @@ function originalMeasureName(m){
   return m.replace(" mu", " μ");
 }
 
+function orderMeasures(measures){
+  let ordered = [], _o = classifierView.measures;
+  for(let i = 0; i < _o.length; i++)
+    if(_o[i] != "Preordered")
+      ordered.push([_o[i], measures[_o[i]]]);
+  return ordered;
+}
+
 function precisionToGraphData(res){
   // Converts a result array to a radar data array
   assert(typeof(res) == "object" && res.length > 0, "Invalid input data");
@@ -791,7 +800,7 @@ function precisionToGraphData(res){
     data.push({axis: res[i].class, value: res[i].val});
   return data;
 }
-1
+
 function getRadarConfig(size){
   let radarChartOptions = {
     // Defines the standard configuration of radar graphs
