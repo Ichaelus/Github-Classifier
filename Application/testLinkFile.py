@@ -26,49 +26,68 @@ from Models.ClassificationModules.nnall import nnall
 from Models.ClassificationModules.knnreadmeonly import knnreadmeonly
 from Models.ClassificationModules.svcfilenamesonly import filenamesonlysvc
 from Models.ClassificationModules.lrstacking import lrstacking
+from Models.ClassificationModules.svmall import svmall
+from Models.ClassificationModules.rfall import allrandomforest
+from Models.ClassificationModules.gbrtmetaonly import gbrtmetaonly
+from Models.ClassificationModules.gbrtreadmeonly import gbrtreadmeonly
+from Models.ClassificationModules.gbrtfilesandfolders import gbrtfilesandfolders
+from Models.ClassificationModules.gbrtdescriptionmeta import gbrtdescriptionmeta
 import Models.DatabaseCommunication as DC
-import Models.JSONCommunication
 
-
-
-rootApp = Bottle()
+print("Starting application..")
 
 # Initialize ClassifierCollection
 classifiercollection = ClassifierCollection()
 
-#Initialize ClassificationModules
 print 'Getting DB Data to be able to create vectorizers for classifiers that need it'
-#descriptionCorpus = DC.getAllDescriptions()
-#readmeCorpus = DC.getAllReadmes()
-#filenameCorpus = DC.getAllFilenames()
 descriptionCorpus, readmeCorpus, filenameCorpus, filetypeCorpus, foldernameCorpus = DC.getCorpi()
 
 #Initialize Classifiers
 print 'Creating and adding Classifiers to Classifier Collection:'
-classifiers = []
-#classifiers.append(nndescriptiononly(descriptionCorpus))
-#classifiers.append(lrdescriptiononly(descriptionCorpus))
-classifiers.append(nnreadmeonly(readmeCorpus))
-#classifiers.append(lrreadmeonly(readmeCorpus))
-#classifiers.append(readmeonlyrandomforest(readmeCorpus))
-#classifiers.append(knnreadmeonly(readmeCorpus))
-#classifiers.append(multinomialnbdescriptiononly(descriptionCorpus))
-#classifiers.append(multinomialnbreadmeonly(readmeCorpus))
-#classifiers.append(bernoullinbdescriptiononly(descriptionCorpus))
-#classifiers.append(bernoullinbreadmeonly(readmeCorpus))
-#classifiers.append(nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, reponamelstm()))
-#classifiers.append(filenamesonlysvc(filenameCorpus))
-#classifiers.append(nnmetaonly())
-#classifiers.append(metaonlyrandomforest())
-#classifiers.append(metaonlysvc())
-#classifiers.append(metaonlyadaboost())
-#classifiers.append(reponamelstm())
-#classifiers.append(lrstacking([nnmetaonly(), metaonlyadaboost(), reponamelstm(), nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus)]))
-#classifiers.append(readmelstm())
 
-print 'Loading last checkpoint for classifiers if available:'
+# First load all classifiers which don't need other classifiers as parameter
+
+standaloneClassifiers = [] # Keep track, which classifiers have be loaded or such attempt has been made
+
+classifiers = {}
+#classifiers['filenamesonlysvc'] = filenamesonlysvc(filenameCorpus)
+#classifiers['nnmetaonly'] = nnmetaonly()
+#classifiers['metaonlysvc'] = metaonlysvc()
+#classifiers['metaonlyadaboost'] = metaonlyadaboost()
+#classifiers['metaonlyrandomforest'] = metaonlyrandomforest()
+classifiers['reponamelstm'] = reponamelstm()
+#classifiers['gbrtreadmeonly'] = gbrtreadmeonly(readmeCorpus)
+#classifiers['gbrtfilesandfolders'] = gbrtfilesandfolders(filenameCorpus, foldernameCorpus)
+#classifiers['gbrtmetaonly'] = gbrtmetaonly()
+#classifiers['gbrtdescriptionmeta'] = gbrtdescriptionmeta(descriptionCorpus)
+
+#classifiers['readmelstm'] = readmelstm()
+
+
+for classifier in classifiers:
+    loaded_classifier = classifiers[classifier].loadClassificationModuleSavePoint(filename="lastused")
+    if loaded_classifier is not None:
+        classifiers[classifier] = loaded_classifier
+    standaloneClassifiers.append(classifier)
+
+# Now all classifiers should have been loaded from last savepoint, if available
+# Use these loaded classifiers by giving them to all ensemble-Models
+
+classifiers['nnall'] = nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
+#classifiers['svmall'] = svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
+#classifiers['allrandomforest'] = allrandomforest(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
+
+for classifier in classifiers:
+    if classifier not in standaloneClassifiers:
+        loaded_classifier = classifiers[classifier].loadClassificationModuleSavePoint(filename="lastused")
+        if loaded_classifier is not None:
+            classifiers[classifier] = loaded_classifier
+
+#classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest']])
+
+#print 'Loading last checkpoint for classifiers if available:'
 for c in classifiers:
-	classifiercollection.addClassificationModuleWithLastSavePoint(c)
+	classifiercollection.addClassificationModule(classifiers[c])
 
 # Pass ClassifierCollection to Controller
 homesetclassifiercollection(classifiercollection)
@@ -76,10 +95,7 @@ homesetclassifiercollection(classifiercollection)
 # Wait a bit so website doesnt get called before it's ready
 time.sleep(3)
 
-#if __name__ == '__main__':
-    #webbrowser.open("http://localhost:8080/")
-    #rootApp.merge(homebottle)
-    #rootApp.run(server='paste', debug=True)
+
 if len(sys.argv) <= 1:
     sys.exit()
 try:
@@ -88,9 +104,8 @@ try:
     data, result = None, None
     classes = ['DEV', 'HW', 'EDU', 'DOCS', 'WEB', 'DATA', 'OTHER']
     for line in linkFile:
-        print line.rstrip().replace("https://github.com", "https://api.github.com/repos")
         data = DC.getInformationsForRepo(line.rstrip().replace("https://github.com", "https://api.github.com/repos"))
-        prediction = classifiers[0].predictLabelAndProbability(data)
+        prediction = classifiers['nnall'].predictLabelAndProbability(data)
         resultFile.write(line.rstrip() + ' ' + classes[prediction[0]] + '\n')
     linkFile.close()
     resultFile.close()
