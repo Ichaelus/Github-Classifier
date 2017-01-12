@@ -307,7 +307,7 @@ function initVue(){
             return "The <strong>testing option</strong> runs each classifier against a predefined set of test samples, thus updating the confusion matrix and precision per class.";
             break;
           case "single":
-            return "The <strong>single sample prediction</strong> method is used to test the outcome of the classifiers for specified a repository (identified by its URL).";
+            return "The <strong>single sample prediction</strong> method is used to test the outcome of the classifiers for a specified repository (identified by its URL).";
             break;
           default:
           case "stream": 

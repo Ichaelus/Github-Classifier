@@ -315,7 +315,7 @@
               <div 
                   v-show="mode == 'single'"
                   :class="'input-group '"
-                  data-toggle="tooltip" data-placement="bottom" data-original-title="If disabled, the user might be asked to classify a sample manually">
+                  data-toggle="tooltip" data-placement="bottom" data-original-title="If checked, the output will always consist of a label prediction.">
                 <span class="input-group-addon">
                   <input id="pH1" name="predictionHandling" v-model="predictionHandling" value="predict" type="radio">
                 </span>
@@ -325,7 +325,7 @@
               <div 
                   v-show="mode == 'single'"
                   :class="'input-group '"
-                  data-toggle="tooltip" data-placement="bottom" data-original-title="If disabled, the user might be asked to classify a sample manually">
+                  data-toggle="tooltip" data-placement="bottom" data-original-title="If checked, the user will be asked to classify the sample manually">
                 <span class="input-group-addon">
                   <input id="pH2" name="predictionHandling" v-model="predictionHandling" value="feedback" type="radio">
                 </span>
@@ -505,11 +505,11 @@
                 class="outputText"
                 >The top-most ranked classifier says it's <strong>{{getOutputClass()}}</strong>. 
                 <span
-                  v-show="(mode != 'test' && classifiersUnsure && (mode != 'single' || predictionHandling == 'feedback') )"
-                >Because one or more module is uncertain about its output, you can classify the sample manually.</span>
+                  v-show="(state == 'showResult') && ((mode != 'test' && mode != 'single' && classifiersUnsure) || (mode == 'single' && predictionHandling == 'feedback'))">
+                  Because one or more module is uncertain about its output, you can classify the sample manually.</span>
             </p>
             <h2 v-on:click="manualClassification()"
-                v-show="(mode != 'test' && state == 'showResult' && classifiersUnsure && (mode != 'single' || predictionHandling == 'feedback'))"
+                  v-show="(state == 'showResult') && ((mode != 'test' && mode != 'single' && classifiersUnsure) || (mode == 'single' && predictionHandling == 'feedback'))"
                 :class="(manualClass == '?' ? 'uncertain' : '')" 
                 :style="{top: 'calc( 35px * (-1 + '+getClassifierAmount()+') * 75px)'}"
                 :title="(manualClass == '?' ? 'Click to manually classify this sample' : 'Classification result')">{{( manualClass )}}</h2>
