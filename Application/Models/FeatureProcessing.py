@@ -92,17 +92,17 @@ def getLabelName(index):
             return label
 
     
-def text_from_base64(text):
+def text_from_base64(input):
     """Convert text back from base64"""
-    text = str(text)
-    missing_padding = len(text) % 4
+    text = str(input).strip().replace('\\n', '') # Remove hardcoded newlines
+#    print type(text)
+    missing_padding = len(text) % 8
     if missing_padding != 0:
-        text += b'='* (4 - missing_padding)
+        text += b'='* (8 - missing_padding)
     try:
         text = base64.b64decode(text)
-    except TypeError as e:
-        print e
-        print "Error decoding readme " + str(e)
+    except Exception as e:
+        print "Error decoding text " + str(e)
         return ""
     return text
 

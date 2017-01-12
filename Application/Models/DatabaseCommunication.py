@@ -90,9 +90,10 @@ def getAllReadmes():
         for sample in data:
             rm = ""
             try:
-                rm = base64.b64decode(sample['readme'])
-            except TypeError:
+                rm = sample['readme'].decode('base64')
+            except TypeError as e:
                 # If there was an error decoding the message, just ignore atm
+                print "Drror decoding readme"
                 pass
             corpus.append(rm)
     return corpus
@@ -132,11 +133,12 @@ def getCorpi():
         for sample in data:
             rm = ""; fn = ""; fts = ""; fn = ""
             try:
-                rm = base64.b64decode(sample['readme'])
+                rm = sample['readme'].decode("base64")
                 fn = sample['files']
                 fts = FP.getFiletypesString(sample)
                 fn = FP.getFoldernames(sample)
-            except TypeError:
+            except TypeError as e:
+                print "Error decoding: " + e
                 # If there was an error decoding the message, just ignore atm
                 pass
             descriptionCorpus.append(sample['description'])
