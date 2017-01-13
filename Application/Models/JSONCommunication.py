@@ -20,12 +20,12 @@ def ConvertClassifierCollectionToJSON(classificationModules):
         measures = {
             'Precision mu': CM.precision_mu(matrix),
             'Recall mu': CM.recall_mu(matrix),
-            'Fscore mu': CM.fscore_mu(matrix, 0.125),
+            'Fscore mu': CM.fscore_mu(matrix, 0.5),
             'Average Accuracy': CM.avg_accuracy(matrix),
             'Error Rate': CM.err_rate(matrix),
             'Precision M': CM.precision(matrix),
             'Recall M': CM.recall(matrix),
-            'Fscore M': CM.fscore(matrix, 0.125),
+            'Fscore M': CM.fscore(matrix, 0.5),
         }
         confusionMatrix = {
             'matrix': formatConfusionMatrix(matrix),
@@ -199,12 +199,12 @@ def formatMultipleClassificationTests(results):
         measures = {
             'Precision mu': CM.precision_mu(result[1][1]),
             'Recall mu': CM.recall_mu(result[1][1]),
-            'Fscore mu': CM.fscore_mu(result[1][1], 0.125),
+            'Fscore mu': CM.fscore_mu(result[1][1], 0.5),
             'Average Accuracy': CM.avg_accuracy(result[1][1]),
             'Error Rate': CM.err_rate(result[1][1]),
             'Precision M': CM.precision(result[1][1]),
             'Recall M': CM.recall(result[1][1]),
-            'Fscore M': CM.fscore(result[1][1], 0.125),
+            'Fscore M': CM.fscore(result[1][1], 0.5),
             }
         confusionMatrix = {
             'matrix': formatConfusionMatrix(result[1][1]),
@@ -261,12 +261,12 @@ def formatSingleClassificationTest(classifier, result):
     measures = {
         'Precision mu': CM.precision_mu(result[1]),
         'Recall mu': CM.recall_mu(result[1]),
-        'Fscore mu': CM.fscore_mu(result[1], 0.125),
+        'Fscore mu': CM.fscore_mu(result[1], 0.5),
         'Average Accuracy': CM.avg_accuracy(result[1]),
         'Error Rate': CM.err_rate(result[1]),
         'Precision M': CM.precision(result[1]),
         'Recall M': CM.recall(result[1]),
-        'Fscore M': CM.fscore(result[1], 0.125),
+        'Fscore M': CM.fscore(result[1], 0.5),
         }
     confusionMatrix = {
         'matrix': formatConfusionMatrix(result[1]),
