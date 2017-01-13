@@ -313,7 +313,7 @@ def getLstmCharLength():
     return len(chars)
 
 def getWord2VecModel():
-    path= os.path.dirname(__file__) + "/../../Classifier_SavePoints/Word2Vec/"
+    path= os.path.dirname(__file__) + "/../Word2VecModel/"
     modelName = 'GoogleNews-vectors-negative300.bin'
     #if modelName not in os.listdir("../Classifier_SavePoints/Word2Vec"):
     #    print "Word2Vec-Model not found, try downloading from source"
