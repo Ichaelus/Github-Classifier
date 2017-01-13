@@ -102,7 +102,7 @@ for classifier in classifiers:
         
 
 classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest']])
-
+classifiers['averageensemble'] = averageensemble([classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['nnall'], classifiers['allrandomforest']])
 
 # Finally load all meta-models such as lrstacking
 
