@@ -1,4 +1,4 @@
-# Github Classificator
+# Github Classifier
 
 ## Features
 

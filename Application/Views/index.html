@@ -292,7 +292,7 @@
               <div
                   v-show="(mode == 'stream')"
                   :class="'input-group '"
-                  data-toggle="tooltip" data-placement="bottom" data-original-title="Semi supervised learning could be included at a future date">
+                  data-toggle="tooltip" data-placement="bottom" data-original-title="Semi-supervised learning could be included at a future date. Right now the precision is too low to make use of semi-supervised learning.">
                 <span class="input-group-addon">
                   <input disabled="disabled" id="semi_supervised" v-model="isSemiSupervised" name="semi_supervised" type="checkbox">
                 </span>
@@ -470,7 +470,7 @@
           </div>
           <div class="col-xs-3" id="output"><!-- output -->
              <div v-show="mode == 'test'">
-               <h4 class="subtitle">Top-most ranked classifier performance</h4>
+               <h4 class="subtitle">Top-most listed classifier performance</h4>
               <p class="outputText">Final classifications are being made by <strong>{{topMostName}}</strong>. Its measures are listed below</p>
               <table class="table table-bordered table-striped measure_table"> 
                 <colgroup> <col class="col-xs-8"> <col class="col-xs-4"> </colgroup>

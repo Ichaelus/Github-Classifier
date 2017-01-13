@@ -37,12 +37,12 @@
 * collect-important-examples(data):
     Testet Beispiele aus dem Pool von ungelabelten Daten auf Wichtigkeit und fügt wichtige Repos zu eigener DB Tabelle hinzu.
     Diese Einträge können wir dann später auf der Website klassifizieren und werden anschließend zum Pool an gelabelten Daten hinzugefügt
-* load/save-classificator-collection():
+* load/save-classifier-collection():
     Standardmäßig sollte das zuletzt genutzte Setup wieder geladen werden, optional aber evtl auch andere vorher hinzugefügte.
-    Speichern: Immer mit TimeStamps; dies soll hauptsätzlich dazu dienen eine Ansammlung von Classificatoren gleichzeitig inkrementell
+    Speichern: Immer mit TimeStamps; dies soll hauptsätzlich dazu dienen eine Ansammlung von classifiern gleichzeitig inkrementell
     trainieren zu können
-* remove/add-classificator():
-    Dies ist auch vor allem nützlich weil man eventuell unterschiedliche Versionen desselben Classificators hat die zu unterschiedlichen
+* remove/add-classifier():
+    Dies ist auch vor allem nützlich weil man eventuell unterschiedliche Versionen desselben classifiers hat die zu unterschiedlichen
     Zeitpunkten unterschiedlich trainiert wurden
 * start-live-training(bool: unsupervisedlearningmode) (): aka play button
     unsupervisedlearningmode: wenn sich alle Klassifikatoren sicher sind, dann könnten wir vor dem nächstem Schritt das jeweilige Sample
@@ -53,7 +53,7 @@
 * pause-live-training():
     bringt noch die akutelle Runde zu Ende? und wartet dann auf weitere Befehle
 * resume-live-learning():
-* calucate/save-fitness-of-all-classificators():
+* calucate/save-fitness-of-all-classifiers():
     Mit Gui könte man immer 2 Fitness-Werte-Sammlungen anzeigen: Einmal die zuletzt gespeicherte und einmal die aktuelle Klassifizierungsrate
     der verschiedenen Klassifikatoren, diese könnten wir in festen Zeit-Intervallen immer wieder berechnen und die Verbesserung/Verschlechterung
     in Prozent anzeigen, ist vlt ganz interessant zum Live-Training im supervised mode
@@ -63,24 +63,24 @@
 * undo-last-training():
     Wir könnten immer vorm Trainieren automatisch speichern und damit wieder zu dem Speicherpunkt zurrückkehren, z.B. wenn wir feststellen,
     dass das letzte Training eine signifikate Fitness-Einbuße gebracht hat
-* safe-classificator-status(classificator)
-* train-all-classificators(data):
+* safe-classifier-status(classifier)
+* train-all-classifiers(data):
     klassiches Trainieren aller Klassifikatoren
 
 
 
-## Classificator collection
+## classifier collection
 
 * Andi: So wie ich das verstehe, wird hier das Ensemble-Learning vollzogen.
         Deshalb würde ich vorschlagen, fast ausschließlich alle Funktionen im vorherigen Absatz hier als Methoden aufzunehmen.
 * Stefan: Hatte das jetzt nicht als Ensemble-learning geplant, sondern nur als Sammlung mehrerer Klassifikations-Module damit man die 
         nicht immer alle einzeln laden und speichern muss, weiß aber nicht wie sinnvoll das ist. Können auch durchaus nochmal 
-        fürs Ensemble-Learning eine eigene Klasse verwenden (oder ist die classificator collection überflüssig und wir wollen sie hierfür verwenden?)
+        fürs Ensemble-Learning eine eigene Klasse verwenden (oder ist die classifier collection überflüssig und wir wollen sie hierfür verwenden?)
         Wichtig hierbei wäre, das man relativ bequem die vorherigen Klassifikatoren als Bausteine verwenden kann die bereits vorher vortrainiert wurden,
         aber vlt will man trotzdem beim Ensemble-Learning die einzelnen verwenden Klassifikatoren nachtrainieren.
-* consists of several Classificator Moduls to train them at the same time with active learning 
-* Is responsible to coordinate each round and to forward function calls to each classificator
-    and to check if a classificator is unsure about something
+* consists of several classifier Moduls to train them at the same time with active learning 
+* Is responsible to coordinate each round and to forward function calls to each classifier
+    and to check if a classifier is unsure about something
 * Es wäre sinnvoll wenn wir in jeder Session immer sehen welches Klassifizierungsmodul für wieviele 
     Nachfragen beim Benutzer verantwortlich ist
 * Fürs Semi-Supervised Learning wäre es vlt sinnvoll dass man auch festlegen kann dass nur dann Samples zum Trainieren verwendet werden wenn eine 
@@ -121,7 +121,7 @@
 * format-input-data():
     Wird nur intern verwendet, hier wäre es eventuell sinnvoll ein kleines Libary File mit unterschiedlichen Formatierungen aufzubaun
     (alles in einem Vektor, nur die Readme, nur die Metadaten usw.)
-* mute-classificator(classificator):
+* mute-classifier(classifier):
     Der Klassifikator verursacht keine Nachfragen beim Nutzer mehr
 
 ## Classifier State Module sinnvoll?

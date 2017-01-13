@@ -50,7 +50,7 @@ _Note: If there are still packages missing that do not show up in the list, plea
 
 Instead of installing everything from above, you can also use the VM image. A virtualisation software such as Oracle VirtualBox is needed in this case as well as a unzipping tool such as 7Zip. Please be sure to reservate enough RAM for the emulation.
 
- > [Download VM](https://drive.google.com/drive/folders/0B3nBoE608aQyaG9iZkk0UFFpSm8?usp=sharing)
+ > [Download VM](https://drive.google.com/open?id=0B3nBoE608aQyT0F2bWh1SDdXSTQ)
 
 Root login credentials are
 ```

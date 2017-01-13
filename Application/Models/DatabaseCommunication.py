@@ -152,8 +152,8 @@ def getInformationsForRepo(repoApiUrl):
     '''Nur dafür da wenn ein bestimmtes Repo klassifiziert werden soll dass noch nicht in DB ist'''
     return api_call('generate_sample&api_url=' + quote(repoApiUrl))
 
-def getStats(table, t):
-    q = "" if t == "numerical"  else "&string_attrs=true"
+def getStats(table, _type):
+    q = "" if _type == "numerical" else "&string_attrs=true"
     return api_call('stats'+q, tableString=table)
 
 def getDistributionArray(table, useExtendedTestSet):
