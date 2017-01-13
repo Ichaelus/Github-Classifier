@@ -135,3 +135,193 @@ Compute the  precision per category- the number of repositories per category whe
 determined by your automatic classifier matched your intuitive classification.
 Discuss the quality of your results and argue whether, according to your opinion, 
 a higher yield or a higher precision is more important for automated repository classification."
+
+<table>
+	<thead>
+		<tr>
+			<th>Repo-Link</th>
+			<th>Result</th>
+		</tr>
+	</thead>
+	<tbody>
+	<tr>
+	    <td>https://github.com/ga-chicago/wdi5-homework</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/Aggregates/MI_HW2</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/datasciencelabs/2016/</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/githubteacher/intro-november-2015</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/atom/atom</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/jmcglone/jmcglone.github.io</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/hpi-swt2-exercise/java-tdd-challenge</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/alphagov/performanceplatform-documentation</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/harvesthq/how-to-walkabout</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/vhf/free-programming-books</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/d3/d3</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/carlosmn/CoMa-II</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/git/git-scm.com</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/PowerDNS/pdns</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/cmrberry/cs6300-git-practice</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/Sefaria/Sefaria-Project</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/mongodb/docs</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/sindresorhus/eslint-config-xo</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/e-books/backbone.en.douceur</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/erikflowers/weather-icons</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/tensorflow/tensorflow</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/cs231n/cs231n.github.io</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/m2mtech/smashtag-2015</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/openaddresses/openaddresses</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/benbalter/congressional-districts</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/Chicago/food-inspections-evaluation</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/OpenInstitute/OpenDuka</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/OpenInstitute/OpenDuka</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/bhuga/bhuga.net</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/macloo/just_enough_code</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/hughperkins/howto-jenkins-ssl</td>
+	    <td>False</td>
+    </tr>
+	</tbody>
+</table>
+
+<table>
+    <thead>
+        <tr>
+            <td></td>
+            <td>erzielte Präzision / precision</td>
+            <td>erzielte Ausbeute / recall</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>DEV</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>HW</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>EDU</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>DOCS</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>WEB</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>DATA</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>OTHER</td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+Wir finden, dass eine höhere Genauigkeit wichtiger ist als eine hohe Ausbeute, da es für jemanden, der mittels des
+Klassifizierers nach Repos einer bestimmten Klasse sucht, von Vorteil ist, wenn er lieber wenige Treffer landet,
+diese dafür dann aber richtig eingestuft wurden. 
+Während eine hohe Ausbeute garantieren täte, dass von denen die wir als eine Klasse eingestuft haben, auch sehr 
+viele als solche erkannt werden, dabei würde aber nicht berücksichtigt wie viele falscherweise als diese Klasse eingestuften
+wurden. Bei einer Suche nach Repos einer bestimmten Klasse könnten also auch viele falsche dabei sein.
+Wenn die Präzision aber für alle Klassen zunimmt würde dass auch die Ausbeute erhöhen.
