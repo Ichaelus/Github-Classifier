@@ -38,7 +38,7 @@ from Models.ClassificationModules.gbrtdescriptionmeta import gbrtdescriptionmeta
 from Models.ClassificationModules.svmreadmemeta import svmreadmemeta
 from Models.ClassificationModules.allbernoullinb import allbernoullinb
 from Models.ClassificationModules.allmultinomialnb import allmultinomialnb
-from Models.ClassificationModules.averageensemble import averageensemble
+#from Models.ClassificationModules.averageensemble import averageensemble
 import Models.DatabaseCommunication as DC
 
 print("Starting application..")
