@@ -186,13 +186,22 @@ class ClassificationModule:
             elif(formula == "Margin-Sampling"):
                 uncertainty = AL.calculateUncertaintyMarginSampling(resultc)
             uncertainties.append(uncertainty)
-        maxuncertainty = 0
-        sampleindex = 0
-        for uncertainty in uncertainties:
-            if uncertainty > maxuncertainty:
-                maxuncertainty = uncertainty
-                sampleindex = uncertainties.index(uncertainty)
-        return data[sampleindex]
+        if formula == 'Entropy-Based' or formula == "Least Confident":
+            maxuncertainty = 0
+            sampleindex = 0
+            for uncertainty in uncertainties:
+                if uncertainty > maxuncertainty:
+                    maxuncertainty = uncertainty
+                    sampleindex = uncertainties.index(uncertainty)
+            return data[sampleindex]
+        elif formula == "Margin-Sampling":
+            minuncertainty = 1
+            sampleindex = 0
+            for uncertainty in uncertainties:
+                if uncertainty < minuncertainty:
+                    minuncertainty = uncertainty
+                    sampleindex = uncertainties.index(uncertainty)
+            return data[sampleindex]
 
     def saveModule(self):
         """serializes modul and add a savepoint to XML-File"""
