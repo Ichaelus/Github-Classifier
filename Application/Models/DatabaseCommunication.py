@@ -153,7 +153,7 @@ def getInformationsForRepo(repoApiUrl):
     return api_call('generate_sample&api_url=' + quote(repoApiUrl))
 
 def getStats(table, _type):
-    q = "" if _type == "numerical" else "&string_attrs=true"
+    q = "" if _type == "numerical" else "&string_based=true"
     return api_call('stats'+q, tableString=table)
 
 def getDistributionArray(table, useExtendedTestSet):

@@ -15,7 +15,7 @@ The User Interface is designed to serve both for training and testing purposes. 
 Selecting this or one of the other **AL** modi will display three buttons on the left side of the header. They are used to control the stream of input repositories. If you are done classifying repositories, either press the `pause` button or simply switch mode.
 
 **Stream Based Active Learning** means that a random sample out of our pool of unlabeled data is being selected and classified by every classification module in the list. If one or more modules are uncertain about their output, you will be asked to classify the sample by your own. Otherwise the sample will be skipped.
-Manually classified samples will then be transfered to the labeled pool of training samples that are used to increase the classifier precision. Skipped samples could be transfered to the semi-supervised training pool, though we decided to disable this feature because of its current negative outcome.
+Manually classified samples will then be transfered to the labeled pool of training samples that are used to increase the classifier precision. Skipped samples could be transfered to the semi-supervised training pool, though we decided to disable this feature because of the current precision level.
 
 In order to calculate their uncertainty, classifiers are using the selected uncertainty formula.
 
