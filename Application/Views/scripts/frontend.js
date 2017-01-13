@@ -389,7 +389,7 @@ function initVue(){
         Vue.set(inoutData, "selectedMeasure", measure);
       },
       getMeasureName: function(){
-        return inoutData.selectedMeasure == "Preordered" ? "Precision M" : inoutData.selectedMeasure;
+        return inoutData.selectedMeasure == "Preordered" ? "Fscore M" : inoutData.selectedMeasure;
       },
       getMeasure: function(c){
         return Math.round(c.confusionMatrix.measures[this.getMeasureName()] * 100);
