@@ -217,6 +217,7 @@ function initVue(){
           repoLink = prompt("Please insert the link to a repository you wish to classify.");
         if(repoLink){
           try{
+            resetOutput();
             repoLink = convertToApiLink(repoLink);
             runGenerator(function *main(){
               // Fetch sample, display
@@ -761,7 +762,7 @@ function HandlePopupResult(result) {
   // If the sample has been labeled, update view
   console.log("result of popup is: ");
   console.log(result);
-  setTimeout(function(){Vue.set(inoutData, "manualClass", result.label)}, 250);
+  setTimeout(function(){Vue.set(inoutData, "manualClass", result.label);}, 250);
   if(!result.skipped)
     $.get("/get/ALclassification"+getStateQuery()+"api_url="+result["api_url"]+"&label="+result.label, function(data){
       console.log(data);
@@ -772,7 +773,7 @@ function HandlePopupResult(result) {
   }, 1000);
 }
 function convertToApiLink(repoLink){
-  // Converts a repo link to an api link. E.g. https://github.com/Ichaelus/Githubclassifier/ -> https://api.github.com/repos/Ichaelus/Githubclassifier/
+  // Converts a repo link an to api link. E.g. https://github.com/Ichaelus/Githubclassifier/ -> https://api.github.com/repos/Ichaelus/Githubclassifier/
   if(repoLink.indexOf("https://github.com/") >= 0){
     return trimRight(repoLink.replace("https://github.com/", "https://api.github.com/repos/", "/").trim(), "/");
   }else{
@@ -790,6 +791,10 @@ function orderMeasures(measures){
     if(_o[i] != "Preordered")
       ordered.push([_o[i], measures[_o[i]]]);
   return ordered;
+}
+
+function resetOutput(){
+  Vue.set(inoutData, "manualClass", "?");
 }
 
 function precisionToGraphData(res){
