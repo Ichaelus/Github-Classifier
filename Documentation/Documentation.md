@@ -32,14 +32,15 @@ dann **nicht DEV** in die weiteren Klassen aufzusplitten (s. classification-skiz
 Majority Class Problem konfrontiert waren.
 Dies verfolgten wir aber nicht weiter, weil wir der Meinung waren, dass sich das Problem über class raids 
 lösen lässt, indem die Gewichtung von **DEV** und **Nicht DEV** Samples unterschiedlich gestaltet wird.
+
 Weiterhin entschieden wir uns später noch Active Learning einzusetzen. Dies ermöglichte uns aus unserem Pool 
 an ungelabelten Daten (etwa 30000 Repositories), die Samples herauszusuchen, die besonders interessant für das 
 Trainieren wären. Dafür entschieden wir uns auf 2 Modi zu setzen. Einmal wird aus dem Pool ein zufälliges
 Repository entnommen, falls die Klassifizierer sich unsicher mit der Einschätzung dieses sind, wird der
 Benutzer befragt.
 Im anderen Modus darf sich reihum ein Klassifizierer ein Sample aus dem Pool herauspicken, bei dem er sich
-nach einer Formel am Unsichersten ist, und erhält auch wieder vom Benutzer eine Einordnung des Samples
-in die Klassen. 
+nach einer Formel (mehrere zur Auswahl) am Unsichersten ist, und erhält auch wieder vom Benutzer eine Einordnung
+ des Samples in die Klassen. 
 
 Jeder erstelle zunächst einen Featurevektor (siehe Discussion/Feature Vector Ideas), sodass wir eine gute 
 Diskussionengrundlage hatten.
@@ -84,7 +85,7 @@ Kreisdiagramm
 Grundsätzlich ist unsere Anwendung in einen php-Server mit Datenbank und einen lokalen Phython-Bottle-Server
 aufgeteilt. Der php-Server übernimmt dabei den Teil des Repositories zu Datensätzen Aufbereitens und die 
 Speicherung aller bisher gewonnen Datensätze. 
-Wir wollten von der graphikaufbereitung möglichst Betriebssystem unabhängig sein, sodass wir uns für 
+Wir wollten von der Graphikaufbereitung möglichst Betriebssystem unabhängig sein, sodass wir uns für 
 eine Darstellung im Browser mittels HTML entschieden. Maschinelles Lernen besitzt eine hohe Komplexität, sodass 
 klar war auf schon vorhandene Bibiotheken angewiesen zu sein. Da ein Teammitglied schon in Python bewandert war, 
 insbesondere in diesem Bereich, viel die Wahl sofort auf Python für unsere Logikschicht.
@@ -106,12 +107,47 @@ sowie noch Zählfunktionalitäten. Genaue Funktionsweisen finden sich in der API
 ### Features
 * hier kommen unsere Überlegungen zu den Features rein
 #### Genutzte:
+* **verwendete Sprachen**: Vektor mit den genutzen Sprachen des Repos
+* **Reponame**:
+* **Autorname**:
+* **Description**: 
+* **Readme**:
+* **Filenamen**:
+* **Ordnernamen**:
+
 
 #### Rausgefallene:
-
-* Commitnachrichten einzubeziehen hätte für den Featurevektor eine viel höhere Dimension bedeutet
+* **Commitnachrichten** einzubeziehen hätte für den Featurevektor eine viel höhere Dimension bedeutet
 dies hätte eine noch viel höhere Testsamplezahl bedeutet. Dahingegen aber wohl kaum relevante Informationen
 hinzugefügt. Nach unserer Einschätzung sind die Kosten also zu hoch um dieses Feature zu nutzen.
+* **commit_count**: Anzahl der Commits: Dieser ist herausgefallen, da keine Korrelation zu bestimmter Klasse
+feststellbar war.
+* **Count of filenames with min. Lev-Distanz**: Anzahl der Dateinamen mit der kleinsten Lev-Distanz aller Dateinamen
+ zueinander (nicht implementiert), hätte vielleicht bessere Ergebnisse bringen können als die 
+ durchschnittliche Lev-Distanz bringen können, insbesondere für HW oder DOCs, indenen gerne mal Dateinamen bis auf
+ eine Zahl gleich sind.
+
+#### unbekannte Kategorie:
+* **hasDownload**: Wahrheitswert ob sich das Repo direkt downloaden lässt.
+* **watches**: Anzahl Personen die Mitteilungen über pull requests und issues haben wollen über dieses Repo
+* **folder_count**: Anzahl der Ordner des Repos: ist aber nach oben beschränkt, weil nur bestimmte Menge API-Calls
+dafür aufgewendet werden.
+* **treeDepth**: Tiefe des Ordnerbaums: kann auch wieder durch API-Calls kleiner sein als es eigentlich ist
+* **stars**: Anzahl der Personen, die sich das Repo merken wollen.
+* **branch_count**: Anzahl der derzeit genutzten Branches
+* **forks**: Anzahl der Forks dieses Repos
+* **commit_interval_avg**: durchschnittles Intervall indem Commits getätigt wurden
+* **contributors_count**: Anzahl der Mitarbeiter am Repo
+* **open_issues_count**: Anzahl der offenen Issues
+* **avg_commit_length**: durchschnittliche Textlänge einer Commitnachricht
+* **hasWiki**: Wahrheitswert für das Vorhandensein eines Wikis
+* **file_count**: Anzahl der Dateien: ist auf die oberste Ordnerebene beschränkt (?)
+* **commit_interval_max**: größte Zeitspanne zwischen zwei Commits
+* **isFork**: Wahrheitswert ob dieses Repo durch Forken eines anderen hervorging
+* **ReadmeLength**: Anzahl der Zeichen des Readme's
+* **durchschnittliche Levenshtein Distanz Ordnernamen**: 
+* **durchschnittliche Levenshtein Distanz Dateinamen**:
+
 
 ### Prediction Model
 * hier kommen unsere Überlegungen zu den Classifiern rein

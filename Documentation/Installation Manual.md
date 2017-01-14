@@ -51,7 +51,7 @@ _Note: If there are still packages missing that do not show up in the list, plea
 
 ## VirtualBox
 
-Instead of installing everything from above, you can also use the VM image. A virtualisation software such as Oracle VirtualBox is needed in this case as well as a unzipping tool such as 7Zip. Please be sure to reservate enough RAM for the emulation.
+Instead of installing everything from above, you can also use the VM image. A virtualisation software such as Oracle VirtualBox is needed in this case as well as a unzipping tool such as 7zip. Please be sure to reservate enough RAM for the emulation.
 
  > [Download VM](https://drive.google.com/open?id=0B3nBoE608aQyT0F2bWh1SDdXSTQ)
 

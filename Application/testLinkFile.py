@@ -60,6 +60,7 @@ classifiers['reponamelstm'] = reponamelstm()
 #classifiers['gbrtfilesandfolders'] = gbrtfilesandfolders(filenameCorpus, foldernameCorpus)
 #classifiers['gbrtmetaonly'] = gbrtmetaonly()
 #classifiers['gbrtdescriptionmeta'] = gbrtdescriptionmeta(descriptionCorpus)
+#classifiers['svmreadmemeta'] = svmreadmemeta(readmeCorpus)
 
 #classifiers['readmelstm'] = readmelstm()
 
@@ -71,11 +72,14 @@ for classifier in classifiers:
     loadedClassifiers.append(classifier)
 
 # Now all classifiers should have been loaded from last savepoint, if available
-# Use these loaded classifiers by giving them to all ensemble-Models
+# Use these loaded classifiers by giving them to specific ensemble-Models
 
-classifiers['nnall'] = nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
-classifiers['svmall'] = svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
-classifiers['allrandomforest'] = allrandomforest(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
+classifiers['nnall'] = nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
+classifiers['svmall'] = svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
+classifiers['allrandomforest'] = allrandomforest(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
+#classifiers['allmultinomialnb'] = allmultinomialnb(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
+#classifiers['allbernoullinb'] = allbernoullinb(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
+
 
 for classifier in classifiers:
     if classifier not in loadedClassifiers:
@@ -114,7 +118,10 @@ try:
     data, result = None, None
     classes = ['DEV', 'HW', 'EDU', 'DOCS', 'WEB', 'DATA', 'OTHER']
     for line in linkFile:
-        data = DC.getInformationsForRepo(line.rstrip().replace("https://github.com", "https://api.github.com/repos"))
+        api_link = line.rstrip().replace("https://github.com", "https://api.github.com/repos")
+        if api_link[-1] == '/':     #remove / at the end
+            api_link = api_link[0:-1]
+        data = DC.getInformationsForRepo(api_link)
         prediction = classifiers['lrstacking'].predictLabelAndProbability(data)
         resultFile.write(line.rstrip() + ' ' + classes[prediction[0]] + '\n')
     linkFile.close()
