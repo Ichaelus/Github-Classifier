@@ -118,7 +118,10 @@ try:
     data, result = None, None
     classes = ['DEV', 'HW', 'EDU', 'DOCS', 'WEB', 'DATA', 'OTHER']
     for line in linkFile:
-        data = DC.getInformationsForRepo(line.rstrip().replace("https://github.com", "https://api.github.com/repos"))
+        api_link = line.rstrip().replace("https://github.com", "https://api.github.com/repos")
+        if api_link[-1] == '/':     #remove / at the end
+            api_link = api_link[0:-1]
+        data = DC.getInformationsForRepo(api_link)
         prediction = classifiers['lrstacking'].predictLabelAndProbability(data)
         resultFile.write(line.rstrip() + ' ' + classes[prediction[0]] + '\n')
     linkFile.close()
