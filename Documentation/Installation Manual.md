@@ -43,12 +43,17 @@ _Installed with the command `pip install xxx`_
 
 Now that every library and dependency is installed, you can open the **command shell** in the folder `Application`. Type `python start.py` and wait until the GUI is being opened in a new Tab in Firefox (this may take a couple of minutes). You can learn how to interact with the GUI in the separate documentation file `Frontend Manual.md`. Note that can can read the docfiles in the User Interface as well.
 
+For testing only a file of repository links (like Appendix B file) go to the directory where the installation 
+files are located, go into folder `Application` and place there your file for testing. Then type 
+instead `python testLinkFile.py <yourfile>` and wait that the script is finished. Then you will get 
+your result in `classification_result.txt` at the same directory. 
+
 _Note: If there are still packages missing that do not show up in the list, please install them via pip._
 
 
 ## VirtualBox
 
-Instead of installing everything from above, you can also use the VM image. A virtualisation software such as Oracle VirtualBox is needed in this case as well as a unzipping tool such as 7Zip. Please be sure to reservate enough RAM for the emulation.
+Instead of installing everything from above, you can also use the VM image. A virtualisation software such as Oracle VirtualBox is needed in this case as well as a unzipping tool such as 7zip. Please be sure to reservate enough RAM for the emulation.
 
  > [Download VM](https://drive.google.com/open?id=0B3nBoE608aQyT0F2bWh1SDdXSTQ)
 

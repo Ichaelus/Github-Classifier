@@ -60,6 +60,7 @@ classifiers['reponamelstm'] = reponamelstm()
 #classifiers['gbrtfilesandfolders'] = gbrtfilesandfolders(filenameCorpus, foldernameCorpus)
 #classifiers['gbrtmetaonly'] = gbrtmetaonly()
 #classifiers['gbrtdescriptionmeta'] = gbrtdescriptionmeta(descriptionCorpus)
+#classifiers['svmreadmemeta'] = svmreadmemeta(readmeCorpus)
 
 #classifiers['readmelstm'] = readmelstm()
 
@@ -71,11 +72,14 @@ for classifier in classifiers:
     loadedClassifiers.append(classifier)
 
 # Now all classifiers should have been loaded from last savepoint, if available
-# Use these loaded classifiers by giving them to all ensemble-Models
+# Use these loaded classifiers by giving them to specific ensemble-Models
 
-classifiers['nnall'] = nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
-classifiers['svmall'] = svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
-classifiers['allrandomforest'] = allrandomforest(readmeCorpus + descriptionCorpus, filetypeCorpus, foldernameCorpus, classifiers['reponamelstm'])
+classifiers['nnall'] = nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
+classifiers['svmall'] = svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
+classifiers['allrandomforest'] = allrandomforest(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
+#classifiers['allmultinomialnb'] = allmultinomialnb(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
+#classifiers['allbernoullinb'] = allbernoullinb(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
+
 
 for classifier in classifiers:
     if classifier not in loadedClassifiers:
