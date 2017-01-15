@@ -269,6 +269,10 @@ def api(key):
 		docfiles = [f for f in os.listdir(docsPath) if os.path.isfile(os.path.join(docsPath, f)) and f.endswith(".md")]
 		return JS.toJson(docfiles)
 
+	elif(key == "getAPICalls"):
+		# Returns the amount of API calls burned during the last hour
+		return JS.toJson(DC.getAPICalls())
+
 	else :
 		return "API call for: " + key
 

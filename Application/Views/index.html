@@ -370,8 +370,8 @@
         </div><!-- /container -->
       </div><!-- /header -->
       <div class="container">
-
         <div id="titles" class="row"><!-- titles -->
+          <div class="alert alert-warning" id="calls_warning" v-html="flag" v-show="flag != ''"></div>
           <blockquote class="lead" v-html="getQuote()"></blockquote>
           <div class="col-xs-2"><h3>Input</h3></div>
           <div class="col-xs-7">

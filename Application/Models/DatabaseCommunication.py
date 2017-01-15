@@ -173,3 +173,6 @@ def getDistributionArray(table, useExtendedTestSet):
                 stats.append(val)
         return stats
     return stats1
+
+def getAPICalls():
+    return api_call('calls')

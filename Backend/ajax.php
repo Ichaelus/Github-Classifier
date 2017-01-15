@@ -86,7 +86,18 @@
                // print "SELECT $selector FROM `train` $filter";
                 reportIf($data !== false, $data, "Database error.");
                 break;
-
+            case "api:calls":
+                $sql = 
+                "SELECT SUM(ac) AS calls FROM (
+                    SELECT SUM(api_calls) as ac FROM `unlabeled` WHERE timestamp > DATE_SUB(NOW(), INTERVAL 1 HOUR)
+                    UNION ALL
+                    SELECT SUM(api_calls) as ac FROM `to_classify` WHERE timestamp > DATE_SUB(NOW(), INTERVAL 1 HOUR)
+                    UNION ALL
+                    SELECT SUM(api_calls) as ac FROM `train` WHERE timestamp > DATE_SUB(NOW(), INTERVAL 1 HOUR)
+                ) as l";
+                $data = $db->select($sql);
+                reportIf($data !== false, $data[0], "Database error.");
+                break;
             case "api:single":
                 // Returns a random sample of the given <table>
                 $data = $db->select("SELECT $selector FROM `$table` WHERE class != 'SKIPPED'  AND class != 'UNSURE'  ORDER BY RAND() LIMIT 0, 1");
