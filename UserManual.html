@@ -52,6 +52,9 @@
       </div>
       <div class="container">
         <div class="row" id="main">
+          <div v-show='(markdown == "")'>
+            <p class="lead">In case this page does not load properly, please use version 50 of <a href="https://www.mozilla.org/de/firefox/new/">Firefox</a>.</p>
+          </div>
           <div v-html="markdown"></div>
         </div>
       </div>
@@ -82,7 +85,9 @@
       let data = {
         markdown: "",
         selectedFile: "README.md",
-        fileList: ["README.md", "Documentation/Installation Manual.md", "Documentation/Frontend Manual.md","Documentation/Documentation.md", "Documentation/API.md"]
+        fileList: ["README.md", "Documentation/Installation Manual.md", "Documentation/Frontend Manual.md","Documentation/Documentation.md", "Documentation/API.md", "Documentation/Classification Ambiguities.md"
+        ]
+
       };
       let View = new Vue({
         el: "#page",

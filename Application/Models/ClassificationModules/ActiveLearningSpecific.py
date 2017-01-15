@@ -12,10 +12,16 @@ def calculateUncertaintyEntropyBased(classiefierlabelandprobability):
     return sum
 
 def calculateUncertaintyLeastConfident(classiefierlabelandprobability):
-    return '0'
+    return 1 - classiefierlabelandprobability[classiefierlabelandprobability[0]+1]
 
 def calculateUncertaintyMarginSampling(classiefierlabelandprobability):
-    return '0'
+    prob = classiefierlabelandprobability[1:]
+    best = prob[classiefierlabelandprobability[0]]
+    second = 0
+    for p in prob:
+        if p < best and p > second:
+            second = p
+    return best - second
 
 def calculateUncertaintyCouncilBasedVoteEntropy(classiefierlabelandprobability):
     return '0'

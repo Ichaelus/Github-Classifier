@@ -32,14 +32,15 @@ dann **nicht DEV** in die weiteren Klassen aufzusplitten (s. classification-skiz
 Majority Class Problem konfrontiert waren.
 Dies verfolgten wir aber nicht weiter, weil wir der Meinung waren, dass sich das Problem über class raids 
 lösen lässt, indem die Gewichtung von **DEV** und **Nicht DEV** Samples unterschiedlich gestaltet wird.
+
 Weiterhin entschieden wir uns später noch Active Learning einzusetzen. Dies ermöglichte uns aus unserem Pool 
 an ungelabelten Daten (etwa 30000 Repositories), die Samples herauszusuchen, die besonders interessant für das 
 Trainieren wären. Dafür entschieden wir uns auf 2 Modi zu setzen. Einmal wird aus dem Pool ein zufälliges
 Repository entnommen, falls die Klassifizierer sich unsicher mit der Einschätzung dieses sind, wird der
 Benutzer befragt.
 Im anderen Modus darf sich reihum ein Klassifizierer ein Sample aus dem Pool herauspicken, bei dem er sich
-nach einer Formel am Unsichersten ist, und erhält auch wieder vom Benutzer eine Einordnung des Samples
-in die Klassen. 
+nach einer Formel (mehrere zur Auswahl) am Unsichersten ist, und erhält auch wieder vom Benutzer eine Einordnung
+ des Samples in die Klassen. 
 
 Jeder erstelle zunächst einen Featurevektor (siehe Discussion/Feature Vector Ideas), sodass wir eine gute 
 Diskussionengrundlage hatten.
@@ -84,7 +85,7 @@ Kreisdiagramm
 Grundsätzlich ist unsere Anwendung in einen php-Server mit Datenbank und einen lokalen Phython-Bottle-Server
 aufgeteilt. Der php-Server übernimmt dabei den Teil des Repositories zu Datensätzen Aufbereitens und die 
 Speicherung aller bisher gewonnen Datensätze. 
-Wir wollten von der graphikaufbereitung möglichst Betriebssystem unabhängig sein, sodass wir uns für 
+Wir wollten von der Graphikaufbereitung möglichst Betriebssystem unabhängig sein, sodass wir uns für 
 eine Darstellung im Browser mittels HTML entschieden. Maschinelles Lernen besitzt eine hohe Komplexität, sodass 
 klar war auf schon vorhandene Bibiotheken angewiesen zu sein. Da ein Teammitglied schon in Python bewandert war, 
 insbesondere in diesem Bereich, viel die Wahl sofort auf Python für unsere Logikschicht.
@@ -106,12 +107,47 @@ sowie noch Zählfunktionalitäten. Genaue Funktionsweisen finden sich in der API
 ### Features
 * hier kommen unsere Überlegungen zu den Features rein
 #### Genutzte:
+* **verwendete Sprachen**: Vektor mit den genutzen Sprachen des Repos
+* **Reponame**:
+* **Autorname**:
+* **Description**: 
+* **Readme**:
+* **Filenamen**:
+* **Ordnernamen**:
+
 
 #### Rausgefallene:
-
-* Commitnachrichten einzubeziehen hätte für den Featurevektor eine viel höhere Dimension bedeutet
+* **Commitnachrichten** einzubeziehen hätte für den Featurevektor eine viel höhere Dimension bedeutet
 dies hätte eine noch viel höhere Testsamplezahl bedeutet. Dahingegen aber wohl kaum relevante Informationen
 hinzugefügt. Nach unserer Einschätzung sind die Kosten also zu hoch um dieses Feature zu nutzen.
+* **commit_count**: Anzahl der Commits: Dieser ist herausgefallen, da keine Korrelation zu bestimmter Klasse
+feststellbar war.
+* **Count of filenames with min. Lev-Distanz**: Anzahl der Dateinamen mit der kleinsten Lev-Distanz aller Dateinamen
+ zueinander (nicht implementiert), hätte vielleicht bessere Ergebnisse bringen können als die 
+ durchschnittliche Lev-Distanz bringen können, insbesondere für HW oder DOCs, indenen gerne mal Dateinamen bis auf
+ eine Zahl gleich sind.
+
+#### unbekannte Kategorie:
+* **hasDownload**: Wahrheitswert ob sich das Repo direkt downloaden lässt.
+* **watches**: Anzahl Personen die Mitteilungen über pull requests und issues haben wollen über dieses Repo
+* **folder_count**: Anzahl der Ordner des Repos: ist aber nach oben beschränkt, weil nur bestimmte Menge API-Calls
+dafür aufgewendet werden.
+* **treeDepth**: Tiefe des Ordnerbaums: kann auch wieder durch API-Calls kleiner sein als es eigentlich ist
+* **stars**: Anzahl der Personen, die sich das Repo merken wollen.
+* **branch_count**: Anzahl der derzeit genutzten Branches
+* **forks**: Anzahl der Forks dieses Repos
+* **commit_interval_avg**: durchschnittles Intervall indem Commits getätigt wurden
+* **contributors_count**: Anzahl der Mitarbeiter am Repo
+* **open_issues_count**: Anzahl der offenen Issues
+* **avg_commit_length**: durchschnittliche Textlänge einer Commitnachricht
+* **hasWiki**: Wahrheitswert für das Vorhandensein eines Wikis
+* **file_count**: Anzahl der Dateien: ist auf die oberste Ordnerebene beschränkt (?)
+* **commit_interval_max**: größte Zeitspanne zwischen zwei Commits
+* **isFork**: Wahrheitswert ob dieses Repo durch Forken eines anderen hervorging
+* **ReadmeLength**: Anzahl der Zeichen des Readme's
+* **durchschnittliche Levenshtein Distanz Ordnernamen**: 
+* **durchschnittliche Levenshtein Distanz Dateinamen**:
+
 
 ### Prediction Model
 * hier kommen unsere Überlegungen zu den Classifiern rein
@@ -135,3 +171,193 @@ Compute the  precision per category- the number of repositories per category whe
 determined by your automatic classifier matched your intuitive classification.
 Discuss the quality of your results and argue whether, according to your opinion, 
 a higher yield or a higher precision is more important for automated repository classification."
+
+<table>
+	<thead>
+		<tr>
+			<th>Repo-Link</th>
+			<th>Result</th>
+		</tr>
+	</thead>
+	<tbody>
+	<tr>
+	    <td>https://github.com/ga-chicago/wdi5-homework</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/Aggregates/MI_HW2</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/datasciencelabs/2016/</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/githubteacher/intro-november-2015</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/atom/atom</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/jmcglone/jmcglone.github.io</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/hpi-swt2-exercise/java-tdd-challenge</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/alphagov/performanceplatform-documentation</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/harvesthq/how-to-walkabout</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/vhf/free-programming-books</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/d3/d3</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/carlosmn/CoMa-II</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/git/git-scm.com</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/PowerDNS/pdns</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/cmrberry/cs6300-git-practice</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/Sefaria/Sefaria-Project</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/mongodb/docs</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/sindresorhus/eslint-config-xo</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/e-books/backbone.en.douceur</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/erikflowers/weather-icons</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/tensorflow/tensorflow</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/cs231n/cs231n.github.io</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/m2mtech/smashtag-2015</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/openaddresses/openaddresses</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/benbalter/congressional-districts</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/Chicago/food-inspections-evaluation</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/OpenInstitute/OpenDuka</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/OpenInstitute/OpenDuka</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/bhuga/bhuga.net</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/macloo/just_enough_code</td>
+	    <td>False</td>
+    </tr>
+    <tr>
+	    <td>https://github.com/hughperkins/howto-jenkins-ssl</td>
+	    <td>False</td>
+    </tr>
+	</tbody>
+</table>
+
+<table>
+    <thead>
+        <tr>
+            <td></td>
+            <td>erzielte Präzision / precision</td>
+            <td>erzielte Ausbeute / recall</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>DEV</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>HW</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>EDU</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>DOCS</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>WEB</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>DATA</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>OTHER</td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+Wir finden, dass eine höhere Genauigkeit wichtiger ist als eine hohe Ausbeute, da es für jemanden, der mittels des
+Klassifizierers nach Repos einer bestimmten Klasse sucht, von Vorteil ist, wenn er lieber wenige Treffer landet,
+diese dafür dann aber richtig eingestuft wurden. 
+Während eine hohe Ausbeute garantieren täte, dass von denen die wir als eine Klasse eingestuft haben, auch sehr 
+viele als solche erkannt werden, dabei würde aber nicht berücksichtigt wie viele falscherweise als diese Klasse eingestuften
+wurden. Bei einer Suche nach Repos einer bestimmten Klasse könnten also auch viele falsche dabei sein.
+Wenn die Präzision aber für alle Klassen zunimmt würde dass auch die Ausbeute erhöhen.

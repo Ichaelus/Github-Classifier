@@ -194,6 +194,8 @@ button.control {
   text-align: center;
   border: 1px solid black;
   border-radius: 2.5px;
+  top: 11px;
+  position: relative;
 }
 .classifier:before{
   top: 35px;
@@ -210,6 +212,7 @@ button.control {
   padding: 5px 0;
   font-family: "RaleWay";
   font-weight: bold;
+  min-height: 54px;
 }
 .inactive .name{
   background: black;

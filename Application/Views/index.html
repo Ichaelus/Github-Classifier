@@ -133,17 +133,17 @@
           </div>
           <h3>Actions</h3>
           <hr>
-          <span class="action btn btn-default" v-on:click="retrain(currentName, false)">Retrain from scratch</span>
-          <span disabled class="action btn btn-default" v-on:click="retrain_semi()">Retrain with semi-supervised data</span>
-          <span class="action btn btn-default" v-on:click="save(currentName)">Save current image</span>
+          <span class="action btn btn-default" v-on:click="retrain(currentName, false)">{{retrainstate}}</span>
+          <span disabled class="action btn btn-default" v-on:click="retrain_semi()">{{semiretrainstate}}</span>
+          <span class="action btn btn-default" v-on:click="save(currentName)">{{savestate}}</span>
           <div class="version_wrapper">
             <div class="input-group-btn select">
-                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b>{{selectedPoint}}</b> <span class="caret"></span></button>
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b>{{formatFileName(selectedPoint)}}</b> <span class="caret"></span></button>
                   <ul class="dropdown-menu" style="margin: 0px auto;">
                     <li v-for="(sp, fileName) in savePoints"><span v-on:click="setSavePoint(fileName)">{{formatFileName(fileName)}}</span></li>
                   </ul>
             </div>
-            <span class="action btn btn-default" v-on:click="load()">Load version</span>
+            <span class="action btn btn-default" v-on:click="load()">{{loadstate}}</span>
           </div>
           <h3>Performance</h3>
           <div class="graph">

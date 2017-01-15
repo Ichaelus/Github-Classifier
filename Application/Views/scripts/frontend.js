@@ -39,15 +39,19 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
     documentations: [], // ["filename1",..]
     expression: "neutral",
     exprState: "",
+    id: 0,
+    loadstate: "Load version",
+    numStats: {},
     thinking: false,
+    retrainstate: "Retrain from scratch",
+    semiretrainstate: "Retrain with semi-supervised data",
     savePoints: {}, // fileName: {precision: [{class, val}, ..]}
+    savestate: "Save current image",
     selectedDocumentation: "Chose documentation",
     selectedPoint: "Version",
     selectedTable: 'unlabeled',
-    tableList: ["semi_supervised", "standard_test_samples", "standard_train_samples", "test", "to_classify", "train", "unlabeled"],
-    numStats: {},
     strStats: {},
-    id: 0
+    tableList: ["semi_supervised", "standard_test_samples", "standard_train_samples", "test", "to_classify", "train", "unlabeled"]
   },
   footerData = {
     andreas: {
@@ -385,7 +389,7 @@ function initVue(){
         Vue.set(inoutData, "selectedMeasure", measure);
       },
       getMeasureName: function(){
-        return inoutData.selectedMeasure == "Preordered" ? "Precision M" : inoutData.selectedMeasure;
+        return inoutData.selectedMeasure == "Preordered" ? "Fscore M" : inoutData.selectedMeasure;
       },
       getMeasure: function(c){
         return Math.round(c.confusionMatrix.measures[this.getMeasureName()] * 100);
@@ -393,12 +397,12 @@ function initVue(){
       getMeasureDescription: function(measure){
         let descriptions = {"Preordered": "Internal order not sorted by any measure",
                             "Precision mu": "Agreement of the data class labels with those of a classifiers if calculated from sums of per-sample decisions",
-                            "Fscore mu": "Relations between data’s positive labels and those given by a classifier based on sums of per-sample decisions",
+                            "Fscore mu": "Relations between data’s positive labels and those given by a classifier based on sums of per-sample decisions (β = 0.5)",
                             "Error Rate": "The average per-class classification error",
                             "Recall M": "An average per-class effectiveness of a classifier to identify class labels",
                             "Average Accuracy": "The average per-class effectiveness of a classifier",
                             "Recall mu": "Effectiveness of a classifier to identify class labels if calculated from sums of per-sample decisions",
-                            "Fscore M": "Relations between data’s positive labels and those given by a classifier based on a per-class average",
+                            "Fscore M": "Relations between data’s positive labels and those given by a classifier based on a per-class average (β = 0.5)",
                             "Precision M": "An average per-class agreement of the data class labels with those of a classifiers"};
         if(typeof(descriptions[measure]) !== "undefined")
           return descriptions[measure];
@@ -526,7 +530,7 @@ function initVue(){
               data.push(precisionToGraphData(wrapperData.savePoints[sp].precision));
             }
             if(data.length > 0){
-              RadarChart("#version_precision_chart", data, getRadarConfig(600));
+              RadarChart("#version_precision_chart", data, getRadarConfig(500));
               document.getElementById('version_chart_header').style.display = "block";
             }else
               document.getElementById("version_precision_chart").style.display = "none";
@@ -540,6 +544,7 @@ function initVue(){
       },
       retrain: function(name, save){
         console.log("Wrapper: "+name+" retraining.");
+        Vue.set(wrapperData, "retrainstate", "Retraining..");
         notify("Retraining", "The classifier: "+name+" started retraining. This could take a while.", 2500);
         runGenerator(function *main(){
           let data = yield jQGetPromise("/get/retrain?name="+name + "&useExtendedTestSet="+stateData.useExtendedTestSet);
@@ -552,25 +557,31 @@ function initVue(){
           }else{
             notify("Error while retraining", data, 2500);
           }
+          Vue.set(wrapperData, "retrainstate", "Retrain from scratch");
         });
       },
       retrain_semi: function(){
         console.log("Wrapper: "+wrapperData.currentName+" semi retraining.");
+        Vue.set(wrapperData, "semiretrainstate", "Retraining..");
         runGenerator(function *main(){
           notify("Retrained", yield jQGetPromise("/get/retrainSemiSupervised?name="+wrapperData + "&useExtendedTestSet="+stateData.useExtendedTestSet.currentName), 2500);
+          Vue.set(wrapperData, "semiretrainstate", "Retraining with semi-supervised data");
         });
       },
       save: function(name){
         console.log("Wrapper: "+name+" saving.");
+        Vue.set(wrapperData, "savestate", "Saving..");
         runGenerator(function *main(){
           notify("Saved", yield jQGetPromise("/get/save?name="+name), 2500);
           wrapperView.getSavePoints();
+          Vue.set(wrapperData, "savestate", "Save current image");
         });
       },
       load: function(){
         console.log("Wrapper: "+wrapperData.currentName+" loading.");
+        Vue.set(wrapperData, "loadstate", "Loading..");
         runGenerator(function *main(){
-          data = yield jQGetPromise("/get/load?name="+wrapperData.currentName + "&savepoint="+wrapperData.selectedPoint + "=useExtendedTestSet="+stateData.useExtendedTestSet, "json");
+          data = yield jQGetPromise("/get/load?name="+wrapperData.currentName + "&savepoint="+wrapperData.selectedPoint + "&useExtendedTestSet="+stateData.useExtendedTestSet, "json");
           // data contains a name of the selected classifier and an precision array
           if(typeof(data.Error) != "undefined"){
             notify("Error", data.Error, 2500);
@@ -578,6 +589,7 @@ function initVue(){
             stateView.updateClassifiers(data.classifiers);
             notify("Loaded", "The classifier "+wrapperData.currentName+" has been loaded.", 2500);
           }
+          Vue.set(wrapperData, "loadstate", "Load version");
         });
       },
       getMatrixDiag: function(matrix){
@@ -685,6 +697,8 @@ function initVue(){
       getMeasureName: function(){return classifierView.getMeasureName();},
       getMeasure: function(c){return classifierView.getMeasure(c);},
       formatFileName: function(fn){
+        if(fn == "Version")
+          return fn;
         try{
           // "2017-01-09T192504.535000.pkl" => "2017-01-09T19:25:04"
           let d = new Date(fn.substr(0, 13) + ":" + fn.substr(13, 2) + ":" + fn.substr(15, 2));

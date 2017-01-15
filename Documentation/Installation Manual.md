@@ -2,9 +2,9 @@
 
 ## Requirements
 
-* Python 2.7 64bit 
-* pip (module manager)
-* Firefox >= 50
+* [Python 2.7 64bit](https://www.python.org/downloads/release/python-2713/)
+* [pip (module manager)](https://packaging.python.org/installing/#install-pip-setuptools-and-wheel)
+* [Firefox >= 50](https://www.mozilla.org/en-US/firefox/new/)
 * Screen size >= (1280px x 600px)
 * RAM >= 4GB
 
@@ -17,7 +17,7 @@ Keep in mind that installations with pip require **super user rights**.
 
 ## Modules
 
-_Either downloaded and installed with the command `pip install path/to/file.whl` (on Windows) or installed with `pip install xxx` (on UNIX systems)._ 
+_Either downloaded and installed with the command `pip install path/to/file.whl` (on Windows) or installed with `pip install xxx` (on UNIX or OS x)._ 
 
 1. [numpy + mkl](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy)
 2. [scipy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy)
@@ -32,23 +32,26 @@ _Installed with the command `pip install xxx`_
 5. gensim
 6. pattern
 7. theano
+8. demjson
 
 ## Other
 
 * [Microsoft Visual C++ Compiler for Python 2.7](https://www.microsoft.com/en-us/download/details.aspx?id=44266)
 * [A 64bit g++ compiler](http://deeplearning.net/software/theano/install_windows.html#gcc)
-* Keras has to be configured to use Theano (instead of Tensorflow). In UNIX systems, this can be changed at `~/.keras/keras.json`.
+* Keras has to be configured to use Theano (instead of Tensorflow). In UNIX systems, this can be changed at `~/.keras/keras.json`. The same file can be found at `%userprofile/.keras/keras.json` on Windows.
 
 ## When everything is said and done
 
-Now that every library and dependency is installed, you can open the **command shell** in the folder `Application`. Type `python start.py` and wait until the GUI is being opened in a new Tab in Firefox (this may take a couple of minutes). You can learn how to interact with the GUI in the separate documentation file `Frontend Manual.md`. Note that can can read the docfiles in the User Interface as well.
+Now that every library and dependency is installed, you can open the **command shell** in the folder `Application`. Type `python start.py` and wait until the GUI is being opened in a new Tab in Firefox (this may take a couple of minutes). Meanwhile, you can learn how to interact with the GUI in the separate documentation file `Frontend Manual.md`. Note that you can read the docfiles in the User Interface as well.
+
+If you want to test a file  of repository links without a GUI (e.g. the Appendix B file) switch into the folder `Application` and place your input file. It must consist of a line seperated list of GitHub repository URLs. Open the command shell and type `python testLinkFile.py <yourfile>` and wait until the script has finished. The results will be saved at `classification_result.txt` in the same directory. 
 
 _Note: If there are still packages missing that do not show up in the list, please install them via pip._
 
 
 ## VirtualBox
 
-Instead of installing everything from above, you can also use the VM image. A virtualisation software such as Oracle VirtualBox is needed in this case as well as a unzipping tool such as 7Zip. Please be sure to reservate enough RAM for the emulation.
+Instead of installing everything from above, you can also use the VM image. A virtualisation software such as Oracle VirtualBox is needed in this case as well as a unzipping tool such as 7zip. Please be sure to reservate enough RAM for the emulation.
 
  > [Download VM](https://drive.google.com/open?id=0B3nBoE608aQyT0F2bWh1SDdXSTQ)
 
