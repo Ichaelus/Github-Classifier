@@ -38,7 +38,8 @@ from Models.ClassificationModules.gbrtdescriptionmeta import gbrtdescriptionmeta
 from Models.ClassificationModules.svmreadmemeta import svmreadmemeta
 from Models.ClassificationModules.allbernoullinb import allbernoullinb
 from Models.ClassificationModules.allmultinomialnb import allmultinomialnb
-#from Models.ClassificationModules.averageensemble import averageensemble
+from Models.ClassificationModules.averageensemble import averageensemble
+
 import Models.DatabaseCommunication as DC
 
 print("Starting application..")
@@ -65,12 +66,13 @@ classifiers['nnmetaonly'] = nnmetaonly()
 classifiers['metaonlysvc'] = metaonlysvc()
 classifiers['metaonlyadaboost'] = metaonlyadaboost()
 classifiers['metaonlyrandomforest'] = metaonlyrandomforest()
-classifiers['reponamelstm'] = reponamelstm()
 classifiers['gbrtreadmeonly'] = gbrtreadmeonly(readmeCorpus)
 classifiers['gbrtfilesandfolders'] = gbrtfilesandfolders(filenameCorpus, foldernameCorpus)
 classifiers['gbrtmetaonly'] = gbrtmetaonly()
 classifiers['gbrtdescriptionmeta'] = gbrtdescriptionmeta(descriptionCorpus)
 classifiers['svmreadmemeta'] = svmreadmemeta(readmeCorpus)
+#classifiers['reponamelstm'] = reponamelstm()
+
 
 
 
