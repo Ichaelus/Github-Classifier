@@ -571,3 +571,7 @@ button.control {
   white-space: nowrap;
   cursor: pointer;
 }
+#calls_warning{
+  text-align: center;
+  margin: 20px 0 0 0;
+}

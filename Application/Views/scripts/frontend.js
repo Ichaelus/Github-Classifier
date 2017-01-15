@@ -7,6 +7,7 @@ console.log("Frontend started..");
 let stateView, inputView, classifierView, outputView, wrapperView, footerView,
 	stateData = {
 		action: "halt",
+    flag: "",
 		formula: "",
 		formulas: [],
     isSemiSupervised: false,
@@ -326,10 +327,21 @@ function initVue(){
             throw new Error("Invalid server response");
           Vue.set(stateData, "poolSize", parseInt(data));
         });
+      },
+      checkAPICalls: function(){
+        $.get("/get/getAPICalls", function(data){
+          let calls = parseInt(data["calls"]);
+          if(!isNaN(calls) && calls > 4000)
+            Vue.set(stateData, "flag", "During the last hour, more than <b>"+calls+"</b> of GitHub's limited API calls have been used. You may not be able to classify userdefined repositories.");
+          else
+            Vue.set(stateData, "flag", "");
+        }, "json");
       }
     }
   }); /* titleView */
   titleView.getPoolsize();
+  titleView.checkAPICalls();
+  setInterval(titleView.checkAPICalls, 60000);
 
   inputView = new Vue({
     el: '#input',
