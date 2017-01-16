@@ -105,7 +105,35 @@ sowie noch Zählfunktionalitäten. Genaue Funktionsweisen finden sich in der API
 
 ## Data Exploration and Prediction Model
 ### Features
-* hier kommen unsere Überlegungen zu den Features rein
+
+#### Text
+Early on we agreed on a distinction of numerical features and text features such as readme and description.
+While it is no problem to feed numerical features directly into our machine-learning model of choice, 
+we tried multiple approaches of how to encode the text presented to us.
+
+> **Frequency-based methods:** We count the frequency of specific tokens or words in our documents and 
+therefore encode the text in a sparse vector with each element representing how often one specific word/token occurs (large number = high frequency).
+Using this approach we had to consider how long this vector may be in order to be efficient as possible.
+We only count the frequency of the __x__ most frequent terms (excluding stop-words). 
+While short vectors (and therefore less words we can keep track of) allow more robust classification
+results for our classifiers, we may loose important information that could make important distinctions (such as HW vs EDU) impossible.
+Having this problem in mind we also used a trick to reduce the necessary dimensionality a lot by not encoding each word 
+but the word stem ('library' and 'libraries' are bot represented by '__librari__').
+The resulting number of necessary words/tokens turned out to differ from the text we encoded. 
+We use smaller numbers (~2000) **UPDATE THOSE NUMBERS** for repository-descriptions and even less (~200) for folder-/filenames.
+The readme turned out to need a lot more (~6000).  
+
+> **Word embeddings:**
+Text  
+
+> **Buchstabe für Buchstabe mit LSTM**
+Text   
+
+ 
+__Noch was zu edit-Abständen__
+
+
+
 #### Genutzte:
 * **verwendete Sprachen**: Vektor mit den genutzen Sprachen des Repos
 * **Reponame**:
