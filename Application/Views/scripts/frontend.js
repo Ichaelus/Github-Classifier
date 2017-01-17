@@ -14,6 +14,8 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
     mode: "test", // stream, pool, test, single
     poolSize: 0,
     predictionHandling: "predict", // predict | feedback
+    retrainAllState: "Retrain all classifers",
+    saveAllState: "Save all classifers",
     trainInstantly: false,
     useExtendedTestSet: true
 	},
@@ -57,25 +59,25 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
   footerData = {
     andreas: {
       degree: "Computer Science and Multimedia Computing BSC",
-      expertise: "",
+      //expertise: "",
       name: "Andreas Grafberger",
       term: "3."
     },
     martin: {
       degree: "Computer Science and Mathematics BSC",
-      expertise: "",
+      //expertise: "",
       name: "Martin Keßler",
       term: "5."
     },
     michael: {
       degree: "Computer Science and Multimedia Computing BSC",
-      expertise: "Web stack, Frontend development and server maintenance",
+      //expertise: "Web stack, Frontend development and server maintenance",
       name: "Michael Leimstädtner",
       term: "5."
     },
     stefan:{
       degree: "Computer Science and Mathematics BSC",
-      expertise: "",
+      //expertise: "",
       name: "Stefan Grafberger",
       term: "5."
     }
@@ -263,7 +265,6 @@ function initVue(){
       retrainAll: function(){
         let all = !confirm("Would you like to retrain only untrained classifiers?");
         let save = confirm("Would you like to save the retrained classifiers to the disk?");
-
         notify("Retrain all classifers", "Retraining many classifiers. This may take a couple of minutes; you may keep an eye on the console output.");
         for(let c in inoutData.classifiers)
           if(all || !inoutData.classifiers[c].isTrained)
@@ -290,6 +291,7 @@ function initVue(){
         });
       },
       showDocumentationWrapper: function(){
+        wrapperView.changeDocumentation("Documentation.md");
         showWrapper('#docs_wrapper');
       },
       changeExtendedSet: function(){
@@ -341,7 +343,7 @@ function initVue(){
   }); /* titleView */
   titleView.getPoolsize();
   titleView.checkAPICalls();
-  setInterval(titleView.checkAPICalls, 60000);
+  setInterval(titleView.checkAPICalls, 120000);
 
   inputView = new Vue({
     el: '#input',
@@ -732,11 +734,11 @@ function initVue(){
         return stateData.mode;
       },
       degree: function() { return footerData[wrapperData.activeMember].degree;},
-      expertise: function() { return footerData[wrapperData.activeMember].expertise;},
+      //expertise: function() { return footerData[wrapperData.activeMember].expertise;},
       name: function() { return footerData[wrapperData.activeMember].name;},
       term: function() { return footerData[wrapperData.activeMember].term;}
     }
-  });/* outputView */
+  });/* wrapperView */
   
   footerView = new Vue({
     el: 'footer',

@@ -1,6 +1,6 @@
 # GitHub Classifier
 
-_Note: Open [UserManual.html](UserManual.html) with [Firefox >= 50](https://www.mozilla.org/en/firefox/new/) for a better Markdown representation._
+_Note: Open [UserManual.html](UserManual.html) with [Firefox 50](https://ftp.mozilla.org/pub/firefox/releases/50.1.0/) for a better Markdown representation._
 
 
 ## Introduction

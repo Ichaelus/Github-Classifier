@@ -4,7 +4,7 @@
 
 * [Python 2.7 64bit](https://www.python.org/downloads/release/python-2713/)
 * [pip (module manager)](https://packaging.python.org/installing/#install-pip-setuptools-and-wheel)
-* [Firefox >= 50](https://www.mozilla.org/en-US/firefox/new/)
+* [Firefox 50](https://www.mozilla.org/en-US/firefox/new/)
 * Screen size >= (1280px x 600px)
 * RAM >= 4GB
 

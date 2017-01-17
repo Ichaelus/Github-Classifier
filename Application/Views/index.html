@@ -104,7 +104,7 @@
             <colgroup> <col class="col-xs-6"> <col class="col-xs-6"></colgroup>
             <thead> <tr> <th>String Attribute</th> <th>Avg length</th> </tr> </thead>
             <tbody> 
-              <tr v-for="(val, m) in formatStats(strStats)"> <td scope="row"> <code>{{m}}</code> </td> <td><b>{{Math.round(parseFloat(val['AVG'])*100)/100}}</b></td></tr>
+              <tr v-for="(val, m) in formatStats(strStats)"> <td scope="row"> <code>{{m.substr(12, m.length - 13)}}</code> </td> <td><b>{{Math.round(parseFloat(val['AVG'])*100)/100}}</b></td></tr>
             </tbody>
           </table>
         </div>
@@ -226,10 +226,10 @@
             <div class="col-xs-4">Term</div>
             <div class="col-xs-8">{{term}}</div>
           </div>
-          <div class="row">
+          <!--<div class="row">
             <div class="col-xs-4">Expertise</div>
             <div class="col-xs-8">{{expertise}}</div>
-          </div>
+          </div>-->
         </div>
       </div> <!-- /Overlay -->
     </div> <!-- /Wrappers -->
@@ -342,16 +342,16 @@
                     title="Predict a list of samples" value="Predict list" type="button">
 
               <!-- Test controls -->
-              <input v-on:click="retrainAll()" value="Retrain all classifers" 
+              <input v-on:click="retrainAll()" :value="retrainAllState" 
                     v-show="(mode == 'test')"
                     :class="'btn btn-primary '" style="width: 49.55%;" type="button">
-              <input v-on:click="saveAll()" value="Save all classifers"
+              <input v-on:click="saveAll()" :value="retrainAllState"
                     v-show="(mode == 'test')"
                     :class="'btn btn-primary '" style="width: 49.55%;" type="button">
 
               <div 
                   v-show="mode == 'test'" :class="'input-group '"
-                  data-toggle="tooltip" data-placement="bottom" data-original-title="The extended test set contains samples classified by ourself.">
+                  data-toggle="tooltip" data-placement="bottom" data-original-title="The extended test set contains additional samples classified by ourself while the standard set does not include OTHER samples.">
                 <span class="input-group-addon">
                   <input v-on:change="changeExtendedSet()" id="useExtendedTestSet" v-model="useExtendedTestSet" name="useExtendedTestSet" type="checkbox">
                 </span>
@@ -491,7 +491,7 @@
               </table>
             </div>
             <div v-show="(mode != 'test' && state == 'showResult')">
-              <h4 class="subtitle">Most predicted classes</h4>
+              <h4 class="subtitle">Predicted class</h4>
               <table class="outputDistr table table-bordered table-striped measure_table">
                 <colgroup><col class="col-xs-2"> <col class="col-xs-10"></colgroup>
                 <thead><tr><th>Class</th> <th>#Predictions</th></tr></thead>
@@ -503,7 +503,7 @@
             <p 
                 v-show="(mode != 'test' && state == 'showResult')"
                 class="outputText"
-                >The top-most ranked classifier says it's <strong>{{getOutputClass()}}</strong>. 
+                >The top-most listed classifier says it's <strong>{{getOutputClass()}}</strong>. 
                 <span
                   v-show="(state == 'showResult') && ((mode != 'test' && mode != 'single' && classifiersUnsure) || (mode == 'single' && predictionHandling == 'feedback'))">
                   Because one or more module is uncertain about its output, you can classify the sample manually.</span>
@@ -524,7 +524,7 @@
       <footer>
         <div class="container">
           <div class="row">
-            <div class="col-xs-4"><h4>Assignment for the <a href="http://informaticup.gi.de/" target="_blank">InformatiCup 2017</a></h4></div>
+            <div class="col-xs-4"><h4>Submission for the <a href="http://informaticup.gi.de/" target="_blank">InformatiCup 2017</a></h4></div>
             <div class="col-xs-2">
               <h4 class="member" v-on:click="showTeam('stefan')">Team Augsburg</h4>
             </div>
