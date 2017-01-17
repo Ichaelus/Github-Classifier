@@ -123,8 +123,13 @@ The resulting number of necessary words/tokens turned out to differ from the tex
 We use smaller numbers (~2000) **UPDATE THOSE NUMBERS** for repository-descriptions and even less (~200) for folder-/filenames.
 The readme turned out to need a lot more (~6000).  
 
-> **Word embeddings:**
-Text  
+> **Word embeddings:** An alternative approach is to not represent a document as a vector accounting for all used words 
+but to represent each word as vector which holds information about the context of it. 
+So we end up with a matrix where each row stands for such word. This embedding is learned through algorithms 
+like presented in [this paper](https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf).
+A model pretrained on Google-News articles which has a vocabulary size of 3 million distinct words is being used herefore.
+Each word-vector is fed into a recurrent neural network (explained later) after another.
+
 
 > **Buchstabe für Buchstabe mit LSTM**
 Text   
