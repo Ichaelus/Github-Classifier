@@ -147,7 +147,7 @@ This method came in handy when trying to classify depending on features like the
 In many cases the name was too specific and complex to have ever appeared before and so no vector-representation is available with previous methods.  
 
  > **Edit distance:**
- When trying to classify repositories that belong to Homework or Education it's important to know how similar the names of files or folders are.
+ When trying to classify repositories that belong to Homework, Documents or Education it's important to know how similar the names of files or folders are.
  Such repositories often contain folders like __Week 1, Week 2, Week 3, ...__. So to hand that information directly to our classifiers 
  we measured the average __Levenshtein distance__  of all files and folders.
 
@@ -166,36 +166,30 @@ While we weren't able to test this approach yet we're excited to see how it will
 * **Average Levenshtein distance of filenames**
 * **Average Levenshtein distance of foldernames**
 
-#### Rausgefallene:
-* **Commitnachrichten** einzubeziehen hätte für den Featurevektor eine viel höhere Dimension bedeutet
-dies hätte eine noch viel höhere Testsamplezahl bedeutet. Dahingegen aber wohl kaum relevante Informationen
-hinzugefügt. Nach unserer Einschätzung sind die Kosten also zu hoch um dieses Feature zu nutzen.
-* **commit_count**: Anzahl der Commits: Dieser ist herausgefallen, da keine Korrelation zu bestimmter Klasse
-feststellbar war.
-* **Count of filenames with min. Lev-Distanz**: Anzahl der Dateinamen mit der kleinsten Lev-Distanz aller Dateinamen
- zueinander (nicht implementiert), hätte vielleicht bessere Ergebnisse bringen können als die 
- durchschnittliche Lev-Distanz bringen können, insbesondere für HW oder DOCs, indenen gerne mal Dateinamen bis auf
- eine Zahl gleich sind.
+#### Dismissed features:
+* **Commit messages** were considered to not obtain enough valuable information to sacrifice both the increase in input-dimension for the classifiers 
+and necessary api-calls.
+* **Commit count**: Weren't used as we didn't measure any correlation with specific classes.
+* **Count of filenames with min. Lev-Distanz**: Could be more informative for classes like __HW__ or __DOCS__ than the average Levenshtein distance and might be implemented in the future. 
 
-#### unbekannte Kategorie:
-* **hasDownload**: Wahrheitswert ob sich das Repo direkt downloaden lässt.
-* **watches**: Anzahl Personen die Mitteilungen über pull requests und issues haben wollen über dieses Repo
-* **folder_count**: Anzahl der Ordner des Repos: ist aber nach oben beschränkt, weil nur bestimmte Menge API-Calls
-dafür aufgewendet werden.
-* **treeDepth**: Tiefe des Ordnerbaums: kann auch wieder durch API-Calls kleiner sein als es eigentlich ist
-* **stars**: Anzahl der Personen, die sich das Repo merken wollen.
-* **branch_count**: Anzahl der derzeit genutzten Branches
-* **forks**: Anzahl der Forks dieses Repos
-* **commit_interval_avg**: durchschnittles Intervall indem Commits getätigt wurden
-* **contributors_count**: Anzahl der Mitarbeiter am Repo
-* **open_issues_count**: Anzahl der offenen Issues
-* **avg_commit_length**: durchschnittliche Textlänge einer Commitnachricht
-* **hasWiki**: Wahrheitswert für das Vorhandensein eines Wikis
-* **file_count**: Anzahl der Dateien: ist auf die oberste Ordnerebene beschränkt (?)
-* **commit_interval_max**: größte Zeitspanne zwischen zwei Commits
-* **isFork**: Wahrheitswert ob dieses Repo durch Forken eines anderen hervorging
-* **ReadmeLength**: Anzahl der Zeichen des Readme's
-* **verwendete Sprachen**: Vektor mit den genutzen Sprachen des Repos
+#### Metadata:
+* **hasDownload**: Boolean value if repository can be downloaded directly.
+* **watches**: Count of people who follow latest news in respect to new pull requests and issues that are created.
+* **folder_count**: Count of folders is currently limited due to limited api-calls available.
+* **treeDepth**: Depth of folder-structure. Also capped at the moment due to limited api-calls.
+* **stars**: Count of people who use this notification system.
+* **branch_count**: Count of branches currently in use.
+* **forks**: Count of created forks.
+* **commit_interval_avg**: Average interval in which commits where created.
+* **contributors_count**: Count of contributors to this repository.
+* **open_issues_count**: Count of open issue.
+* **avg_commit_length**: Average text-length of commit messages.
+* **hasWiki**: Boolean value if wiki is available.
+* **file_count**: Count of files in first layer of folder-structure (Where readme is usually located).
+* **commit_interval_max**: Longest interval between commits.
+* **isFork**: Boolean value if repository is fork of another.
+* **ReadmeLength**: Count of characters in readme.
+* **verwendete Sprachen**: Used programming languages (represented as vector with each column representing one language. 0.5 if language is beeing used, 1.0 if it's the repository's main language).
 
 
 
