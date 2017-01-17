@@ -1,23 +1,27 @@
 # Documentation
 
-"Please also document the decisions you made selecting your features, 
-algorithms, data structures and software development tools and practices."
-
 ## Inital Approach/Planning Phase 
 
 ### Our Strategy to get our train data
-* Api-Call Limit, erste Website
 
 Uns wurde schon recht bald bewusst, dass wir möglichst viele Datensätze von Repositories brauchen.
 Da zudem das Problem eines Limits an API-Calls besteht, um an diese Daten heranzukommen,
 erstellten wir eine Datenbank um diese Daten erstmal einfach nur ohne Zugangsbeschränkungen zur Verfügung zu haben.
 Daraufhin begannen wir die erhaltenen Daten zu sichten und einzuordnen. 
-Besonders geholfen hat uns dabei eine kleine Webseite, die uns die Informationen eines Repositories angezeigt hat
+Dazu bauten wir uns eine kleine Webseite, die uns die Informationen eines Repositories angezeigt hat
 und mit der wir klassifizieren konnten. So versetzten wir uns in die Lage eines Klassifizieres, um herauszufinden
 welche der nutzbaren Features wirklich wertvoll sein könnten oder welche uns sogar noch fehlten.
 Durch diese Phase erkannten wir wie unterschiedlich allein die interpretativen Ansichten von 4 Personen 
 aufgrund der gegebenen Klassenbeschreibungen sein können. Wir erkannten dass diese ersten Kategorisierungen 
-nicht weiter verwendet werden konnten wegen der hohen Diversität.
+nicht weiter verwendet werden konnten wegen der hohen Diversität unserer Einschätzungen.
+Daraus ergab sich ein kompletter Neustart der Gewinnung von Trainingsdaten, da die Trainingsdaten den Erfolg eines
+Klassifizierers doch maßgeblich prägen. Wir entschlossen uns aber, möglichst natürliche Klassengrenzen zu ziehen
+und sie nicht so zu setzen, dass eine Klassifzierung möglichst einfach wäre.
+Diesesmal klassifizierten wir immer nur alle gemeinsam, um die Einheitlichkeit der Klassifizierung sicherzustellen.
+Da dies auf Dauer zu zeitaufwendig wurde, wir aber eine möglichst große Menge an Trainingsdaten brauchten, 
+übernahm diese Aufgabe nur noch einer. Fehler waren damit nicht ausgeschlossen, aber widersprüchliche Einteilungen
+ähnlicher Repositiories sollten dadurch relativ selten werden.
+Somit kommen wir nun schlussendlich auf einen Trainingspool von ca. 2000 Repositiories.
 
 ### First Data Set Impressions
 * Erste Versuche mit ersten Classifiern/Entdecken des Majority Class Problems
@@ -40,10 +44,14 @@ Repository entnommen, falls die Klassifizierer sich unsicher mit der Einschätzu
 Benutzer befragt.
 Im anderen Modus darf sich reihum ein Klassifizierer ein Sample aus dem Pool herauspicken, bei dem er sich
 nach einer Formel (mehrere zur Auswahl) am Unsichersten ist, und erhält auch wieder vom Benutzer eine Einordnung
- des Samples in die Klassen. 
+ des Samples in die Klassen.
+Durch Active Learning ordnet man aber nach unserer Empfindung hauptsächlich Repos eine Klasse zu, die zwischen 
+den Klassen stehen. Ein gutes Trainingsset stellten wir fest, braucht aber auch eine große Anzahl an Repos, 
+die sich fast 100-prozentig der jeweiligen Klasse zuordnen lassen, sodass wir die Parameter um ein Repo vorgelegt
+zu bekommen dafür anpassten.
 
-Jeder erstelle zunächst einen Featurevektor (siehe Discussion/Feature Vector Ideas), sodass wir eine gute 
-Diskussionengrundlage hatten.
+Für die Entscheidung welche Features genutzt werden sollten, erstellte jeder zunächst einen Featurevektor 
+(siehe Discussion/Feature Vector Ideas), sodass wir eine gute Diskussionengrundlage hatten.
 Als erste konventionelle Features kristallisierten sich die textuellen Daten heraus, darunter: Readme,
 Kurzbeschreibung, Ordnernamen, Dateinamen, Autorname. Bei Ordner und Dateien mussten wir wegen des API-Call Limits
 uns auf die oberste Ebene beschränken. In Diskussionen einigten wir uns auch der Verlockung durch festgelegte
@@ -75,10 +83,13 @@ ein schnelles Testen dieser möglich wäre (Austauschbarkeit der Klassifizierer)
 Darüberhinaus soll die Anwendung uns Informationen über die Güte der erfolgten Klassifizierungen
 liefern können.
 
-Konfusionsmatrix
+Dazu nutzen wir unteranderem:
+> Konfusionsmatrix
+
 <img src="/Documentation/Konfusionsmatrix.png" height=350>
 
-Kreisdiagramm
+> Kreisdiagramm
+
 <img src="/Documentation/Kreisdiagramm.png" height=350>
 
 ### Overview
@@ -388,4 +399,5 @@ diese dafür dann aber richtig eingestuft wurden.
 Während eine hohe Ausbeute garantieren täte, dass von denen die wir als eine Klasse eingestuft haben, auch sehr 
 viele als solche erkannt werden, dabei würde aber nicht berücksichtigt wie viele falscherweise als diese Klasse eingestuften
 wurden. Bei einer Suche nach Repos einer bestimmten Klasse könnten also auch viele falsche dabei sein.
-Wenn die Präzision aber für alle Klassen zunimmt würde dass auch die Ausbeute erhöhen.
+Wenn die Präzision aber für alle Klassen zunimmt würde dass auch die Ausbeute erhöhen. 
+Eine Betrachtung des Fscore, wodurch es möglich ist sowohl Präzision als auch Ausbeute in einen Wert zu fassen, mit höherer Gewichtung der Präzision empfinden wir aber als die bessere Wahl, da dadurch die Ausbeute nicht völlig aus der Betrachtung fällt.
