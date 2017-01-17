@@ -4,24 +4,25 @@
 
 ### Our Strategy to get our train data
 
-Uns wurde schon recht bald bewusst, dass wir möglichst viele Datensätze von Repositories brauchen.
-Da zudem das Problem eines Limits an API-Calls besteht, um an diese Daten heranzukommen,
-erstellten wir eine Datenbank um diese Daten erstmal einfach nur ohne Zugangsbeschränkungen zur Verfügung zu haben.
-Daraufhin begannen wir die erhaltenen Daten zu sichten und einzuordnen. 
-Dazu bauten wir uns eine kleine Webseite, die uns die Informationen eines Repositories angezeigt hat
-und mit der wir klassifizieren konnten. So versetzten wir uns in die Lage eines Klassifizieres, um herauszufinden
-welche der nutzbaren Features wirklich wertvoll sein könnten oder welche uns sogar noch fehlten.
-Durch diese Phase erkannten wir wie unterschiedlich allein die interpretativen Ansichten von 4 Personen 
-aufgrund der gegebenen Klassenbeschreibungen sein können. Wir erkannten dass diese ersten Kategorisierungen 
-nicht weiter verwendet werden konnten wegen der hohen Diversität unserer Einschätzungen.
-Daraus ergab sich ein kompletter Neustart der Gewinnung von Trainingsdaten, da die Trainingsdaten den Erfolg eines
-Klassifizierers doch maßgeblich prägen. Wir entschlossen uns aber, möglichst natürliche Klassengrenzen zu ziehen
-und sie nicht so zu setzen, dass eine Klassifzierung möglichst einfach wäre.
-Diesesmal klassifizierten wir immer nur alle gemeinsam, um die Einheitlichkeit der Klassifizierung sicherzustellen.
-Da dies auf Dauer zu zeitaufwendig wurde, wir aber eine möglichst große Menge an Trainingsdaten brauchten, 
-übernahm diese Aufgabe nur noch einer. Fehler waren damit nicht ausgeschlossen, aber widersprüchliche Einteilungen
-ähnlicher Repositiories sollten dadurch relativ selten werden.
-Somit kommen wir nun schlussendlich auf einen Trainingspool von ca. 2000 Repositiories.
+As we approached this problem from a machine learning perspective we knew from the start that our models require a 
+large and diverse collection of manually classified examples.
+GitHub only grants a limited number of Api-calls available in a short amount of time so early on we stored
+all hand-classified repositories with extracted features in a database to access them without restrictions.
+The process of classification was made possible through a website whose aim was to display all necessary information about a repository
+and made the assignment into categories possible.
+In this process we filtered out all information (features) we needed and also possibly lacked to do so confidently.
+Pretty soon we were suprised by how different our perspectives were in regards to which class to asign to many repositores.
+Following this we decided to abolish all samples we classified through weeks and start from the beginning.
+The danger this diversity proposed to our classification-results was unacceptable.
+So we worked out precise definitions of each class and listed vital edge cases.
+The focus hereby laid on understandable definitions, finally sacrificing better evaluation scores of our models since 
+many important distinctions are very hard 'to get' for these models. **MAYBE EMPHASIS THIS MORE?**
+After we learned from our mistakes we started to only classify in groups, later on handing this task over to only two team members
+and finally to only one person as it became too time-consuming.
+Mistakes made by this one person couldn't be prevented but eliminating the possibility of confusing differences in proposed classifications
+was our priority.
+Using this method we finally classified over 2000 repositories by hand in the course of one month. **FIND BETTER TIME-WINDOW**
+
 
 ### First Data Set Impressions
 * Erste Versuche mit ersten Classifiern/Entdecken des Majority Class Problems
@@ -64,55 +65,45 @@ dass bei DOCS oder HW Ordner/Filenamen meist oftmals ähnlich sind.
 
 
 ### Discussions about Class Descriptions
-Die Klassenbeschreibungen fanden wir nicht so eindeutig, sodass wir uns entschieden haben,
-die gegebenen Klassenbeschreibungen an den wunden Punkten in unseren Augen zu korrigieren.
-Dadurch haben wir dann herausgefunden zwischen welchen Klassen einordnungsprobleme bestehen,
-also wie sich jeweils 2 der gegebenen Klassen zueinander abgrenzen.
-Diskussionsergebnisse sind in **Classification Ambiguities.md** zu finden.
+As we didn't consider the class descriptions to be precise we added further explanations and
+also partially changed the preexisting ones.
+To examine our class descriptions and explanation of edge cases see **Classification Ambiguities.md**
+
 
 ## Software Architecture
 
 ### Goals
-* MainlyReusability, make it as easy as possible to try and compare different solutions etc
-Possibily also for other projects
+* The probably highest priority was to make it as easy as possible to try and compare different solutions. 
+We tried a great variety of machine learning models (as seen later in this document) and so we needed fast interchangeability and
+evaluation of models.
+Additionally we wanted to make the manual classification of new repositories and training of our models so efficient 
+that we can build up a great training-corpus quickly.
+One step to achieve this was to integrate Active Learning in the process of selecting new training-samples.
 
-Die Anwendung soll uns Active Learning Unterstützung zur Verfügung stellen, sowie eine Testumgebung
-für die Klassifizierer bereitstellen.
-Weiter soll sie möglichst gut mit verschiedensten Klassifizierern arbeiten können, sodass 
-ein schnelles Testen dieser möglich wäre (Austauschbarkeit der Klassifizierer).
-Darüberhinaus soll die Anwendung uns Informationen über die Güte der erfolgten Klassifizierungen
-liefern können.
-
-Dazu nutzen wir unteranderem:
-> Konfusionsmatrix
-
+For evaluation we predominantly used:
+> Confusion matrix
 <img src="/Documentation/Konfusionsmatrix.png" height=350>
 
-> Kreisdiagramm
-
+> Piechart
 <img src="/Documentation/Kreisdiagramm.png" height=350>
 
 ### Overview
-Grundsätzlich ist unsere Anwendung in einen php-Server mit Datenbank und einen lokalen Phython-Bottle-Server
-aufgeteilt. Der php-Server übernimmt dabei den Teil des Repositories zu Datensätzen Aufbereitens und die 
-Speicherung aller bisher gewonnen Datensätze. 
-Wir wollten von der Graphikaufbereitung möglichst Betriebssystem unabhängig sein, sodass wir uns für 
-eine Darstellung im Browser mittels HTML entschieden. Maschinelles Lernen besitzt eine hohe Komplexität, sodass 
-klar war auf schon vorhandene Bibiotheken angewiesen zu sein. Da ein Teammitglied schon in Python bewandert war, 
-insbesondere in diesem Bereich, viel die Wahl sofort auf Python für unsere Logikschicht.
+The basic components of our Application are divided into a php-server with database and a local python-Bottle-server.
+The php-server manages the storage and acces to all saved repositories and a large part of preprocessing new ones.
+To be independent of operating systems and further complications we decided to present all graphic elements in the browser with HTML.
+As most machine-learning algorithms are too complex to implement them by ourselves without spending an extraordinary effort,
+we relied on pre-existing libraries. The easiest access to such is available with Python so we chose it as our main backend language.
 
-Genaueres zur Installation des Python-Teils der Anwendung: **Installation Manual.md**
+Specific requirements and information about installation: **Installation Manual.md**
 
 ### Python application
-Eine GUI-Beschreibung mit allen Funktionalitäten findet sich in: **Frontend Manual.md**
-
-Dokumentation der Plannung des Frameworks in: **Active Learning Framework Planning Phase.md**
-
+An explanation of our User-Interface with all functionas can be found in **Frontend Manual.md**.
+Design of framework: **Active Learning Framework Planning Phase.md**
 
 
 ### Webserver
-Der Webserver stellt einen Zugang zu allen gesammelten Datensätzen bereit und zusätzlich einige Filter, 
-sowie noch Zählfunktionalitäten. Genaue Funktionsweisen finden sich in der API Dokumentation: **API.md**
+The server provides access to all collected data samples with additional filters and count-functionalities.
+For more detailled information see **API.md**.
 
 ## Data Exploration and Prediction Model
 ### Features
@@ -141,7 +132,7 @@ like presented in [this paper](https://papers.nips.cc/paper/5021-distributed-rep
 A so called __Word2Vec__ model pretrained on Google-News articles which has a vocabulary size of 3 million distinct words is being used herefore.
 Each word-vector is fed into a recurrent neural network (explained later) one after another.
 
-> **Buchstabe für Buchstabe mit LSTM:**
+> **Character by character:**
 But instead of learning such a complex representation for each word we can just directly feed a text character-wise into such a network.
 This method came in handy when trying to classify depending on features like the repository-name.
 In many cases the name was too specific and complex to have ever appeared before and so no vector-representation is available with previous methods.  
@@ -150,10 +141,6 @@ In many cases the name was too specific and complex to have ever appeared before
  When trying to classify repositories that belong to Homework, Documents or Education it's important to know how similar the names of files or folders are.
  Such repositories often contain folders like __Week 1, Week 2, Week 3, ...__. So to hand that information directly to our classifiers 
  we measured the average __Levenshtein distance__  of all files and folders.
-
-> **Document vector:**
-A possible approach similar to word embeddings is often refered to as __Doc2Vec__, presented [in this paper](https://cs.stanford.edu/~quocle/paragraph_vector.pdf).
-While we weren't able to test this approach yet we're excited to see how it will compete against our current methods.
 
 
 #### Summary of used text-features:
@@ -167,10 +154,11 @@ While we weren't able to test this approach yet we're excited to see how it will
 * **Average Levenshtein distance of foldernames**
 
 #### Dismissed features:
-* **Commit messages** were considered to not obtain enough valuable information to sacrifice both the increase in input-dimension for the classifiers 
+* **Commit messages:** We considered them to not obtain enough valuable information to sacrifice both the increase in input-dimension for the classifiers 
 and necessary api-calls.
 * **Commit count**: Weren't used as we didn't measure any correlation with specific classes.
-* **Count of filenames with min. Lev-Distanz**: Could be more informative for classes like __HW__ or __DOCS__ than the average Levenshtein distance and might be implemented in the future. 
+
+
 
 #### Metadata:
 * **hasDownload**: Boolean value if repository can be downloaded directly.
@@ -191,6 +179,11 @@ and necessary api-calls.
 * **ReadmeLength**: Count of characters in readme.
 * **verwendete Sprachen**: Used programming languages (represented as vector with each column representing one language. 0.5 if language is beeing used, 1.0 if it's the repository's main language).
 
+#### Possible features for the future
+* **Count of filenames with min. Lev-Distanz**: Could be more informative for classes like __HW__ or __DOCS__ than the average Levenshtein distance and might be implemented in the future. 
+* **Document vector:**
+A possible approach similar to word embeddings is often refered to as __Doc2Vec__, presented [in this paper](https://cs.stanford.edu/~quocle/paragraph_vector.pdf).
+While we weren't able to test this approach yet we're excited to see how it will compete against our current methods.
 
 
 ### Prediction Model
