@@ -28,15 +28,35 @@ Using this method we finally classified over 2000 repositories by hand in the co
 * Erste Versuche mit ersten Classifiern/Entdecken des Majority Class Problems
 * Erste Überlegungen zu den Features
 
+
 Erste Versuche starteten wir mit neuronalen Netzwerken und Support Vector Maschines (zu finden unter **First Trys**).
-Theoretische Überlegungen waren uns zu diesem Zeitpunkt aber wichtiger. Eine war:
-"Inwiefern beeinflusst das Majority Class Problem unseren Klassifizierer"
-Wir fanden nämlich heraus, dass die Klasse **development** um ein vielfaches häufiger vorkommt als alle anderen Klassen.
-Daraus entstand die Idee erst nur zwischen **DEV** und **nicht DEV** entscheiden zu lassen und danach 
-dann **nicht DEV** in die weiteren Klassen aufzusplitten (s. classification-skizze.png), sodass wir nicht mit einem 
-Majority Class Problem konfrontiert waren.
-Dies verfolgten wir aber nicht weiter, weil wir der Meinung waren, dass sich das Problem über class raids 
-lösen lässt, indem die Gewichtung von **DEV** und **Nicht DEV** Samples unterschiedlich gestaltet wird.
+Theoretische Überlegungen waren uns zu diesem Zeitpunkt aber wichtiger. **Das vlt rauslassen und erst bei classifiers erwähnen?**
+
+After building up our first set of training-data we were confronted with a serious problem:
+We encounterd a so called Majority Class Problem. As GitHub is mainly used for software development projects the class
+**Development (DEV)** appeared way more frequently as any other class, taking up around 80% of all public repositories on GitHub. **Better %?**
+This resulted in our first classifiers assigning *DEV* to almost every repository. **Explanation?**
+Our first approach to this problem was to split up the prediction process into a first step where only the distinction between *DEV* and *NOT Dev* 
+has to been made. If it was classified as *NOT Dev* we'd show the repository to a classifier which only knew how to classify such 
+(see classification-skizze.png for more).
+We dropped this technique later on as we started to weight the importance of each sample during training with respect to the frequency of it's class.
+
+Furthermore we incorporated the use of *Active Learning* in our training process 
+([click here for more information](https://goo.gl/TPWjGo)).
+By this we were able to only present such repositories to us for manual classification which our classifiers were particularly unsure about.
+We used this approach to improve our classifiers more effectively by not hand-classifying redundant repositories.
+This was achieved by maintaining a large pool (~30,000) of unlabeled repositories in our database.
+Two modes were implemented:
+* *Stream based* One random repository from the pool is selected and shown to the classifiers. If a classifier is unsure about the class, 
+the user (like an Orakel) is being questioned.
+* *Pool based* In turns each classifier is shown a subset of these repositories and picks the one it's most uncertain about for further questioning.  
+To measure the uncertainty about a sample, various formulas are provided.
+Our experience with this method was very positive altough it turned out to not solve the issue of training altogether.
+The repositories presented to the user were almost exclusively edge-cases.
+On the one hand that was beneficial but in order for most of our classifiers to work correctly we needed a 
+large amount of samples with clear and easy to interpret features to confirm assumptions about correlation between features.
+We partly tackled this problem by adjusting the parameters which determine when a classification made is assumed to be confident/unsure.
+
 
 Weiterhin entschieden wir uns später noch Active Learning einzusetzen. Dies ermöglichte uns aus unserem Pool 
 an ungelabelten Daten (etwa 30000 Repositories), die Samples herauszusuchen, die besonders interessant für das 
