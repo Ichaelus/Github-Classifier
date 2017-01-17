@@ -136,29 +136,35 @@ The readme turned out to need a lot more (~6000).
 
 > **Word embeddings:** An alternative approach is to not represent a document as a vector accounting for all used words 
 but to represent each word as vector which holds information about the context of it. 
-So we end up with a matrix where each row stands for such word. This embedding is learned through algorithms 
+So we end up with a matrix where each row stands for such a wordrepresenation. This embedding is learned through algorithms 
 like presented in [this paper](https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf).
-A model pretrained on Google-News articles which has a vocabulary size of 3 million distinct words is being used herefore.
-Each word-vector is fed into a recurrent neural network (explained later) after another.
+A so called __Word2Vec__ model pretrained on Google-News articles which has a vocabulary size of 3 million distinct words is being used herefore.
+Each word-vector is fed into a recurrent neural network (explained later) one after another.
+
+> **Buchstabe für Buchstabe mit LSTM:**
+But instead of learning such a complex representation for each word we can just directly feed a text character-wise into such a network.
+This method came in handy when trying to classify depending on features like the repository-name.
+In many cases the name was too specific and complex to have ever appeared before and so no vector-representation is available with previous methods.  
+
+ > **Edit distance:**
+ When trying to classify repositories that belong to Homework or Education it's important to know how similar the names of files or folders are.
+ Such repositories often contain folders like __Week 1, Week 2, Week 3, ...__. So to hand that information directly to our classifiers 
+ we measured the average __Levenshtein distance__  of all files and folders.
+
+> **Document vector:**
+A possible approach similar to word embeddings is often refered to as __Doc2Vec__, presented [in this paper](https://cs.stanford.edu/~quocle/paragraph_vector.pdf).
+While we weren't able to test this approach yet we're excited to see how it will compete against our current methods.
 
 
-> **Buchstabe für Buchstabe mit LSTM**
-Text   
-
- 
-__Noch was zu edit-Abständen__
-
-
-
-#### Genutzte:
-* **verwendete Sprachen**: Vektor mit den genutzen Sprachen des Repos
-* **Reponame**:
-* **Autorname**:
-* **Description**: 
-* **Readme**:
-* **Filenamen**:
-* **Ordnernamen**:
-
+#### Summary of used text-features:
+* **Repository-name**
+* **Author-name**
+* **Description**
+* **Readme**
+* **Filenames**
+* **Foldernames**
+* **Average Levenshtein distance of filenames**
+* **Average Levenshtein distance of foldernames**
 
 #### Rausgefallene:
 * **Commitnachrichten** einzubeziehen hätte für den Featurevektor eine viel höhere Dimension bedeutet
@@ -189,8 +195,8 @@ dafür aufgewendet werden.
 * **commit_interval_max**: größte Zeitspanne zwischen zwei Commits
 * **isFork**: Wahrheitswert ob dieses Repo durch Forken eines anderen hervorging
 * **ReadmeLength**: Anzahl der Zeichen des Readme's
-* **durchschnittliche Levenshtein Distanz Ordnernamen**: 
-* **durchschnittliche Levenshtein Distanz Dateinamen**:
+* **verwendete Sprachen**: Vektor mit den genutzen Sprachen des Repos
+
 
 
 ### Prediction Model
