@@ -85,3 +85,16 @@ Database access: http://67.209.116.156/phpmyadmin/
 Database username: root
 Database password: c99t6%3NSjte7eaub8iw7y1a!
 ```
+
+If you still insist running the Backend locally, follow this guideline:
+
+* Run **A**pache, **M**ySQL and **P**HP on your local machine. Note that the port of this localhost must be set different to 8080
+* Installing PHPMyAdmin as well will make it easier to import database files
+* Make sure Apache's DocumentRoot is set to the /Backend folder of our submission
+* Create a new MySQL user and import the database files located in /Database/SQL dumps/u51019db1.sql
+* Now switch to /Backend/mysqli_class.php and update username, password, server name and database name
+* Go to http://localhost:<port> to see if everything is running
+* The last step is to replace every occurrence of `67.209.116.156` to `localhost:<port>`. This should be limited to the files:
+    * /Application/Models/DatabaseCommunication.py
+    * /Application/Views/scripts/crawler_local.js
+* Restart the application and enjoy :-)
