@@ -4,6 +4,7 @@
 //########################################
 
 console.log("Frontend started..");
+// Initialize state and view objects
 let stateView, inputView, classifierView, outputView, wrapperView, footerView,
 	stateData = {
 		action: "halt",
@@ -84,6 +85,8 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
 
   };
 
+// Kickstarting methods. Load classifiers and startup View
+
 try{
 	runGenerator(function *main(){
 		let initData = yield jQGetPromise("/get/classifiers", "json");
@@ -100,6 +103,7 @@ try{
 }
 
 function setInititalProbability(){
+  // Fill classifier probabilities with according values or zeros
   let cd = inoutData.classifiers;
   for(let c in cd){
     assert(typeof(cd[c].precision) != "undefined", "Object missing");
@@ -111,6 +115,7 @@ function setInititalProbability(){
 }
 
 function getStateQuery(){
+  // Converts the stateData object to a query string to be passed <as it is> to the Python backend
 	let query = "?";
 	var keys = Object.keys(stateData);
 	for(var i = 0; i < keys.length; i++){
@@ -121,7 +126,7 @@ function getStateQuery(){
 }
 
 function initVue(){
-  // Init Vue components (state, input, classifiers, output)
+  // Init Vue components (state, title, input, classifiers, output, wrapper, footer)
   assert(typeof(Vue) != "undefined", "Vue script missing");
   stateView = new Vue({
     el: '#header',

@@ -1,4 +1,8 @@
 <?php
+##################################################
+# The interface between PHP and the MySQL server #
+##################################################
+
 class MYSQL{
 	var $CONN = "";
 	var $USER = "HIDDEN";

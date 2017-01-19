@@ -1,6 +1,13 @@
 <?php
+	################################################
+	# The interface between PHP and the GitHub API #
+	################################################
+
 	class GitHandler{
 		var $tokenList = array(
+				# This list is being used to access the GitHub API
+				# Even though using more than one id:secret pair, the server is limited to 5000 API calls per minute per IP
+				# If more than one backend instance is running, this list will be useful
 				array("786e167cb4599083c50f", "7b5c5422ab50aa15c15f6b32297b1c92a6745855"), // Michi
 				array("4e290575e9eef794e3b3", "cfe75b4a0e3e4bd5c38138d07da1e189e762f39b"), // Andi
 				array("076b012762c504c5ae11", "cb9242a96a092be66eeb241cce6b0b343e320b22"), // Stefan

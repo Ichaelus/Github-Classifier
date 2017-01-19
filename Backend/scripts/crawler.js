@@ -1,4 +1,9 @@
 /*
+
+  #####################################################
+  # A JavaScript script to mine random GitHub samples #
+  #####################################################
+
   Author: Michael Leimstädtner
   JQuery has to be accessible
   */

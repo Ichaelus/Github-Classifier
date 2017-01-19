@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+###########################################################
+# Initialization and startup file for the file based mode #
+###########################################################
+
 import time
 import sys
 from bottle import Bottle

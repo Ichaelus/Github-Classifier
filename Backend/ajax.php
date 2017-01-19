@@ -1,4 +1,9 @@
 <?php
+############################################################
+# A PHP class providing a list of services to the frontend #
+############################################################
+
+
     header("Access-Control-Allow-Origin: *");
     require('mysqli_class.php');
     require("GitHandler.class.php");
@@ -33,17 +38,18 @@
         }
     }
     try{
-        // Handle GET Requests based on the `key` value
+        // Handle GET requests based on the `key` value
         if(isset($_GET['key'])){
             $getkey = $db->check($_GET['key']);
             if($getkey != "")
                 handleGET($getkey);
         }
         if(isset($_POST['key'])){
-            // Handle POST Requests based on the `key` value
+            // Handle POST requests based on the `key` value
             $postkey = post_attr('key');
             if($postkey != "")
                 handlePOST($postkey);
+            // Handle POST requests based on the `key` value
         }
         report(false, "This is not a valid API call."); // this report() call will only be shown if no previous report() was made.
     }catch(Exception $e){
@@ -54,6 +60,7 @@
     ob_end_flush();
 
     function handleGET($getkey){
+        // Handle GET requests based on the `key` value
         global $apihandler, $db;
         $table = get_attr("table") != "" ? get_attr("table") : "train";
         $selector = getSelector();
@@ -87,6 +94,7 @@
                 reportIf($data !== false, $data, "Database error.");
                 break;
             case "api:calls":
+                // Returns the approx. SUM of API calls used during the last hour
                 $sql = 
                 "SELECT SUM(ac) AS calls FROM (
                     SELECT SUM(api_calls) as ac FROM `unlabeled` WHERE timestamp > DATE_SUB(NOW(), INTERVAL 1 HOUR)
@@ -268,6 +276,7 @@
     }
 
     function handlePOST($postkey){
+        // Handle POST requests based on the `key` value
         global $apihandler, $db;
         $table = post_attr("table") != "" ? post_attr("table") : "train";
         switch ($postkey) {
@@ -329,14 +338,17 @@
     }
 
     function isValidTable($t){
+        # Checks if a table is among the list of tables present on the databse
         return in_array($t, array("train", "test", "unlabeled", "to_classify", "semi_supervised", "_old_train")) == true;
     }
 
     function isValidLabel($l){
+        # Checks if the label is among the predefined labels. To be set dynamically on a more general approach
         return in_array($l, array("DEV", "HW", "EDU", "DOCS", "WEB", "DATA", "OTHER", "UNSURE", "UNLABELED")) == true;
     }
 
     function isValidApiUrl($url){
+        # Checks if an API url matches the criteria of GitHub API urls
         return !(strpos($url, "https://api.github.com/repos/") === false);
     }
 
@@ -390,6 +402,7 @@
     }
 
     function getLimitation(){
+        # If a query <limit> is set, return <limit> amount of random samples
         $limit = get_attr("limit");
         if($limit != "")
             return " ORDER BY RAND() LIMIT 0, $limit";
@@ -397,6 +410,7 @@
     }
 
     function getSelector(){
+        # If the query <selector> is set, return it. If not, use the all selector (*)
         $selector = get_attr("selector");
         if($selector == "")
             return " * ";
@@ -594,6 +608,7 @@
     }
 
     function getReadme($repo){
+        # Returns the readme of a given repo
         global $apihandler;
         $readme_data = $apihandler -> getJSON($repo["url"] . "/readme?" . $apihandler->getAPItoken(), false);
         if(isset($readme_data["content"]) && isset($readme_data["encoding"]))
@@ -602,6 +617,7 @@
     }
 
     function isEmptyRepo($repo){
+        # Checks if a repository is emtpy
         if(isset($repo["documentation_url"]) && isset($repo["message"]))
             if($repo["message"] == "Moved Permanently" || $repo["message"] == "Git Repository is empty." || $repo["message"] == "Not Found")
                 return true;

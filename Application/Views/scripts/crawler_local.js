@@ -1,4 +1,8 @@
+
 /*
+  ##########################################
+  # JS script to classify samples manually #
+  ##########################################
   Author: Michael Leimstädtner
   JQuery has to be accessible
   */
