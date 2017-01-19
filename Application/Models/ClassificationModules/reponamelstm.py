@@ -57,7 +57,6 @@ class reponamelstm(ClassificationModule):
         train_lables = []
         for sample in samples:
             formatted_sample = self.formatInputData(sample)[0].tolist()
-            print formatted_sample
             train_samples.append(formatted_sample)
             train_lables.append(oneHot(getLabelIndex(sample)))
         train_lables = np.asarray(train_lables)

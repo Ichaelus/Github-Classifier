@@ -71,12 +71,9 @@ classifiers['gbrtfilesandfolders'] = gbrtfilesandfolders(filenameCorpus, foldern
 classifiers['gbrtmetaonly'] = gbrtmetaonly()
 classifiers['gbrtdescriptionmeta'] = gbrtdescriptionmeta(descriptionCorpus)
 classifiers['svmreadmemeta'] = svmreadmemeta(readmeCorpus)
-#classifiers['reponamelstm'] = reponamelstm()
+classifiers['reponamelstm'] = reponamelstm()
 
-
-
-
-#classifiers['readmelstm'] = readmelstm()
+classifiers['readmelstm'] = readmelstm()
 
 
 for classifier in classifiers:
@@ -104,7 +101,7 @@ for classifier in classifiers:
         
 
 classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest']])
-classifiers['averageensemble'] = averageensemble([classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['nnall'], classifiers['allrandomforest']])
+classifiers['averageensemble'] = averageensemble([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest']])
 
 # Finally load all meta-models such as lrstacking
 
