@@ -71,7 +71,7 @@ classifiers['gbrtfilesandfolders'] = gbrtfilesandfolders(filenameCorpus, foldern
 classifiers['gbrtmetaonly'] = gbrtmetaonly()
 classifiers['gbrtdescriptionmeta'] = gbrtdescriptionmeta(descriptionCorpus)
 classifiers['svmreadmemeta'] = svmreadmemeta(readmeCorpus)
-#classifiers['reponamelstm'] = reponamelstm()
+classifiers['reponamelstm'] = reponamelstm()
 
 
 
