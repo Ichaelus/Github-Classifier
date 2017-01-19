@@ -55,33 +55,20 @@ Our experience with this method was very positive altough it turned out to not s
 The repositories presented to the user were almost exclusively edge-cases.
 On the one hand that was beneficial but in order for most of our classifiers to work correctly we needed a 
 large amount of samples with clear and easy to interpret features to confirm assumptions about correlation between features.
-We partly tackled this problem by adjusting the parameters which determine when a classification made is assumed to be confident/unsure.
+We partly tackled this problem by adjusting the parameters which determine when a classification is assumed to be confident/unsure.
 
 
-Weiterhin entschieden wir uns später noch Active Learning einzusetzen. Dies ermöglichte uns aus unserem Pool 
-an ungelabelten Daten (etwa 30000 Repositories), die Samples herauszusuchen, die besonders interessant für das 
-Trainieren wären. Dafür entschieden wir uns auf 2 Modi zu setzen. Einmal wird aus dem Pool ein zufälliges
-Repository entnommen, falls die Klassifizierer sich unsicher mit der Einschätzung dieses sind, wird der
-Benutzer befragt.
-Im anderen Modus darf sich reihum ein Klassifizierer ein Sample aus dem Pool herauspicken, bei dem er sich
-nach einer Formel (mehrere zur Auswahl) am Unsichersten ist, und erhält auch wieder vom Benutzer eine Einordnung
- des Samples in die Klassen.
-Durch Active Learning ordnet man aber nach unserer Empfindung hauptsächlich Repos eine Klasse zu, die zwischen 
-den Klassen stehen. Ein gutes Trainingsset stellten wir fest, braucht aber auch eine große Anzahl an Repos, 
-die sich fast 100-prozentig der jeweiligen Klasse zuordnen lassen, sodass wir die Parameter um ein Repo vorgelegt
-zu bekommen dafür anpassten.
-
-Für die Entscheidung welche Features genutzt werden sollten, erstellte jeder zunächst einen Featurevektor 
-(siehe Discussion/Feature Vector Ideas), sodass wir eine gute Diskussionengrundlage hatten.
-Als erste konventionelle Features kristallisierten sich die textuellen Daten heraus, darunter: Readme,
-Kurzbeschreibung, Ordnernamen, Dateinamen, Autorname. Bei Ordner und Dateien mussten wir wegen des API-Call Limits
-uns auf die oberste Ebene beschränken. In Diskussionen einigten wir uns auch der Verlockung durch festgelegte
-Schlüsselwörter zu widerstehen, Mustererkennung sollte dem Klassifizierer überlassen bleiben.
-Neben den sprachabhängigen Features fanden wir auch Features der Projektstruktur: Hauptprogrammiersprache, 
-vorkommende Programmiersprachen, Ordnertiefe, Anzahl Commits, durchschnittliche Commitlänge, Anzahl Branches, 
-hat Downloads, Ordneranzahl, Dateianzahl und weitere. Später kam noch die durchschnittliche Levenshtein Distanz
-sowohl zwischen Ordner als auch Files dazu, weil uns auffiel, dass wir bis jetzt noch nicht berücksichtigt hatten, 
-dass bei DOCS oder HW Ordner/Filenamen meist oftmals ähnlich sind.
+To create the optimal feature vector every team member compiled a list of possible features (see Discussion/Feature Vector Ideas).
+We then discussed every proposal and added further ones.
+It's notable that the features considered most important by us at first where almost exclusively text based.
+Readme, description, foldernames, filenames, authorname and more. Unfortunatley we had to limit the access of our models to 
+the folder and filenames of only the first layer in a repository's folder-structure. This was due to the previously mention API-Call limit.
+"In Diskussionen einigten wir uns auch der Verlockung durch festgelegte
+Schlüsselwörter zu widerstehen, Mustererkennung sollte dem Klassifizierer überlassen bleiben." # Soll das hier rein?
+In these discussion we discovered many features we first neglected: used programming languages (with a possible emphasis on the main language),
+depth of the folder-structure, commit count, average commit-length, branch count, whether a download of the repository is allowed, folder-count,
+number of files and more. Later we additionally implemented the average Levenshtein distance between folder and filenames. This was done
+due to a lack of any feature that can give us valuable information despite the fact that many DOCS or HW folder-/filenames are often similar.
 
 
 ### Discussions about Class Descriptions
@@ -143,7 +130,8 @@ Having this problem in mind we also used a trick to reduce the necessary dimensi
 but the word stem ('library' and 'libraries' are bot represented by '__librari__').
 The resulting number of necessary words/tokens turned out to differ from the text we encoded. 
 We use smaller numbers (~2000) **UPDATE THOSE NUMBERS** for repository-descriptions and even less (~200) for folder-/filenames.
-The readme turned out to need a lot more (~6000).  
+The readme turned out to need a lot more (~6000).
+This all was implemented using the *Tfidf-Vectorizer* from the sklearn-package.
 
 > **Word embeddings:** An alternative approach is to not represent a document as a vector accounting for all used words 
 but to represent each word as vector which holds information about the context of it. 
@@ -207,7 +195,18 @@ While we weren't able to test this approach yet we're excited to see how it will
 
 
 ### Prediction Model
-* hier kommen unsere Überlegungen zu den Classifiern rein
+
+#### Neural networks
+##### Feed-forward
+Text
+##### LSTM
+Text
+
+#### SVM
+Test
+
+#### ...
+
 
 ### Example Repositories
 "Please document three repositories where you assume that your 
@@ -411,11 +410,9 @@ a higher yield or a higher precision is more important for automated repository 
     </tbody>
 </table>
 
-Wir finden, dass eine höhere Genauigkeit wichtiger ist als eine hohe Ausbeute, da es für jemanden, der mittels des
-Klassifizierers nach Repos einer bestimmten Klasse sucht, von Vorteil ist, wenn er lieber wenige Treffer landet,
-diese dafür dann aber richtig eingestuft wurden. 
-Während eine hohe Ausbeute garantieren täte, dass von denen die wir als eine Klasse eingestuft haben, auch sehr 
-viele als solche erkannt werden, dabei würde aber nicht berücksichtigt wie viele falscherweise als diese Klasse eingestuften
-wurden. Bei einer Suche nach Repos einer bestimmten Klasse könnten also auch viele falsche dabei sein.
-Wenn die Präzision aber für alle Klassen zunimmt würde dass auch die Ausbeute erhöhen. 
-Eine Betrachtung des Fscore, wodurch es möglich ist sowohl Präzision als auch Ausbeute in einen Wert zu fassen, mit höherer Gewichtung der Präzision empfinden wir aber als die bessere Wahl, da dadurch die Ausbeute nicht völlig aus der Betrachtung fällt.
+We consider a higher precision to be more relevant than a high recall per class. When thinking about a user, looking for repositories of a specific
+class on GitHub, it appears way more desirable if the repositories proposed by us are actually of the right class.
+Making sure every *DEV*-repository is presented to the user, potentially including wrongly as *DEV* labeled repositores didn't seem like the right approach.
+As the precision per class goes up during training, the recall will do so automatically as well.
+Emphasising precision while not neglecting recall completely we agreed upon Fscore as our metric.
+With it it's possible to combine both values into one while being able to favor one over another.
