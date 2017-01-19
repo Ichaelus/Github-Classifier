@@ -15,7 +15,7 @@ The backend host can be switched if every occurrence of the IP written above is 
 
 ### ?key=api:all
 
-Returns all rows of the table `table`. (Attributes: `table`, `limit`(opt.), `filter` (opt.), `selector` (opt.))
+Returns all rows of the table `table`. (Attributes: `table`, `limit` (opt.), `filter` (opt.), `selector` (opt.))
 
 ### ?key=api:train
 
@@ -48,7 +48,7 @@ Returns the amount of rows affected by `table` and `filter`. (Attributes: `table
 
 ### ?key=api:class-count
 
-Combination of the two above. Returns the a class-based row count. (Attributes: `table`, `filter`)
+Combination of the two above. Returns a class-based row count. (Attributes: `table`, `filter`)
 
 ### ?key=api:tagger-class-count
 
@@ -65,14 +65,14 @@ The attribute `api-url` must be passed as an identifier. (Attributes: `from_tabl
 
 Generates and returns the API-url of a **random** GitHub repository.
 
-Attributes `client_id` and `client_secret` can (but mustn't) be passed in order ot be used by the server. If they aren't, hardcoded credentials will be used with their limitation of 5000 API calls per minute.
+Attributes `client_id` and `client_secret` can (but mustn't) be passed in order to be used by the server. If they aren't, hardcoded credentials will be used with their limitation of 5000 API calls per minute.
 
 ### ?key=api:generate_sample
 
 This service depends on the parameter `api_url`. Feature extraction and accordingly data dumping to the database is being made for the given repository. The unlabeled row is being saved and returned to the client.
 If the parameter `api-url` is empty, a random sample is being generated. The attribute `class` (opt.) leads to an instant classification of the sample, if empty the class `UNLABELED` is being used.
 
-Attributes `client_id` and `client_secret` can (but mustn't) be passed in order ot be used by the server.
+Attributes `client_id` and `client_secret` can (but mustn't) be passed in order to be used by the server.
 
 
 ## Attributes
@@ -103,7 +103,7 @@ SQL equivalent: `SELECT class, api_url FROM ...`
 
 The parameter `limit` defines the maximum amount of result data samples, which are being chosen randomly.
 
-The attribute `filter` can be set to (if supported by the service) a **base 64 encoded** array structured like `[attr1=val1,..]`. Operators available are `=`, `<`, `<=`, `>` and `>=`. Pairs of attribute specific filters can be separated either with `,`, which results in an **AND** conjunction or with `|` which forms an **OR** disjunction. (In our case, OR binds stronger(!) than AND).
+The attribute `filter` can be set to (if supported by the service) a **base 64 encoded** array structured like `[attr1=val1,..]`. Operators available are `=`, `<`, `<=`, `>` and `>=`. Pairs of attribute specific filters can be separated either with `,`, which results in an **AND** conjunction or with `|` which forms an **OR** disjunction. (In our case, OR binds stronger (!) than AND).
 
 **Example**
 ```javascript 

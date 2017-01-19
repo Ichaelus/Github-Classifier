@@ -155,8 +155,9 @@ filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=0,OffY=1,Color=#ccfffff
     color: #575454;
     font-size: 16px;
 }
-#readme img{
+#readme img, #md img{
 	max-width: 100%;
+  height: auto;
 }
 #readme_header{
 	display: block;

@@ -12,7 +12,7 @@
 
 This guide can be followed to get the frontend running on your local system. If you don't want to install one of the listed dependencies or want to emulate a preconfigured client image, please refer to the section `VirtualBox`. Even though running the client in an emulation should only be considered in exceptional cases.
 
-Please make sure that the working / installation **directory** of Python and the g++ compiler do **not contain special characters** such as german umlauts.
+Please make sure that the working / installation **directory** of Python and the g++ compiler do **not contain special characters** such as German umlauts.
 Keep in mind that installations with pip require **super user rights**.
 
 ## Modules
@@ -42,16 +42,16 @@ _Installed with the command `pip install xxx`_
 
 ## When everything is said and done
 
-Now that every library and dependency is installed, you can open the **command shell** in the folder `Application`. Type `python start.py` and wait until the GUI is being opened in a new Tab in Firefox (this may take a couple of minutes). Meanwhile, you can learn how to interact with the GUI in the separate documentation file `Frontend Manual.md`. Note that you can read the docfiles in the User Interface as well.
+Now that every library and dependency is installed, you can open the **command shell** as a superuser in the folder `Application`. Type `python start.py` and wait until the GUI is being opened in a new Tab in Firefox (this will take a couple of minutes). Meanwhile, you can learn how to interact with the GUI in the separate documentation file `Frontend Manual.md`. Note that you can read the docfiles in the User Interface as well.
 
-If you want to test a file  of repository links without a GUI (e.g. the Appendix B file) switch into the folder `Application` and place your input file. It must consist of a line seperated list of GitHub repository URLs. Open the command shell and type `python testLinkFile.py <yourfile>` and wait until the script has finished. The results will be saved at `classification_result.txt` in the same directory. 
+If you want to test a file  of repository links without a GUI (e.g. the Appendix B file) switch into the folder `Application` and place your input file. It must consist of a line separated list of GitHub repository URLs. Open the command shell and type `python testLinkFile.py <yourfile>` and wait until the script has finished. The results will be saved at `classification_result.txt` in the same directory. 
 
 _Note: If there are still packages missing that do not show up in the list, please install them via pip._
 
 
 ## VirtualBox
 
-Instead of installing everything from above, you can also use the VM image. A virtualisation software such as Oracle VirtualBox is needed in this case as well as a unzipping tool such as 7zip. Please be sure to reservate enough RAM for the emulation.
+Instead of installing everything from above, you can also use the VM image. A virtualisation software such as Oracle VirtualBox is needed in this case as well as a unzipping tool such as 7zip. Please be sure to reserve enough RAM for the emulation.
 
  > [Download VM](https://drive.google.com/open?id=0B3nBoE608aQyT0F2bWh1SDdXSTQ)
 
@@ -67,7 +67,7 @@ Username: InformatiCupClient
 Password: InformatiCupClient1
 ```
 
-Once Ubuntu has booted, change to the folder `~/GithubClassificator/Application` and replace it with the folder `Application` of our submission. Open the folder and run `sudo python start.py` inside the terminal.
+Once Ubuntu has booted, change to the folder `~/GithubClassificator/Application` and replace it with the folder `Application` of our submission. Open the folder and run `python start.py` inside the terminal as root.
 
 ## And what about the Backend?
 
