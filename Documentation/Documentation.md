@@ -196,16 +196,62 @@ While we weren't able to test this approach yet we're excited to see how it will
 
 ### Prediction Model
 
-#### Neural networks
-##### Feed-forward
-Text
-##### LSTM
-Text
+#### Used models
+> **Neural Networks** are without any doubt the most hyped up machine learning models since many years. 
+Mastering many difficult challenges [like finding the right category out of thousands for images](http://image-net.org/) at human like performance.
+So we tried the most popular architectures to make use of this immense capability.
+The first architecture we tried was a standard **feedforward** network.
+Depending on the complexity of the feature-space we mostly used 2 or less layers, also trying 3 layers for frequency based feature-spaces.
+When using more layers we quickly saw an immense loss in *generalization* and the network *overfitted* on the training data 
+(meaning that it only memorized repositories and their right class instead of actually learning how to interpret the given features).
+As activation function we favored the newer [*ReLU* or *Noisy ReLU*](https://en.wikipedia.org/wiki/Rectifier_(neural_networks)) over the previously used *tanh* and *sigmoid* functions [for various reasons](https://stats.stackexchange.com/questions/126238/what-are-the-advantages-of-relu-over-sigmoid-function-in-deep-neural-network).
+As our *optimizer* we chose [*ADAM*](http://sebastianruder.com/optimizing-gradient-descent/index.html#adam) for this network-type.
+Having these things in mind our networks performed pretty well, always being among the best classifiers.
+The above mentioned **LSTM** networks came in handy when classifying based on a sequence of inputs (like characters or word-embeddings).
+By feeding their last activation to themselves, these neurons "remember" their previous inputs (like the last characters forming a sentence).
+A helpful explanation can be found [here](https://colah.github.io/posts/2015-08-Understanding-LSTMs/).
+For reasons like improving training time *Stochastic gradient descent* was used for training here.    
+For the last layer of all networks consisted of a fully connected layer with an applied *softmax* function to output actual predictions.
+To implement them we used the popular [Keras library](https://keras.io/) running on top of [Theano](https://github.com/Theano/Theano).
 
-#### SVM
+> **SVMs (Support Vector Machines)** were an obvious choice, having proven to be a robust method for both regression and classification problems.
+After only a few tries we quickly decided to use the popular non-linear [*RBF-kernel*](https://en.wikipedia.org/wiki/Radial_basis_function_kernel) 
+over the linear version. Using that we had to find the best combination of the [C and gamma](http://scikit-learn.org/stable/auto_examples/svm/plot_rbf_parameters.html) values.
+We used them for all kinds of features, each time they've proven to be a serious competitor to our *neural networks*.
+The used library was [Scikit-learn](http://scikit-learn.org/stable/).
+
+> We considered **Naive Bayes** classifiers to be very promising for text classification as they are in many cases.
+But even after trying out many [*event models*](https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Parameter_estimation_and_event_models) the results were rarely satisfying.
+After trying different combinations of lengths of the Frequency based features we omitted their further use.
+Same for our [Nearest Neighbors classifiers](http://scikit-learn.org/stable/modules/neighbors.html), even though we also tried non-text features with them.
+Both are contained in the [Scikit-learn library](http://scikit-learn.org/stable/).
+
+> **Ensemble methods** combine the capabilities of various classifiers to make an even more powerful prediciton.
+The methods we used were incredibly powerful like the **Random Forests** or **Gradient Tree Boosting**. **AdaBoost** turned out to 
+depend strongly on the used base-classifiers but after some tries our other methods outperformed them most of the time so we ommited further use.
+All these were already implemented in the Scikit-learn library. Parameter tuning mostly depended on adjusting the number of base-classifiers.
+They were not only often times the most robust classifiers but also outperformed *neural nets* or *SVMs* in many cases.
+After reading [articles like this](http://mlwave.com/kaggle-ensembling-guide/) we began creating our final classifier used for the competition.
+**Stacking** is a general term for combining only the predictions of other learning algorithms also often referred to as **Stacked Generalization**.
+Among the great variety of methods we selected, implemented and finally compared two **Oder eben 3 mit Meta-features** different methods:
+One was to simply let the classifiers vote democratically by simply taking the **average** probability per class.
+This made our classification way more robust and delivered an incredibly satisfying result.
+The second method is the probably most famous one: We trained a **linear classifier** to let the classifiers vote on the class 
+but not without assigning a weight to the predictions of each classifier. This way we wanted to enable the classifiers to mainly decide on the classes
+they were best at. This was implemented using sklearn's **Linear Regression** class.
+**Hier jetzt vlt ein Absatz, dass des unser finaler Classifier ist und der voll rockt**
+
+
+**Evtl. regularization**
+
+
+##### SVM
 Test
 
-#### ...
+##### ...
+
+
+#### Comparation
 
 
 ### Example Repositories
