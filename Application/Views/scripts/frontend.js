@@ -129,10 +129,12 @@ function initVue(){
   // Init Vue components (state, title, input, classifiers, output, wrapper, footer)
   assert(typeof(Vue) != "undefined", "Vue script missing");
   stateView = new Vue({
+    // Methods regarding the heading / controlling section
     el: '#header',
     data: stateData,
     methods:{
     	getFormulas: function(){
+        // Refreshes list of available formulas
     		$.get("/get/formulas", function(data){
     			data = JSON.parse(data);
     			if(data === false)
@@ -143,10 +145,12 @@ function initVue(){
     		});
     	},
     	setFormula: function(f){
+        // Choses formula <f> to be selected
     		assert(isNotEmpty(f) && stateData.formulas.indexOf(f) >= 0, "Formula should not be empty");
     		Vue.set(stateData, "formula", f);
     	},
       switchMode: function(){
+        // Reacts on a basic mode change
         stateView.resetView();
         Vue.set(inoutData, "isPrediction", stateData.mode == 'test');
         outputView.switchMode(stateData.mode);
@@ -155,6 +159,7 @@ function initVue(){
           wrapperView.getDistributionArray();
       },
 		  singleStep: function(){
+        // Proceeds a single step (play button) action.
   			Vue.set(stateData, "action", "singleStep");
   			console.log("Proceeding single step");
         stateView.resetView();
@@ -166,10 +171,12 @@ function initVue(){
         });
   		},
   		halt: function(){
+        // Prevents the AL loop from continuing
   			Vue.set(stateData, "action", "halt");
   			console.log("Halting");
   		},
   		loop: function(){
+        // Performs single AL steps until halted
   			Vue.set(stateData, "action", "loop");
   			console.log("Looping");
         stateView.resetView();
@@ -225,6 +232,7 @@ function initVue(){
         }
       },
       predictSingle: function(repoLink){
+        // Predict a single sample identified by <repoLink>
         if(repoLink == "")
           repoLink = prompt("Please insert the link to a repository you wish to classify.");
         if(repoLink){
@@ -244,9 +252,11 @@ function initVue(){
         }
       },
       showListPrediction: function(){
+        // Fades in the List prediction wrapper
         showWrapper("#predictionList_wrapper");
       },
       startTest: function(){
+        // Tests each classifier on the predefined <testset>. This will take a while
         Vue.set(inoutData, "state", "Testing..");
         notify("Testing", "Every module is being tested on the selected test set. This may take a while.", 3000);
         runGenerator(function *main(){
@@ -268,6 +278,7 @@ function initVue(){
         Vue.set(inoutData, "classifiersUnsure", false);
       },
       retrainAll: function(){
+        // Retrains <ands saves> <every|untrained> classification modules.
         let all = !confirm("Would you like to retrain only untrained classifiers?");
         let save = confirm("Would you like to save the retrained classifiers to the disk?");
         notify("Retrain all classifers", "Retraining many classifiers. This may take a couple of minutes; you may keep an eye on the console output.");
@@ -276,11 +287,13 @@ function initVue(){
             wrapperView.retrain(c, save);
       },
       saveAll: function(){
+        // Saves every classification module
         notify("Saving all classifiers", "Every classifier is being saved to disk.");
         for(let c in inoutData.classifiers)
           wrapperView.save(c);
       },
       getStats: function(callback){
+        // Updates statistics for the <selectedTable> and runs <callback> on success
         runGenerator(function *main(){
           numStats = yield jQGetPromise("/get/stats?table="+wrapperData.selectedTable+"&string_attrs=false", "json");
           strStats = yield jQGetPromise("/get/stats?table="+wrapperData.selectedTable+"&string_attrs=true", "json");
@@ -290,16 +303,18 @@ function initVue(){
         });
       },
       showStats: function(){
-        // Fetch sample, display
+        // Displays the statistics wrapper when loaded
         stateView.getStats(function(){
           showWrapper('#stats_wrapper');
         });
       },
       showDocumentationWrapper: function(){
+        // Fades in the documentation wrapper
         wrapperView.changeDocumentation("Documentation.md");
         showWrapper('#docs_wrapper');
       },
       changeExtendedSet: function(){
+        // updates the sample distribution array depending on <useExtendedTestSet>
         Vue.set(wrapperData, "distribution","Test");
         wrapperView.getDistributionArray();
       }
@@ -308,10 +323,12 @@ function initVue(){
   stateView.getFormulas();
 
   titleView = new Vue({
+    // A controller for methods regarding actions in the title section
     el: '#titles',
     data: stateData,
     methods: {
       getQuote: function(){
+        // Returns the quote displayed on top of the page depending on the <mode>
         switch(stateData.mode){
           case "pool":
             return "<strong>Pool Based Active Learning</strong> selects the sample with the highest uncertainty out of a pool of unlabeled data as input. The uncertainty is being calculated (in turns) by a single classifier, marked in blue. There are currently <strong>"+stateData.poolSize+"</strong> samples in this pool.";
@@ -329,6 +346,7 @@ function initVue(){
         }
       },
       getPoolsize: function(){
+        // Fetches the amount of samples located in the table <unlabeled>
         $.get("/get/poolSize", function(data){
           if(isNaN(data))
             throw new Error("Invalid server response");
@@ -336,6 +354,7 @@ function initVue(){
         });
       },
       checkAPICalls: function(){
+        // Checks if the burned API calls reach a certain cap (4000). If yes, warn the user
         $.get("/get/getAPICalls", function(data){
           let calls = parseInt(data["calls"]);
           if(!isNaN(calls) && calls > 4000)
@@ -351,35 +370,42 @@ function initVue(){
   setInterval(titleView.checkAPICalls, 120000);
 
   inputView = new Vue({
+    // Methods and values regarding the input section
     el: '#input',
     data: inoutData,
     methods:{
       getClassifierAmount: function(){
+        // Returns the amount of classifiers
         return Object.keys(inoutData.classifiers).length;
       }
     },
     computed:{
       shortDesc: function(){
+        // Returns the short description of the input repo, limited to 200 signs
         return add3Dots(inoutData.repo.description, 200);
       },
       mode: function(){
+        // Returns the <mode>
         return stateData.mode;
       }
     }
   });/* inputView */
 
   classifierView = new Vue({
+    // Methods regarding the classifier section
     el: '#classifier_wrapper',
     data: inoutData,
     methods:{
       showInfo: function(name){
+        // Display the information wrapper for the classifier <name>
         wrapperView.setData(name);
         wrapperView.getSavePoints();
         //RadarChart("#class_accuarcy_chart", [precisionToGraphData(wrapperData.current.precision)], getRadarConfig(700));
         showWrapper('#details_wrapper');
       },
       switchState: function(name){
-        let c= inoutData.classifiers[name];
+        // Enables or disables classifier <name>
+        let c = inoutData.classifiers[name];
         c.active = !c.active;
         if(!c.active){
           $.get("/get/mute?name="+name, function(data){
@@ -394,6 +420,7 @@ function initVue(){
         }
       },
       getMax: function(id){
+        // Returns the maximum value for a class <either precision or probability>
         let max = 0;
         array = stateData.mode == "test" ? "precision" : "probability";
         if(typeof(inoutData.classifiers[id][array]) != "undefined")
@@ -402,18 +429,23 @@ function initVue(){
         return max;
       },
       isAsking: function(name){
+        // Checks if the classifier <name> should be marked blue
         return stateData.mode == "pool" && inoutData.classifierAsking == name;
       },
       changeMeasure: function(measure){
+        // Sets the <measure> to be selected
         Vue.set(inoutData, "selectedMeasure", measure);
       },
       getMeasureName: function(){
+        // Returns the name of the selected measure
         return inoutData.selectedMeasure == "Preordered" ? "Fscore M" : inoutData.selectedMeasure;
       },
       getMeasure: function(c){
+        // Returns the value of the current measure for classifier <c>
         return Math.round(c.confusionMatrix.measures[this.getMeasureName()] * 100);
       },
       getMeasureDescription: function(measure){
+        // Returns a description for <measure>
         let descriptions = {"Preordered": "Internal order not sorted by any measure",
                             "Precision mu": "Agreement of the data class labels with those of a classifiers if calculated from sums of per-sample decisions",
                             "Fscore mu": "Relations between data’s positive labels and those given by a classifier based on sums of per-sample decisions (β = 0.5)",
@@ -430,8 +462,9 @@ function initVue(){
     },
     computed:{
       orderedClassifiers: function(){
+        // Returns an ordered list of classifiers [dict -> array]
         let ordered = inoutData.classifiers;
-        // This is actualy not a copy but a referency, though no hurt is being done but adding stuff.
+        // This is actualy not a copy but a reference, though no hurt is being done by adding stuff.
         for(let c in inoutData.classifiers)
           ordered[c].name = c;
         if(inoutData.selectedMeasure == "Preordered")
@@ -443,6 +476,7 @@ function initVue(){
           }, "desc");
         },
       measures: function(){
+        // Returns a list of measures available
         let _measures = ["Preordered"];
         _measures = _measures.concat(['Precision M','Recall M','Fscore M','Average Accuracy','Error Rate','Precision mu','Recall mu','Fscore mu']); // Hardcoded but with proper order
         /*if(Object.keys(inoutData.classifiers).length > 0)
@@ -450,6 +484,7 @@ function initVue(){
         return _measures;
       },
       mode: function(){
+        // Returns the current <mode>
         return stateData.mode;
       }
     }
@@ -457,6 +492,7 @@ function initVue(){
   classifierView.changeMeasure(classifierView.measures[0]);
 
   outputView = new Vue({
+    // Methods used in the output section
     el: '#output',
     data: inoutData,
     methods:{
@@ -471,10 +507,9 @@ function initVue(){
             RadarChart("#testOuputChart", data, getRadarConfig(350));
         }*/
       },
-      getClassifierAmount: function(type){
-        return Object.keys(inoutData.classifiers).length;
-      },
+      getClassifierAmount: function(){return inputView.getClassifierAmount();},
       manualClassification: function(){
+        // Opens a new window in order to let the user classify a sample manually
         if(inoutData.manualClass == '?')
           (function(window, undefined){
               var win = window.open("/user_classification.html?popup=true&api_url="+inoutData.repo.repoAPILink, '_blank');
@@ -482,6 +517,7 @@ function initVue(){
           })(window);
       },
       mapDistribution: function(data){
+        // Maps each classifier to its best predicted class
         let maxProbs = _.values(_.mapValues(inoutData.classifiers,function(c){
           // Returns only the maximum key value pair
           return getClassifierMaximumClass(c[data]);
@@ -498,6 +534,7 @@ function initVue(){
         return _.orderBy(output, "count", "desc");
       },
       getOutputClass: function(){
+        // Returns the actual output predicted class
        return getClassifierMaximumClass(classifierView.orderedClassifiers[0].probability);
       },
       getMeasureDescription: function(m){ return classifierView.getMeasureDescription(m);}
@@ -523,21 +560,20 @@ function initVue(){
       }
     }
   });/* outputView */
-
-  function getClassifierMaximumClass(c){
-    return _.values(_.pick(_.maxBy(c, "val"), "class"))[0];
-  }
   outputView.switchMode(stateView.mode);
 
   wrapperView = new Vue({
+    // Methods used and triggered in one of the wrapper views
     el: '#wrappers',
     data: wrapperData,
     methods:{
-      setData: function(i){
-        Vue.set(wrapperData, "current", inoutData.classifiers[i]);
-        Vue.set(wrapperData, "currentName", i);
+      setData: function(classifierName){
+        // Sets <classifierName> to be currently selected
+        Vue.set(wrapperData, "current", inoutData.classifiers[classifierName]);
+        Vue.set(wrapperData, "currentName", classifierName);
       },
       getSavePoints: function(){
+        // Refreshes the list of savepoints for the currently selected classifier and displays its performace graph
         $.get("/get/savePoints?name="+wrapperData.currentName, function(resp){
           if(resp != ""){
             resp = JSON.parse(resp);
@@ -559,9 +595,11 @@ function initVue(){
         });
       },
       setSavePoint: function(fileName){
+        // Confirm and remember savePoint selection by the user
         Vue.set(wrapperData, "selectedPoint", fileName);
       },
       retrain: function(name, save){
+        // Retrain classifier <name> and <save> it optionally.
         console.log("Wrapper: "+name+" retraining.");
         Vue.set(wrapperData, "retrainstate", "Retraining..");
         notify("Retraining", "The classifier: "+name+" started retraining. This could take a while.", 2500);
@@ -579,15 +617,17 @@ function initVue(){
           Vue.set(wrapperData, "retrainstate", "Retrain from scratch");
         });
       },
-      retrain_semi: function(){
-        console.log("Wrapper: "+wrapperData.currentName+" semi retraining.");
+      retrain_semi: function(name){
+        // Retrain classifier <name> with semi supervised data
+        console.log("Wrapper: "+name+" semi retraining.");
         Vue.set(wrapperData, "semiretrainstate", "Retraining..");
         runGenerator(function *main(){
-          notify("Retrained", yield jQGetPromise("/get/retrainSemiSupervised?name="+wrapperData + "&useExtendedTestSet="+stateData.useExtendedTestSet.currentName), 2500);
+          notify("Retrained", yield jQGetPromise("/get/retrainSemiSupervised?name="+name + "&useExtendedTestSet="+stateData.useExtendedTestSet.currentName), 2500);
           Vue.set(wrapperData, "semiretrainstate", "Retraining with semi-supervised data");
         });
       },
       save: function(name){
+        // Save classifier <name> to disk
         console.log("Wrapper: "+name+" saving.");
         Vue.set(wrapperData, "savestate", "Saving..");
         runGenerator(function *main(){
@@ -597,6 +637,7 @@ function initVue(){
         });
       },
       load: function(){
+        // Loads a selected savePoint for the current classifier
         console.log("Wrapper: "+wrapperData.currentName+" loading.");
         Vue.set(wrapperData, "loadstate", "Loading..");
         runGenerator(function *main(){
@@ -617,16 +658,19 @@ function initVue(){
           return matrix.map(function(val, rowInd) {return val.filter( function(cell, colInd) {return rowInd == colInd})[0];});
       },
       arrayRowSum: function(array){
+        // Returns an array containing the row based sum of <array>
         if(typeof(array) !== "undefined")
           return array.reduce(function(pv, cv) { return parseInt(pv) + parseInt(cv); }, 0);
       },
       arrayColSum: function(array, i){
+        // Returns an array containing the col based sum of <array>
         if(typeof(array) !== "undefined")
           return array.reduce(function(prevRow, actRow, actIndex) { 
             return prevRow == 0 ? actRow[i] : parseInt(prevRow[i]) + parseInt(actRow[i]);
           }, 0);
       },
       formatStats: function(stats){
+        // Format statistic attribute names and values. 
         let attrs = {};
         for(let i in stats){
           let attrName = i.substr(10, i.length - 12);//ROUND(AVG(attrName))
@@ -637,6 +681,7 @@ function initVue(){
         return attrs;
       },
       predictList: function(){
+        // Predicts every repository listed in the <inputList> and displays its output line per line on the right side
         let list = document.querySelector("#inputList").value.split("\n");
         let to_append = "\n";
         document.querySelector("#outputList").value = "";
@@ -676,6 +721,7 @@ function initVue(){
         });
       },
       keepThinking: function(){
+        // Switch between thinking images
         let i = 0;
         let interval = setInterval(
           function(){
@@ -687,18 +733,21 @@ function initVue(){
         }, 1000);
       },
       getDistributionArray: function(){
-          $.get("/get/distributionArray?table="+wrapperData.distribution + "&useExtendedTestSet="+stateData.useExtendedTestSet, function(data){
-            Vue.set(wrapperData, "distributionArray", _.sortBy(data, "class"));
-            if(wrapperData.distribution == "Test")
-              // Special variable because of permanent visibility in test mode
-              Vue.set(inoutData, "TestDistribution", _.sortBy(data, "class"));
-          }, "json");
+        // Updates the distribution array for the test or train set
+        $.get("/get/distributionArray?table="+wrapperData.distribution + "&useExtendedTestSet="+stateData.useExtendedTestSet, function(data){
+          Vue.set(wrapperData, "distributionArray", _.sortBy(data, "class"));
+          if(wrapperData.distribution == "Test")
+            // Special variable because of permanent visibility in test mode
+            Vue.set(inoutData, "TestDistribution", _.sortBy(data, "class"));
+        }, "json");
       },
       changeDistribution: function(dist){
+        // Switches between train and test set
         Vue.set(wrapperData, "distribution", dist);
         wrapperView.getDistributionArray();
       },
       changeDocumentation: function(docName){
+        // Displays the file specified in <docName> 
         Vue.set(wrapperData, "selectedDocumentation", docName);
         $.get("/docs/"+docName, function(data){
           let converter = new showdown.Converter();
@@ -706,9 +755,9 @@ function initVue(){
         });
       },
       getDocumentationNames: function(){
+        // Updates the list of documentation files available
         $.get("/get/documentationNames", function(data){
           Vue.set(wrapperData, "documentations", JSON.parse(data));
-          console.log(JSON.parse(data));
         });
       },
       getMeasureDescription: function(m){ return classifierView.getMeasureDescription(m);},
@@ -716,6 +765,7 @@ function initVue(){
       getMeasureName: function(){return classifierView.getMeasureName();},
       getMeasure: function(c){return classifierView.getMeasure(c);},
       formatFileName: function(fn){
+        // Transforms filenames into a better readable format
         if(fn == "Version")
           return fn;
         try{
@@ -726,8 +776,9 @@ function initVue(){
           return fn;
         }
       },
-      selectTable: function(t){
-        Vue.set(wrapperData, "selectedTable", t);
+      selectTable: function(table){
+        // Switches to select <table>
+        Vue.set(wrapperData, "selectedTable", table);
         stateView.getStats(function(){});
       }
     },
@@ -746,10 +797,12 @@ function initVue(){
   });/* wrapperView */
   
   footerView = new Vue({
+    // Methods used in the footer of the page
     el: 'footer',
     data: footerData,
     methods: {
       showTeam: function(member){
+        // Shows the team wrapper with focus on <member>
         Vue.set(wrapperData, "activeMember", member);
         showWrapper('#team_wrapper');
       }
@@ -760,6 +813,11 @@ function initVue(){
   
   wrapperView.getDistributionArray();
   wrapperView.getDocumentationNames();
+}
+
+function getClassifierMaximumClass(c){
+  // Gets the class that being best predicted by classifier <c>
+  return _.values(_.pick(_.maxBy(c, "val"), "class"))[0];
 }
 
 function wait_async(time){
@@ -805,6 +863,7 @@ function HandlePopupResult(result) {
       stateView.loop();
   }, 1000);
 }
+
 function convertToApiLink(repoLink){
   // Converts a repo link an to api link. E.g. https://github.com/Ichaelus/Githubclassifier/ -> https://api.github.com/repos/Ichaelus/Githubclassifier/
   if(repoLink.indexOf("https://github.com/") >= 0){
@@ -815,10 +874,12 @@ function convertToApiLink(repoLink){
 }
 
 function originalMeasureName(m){
+  // Transform "mu" to be an actual μ
   return m.replace(" mu", " μ");
 }
 
 function orderMeasures(measures){
+  // Returns an ordered list of <measurs> 
   let ordered = [], _o = classifierView.measures;
   for(let i = 0; i < _o.length; i++)
     if(_o[i] != "Preordered")
@@ -827,6 +888,7 @@ function orderMeasures(measures){
 }
 
 function resetOutput(){
+  // Resets the output after a prediciton
   Vue.set(inoutData, "manualClass", "?");
 }
 
@@ -840,8 +902,8 @@ function precisionToGraphData(res){
 }
 
 function getRadarConfig(size){
+  // Defines the standard configuration of radar graphs
   let radarChartOptions = {
-    // Defines the standard configuration of radar graphs
     margin: {top: 25, right: 25, bottom: 25, left: 25},
     maxValue: 0.5,
     levels: 5,
