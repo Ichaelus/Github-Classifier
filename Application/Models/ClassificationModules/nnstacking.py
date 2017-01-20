@@ -19,7 +19,7 @@ class nnstacking(EnsembleClassifier):
         self.subclassifiers = subclassifiers
 
         # Set input-size and output_size
-        self.input_size = 7 * len(subclassifiers) + getMetadataLength()
+        self.input_size = 7 * len(subclassifiers) + getReducedMetadataLength()
         self.output_size = 7 # Hardcoded for 7 classes
 
         # Create model
@@ -91,7 +91,7 @@ class nnstacking(EnsembleClassifier):
                 classifier.train(trainingData)
             prediction = classifier.predictLabelAndProbability(sample)[1:]
             predictions += prediction
-        predictions += getMetadataVector(sample)
+        predictions += getReducedMetadata(sample)
         return np.expand_dims(predictions, axis=0)
 
     def getSubClassifierNames(self):

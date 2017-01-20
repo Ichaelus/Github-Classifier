@@ -35,9 +35,10 @@ max_avg_commit_length = 100
 max_file_count = 150
 max_commit_interval_max = 20
 max_commit_count = 200
-max_readme_length = 1000 # TODO: What to do with this?
+max_readme_length = 4000
 max_lev_files = 10 # Maximal Levenshtein distance
 max_lev_folders = 10
+
 
 
 max_vectorizer_word_count = 3000
@@ -79,6 +80,21 @@ def getVectorsFromData(data, processText=True):
         labels.append(getLabelIndex(sample[i]))
     return (features, labels, label_names)
 
+def getReducedMetadata(sample):
+    vec = []
+    vec.append(min(1., float(sample['folder_count']) / max_folder_count))
+    vec.append(min(1., float(sample['treeDepth']) / max_treeDepth))
+    vec.append(min(1., float(sample['avg_commit_length']) / max_avg_commit_length))
+    vec.append(min(1., float(sample['file_count']) / max_file_count))
+    vec.append(min(1., float(sample['commit_count']) / max_commit_count))
+    vec.append(min(1., float(getReadmeLength(sample) / max_readme_length)))
+    vec.append(min(1., float(avgLev(sample['folders']) / max_lev_folders)))
+    vec.append(min(1., float(avgLev(sample['files']) / max_lev_files)))
+    return vec
+
+def getReducedMetadataLength():
+    return 8 # TODO: Find better way
+
 def getLabelIndex(sample):
     """Returns the index for the class of a given sample"""
     assert  'class' in sample, "Data vector incomplete"
@@ -105,6 +121,8 @@ def text_from_base64(input):
         print "Error decoding text " + str(e)
         return ""
     return text
+
+
 
 def getReadme(data):
     """Converts the base64 encoded readme into a text string"""

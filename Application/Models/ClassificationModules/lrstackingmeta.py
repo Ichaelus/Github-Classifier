@@ -74,16 +74,8 @@ class lrstackingmeta(EnsembleClassifier):
                 classifier.train(trainingData)
             prediction = classifier.predictLabelAndProbability(sample)[1:]
             predictions += prediction
-            """
-            try: 
-                prediction = classifier.predictLabelAndProbability(sample)
-            except sklearn.exceptions.NotFittedError as e:
-                print self.name, "tried to use an unfitted classifier", "(" + e.message + ")", "Make sure, there's a saved instance available "
-                prediction = np.zeros(7).tolist()
-            predictions += prediction        
-            """
         # Returns numpy array which contains 1 array with features
-        predictions += getMetadataVector(sample)
+        predictions += getReducedMetadata(sample)
         return np.expand_dims(predictions, axis=0)
 
     def getSubClassifierNames(self):
