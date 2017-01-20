@@ -11,7 +11,7 @@ import json
 import FeatureProcessing as FP
 
 def api_call(keyString, filterString="", tableString="", limitString="", selector = "*"):
-    """Get list of Repos-Data in json-format"""
+    """Run a PHP service and return the JSON formatted result"""
     filterString = base64.b64encode(b'' + filterString)
     url = None
     data = None

@@ -277,134 +277,166 @@ a higher yield or a higher precision is more important for automated repository 
 <table>
 	<thead>
 		<tr>
-			<th>Repo-Link</th>
-			<th>Result</th>
+			<th>Repository</th>
+			<th>Manual classification</th>
+			<th>Calculated class</th>
 		</tr>
 	</thead>
 	<tbody>
 	<tr>
 	    <td>https://github.com/ga-chicago/wdi5-homework</td>
-	    <td>False</td>
+	    <td>HW</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/Aggregates/MI_HW2</td>
-	    <td>False</td>
+	    <td>HW</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/datasciencelabs/2016/</td>
-	    <td>False</td>
+	    <td>HW</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/githubteacher/intro-november-2015</td>
-	    <td>False</td>
+	    <td>EDU</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/atom/atom</td>
-	    <td>False</td>
+	    <td>DEV</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/jmcglone/jmcglone.github.io</td>
-	    <td>False</td>
+	    <td>WEB</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/hpi-swt2-exercise/java-tdd-challenge</td>
-	    <td>False</td>
+	    <td>HW</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/alphagov/performanceplatform-documentation</td>
-	    <td>False</td>
+	    <td>DOCS</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/harvesthq/how-to-walkabout</td>
-	    <td>False</td>
+	    <td>EDU</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/vhf/free-programming-books</td>
-	    <td>False</td>
+	    <td>EDU</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/d3/d3</td>
-	    <td>False</td>
+	    <td>DEV</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/carlosmn/CoMa-II</td>
-	    <td>False</td>
+	    <td>HW</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/git/git-scm.com</td>
-	    <td>False</td>
+	    <td>DEV</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/PowerDNS/pdns</td>
-	    <td>False</td>
+	    <td>DEV</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/cmrberry/cs6300-git-practice</td>
-	    <td>False</td>
+	    <td>HW</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/Sefaria/Sefaria-Project</td>
-	    <td>False</td>
+	    <td>DEV</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/mongodb/docs</td>
-	    <td>False</td>
+	    <td>DOCS</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/sindresorhus/eslint-config-xo</td>
-	    <td>False</td>
+	    <td>DEV</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/e-books/backbone.en.douceur</td>
-	    <td>False</td>
+	    <td>EDU</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/erikflowers/weather-icons</td>
-	    <td>False</td>
+	    <td>DOCS</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/tensorflow/tensorflow</td>
-	    <td>False</td>
+	    <td>DEV</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/cs231n/cs231n.github.io</td>
-	    <td>False</td>
+	    <td>WEB</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/m2mtech/smashtag-2015</td>
-	    <td>False</td>
+	    <td>HW</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/openaddresses/openaddresses</td>
-	    <td>False</td>
+	    <td>DATA</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/benbalter/congressional-districts</td>
-	    <td>False</td>
+	    <td>DATA</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/Chicago/food-inspections-evaluation</td>
-	    <td>False</td>
+	    <td>HW</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/OpenInstitute/OpenDuka</td>
-	    <td>False</td>
+	    <td>DEV</td>
+	    <td>None</td>
     </tr>
     <tr>
-	    <td>https://github.com/OpenInstitute/OpenDuka</td>
-	    <td>False</td>
+	    <td>https://github.com/torvalds/linux</td>
+	    <td>DEV</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/bhuga/bhuga.net</td>
-	    <td>False</td>
+	    <td>WEB</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/macloo/just_enough_code</td>
-	    <td>False</td>
+	    <td>EDU</td>
+	    <td>None</td>
     </tr>
     <tr>
 	    <td>https://github.com/hughperkins/howto-jenkins-ssl</td>
-	    <td>False</td>
+	    <td>EDU</td>
+	    <td>None</td>
     </tr>
 	</tbody>
 </table>
@@ -412,44 +444,44 @@ a higher yield or a higher precision is more important for automated repository 
 <table>
     <thead>
         <tr>
-            <td></td>
-            <td>erzielte Präzision / precision</td>
-            <td>erzielte Ausbeute / recall</td>
+            <th>Class</th>
+            <th>Precision obtained</th>
+            <th>Recall obtained</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>DEV</td>
+            <td><strong>DEV</strong></td>
             <td></td>
             <td></td>
         </tr>
         <tr>
-            <td>HW</td>
+            <td><strong>HW</strong></td>
             <td></td>
             <td></td>
         </tr>
         <tr>
-            <td>EDU</td>
+            <td><strong>EDU</strong></td>
             <td></td>
             <td></td>
         </tr>
         <tr>
-            <td>DOCS</td>
+            <td><strong>DOCS</strong></td>
             <td></td>
             <td></td>
         </tr>
         <tr>
-            <td>WEB</td>
+            <td><strong>WEB</strong></td>
             <td></td>
             <td></td>
         </tr>
         <tr>
-            <td>DATA</td>
+            <td><strong>DATA</strong></td>
             <td></td>
             <td></td>
         </tr>
         <tr>
-            <td>OTHER</td>
+            <td><strong>OTHER</strong></td>
             <td></td>
             <td></td>
         </tr>
