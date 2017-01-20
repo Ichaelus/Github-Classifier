@@ -242,7 +242,7 @@
             <div
                 v-show="(mode == 'stream' || mode == 'pool')" 
                 :class="'control_buttons '"><!--control-subgroup-->
-                <span :class="(action == 'loop' ? 'active ' : '') + 'glyphicon glyphicon-play'" v-on:click="loop()" data-toggle="tooltip" data-placement="top" title="Classify random samples until paused"></span>
+                <span :class="(action == 'loop' ? 'active ' : '') + 'glyphicon glyphicon-play'" v-on:click="loop('endless')" data-toggle="tooltip" data-placement="top" title="Classify random samples until paused"></span>
                 <span :class="(action == 'halt' ? 'active ' : '') + 'glyphicon glyphicon-pause'" v-on:click="halt()" data-toggle="tooltip" data-placement="top" title="Stop classifying"></span>
                 <span class="glyphicon glyphicon-step-forward" v-on:click="singleStep()" data-toggle="tooltip" data-placement="top" title="Classify a single random sample">
                 </span>

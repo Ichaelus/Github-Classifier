@@ -160,22 +160,15 @@ function initVue(){
       },
 		  singleStep: function(){
         // Proceeds a single step (play button) action.
-  			Vue.set(stateData, "action", "singleStep");
   			console.log("Proceeding single step");
-        stateView.resetView();
-        runGenerator(function *main(){
-          // Fetch sample, display
-          Vue.set(inoutData, "state", "Searching..");
-          results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
-          stateView.updateResults(results);
-        });
+        stateView.loop("single");
   		},
   		halt: function(){
         // Prevents the AL loop from continuing
   			Vue.set(stateData, "action", "halt");
   			console.log("Halting");
   		},
-  		loop: function(){
+  		loop: function(type){
         // Performs single AL steps until halted
   			Vue.set(stateData, "action", "loop");
   			console.log("Looping");
@@ -188,9 +181,11 @@ function initVue(){
             skipped++;
   					results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
   					stateView.updateResults(results);
-            if(results.classifiersUnsure)
+            if(results.classifiersUnsure){
               Vue.set(stateData, "action", "halt_loop");
-            else
+              if(type == "single")
+                break;
+            }else
               Vue.set(inoutData, "state", "Skipped " + skipped + " samples.");
   				}
   			});
