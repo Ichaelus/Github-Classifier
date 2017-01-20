@@ -5,11 +5,11 @@
 ### Our Strategy to get our train data
 
 As we approached this problem from a machine learning perspective we knew from the start that our models require a 
-large and diverse collection of manually classified examples.
+large and diverse collection of manually classified examples. In order to speed up this process and make
+as pleasant as possible we first set up a website whose aim was to display all necessary information about a repository
+and made the assignment into categories possible. 
 GitHub only grants a limited number of Api-calls available in a short amount of time so early on we stored
 all hand-classified repositories with extracted features in a database to access them without restrictions.
-The process of classification was made possible through a website whose aim was to display all necessary information about a repository
-and made the assignment into categories possible.
 In this process we filtered out all information (features) we needed and also possibly lacked to do so confidently.
 Pretty soon we were suprised by how different our perspectives were in regards to which class to asign to many repositores.
 Following this we decided to abolish all samples we classified through weeks and start from the beginning.

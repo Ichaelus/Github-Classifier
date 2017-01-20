@@ -15,7 +15,7 @@ class metaonlyadaboost(ClassificationModule):
     """An AdaBoostClassifier with Decision-Trees as Base Estimator"""
 
     def __init__(self):
-        ClassificationModule.__init__(self, "Meta Only AdaBoostClassifier (Descision-Trees)", 'AdaBoostClassifier (base estimator: Decision-Trees) used with Meta-Data (Programming-Languages, stars, watches, ...)')
+        ClassificationModule.__init__(self, "Meta Only AdaBoostClassifier (Decision-Trees)", 'AdaBoostClassifier (base estimator: Decision-Trees) used with Meta-Data (Programming-Languages, stars, watches, ...)')
         self.clf = AdaBoostClassifier()
         print "\t-", self.name
 
