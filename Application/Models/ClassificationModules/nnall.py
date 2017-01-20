@@ -6,7 +6,7 @@ from keras.layers import Activation, Dense
 from keras.layers.advanced_activations import LeakyReLU
 from keras.optimizers import Adam
 import numpy as np
-import abc
+import abc, cherrypy
 from ClassificationModule import ClassificationModule
 
 

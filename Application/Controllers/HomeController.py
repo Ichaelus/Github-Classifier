@@ -6,7 +6,7 @@
 #############################
 
 from bottle import Bottle, route, run, static_file, request
-import os
+import os, cherrypy
 import Models.ClassifierCollection
 import Models.JSONCommunication as JS
 import Models.DatabaseCommunication as DC
@@ -15,6 +15,8 @@ abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Views') #
 homebottle = Bottle()
 CC = None # Classifier Collection
 cherrypy.response.timeout = 14400000
+cherrypy.config.update({'response.timeout': 14400000})
+cherrypy.engine.timeout_monitor.unsubscribe()
 
 # Server static files at given paths
 

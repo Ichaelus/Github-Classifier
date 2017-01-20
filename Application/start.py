@@ -26,7 +26,7 @@ from Models.ClassifierCollection import ClassifierCollection
 #from Models.ClassificationModules.metaonlyadaboost import metaonlyadaboost
 #from Models.ClassificationModules.reponamelstm import reponamelstm
 #from Models.ClassificationModules.readmelstm import readmelstm
-from Models.ClassificationModules.nnall import nnall
+#from Models.ClassificationModules.nnall import nnall
 #from Models.ClassificationModules.knnreadmeonly import knnreadmeonly
 #from Models.ClassificationModules.svcfilenamesonly import filenamesonlysvc
 #from Models.ClassificationModules.lrstacking import lrstacking
@@ -42,7 +42,7 @@ from Models.ClassificationModules.nnall import nnall
 #from Models.ClassificationModules.averageensemble import averageensemble
 #from Models.ClassificationModules.nnstacking import nnstacking
 #from Models.ClassificationModules.lrstackingmeta import lrstackingmeta
-#from Models.ClassificationModules.foldernameslstm import foldernameslstm
+from Models.ClassificationModules.foldernameslstm import foldernameslstm
 #from Models.ClassificationModules.descriptionfoldersreponamelstm import descriptionfoldersreponamelstm
 #from Models.ClassificationModules.descriptionlstm import descriptionlstm
 #from Models.ClassificationModules.descriptionreponamelstm import descriptionreponamelstm
@@ -57,7 +57,7 @@ rootApp = Bottle()
 classifiercollection = ClassifierCollection()
 
 print 'Getting DB Data to be able to create vectorizers for classifiers that need it'
-descriptionCorpus, readmeCorpus, filenameCorpus, filetypeCorpus, foldernameCorpus = DC.getCorpi()
+#descriptionCorpus, readmeCorpus, filenameCorpus, filetypeCorpus, foldernameCorpus = DC.getCorpi()
 
 
 #Initialize Classifiers
@@ -82,7 +82,7 @@ classifiers = {}
 #
 #classifiers['descriptionlstm'] = descriptionlstm()
 #classifiers['descriptionfoldersreponamelstm'] = descriptionfoldersreponamelstm()
-#classifiers['foldernameslstm'] = foldernameslstm()
+classifiers['foldernameslstm'] = foldernameslstm()
 #classifiers['reponamelstm'] = reponamelstm()
 #classifiers['readmelstm'] = readmelstm()
 #classifiers['descriptionreponamelstm'] = descriptionreponamelstm()
@@ -97,7 +97,7 @@ for classifier in classifiers:
 # Now all classifiers should have been loaded from last savepoint, if available
 # Use these loaded classifiers by giving them to specific ensemble-Models
 
-classifiers['nnall'] = nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
+#classifiers['nnall'] = nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
 #classifiers['svmall'] = svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
 #classifiers['allrandomforest'] = allrandomforest(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
 #classifiers['allmultinomialnb'] = allmultinomialnb(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
@@ -138,6 +138,8 @@ time.sleep(3)
 print 'Done. Starting Bottle...'
 #Start Bottle
 cherrypy.response.timeout = 14400000
+cherrypy.config.update({'response.timeout': 14400000})
+cherrypy.engine.timeout_monitor.unsubscribe()
 
 if __name__ == '__main__':
     webbrowser.open("http://localhost:8080/")
