@@ -12,11 +12,11 @@ from ClassificationModule import ClassificationModule
 class reponamelstm(ClassificationModule):
     """A basic feedforward neural network"""
     
-    def __init__(self, num_hidden_layers=1):
+    def __init__(self, num_hidden_layers=3):
         ClassificationModule.__init__(self, "Repo-Name Only LSTM", "A LSTM reading the repository-name character by character")
 
-        hidden_size = 300
-        self.maxlen = 15
+        hidden_size = 100
+        self.maxlen = 30
 
         # Set output_size
         self.output_size = 7 # Hardcoded for 7 classes
@@ -33,7 +33,7 @@ class reponamelstm(ClassificationModule):
         model.add(Activation('softmax'))
 
         model.compile(loss='categorical_crossentropy',
-                    optimizer=SGD(lr=1e-3),
+                    optimizer=Adam(),
                     metrics=['accuracy'])
 
         self.model = model
@@ -51,7 +51,7 @@ class reponamelstm(ClassificationModule):
         label_one_hot = np.expand_dims(oneHot(label_index), axis=0) # [1, 0, 0, ..] -> [[1, 0, 0, ..]] Necessary for keras
         self.model.fit(readme_vec, label_one_hot, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose) # TODO: think about nb_epoch-value
 
-    def train(self, samples, nb_epoch=200, shuffle=True, verbose=True):
+    def train(self, samples, nb_epoch=100, shuffle=True, verbose=True):
         """Trainiere mit Liste von Daten. Evtl weitere Paramter nötig (nb_epoch, learning_rate, ...)"""
         train_samples = []
         train_lables = []
@@ -60,7 +60,7 @@ class reponamelstm(ClassificationModule):
             train_samples.append(formatted_sample)
             train_lables.append(oneHot(getLabelIndex(sample)))
         train_lables = np.asarray(train_lables)
-        train_result = self.model.fit(train_samples, train_lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose, batch_size=128, class_weight=getClassWeights())
+        train_result = self.model.fit(train_samples, train_lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose, class_weight=getClassWeights())
         self.isTrained = True
         return train_result
 
