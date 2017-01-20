@@ -44,6 +44,7 @@ from Models.ClassificationModules.lrstackingmeta import lrstackingmeta
 from Models.ClassificationModules.foldernameslstm import foldernameslstm
 from Models.ClassificationModules.descriptionfoldersreponamelstm import descriptionfoldersreponamelstm
 from Models.ClassificationModules.descriptionlstm import descriptionlstm
+from Models.ClassificationModules.descriptionreponamelstm import descriptionreponamelstm
 
 import Models.DatabaseCommunication as DC
 
@@ -83,6 +84,7 @@ classifiers['descriptionfoldersreponamelstm'] = descriptionfoldersreponamelstm()
 classifiers['foldernameslstm'] = foldernameslstm()
 classifiers['reponamelstm'] = reponamelstm()
 classifiers['readmelstm'] = readmelstm()
+classifiers['descriptionreponamelstm'] = descriptionreponamelstm()
 
 
 for classifier in classifiers:
