@@ -39,6 +39,11 @@ from Models.ClassificationModules.svmreadmemeta import svmreadmemeta
 from Models.ClassificationModules.allbernoullinb import allbernoullinb
 from Models.ClassificationModules.allmultinomialnb import allmultinomialnb
 from Models.ClassificationModules.averageensemble import averageensemble
+from Models.ClassificationModules.nnstacking import nnstacking
+from Models.ClassificationModules.lrstackingmeta import lrstackingmeta
+from Models.ClassificationModules.foldernameslstm import foldernameslstm
+from Models.ClassificationModules.descriptionfoldersreponamelstm import descriptionfoldersreponamelstm
+from Models.ClassificationModules.descriptionlstm import descriptionlstm
 
 import Models.DatabaseCommunication as DC
 
@@ -61,6 +66,7 @@ print 'Creating and adding Classifiers to Classifier Collection:'
 loadedClassifiers = [] # Keep track, which classifiers have be loaded or such attempt has been made
 
 classifiers = {}
+
 classifiers['filenamesonlysvc'] = filenamesonlysvc(filenameCorpus)
 classifiers['nnmetaonly'] = nnmetaonly()
 classifiers['metaonlysvc'] = metaonlysvc()
@@ -71,8 +77,11 @@ classifiers['gbrtfilesandfolders'] = gbrtfilesandfolders(filenameCorpus, foldern
 classifiers['gbrtmetaonly'] = gbrtmetaonly()
 classifiers['gbrtdescriptionmeta'] = gbrtdescriptionmeta(descriptionCorpus)
 classifiers['svmreadmemeta'] = svmreadmemeta(readmeCorpus)
-classifiers['reponamelstm'] = reponamelstm()
 
+classifiers['descriptionlstm'] = descriptionlstm()
+classifiers['descriptionfoldersreponamelstm'] = descriptionfoldersreponamelstm()
+classifiers['foldernameslstm'] = foldernameslstm()
+classifiers['reponamelstm'] = reponamelstm()
 classifiers['readmelstm'] = readmelstm()
 
 
@@ -100,9 +109,10 @@ for classifier in classifiers:
         loadedClassifiers.append(classifier)
         
 
-classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest']])
-classifiers['averageensemble'] = averageensemble([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest']])
-
+classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta']])
+classifiers['averageensemble'] = averageensemble([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta']])
+classifiers['nnstacking'] = nnstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta']])
+classifiers['lrstackingmeta'] = lrstackingmeta([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta']])
 # Finally load all meta-models such as lrstacking
 
 for classifier in classifiers:
