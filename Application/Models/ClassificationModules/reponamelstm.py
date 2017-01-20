@@ -15,7 +15,7 @@ class reponamelstm(ClassificationModule):
     def __init__(self, num_hidden_layers=3):
         ClassificationModule.__init__(self, "Repo-Name Only LSTM", "A LSTM reading the repository-name character by character")
 
-        hidden_size = 200
+        hidden_size = 250
         self.maxlen = 30
 
         # Set output_size
@@ -33,7 +33,7 @@ class reponamelstm(ClassificationModule):
         model.add(Activation('softmax'))
 
         model.compile(loss='categorical_crossentropy',
-                    optimizer=Adam(),
+                    optimizer=Adam(lr  =0.0025),
                     metrics=['accuracy'])
 
         self.model = model
