@@ -22,9 +22,4 @@ def calculateUncertaintyMarginSampling(classiefierlabelandprobability):
         if p < best and p > second:
             second = p
     return best - second
-
-def calculateUncertaintyCouncilBasedVoteEntropy(classiefierlabelandprobability):
-    return '0'
-
-def calculateUncertaintyCouncilBasedKLDivergence(classiefierlabelandprobability):
-    return '0'
+    

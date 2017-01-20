@@ -132,7 +132,24 @@ def formatStreamBasedALRound(sample, unsure, SemiSupervisedL, SemiSupervisedLabe
         'semisupervised':semisupervised,
         'classifiers':classifiers,
         }
-    return json.dumps(returndata)
+    return json.dumps(returndata)# Fehler hier: Margin-Sampling Value Error
+    # 
+
+    #return JS.formatStreamBasedALRound(sample, unsure, SemiSupervisedL, SemiSupervisedLabel, results)
+  #File "/Users/Stefan/GithubClassificator/Application/Models/JSONCommunication.py", line 135, in formatStreamBasedALRound
+  #  return json.dumps(returndata)
+  #File "/Users/Stefan/anaconda/lib/python2.7/json/__init__.py", line 244, in dumps
+  #  return _default_encoder.encode(obj)
+  #File "/Users/Stefan/anaconda/lib/python2.7/json/encoder.py", line 207, in encode
+  #  chunks = self.iterencode(o, _one_shot=True)
+  #File "/Users/Stefan/anaconda/lib/python2.7/json/encoder.py", line 270, in iterencode
+  #  return _iterencode(o, 0)
+  #File "/Users/Stefan/anaconda/lib/python2.7/json/encoder.py", line 184, in default
+  #  raise TypeError(repr(o) + " is not JSON serializable")
+#TypeError: 0.99999988 is not JSON serializable
+
+    #
+
     #return '{"repo": {"repoName": "rName", "repoAPILink":""}, "classifiersUnsure":"true","semisupervised":{"SemiSupervisedSureEnough":"false","SemiSupervisedLabel":"None"} ,"classifierResults" : {"Neural network1":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network2":[{"class":"DEV","val":0.94},{"class":"HW","val":0.03},{"class":"EDU","val":0.01},{"class":"DOCS","val":0.04},{"class":"WEB","val":0.09},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}],"Neural network3":[{"class":"DEV","val":0.04},{"class":"HW","val":0.13},{"class":"EDU","val":0.11},{"class":"DOCS","val":0.24},{"class":"WEB","val":0.59},{"class":"DATA","val":0.02},{"class":"OTHER","val":0.04}]}}'
     # EXAMPLE
     # {

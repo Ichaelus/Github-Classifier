@@ -24,7 +24,7 @@ def err_rate(confusion_matrix):
 
 def precision_mu(confusion_matrix):
     """Agreement of the data class labels with those
-     of a classifiers if calculated from sums of per-text decisions"""
+     of a classifiers if calculated from sums of per-sample decisions"""
     numerator = 0.0
     denominator = 0.0
     for i in xrange(len(confusion_matrix)-2):
@@ -36,7 +36,7 @@ def precision_mu(confusion_matrix):
 
 def recall_mu(confusion_matrix):
     """Effectiveness of a classifier to identify
-    class labels if calculated from sums of per-text decisions"""
+    class labels if calculated from sums of per-sample decisions"""
     numerator = 0.0
     denominator = 0.0
     for i in xrange(len(confusion_matrix)-2):
@@ -48,7 +48,7 @@ def recall_mu(confusion_matrix):
 
 def fscore_mu(confusion_matrix, beta):
     """Relations between data s positive labels and
-     those given by a classifier based on sums of per-text decisions"""
+     those given by a classifier based on sums of per-sample decisions"""
     p = precision_mu(confusion_matrix)
     r = recall_mu(confusion_matrix)
     numerator = (beta*beta + 1) * p * r
