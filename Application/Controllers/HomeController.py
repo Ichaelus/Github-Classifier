@@ -14,6 +14,7 @@ import Models.DatabaseCommunication as DC
 abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Views') # The default OS independent path
 homebottle = Bottle()
 CC = None # Classifier Collection
+cherrypy.response.timeout = 14400000
 
 # Server static files at given paths
 
@@ -155,18 +156,19 @@ def api(key):
 		# Retrains a single classifier identified by <name>
 		ClassifierName = getQueryValue("name")
 		useExtendedTestSet = getQueryValue("useExtendedTestSet") == "true"
-		#try:
+		try:
 			# Get data to train on
-		train_data = DC.getTrainData()
-		classifier = CC.getClassificationModule(ClassifierName)
-		classifier.resetAllTraining()
-		classifier.train(train_data)
+			train_data = DC.getTrainData()
+			classifier = CC.getClassificationModule(ClassifierName)
+			classifier.resetAllTraining()
+			classifier.train(train_data)
 
-		# Test classifier
-		test_data = DC.getTestData(useExtendedTestSet)
-		return JS.formatSingleClassificationTest(classifier, classifier.testModule(test_data))
-		#except:
-		#	return "The classifier "+ClassifierName+" has been retrained."
+			# Test classifier
+			test_data = DC.getTestData(useExtendedTestSet)
+			return JS.formatSingleClassificationTest(classifier, classifier.testModule(test_data))
+		except Exception as e:
+			print e
+			return JS.toJson({'error': str(e)})
 
 	elif(key == "retrainSemiSupervised"):
 		# Retrains a single classifier identified by <name> including semi-supervised data

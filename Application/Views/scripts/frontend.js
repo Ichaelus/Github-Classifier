@@ -4,6 +4,7 @@
 //########################################
 
 console.log("Frontend started..");
+jQuery.ajaxSetup({timeout: 3600000}); // Client waits for up to an hour for responses - retraining may take a while
 // Initialize state and view objects
 let stateView, inputView, classifierView, outputView, wrapperView, footerView,
 	stateData = {
