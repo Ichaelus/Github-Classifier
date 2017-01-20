@@ -266,7 +266,7 @@ def api(key):
 	elif(key == "documentationNames"):
 		# Returns a list of .md documentation files
 		docsPath = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../'), '../Documentation')
-		docfiles = [f for f in os.listdir(docsPath) if os.path.isfile(os.path.join(docsPath, f)) and f.endswith(".md")]
+		docfiles = [f for f in os.listdir(docsPath) if os.path.isfile(os.path.join(docsPath, f)) and f.endswith(".md") and f.lower() != 'readme.md']
 		return JS.toJson(docfiles)
 
 	elif(key == "getAPICalls"):

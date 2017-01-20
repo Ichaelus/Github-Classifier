@@ -751,7 +751,7 @@ function initVue(){
         Vue.set(wrapperData, "selectedDocumentation", docName);
         $.get("/docs/"+docName, function(data){
           let converter = new showdown.Converter();
-          Vue.set(wrapperData, "documentationContent", converter.makeHtml(data).replace(/<table>/g, "<table class='table'>"));
+          Vue.set(wrapperData, "documentationContent", converter.makeHtml(data).replace(/<table>/g, "<table class='table table-bordered table-striped'>"));
         });
       },
       getDocumentationNames: function(){

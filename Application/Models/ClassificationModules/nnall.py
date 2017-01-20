@@ -16,10 +16,10 @@ class nnall(ClassificationModule):
     def __init__(self, text_corpus, filetype_corpus, filename_corpus, foldername_corpus, num_hidden_layers=1):
         ClassificationModule.__init__(self, "All NN", "A basic feedforward neural network")
 
-        self.vectorizer = getTextVectorizer(6000) # Maximum of different columns
+        self.vectorizer = getTextVectorizer(7000) # Maximum of different columns
         self.filetypeVectorizer = getTextVectorizer(30) # TODO: Find better number
-        self.foldernameVectorizer = getTextVectorizer(100) # TODO: Find better number
-        self.filenameVectorizer = getTextVectorizer(200) # TODO: Find better number
+        self.foldernameVectorizer = getTextVectorizer(150) # TODO: Find better number
+        self.filenameVectorizer = getTextVectorizer(150) # TODO: Find better number
 
         # Vectorizer for descriptions and/or readmes
         corpus = []
@@ -65,7 +65,7 @@ class nnall(ClassificationModule):
         model.add(Activation('softmax'))
 
         # Compile model and use Adam as optimizer
-        model.compile(metrics=['accuracy'], loss='categorical_crossentropy', optimizer=Adam())
+        model.compile(metrics=['accuracy'], loss='categorical_crossentropy', optimizer=Adam(0.0025))
 
         self.model = model
         print "\t-", self.name
