@@ -13,7 +13,7 @@ from EnsembleClassifier import EnsembleClassifier
 
 class nnstacking(EnsembleClassifier):
     """A basic feedforward neural network"""
-    def __init__(self, subclassifiers, num_hidden_layers=1):
+    def __init__(self, subclassifiers):
         EnsembleClassifier.__init__(self, "Stacking NN", "A basic feedforward neural network")
 
         self.subclassifiers = subclassifiers

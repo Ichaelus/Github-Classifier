@@ -8,7 +8,7 @@
 def packageMissing(name):
     raise ImportError('Dependency \''+name+'\' has not been found. Please refer to the installation manual.')
 
-import time, os, webbrowser
+import time, os, webbrowser, collections
 
 try:
     from bottle import Bottle
@@ -124,10 +124,10 @@ for classifier in classifiers:
             classifiers[classifier] = loaded_classifier
         loadedClassifiers.append(classifier)
         
-classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
-classifiers['averageensemble'] = averageensemble([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
+#classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
+#classifiers['averageensemble'] = averageensemble([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
 classifiers['nnstacking'] = nnstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
-classifiers['lrstackingmeta'] = lrstackingmeta([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
+#classifiers['lrstackingmeta'] = lrstackingmeta([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
 # Finally load all meta-models such as lrstacking
 
 for classifier in classifiers:
@@ -136,9 +136,20 @@ for classifier in classifiers:
         if loaded_classifier is not None:
             classifiers[classifier] = loaded_classifier
 
+# Order the classifiers for the final submission
+    orderedClassifiers = collections.OrderedDict()
+    orderedClassifiers['nnstacking'] = classifiers['nnstacking']
+    orderedClassifiers['nnall'] = classifiers['nnall']
+    orderedClassifiers['gbrtdescriptionmeta'] = classifiers['gbrtdescriptionmeta']
+    orderedClassifiers['svmall'] = classifiers['svmall']
+    orderedClassifiers['svmreadmemeta'] = classifiers['svmreadmemeta']
+    orderedClassifiers['allrandomforest'] = classifiers['allrandomforest']
+    orderedClassifiers['metaonlyrandomforest'] = classifiers['metaonlyrandomforest']
+    orderedClassifiers['metaonlysvc'] = classifiers['metaonlysvc']
+    orderedClassifiers['reponamelstm'] = classifiers['reponamelstm']
 
 # Load classifiers into collection
-for c in classifiers:
+for c in orderedClassifiers:
     classifiercollection.addClassificationModule(classifiers[c])
 
 # Pass ClassifierCollection to Controller
