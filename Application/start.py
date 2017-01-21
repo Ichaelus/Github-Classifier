@@ -5,9 +5,28 @@
 # Initialization and startup file #
 ###################################
 
+def packageMissing(name):
+    raise ImportError('Dependency \''+name+'\' has not been found. Please refer to the installation manual.')
+
 import time
-from bottle import Bottle
-import cherrypy
+try:
+    from bottle import Bottle
+except ImportError:
+    packageMissing("Bottle")
+serverUsed = ""
+try:
+    import cherrypy
+    serverUsed = "cherrypy"
+    cherrypy.response.timeout = 14400000
+    cherrypy.config.update({'response.timeout': 14400000})
+    cherrypy.engine.timeout_monitor.unsubscribe()
+except ImportError:
+    try: # Fallback for MacOS
+        import paste
+        serverUsed = "paste"
+    except ImportError:
+        packageMissing("paste")
+
 import webbrowser
 from Controllers.HomeController import homebottle, homesetclassifiercollection
 from Models.ClassifierCollection import ClassifierCollection
@@ -30,7 +49,7 @@ from Models.ClassifierCollection import ClassifierCollection
 #from Models.ClassificationModules.knnreadmeonly import knnreadmeonly
 #from Models.ClassificationModules.svcfilenamesonly import filenamesonlysvc
 #from Models.ClassificationModules.lrstacking import lrstacking
-#from Models.ClassificationModules.svmall import svmall
+from Models.ClassificationModules.svmall import svmall
 #from Models.ClassificationModules.rfall import allrandomforest
 #from Models.ClassificationModules.gbrtmetaonly import gbrtmetaonly
 #from Models.ClassificationModules.gbrtreadmeonly import gbrtreadmeonly
@@ -42,7 +61,7 @@ from Models.ClassifierCollection import ClassifierCollection
 #from Models.ClassificationModules.averageensemble import averageensemble
 #from Models.ClassificationModules.nnstacking import nnstacking
 #from Models.ClassificationModules.lrstackingmeta import lrstackingmeta
-from Models.ClassificationModules.foldernameslstm import foldernameslstm
+#from Models.ClassificationModules.foldernameslstm import foldernameslstm
 #from Models.ClassificationModules.descriptionfoldersreponamelstm import descriptionfoldersreponamelstm
 #from Models.ClassificationModules.descriptionlstm import descriptionlstm
 #from Models.ClassificationModules.descriptionreponamelstm import descriptionreponamelstm
@@ -57,7 +76,7 @@ rootApp = Bottle()
 classifiercollection = ClassifierCollection()
 
 print 'Getting DB Data to be able to create vectorizers for classifiers that need it'
-#descriptionCorpus, readmeCorpus, filenameCorpus, filetypeCorpus, foldernameCorpus = DC.getCorpi()
+descriptionCorpus, readmeCorpus, filenameCorpus, filetypeCorpus, foldernameCorpus = DC.getCorpi()
 
 
 #Initialize Classifiers
@@ -82,7 +101,7 @@ classifiers = {}
 #
 #classifiers['descriptionlstm'] = descriptionlstm()
 #classifiers['descriptionfoldersreponamelstm'] = descriptionfoldersreponamelstm()
-classifiers['foldernameslstm'] = foldernameslstm()
+#classifiers['foldernameslstm'] = foldernameslstm()
 #classifiers['reponamelstm'] = reponamelstm()
 #classifiers['readmelstm'] = readmelstm()
 #classifiers['descriptionreponamelstm'] = descriptionreponamelstm()
@@ -98,7 +117,7 @@ for classifier in classifiers:
 # Use these loaded classifiers by giving them to specific ensemble-Models
 
 #classifiers['nnall'] = nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
-#classifiers['svmall'] = svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
+classifiers['svmall'] = svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
 #classifiers['allrandomforest'] = allrandomforest(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
 #classifiers['allmultinomialnb'] = allmultinomialnb(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
 #classifiers['allbernoullinb'] = allbernoullinb(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
@@ -137,11 +156,8 @@ time.sleep(3)
 
 print 'Done. Starting Bottle...'
 #Start Bottle
-cherrypy.response.timeout = 14400000
-cherrypy.config.update({'response.timeout': 14400000})
-cherrypy.engine.timeout_monitor.unsubscribe()
 
 if __name__ == '__main__':
     webbrowser.open("http://localhost:8080/")
     rootApp.merge(homebottle)
-    rootApp.run(server='cherrypy', debug=True)
+    rootApp.run(server=serverUsed, debug=True)

@@ -5,9 +5,15 @@
 # A collection of Python -> JSON conversion  functions #
 ########################################################
 
+def packageMissing(name):
+    raise ImportError('Dependency \''+name+'\' has not been found. Please refer to the installation manual.')
+
 from collections import OrderedDict
 import json
-import demjson
+try:
+    import demjson
+except ImportError:
+    packageMissing("demjson")
 import Models.ClassificationModules.ClassificationModule
 import Models.classifierMeasures as CM
 
