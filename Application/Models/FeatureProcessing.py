@@ -5,18 +5,37 @@
 # Convert repository information into features #
 ################################################
 
-import cPickle as pickle
+def packageMissing(name):
+    raise ImportError('Dependency \''+name+'\' has not been found. Please refer to the installation manual.')
+try:
+    import cPickle as pickle
+except ImportError:
+    packageMissing("pickle")
+
 import os
 import base64
 import string
-
-from sklearn.feature_extraction.text import TfidfVectorizer
+try:
+    from sklearn.feature_extraction.text import TfidfVectorizer
+except ImportError:
+    packageMissing("sklearn")
 import re
-from nltk.stem import PorterStemmer
-import numpy as np
-
-from gensim.models import Word2Vec
-import keras
+try:
+    from nltk.stem import PorterStemmer
+except ImportError:
+    packageMissing("nltk")
+try:
+    import numpy as np
+except ImportError:
+    packageMissing("numpy")
+try:
+    from gensim.models import Word2Vec
+except ImportError:
+    packageMissing("gensim")
+try:
+    import keras
+except ImportError:
+    packageMissing("keras")
 
 # Constants
 

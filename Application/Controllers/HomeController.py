@@ -5,8 +5,24 @@
 # GUI <-> Python Controller #
 #############################
 
-from bottle import Bottle, route, run, static_file, request
-import os, cherrypy
+def packageMissing(name):
+    raise ImportError('Dependency \''+name+'\' has not been found. Please refer to the installation manual.')
+
+try:
+	from bottle import Bottle, route, run, static_file, request
+except ImportError:
+	packageMissing("bottle")
+import os
+
+try:
+    if os.name.lower() == "nt":
+	    import cherrypy
+	    cherrypy.response.timeout = 14400000
+	    cherrypy.config.update({'response.timeout': 14400000})
+	    cherrypy.engine.timeout_monitor.unsubscribe()
+except ImportError:
+	pass
+
 import Models.ClassifierCollection
 import Models.JSONCommunication as JS
 import Models.DatabaseCommunication as DC
@@ -14,10 +30,6 @@ import Models.DatabaseCommunication as DC
 abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Views') # The default OS independent path
 homebottle = Bottle()
 CC = None # Classifier Collection
-cherrypy.response.timeout = 14400000
-cherrypy.config.update({'response.timeout': 14400000})
-cherrypy.engine.timeout_monitor.unsubscribe()
-
 # Server static files at given paths
 
 def homesetclassifiercollection(classifiercollection):

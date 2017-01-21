@@ -22,10 +22,10 @@ class svmall(ClassificationModule):
                           Sklearn can't predict individual probabilities per class so one-hot encoding for these is used."
         ClassificationModule.__init__(self, "ALL Support Vector Classifier", my_description)
 
-        self.vectorizer = getTextVectorizer(6000) # Maximum of different columns
+        self.vectorizer = getTextVectorizer(7000) # Maximum of different columns
         self.filetypeVectorizer = getTextVectorizer(30) # TODO: Find better number
-        self.foldernameVectorizer = getTextVectorizer(100) # TODO: Find better number
-        self.filenameVectorizer = getTextVectorizer(200) # TODO: Find better number
+        self.foldernameVectorizer = getTextVectorizer(150) # TODO: Find better number
+        self.filenameVectorizer = getTextVectorizer(150) # TODO: Find better number
 
         # Vectorizer for descriptions and/or readmes
         corpus = []
@@ -52,7 +52,7 @@ class svmall(ClassificationModule):
         self.foldernameVectorizer.fit(corpus)
 
         # Create classifier
-        self.clf = SVC(C=1000.0, class_weight='balanced', probability=True) # TODO: Find better C, gamma
+        self.clf = SVC(C=2000.0, class_weight="auto", gamma = 0.01,probability=True) # TODO: Find better C, gamma
         
         print "\t-", self.name
 
@@ -61,13 +61,13 @@ class svmall(ClassificationModule):
         """Reset classification module to status before training"""
         self.clf = sklearn.base.clone(self.clf)
 
-    def trainOnSample(self, sample, nb_epoch=10, shuffle=True, verbose=True):
+    def trainOnSample(self, sample, nb_epoch=8, shuffle=True, verbose=True):
         """Trainiere (inkrementell) mit Sample. Evtl zusätzlich mit best. Menge alter Daten, damit overfitten auf neue Daten verhindert wird."""
         vec = self.formatInputData(sample)
         label_index = getLabelIndex(sample)
         return self.clf.fit(vec, np.expand_dims(label_index, axis=0))
 
-    def train(self, samples, nb_epoch=10, shuffle=True, verbose=True):
+    def train(self, samples, nb_epoch=8, shuffle=True, verbose=True):
         """Trainiere mit Liste von Daten. Evtl weitere Paramter nötig (nb_epoch, learning_rate, ...)"""
         train_samples = []
         train_lables = []

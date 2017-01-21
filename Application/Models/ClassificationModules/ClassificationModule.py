@@ -5,12 +5,21 @@
 # A meta class for every classification module #
 ################################################
 
+def packageMissing(name):
+    raise ImportError('Dependency \''+name+'\' has not been found. Please refer to the installation manual.')
+
 from abc import ABCMeta, abstractmethod
-import cPickle as pickle
+try:
+    import cPickle as pickle
+except ImportError:
+    packageMissing("cPickle")
 from datetime import datetime, date, time
 import ActiveLearningSpecific as AL
 from Models.FeatureProcessing import getLabelIndex
-import numpy as np
+try:
+    import numpy as np
+except ImportError:
+    packageMissing("numpy")
 import re
 import copy
 
