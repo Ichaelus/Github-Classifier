@@ -67,7 +67,7 @@ possibleLanguages = ['JavaScript', 'Java', 'Python', 'C#', 'C++', 'Ruby',
                     'R', 'CSS', 'HTML']
 
 label_dict = {'DEV':0, 'HW':1, 'EDU':2, 'DOCS':3, 'WEB':4, 'DATA':5, 'OTHER':6}
-class_weights = {0:0.11, 1:0.58, 2:0.34, 3:0.34, 4:0.79, 5:1, 6: 0.55}
+class_weights = {0:0.11, 1:0.58, 2:0.34, 3:0.33, 4:0.79, 5:1, 6: 0.55}
 
 # Save vectorizer so it doesnt have to be loaded from serialised file each time
 global_vectorizer = None

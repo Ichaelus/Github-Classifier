@@ -65,7 +65,7 @@ class nnall(ClassificationModule):
         model.add(Activation('softmax'))
 
         # Compile model and use Adam as optimizer
-        model.compile(metrics=['accuracy'], loss='categorical_crossentropy', optimizer=Adam(0.0025))
+        model.compile(metrics=['accuracy'], loss='categorical_crossentropy', optimizer=Adam())
 
         self.model = model
         print "\t-", self.name
