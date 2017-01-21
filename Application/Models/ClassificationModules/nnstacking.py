@@ -21,18 +21,18 @@ class nnstacking(EnsembleClassifier):
         # Set input-size and output_size
         self.input_size = 7 * len(subclassifiers) + getReducedMetadataLength()
         self.output_size = 7 # Hardcoded for 7 classes
+        self.hidden_size = self.input_size
 
         # Create model
         model = Sequential()
         # Add input-layer
-        model.add(Dense(self.output_size, input_dim=self.input_size, init='uniform'))
+        model.add(Dense(self.hidden_size, input_dim=self.input_size, init='uniform'))
 
-        """
-        # Add hidden layers
-        for _ in xrange(num_hidden_layers):
-            model.add(Dense(self.input_size, init='uniform'))
-            model.add(LeakyReLU())
-        """
+        # Add hidden layer
+        model.add(LeakyReLU())
+        model.add(Dense(self.output_size, init='uniform'))
+            
+            
 
         # Add output layer and normalize probablities with softmax
         #model.add(Dense(self.output_size, init='uniform'))

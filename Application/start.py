@@ -124,10 +124,10 @@ for classifier in classifiers:
             classifiers[classifier] = loaded_classifier
         loadedClassifiers.append(classifier)
         
-classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta']])
-classifiers['averageensemble'] = averageensemble([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta']])
-classifiers['nnstacking'] = nnstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta']])
-classifiers['lrstackingmeta'] = lrstackingmeta([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta']])
+classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
+classifiers['averageensemble'] = averageensemble([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
+classifiers['nnstacking'] = nnstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
+classifiers['lrstackingmeta'] = lrstackingmeta([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
 # Finally load all meta-models such as lrstacking
 
 for classifier in classifiers:
