@@ -3,13 +3,27 @@
 ## Overview
 ### Problems with train data
 ### Intelligent Sample Collection
-Da Text verwendet wird mehrere-1000 dimensionaler Inputvektor
-Unmöglich so viele Samples zu sammeln, wenn hohe Samplequalität gewünscht ist, außerdem nicht unendlich viel Zeit um 10000+ Samples
-zu klassifizieren
-Active Learning + gezieltes Raussuchen von Repos der Minority Classes mithilfe unserer Classifier + 
-gezieltes manuelles Raussuchen von Repos wenn wir bei Subklassen gemerkt haben dass Performance hier schlecht ist
-### Tool um uns zu helfen beim klassifizieren
-Haben ein cooles Tool gebastelt.
+Probably the most important sources of information about a Github repository is the readme and the short description text. 
+As we knew we had to use them, we knew to achieve really good results we would need an extreme amount of samples, as text is 
+a very hard to use feature for a given classifier. Using word counts as example we knew we would get an input vector
+with a dimension of several thousand. So for a classifier to actually learn the importance of each value of the input
+vector, we would probably need at least ten thousands samples, and that´s not even counting in the majority class problem - 
+repos belonging into the DEV category outnumber the repos of other categories by a large factor. As the repositories 
+are really difficult to classify cleanly and consistently and because classification is really time consuming in this
+particular szenario, we set ourself the goal to try to utilize several different techniques to 
+achieve a good result with a much smaller amount of samples.
+The main method we used for that was **Active Learning**. We also tried different methods, like manually selecting repositories,
+(for that, it was really important to choose them as diverse as possible) of different subclasses of the different classes,
+as example the tutorial-repository subclass of the EDU class, and use them to get a jumpstart on the different categories. 
+Later, when our classifier got better, we also tried to only classify samples where our best classifiers where
+confident that it wasn´t a DEV or OTHER repo, as these classes are much less interesting then the other ones.
+By utilizing methods like these we are pretty happy with the performance we reached with only around 2000 samples.
+### We built ourself a somewhat reusable tool to help us with machine learning tasks like the given one
+Experimenting with different features, classifiers and parameters can take a huge amount of time. So we designed and implented
+a tool that allowed us to use different classifiers as blackbox, to save and load them and to test and analyze and compare
+their performance. To make experimenting with different features possible, we didn´t save only the features we ended up using
+in the end in our database, but saved all the information we thought could be useful in our database, so each classifier
+could independently choose and process the features for itself.
 ### Classification Strategy
 Kaggle dominiert von Ensemble Classifiern, vor allem Stacking von mehreren starken Classifiern, also war das auf jeden 
 Fall etwas was wir unbedingt probieren wollten und mit dem wir auch die besten Ergebnisse hatten.
