@@ -8,26 +8,30 @@
 def packageMissing(name):
     raise ImportError('Dependency \''+name+'\' has not been found. Please refer to the installation manual.')
 
-import time
+import time, os, webbrowser
+
 try:
     from bottle import Bottle
 except ImportError:
     packageMissing("Bottle")
+
 serverUsed = ""
 try:
-    import cherrypy
-    serverUsed = "cherrypy"
-    cherrypy.response.timeout = 14400000
-    cherrypy.config.update({'response.timeout': 14400000})
-    cherrypy.engine.timeout_monitor.unsubscribe()
+    if os.name.lower() == "nt":
+        import cherrypy
+        serverUsed = "cherrypy"
+        cherrypy.response.timeout = 14400000
+        cherrypy.config.update({'response.timeout': 14400000})
+        cherrypy.engine.timeout_monitor.unsubscribe()
+    else:
+        raise ImportError("Not Using Windows")
 except ImportError:
-    try: # Fallback for MacOS
+    try: # Fallback for MacOS, Unix.. or for Windows not having installed cherrypy
         import paste
         serverUsed = "paste"
     except ImportError:
         packageMissing("paste")
 
-import webbrowser
 from Controllers.HomeController import homebottle, homesetclassifiercollection
 from Models.ClassifierCollection import ClassifierCollection
 #from Models.ClassificationModules.nndescriptiononly import nndescriptiononly

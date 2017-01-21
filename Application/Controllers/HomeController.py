@@ -15,10 +15,11 @@ except ImportError:
 import os
 
 try:
-    import cherrypy
-    cherrypy.response.timeout = 14400000
-    cherrypy.config.update({'response.timeout': 14400000})
-    cherrypy.engine.timeout_monitor.unsubscribe()
+    if os.name.lower() == "nt":
+	    import cherrypy
+	    cherrypy.response.timeout = 14400000
+	    cherrypy.config.update({'response.timeout': 14400000})
+	    cherrypy.engine.timeout_monitor.unsubscribe()
 except ImportError:
 	pass
 
