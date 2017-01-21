@@ -21,7 +21,7 @@ _Either downloaded and installed with the command `pip install path/to/file.whl`
 
 1. [numpy + mkl](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy)
 2. [scipy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy)
-3. [cherrypy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#cherrypy)
+3. [cherrypy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#cherrypy), `paste` on UNIX or OS x (cherrypy must not be installed in this case)
 
 _Installed with the command `pip install xxx`_
 
