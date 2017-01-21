@@ -21,7 +21,7 @@ class metaonlysvc(ClassificationModule):
 
 
 
-        self.clf = SVC(C=500.0, class_weight='auto')
+        self.clf = SVC(C=500.0, class_weight='balanced')
         
         print "\t-", self.name
 

@@ -23,7 +23,7 @@ class lrstacking(EnsembleClassifier):
                 self.subclassifiers.append(loadedClassifiers)
             else:
                 self.subclassifiers.append(classifier)
-        self.clf = LogisticRegression()
+        self.clf = LogisticRegression(class_weight='balanced')
         EnsembleClassifier.__init__(self, "Logistic Regression Stacking", "Logistic Regression Stacking")
         print "\t-", self.name
 

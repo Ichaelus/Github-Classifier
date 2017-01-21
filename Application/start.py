@@ -136,7 +136,8 @@ for classifier in classifiers:
         if loaded_classifier is not None:
             classifiers[classifier] = loaded_classifier
 
-#print 'Loading last checkpoint for classifiers if available:'
+
+# Load classifiers into collection
 for c in classifiers:
     classifiercollection.addClassificationModule(classifiers[c])
 

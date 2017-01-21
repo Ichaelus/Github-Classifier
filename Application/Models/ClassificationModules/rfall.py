@@ -46,7 +46,7 @@ class allrandomforest(ClassificationModule):
             corpus.append(folder)
         self.foldernameVectorizer.fit(corpus)
 
-        self.clf = RandomForestClassifier(n_estimators=n_estimators, class_weight='auto')
+        self.clf = RandomForestClassifier(n_estimators=n_estimators, class_weight='balanced')
         
         print "\t-", self.name
 
