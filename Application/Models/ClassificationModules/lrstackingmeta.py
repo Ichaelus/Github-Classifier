@@ -90,5 +90,3 @@ class lrstackingmeta(EnsembleClassifier):
             descriptions.append(classifier.descriptions)
         return descriptions
 
-
-
