@@ -87,7 +87,7 @@ number of files and more. Later we additionally implemented the average Levensht
 due to a lack of any feature that can give us valuable information despite the fact that many DOCS or HW folder-/filenames are often similar.
 
 
-### Discussions about Class Descriptions
+### Class Descriptions
 As we didn't consider the class descriptions to be precise we added further explanations and
 also partially changed the preexisting ones, later we decided we have too many new
 border cases all the time so a single team member took over all the classifying at some point
