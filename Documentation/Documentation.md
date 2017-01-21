@@ -2,6 +2,18 @@
 
 ## Overview
 ### Problems with train data
+One of the biggest challenges was the unclear class definitions. We spent a lot of time on discussing how to classify different
+samples, there were many samples where different classes would have been a reasonable fit. We tried to extend the class definitions
+on our own while trying to avoid conflicts with the sample repos and the short definitions in the challenge descriptions. 
+We decided we wanted to classify the samples in a logical, consistent and somewhat intuitive way, even though some things
+are debatable, e.g. WEB was defined as static personal websites and blogs. But when is a website non-static? As soon as there´s
+some Javascript or PHP involved? And is personal websites only a reasonable definition? Or shouldn´t a small, static website of some
+sports team also be classified as a WEB sample?
+Because of that we expect the results of the different teams widely and very hard to compare. 
+What we want to emphasize in the beginning: we didn´t take shortcuts and deliberately chose to not make our lifes easy, e.g.
+it would have been possible to just put every website that´s not a huge webapp into WEB instead of trying to differentiate
+like the given class definitions suggest. Doing that would have led to a huge increase in the precision of our classifiers
+in the WEB class and other classes made us make similar decisions.
 ### Intelligent Sample Collection
 Probably the most important sources of information about a Github repository is the readme and the short description text. 
 As we knew we had to use them, we knew to achieve really good results we would need an extreme amount of samples, as text is 
