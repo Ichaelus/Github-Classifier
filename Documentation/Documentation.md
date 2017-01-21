@@ -103,7 +103,6 @@ On the one hand that was beneficial but in order for most of our classifiers to 
 large amount of samples with clear and easy to interpret features to confirm assumptions about correlation between features.
 We partly tackled this problem by adjusting the parameters which determine when a classification is assumed to be confident/unsure.
 
-
 To create the optimal feature vector every team member compiled a list of possible features (see Discussion/Feature Vector Ideas).
 We then discussed every proposal and added further ones.
 It's notable that the features considered most important by us at first where almost exclusively text based.
@@ -124,7 +123,6 @@ border cases all the time so a single team member took over all the classifying 
 to save the extreme amount of time we spent discussing samples and trying to keep our classifications
 consistent.
 (To examine our old extended class descriptions and explanation of edge cases see **Classification Ambiguities.md** )
-
 
 
 ## Software Architecture
@@ -178,14 +176,14 @@ we tried multiple approaches of how to encode the text presented to us.
 
 > **Frequency-based methods:** We count the frequency of specific tokens or words in our documents and 
 therefore encode the text in a sparse vector with each element representing how often one specific word/token occurs (large number = high frequency).
-Using this approach we had to consider how long this vector may be in order to be efficient as possible.
+Using this approach we had to consider how long this vector may be in order to be as efficient as possible.
 We only count the frequency of the __x__ most frequent terms (excluding stop-words). 
 While short vectors (and therefore less words we can keep track of) allow more robust classification
 results for our classifiers, we may loose important information that could make important distinctions (such as HW vs EDU) impossible.
 Having this problem in mind we also used a trick to reduce the necessary dimensionality a lot by not encoding each word 
 but the word stem ('library' and 'libraries' are bot represented by '__librari__').
 The resulting number of necessary words/tokens turned out to differ from the text we encoded. 
-We use smaller numbers (~2000) **UPDATE THOSE NUMBERS** for repository-descriptions and even less (~200) for folder-/filenames.
+We use smaller numbers (~2000) for repository-descriptions and even less (~200) for folder-/filenames.
 The readme turned out to need a lot more (~6000).
 This all was implemented using the *Tfidf-Vectorizer* from the sklearn-package.
 
@@ -221,8 +219,6 @@ In many cases the name was too specific and complex to have ever appeared before
 * **Commit messages:** We considered them to not obtain enough valuable information to sacrifice both the increase in input-dimension for the classifiers 
 and necessary api-calls.
 * **Commit count**: Weren't used as we didn't measure any correlation with specific classes.
-
-
 
 #### Metadata:
 * **hasDownload**: Boolean value if repository can be downloaded directly.
@@ -289,25 +285,25 @@ All these were already implemented in the Scikit-learn library. Parameter tuning
 They were not only often times the most robust classifiers but also outperformed *neural nets* or *SVMs* in many cases.
 After reading [articles like this](http://mlwave.com/kaggle-ensembling-guide/) we began creating our final classifier used for the competition.
 **Stacking** is a general term for combining only the predictions of other learning algorithms also often referred to as **Stacked Generalization**.
-Among the great variety of methods we selected, implemented and finally compared two **Oder eben 3 mit Meta-features** different methods:
+Among the great variety of methods we selected, implemented and finally compared three different methods:
 One was to simply let the classifiers vote democratically by simply taking the **average** probability per class.
 This made our classification way more robust and delivered an incredibly satisfying result.
 The second method is the probably most famous one: We trained a **linear classifier** to let the classifiers vote on the class 
 but not without assigning a weight to the predictions of each classifier. This way we wanted to enable the classifiers to mainly decide on the classes
 they were best at. This was implemented using sklearn's **Linear Regression** class.
-**Hier jetzt vlt ein Absatz, dass des unser finaler Classifier ist und der voll rockt**
-
-
-**Evtl. regularization**
-
-
-##### SVM
-Test
-
-##### ...
-
-
-#### Comparation
+But the third was the one we actually used for our final model. Instead of just letting the meta-classifier learn, which base-classifier
+delivered the best results for each class we supplied it with additional information about the repository.
+This information consisted of a collection of hand-selected features: the count of folders, files and commits, 
+the edit distance among the folder and filenames, the length of readme, the average length of each commit and finally the depth of the folder structure.
+The reasoning behind this all was the following: The base-classifiers were not only different in terms of machine learning models but were
+also trained on different features. We use on Neural Net (LSTM) which only has knowledge of the repository-name while one Support Vector Machines
+has knowledge of all features except that name and so on. So the quality of each classifiers prediction varies from repository to repository.
+We fed all this data, the predictions of our base-classifiers and in addition this subset of meta-features, in a neural network with one hidden layer.
+This network is now able to not only tell which sub-classifier generally is most reliable when it comes to one class but knows
+which classifier might be most reliable specifically for the current repository. When for example the readme-length is very
+small or it's even empty the classifiers depending on the readme will not produce reliable predictions. But now it's able to recognize
+that and watch out specifically what other classifiers like the repo-name LSTM predict.
+This method allowed us to produce even more robust predictions, outperforming all previously mentioned ones.
 
 
 ### Example Repositories
