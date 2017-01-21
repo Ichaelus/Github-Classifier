@@ -8,11 +8,12 @@
 def packageMissing(name):
     raise ImportError('Dependency \''+name+'\' has not been found. Please refer to the installation manual.')
 
+import os
+
 try:
 	from bottle import Bottle, route, run, static_file, request
 except ImportError:
 	packageMissing("bottle")
-import os
 
 try:
     if os.name.lower() == "nt":
@@ -30,7 +31,8 @@ import Models.DatabaseCommunication as DC
 abspath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../Views') # The default OS independent path
 homebottle = Bottle()
 CC = None # Classifier Collection
-# Server static files at given paths
+
+# Serve static files at given paths
 
 def homesetclassifiercollection(classifiercollection):
 	global CC

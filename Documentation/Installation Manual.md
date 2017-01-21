@@ -6,7 +6,7 @@
 * [pip (module manager)](https://packaging.python.org/installing/#install-pip-setuptools-and-wheel)
 * [Firefox 50](https://www.mozilla.org/en-US/firefox/new/)
 * Screen size >= (1280px x 600px)
-* RAM >= 4GB
+* RAM > 4GB
 
 ## Notes
 
@@ -21,7 +21,7 @@ _Either downloaded and installed with the command `pip install path/to/file.whl`
 
 1. [numpy + mkl](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy)
 2. [scipy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy)
-3. [cherrypy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#cherrypy), `paste` on UNIX or OS x (cherrypy must not be installed in this case)
+3. [cherrypy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#cherrypy) on Windows **or** `paste` on UNIX or OS x for compatibility reasons
 
 _Installed with the command `pip install xxx`_
 

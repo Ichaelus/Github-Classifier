@@ -4,7 +4,7 @@
 //########################################
 
 console.log("Frontend started..");
-jQuery.ajaxSetup({timeout: 3600000}); // Client waits for up to an hour for responses - retraining may take a while
+$.ajaxSetup({timeout: 14400000}); // Client waits for up to 4 hours for responses - retraining may take a while
 // Initialize state and view objects
 let stateView, inputView, classifierView, outputView, wrapperView, footerView,
 	stateData = {
@@ -66,7 +66,7 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
       term: "3."
     },
     martin: {
-      degree: "Computer Science and Mathematics BSC",
+      degree: "Computer Science BSC",
       //expertise: "",
       name: "Martin Keßler",
       term: "5."
@@ -78,7 +78,7 @@ let stateView, inputView, classifierView, outputView, wrapperView, footerView,
       term: "5."
     },
     stefan:{
-      degree: "Computer Science and Mathematics BSC",
+      degree: "Computer Science BSC",
       //expertise: "",
       name: "Stefan Grafberger",
       term: "5."
@@ -396,6 +396,7 @@ function initVue(){
         // Display the information wrapper for the classifier <name>
         wrapperView.setData(name);
         wrapperView.getSavePoints();
+        wrapperView.setSavePoint("Version");
         //RadarChart("#class_accuarcy_chart", [precisionToGraphData(wrapperData.current.precision)], getRadarConfig(700));
         showWrapper('#details_wrapper');
       },
@@ -681,7 +682,7 @@ function initVue(){
         let list = document.querySelector("#inputList").value.split("\n");
         let to_append = "\n";
         document.querySelector("#outputList").value = "";
-        runGenerator(function *main(){
+ $(function *main(){
           notify("List prediction", "List prediction started. Results will soon show up.")
           for (var i = 0; i < list.length; i++) {
             if(list[i].length > 0){
