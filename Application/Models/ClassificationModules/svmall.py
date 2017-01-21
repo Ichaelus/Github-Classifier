@@ -52,7 +52,7 @@ class svmall(ClassificationModule):
         self.foldernameVectorizer.fit(corpus)
 
         # Create classifier
-        self.clf = SVC(C=2000.0, class_weight="auto", gamma = 0.01,probability=True) # TODO: Find better C, gamma
+        self.clf = SVC(C=2000.0, class_weight="balanced", gamma = 0.01,probability=True) # TODO: Find better C, gamma
         
         print "\t-", self.name
 
