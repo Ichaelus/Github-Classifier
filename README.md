@@ -21,7 +21,7 @@ Over the time we tried out many different approaches to use varying algorithms o
 
 This comparison is far from being close to reality, but does justice to the underlying **evaluation problem**.
 
-To outreach that boundary of ~ 60%, we made use of an [Ensemble learning module](https://en.wikipedia.org/wiki/Ensemble_learning) that combines the decisions of other modules to a final, more accurate one. All that combined - **AL**, modularisation, a train set with > 2000 samples and **Ensemble Learning** brought us to a total prediction precision of ~ 70%.
+To outreach that boundary of ~ 60%, we made use of an [Ensemble learning module](https://en.wikipedia.org/wiki/Ensemble_learning) that combines the decisions of other modules to a final, more accurate one. All that combined - **AL**, modularisation, a train set with > 2000 samples and **Ensemble Learning** brought us to a total prediction precision of ~ 65%.
 
 _You can read further about our goals in **Documentation/Documentation.md**._
 
