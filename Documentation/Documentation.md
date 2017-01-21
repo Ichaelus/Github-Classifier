@@ -1,13 +1,29 @@
 # Documentation
 
+## Overview
+### Problems with train data
+### Intelligent Sample Collection
+Da Text verwendet wird mehrere-1000 dimensionaler Inputvektor
+Unmöglich so viele Samples zu sammeln, wenn hohe Samplequalität gewünscht ist, außerdem nicht unendlich viel Zeit um 10000+ Samples
+zu klassifizieren
+Active Learning + gezieltes Raussuchen von Repos der Minority Classes mithilfe unserer Classifier + 
+gezieltes manuelles Raussuchen von Repos wenn wir bei Subklassen gemerkt haben dass Performance hier schlecht ist
+### Tool um uns zu helfen beim klassifizieren
+Haben ein cooles Tool gebastelt.
+### Classification Strategy
+Kaggle dominiert von Ensemble Classifiern, vor allem Stacking von mehreren starken Classifiern, also war das auf jeden 
+Fall etwas was wir unbedingt probieren wollten und mit dem wir auch die besten Ergebnisse hatten.
+We tried several state of the art techniques, like Word2Vec and LSTMs with different results.
+
 ## Inital Approach/Planning Phase 
 
 ### Our Strategy to get our train data
 
 As we approached this problem from a machine learning perspective we knew from the start that our models require a 
-large and diverse collection of manually classified examples. In order to speed up this process and make
-as pleasant as possible we first set up a website whose aim was to display all necessary information about a repository
-and made the assignment into categories possible. 
+large and diverse collection of manually classified examples. We immediately decided we needed a tool
+to help us building up a large collection of training samples. So, in order to speed up this process and make it
+as pleasant as possible, we first set up a website whose aim was to display all necessary information about a repository
+and to make it easy to classify the samples, the resulting data got saved to a database server.
 GitHub only grants a limited number of Api-calls available in a short amount of time so early on we stored
 all hand-classified repositories with extracted features in a database to access them without restrictions.
 In this process we filtered out all information (features) we needed and also possibly lacked to do so confidently.
@@ -73,11 +89,20 @@ due to a lack of any feature that can give us valuable information despite the f
 
 ### Discussions about Class Descriptions
 As we didn't consider the class descriptions to be precise we added further explanations and
-also partially changed the preexisting ones.
-To examine our class descriptions and explanation of edge cases see **Classification Ambiguities.md**
+also partially changed the preexisting ones, later we decided we have too many new
+border cases all the time so a single team member took over all the classifying at some point
+to save the extreme amount of time we spent discussing samples and trying to keep our classifications
+consistent.
+(To examine our old extended class descriptions and explanation of edge cases see **Classification Ambiguities.md** )
+
 
 
 ## Software Architecture
+### Motivation
+As we already tried several different classification methods and spent a lot of time iterating and 
+trying to understand how to use each others code we decided we needed a tool that allowed us to use
+different classifiers as black box and to analyze their performance independet of the inner 
+workings. ...
 
 ### Goals
 * The probably highest priority was to make it as easy as possible to try and compare different solutions. 
@@ -91,10 +116,11 @@ For evaluation we predominantly used:
 > Confusion matrix
 <img src="/Documentation/Konfusionsmatrix.png" height=350>
 
-> Piechart
-<img src="/Documentation/Kreisdiagramm.png" height=350>
+> Different measures
+<img src="/Documentation/measures.png" height=350>
 
 ### Overview
+<img src="/Documentation/component_correlation.png">
 The basic components of our Application are divided into a php-server with database and a local python-Bottle-server.
 The php-server manages the storage and acces to all saved repositories and a large part of preprocessing new ones.
 To be independent of operating systems and further complications we decided to present all graphic elements in the browser with HTML.
@@ -488,9 +514,39 @@ a higher yield or a higher precision is more important for automated repository 
     </tbody>
 </table>
 
+> Confusion matrix, later to be replaced with the resulting confusion matrix of the final classifer when classifying Appendix_B Repos,
+> maybe the table on top of this picture is redundant then?
+<img src="/Documentation/Konfusionsmatrix.png" height=350>
+
 We consider a higher precision to be more relevant than a high recall per class. When thinking about a user, looking for repositories of a specific
 class on GitHub, it appears way more desirable if the repositories proposed by us are actually of the right class.
 Making sure every *DEV*-repository is presented to the user, potentially including wrongly as *DEV* labeled repositores didn't seem like the right approach.
 As the precision per class goes up during training, the recall will do so automatically as well.
 Emphasising precision while not neglecting recall completely we agreed upon Fscore as our metric.
 With it it's possible to combine both values into one while being able to favor one over another.
+
+## Conclusion
+### Hard Problem
+Text Classification isn´t easy and the different classes are extremely hard to distinguish.
+So hard in fact, that even we as humans had problems agreeing on the class labels after classifying
+hundreds and thousands of repos before. So, if we humans disagree on every second sample, we probably 
+can´t expect our classifiers to perform a lot better that that, especially considering the extreme 
+amount of information per repo.
+### Features
+Talk about information per repo we used and didn´t use here
+Word counts aren´t that good and we tried our luck with LSTMS.
+We had our reasons for not using the commits.
+File contents are utopical and impossible to use in this situation.
+So we used/tried using everything or had a good reason for not using it. 
+### Our classifiers clearly reached a ceiling
+No classifier performed much better than 60% precision M, no matter how much parameter tuning, but we reached a value 
+near that with several different classifiers, so that probably was some sort of limit how much can be achieved with our 
+features and amount/cleanness of our train data. With a Ensemble classifier, just like in competitions like Kaggle, 
+we somewhat managed to gain a few extra percent points.
+### Interpretation of our results
+60% x sounds like a pretty good number when we humans disagreed on what felt like every second sample.
+While working on the given challenge, we learned a lot about machine learning, although we unfortunatley couldn´t utilize 
+every method we learnt about during the project on the project. 
+However, we developed a framework that we will most likely again the next time we get to work on a machine learning 
+project. After building our application, the testing and comparison of different methods and parameters was incredible 
+comfortable.
