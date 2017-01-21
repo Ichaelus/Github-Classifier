@@ -25,16 +25,17 @@ class nnstacking(EnsembleClassifier):
         # Create model
         model = Sequential()
         # Add input-layer
-        model.add(Dense(self.input_size, input_dim=self.input_size, init='uniform'))
-        model.add(LeakyReLU())
+        model.add(Dense(self.output_size, input_dim=self.input_size, init='uniform'))
 
+        """
         # Add hidden layers
         for _ in xrange(num_hidden_layers):
             model.add(Dense(self.input_size, init='uniform'))
             model.add(LeakyReLU())
-        
+        """
+
         # Add output layer and normalize probablities with softmax
-        model.add(Dense(self.output_size, init='uniform'))
+        #model.add(Dense(self.output_size, init='uniform'))
         model.add(Activation('softmax'))
 
         # Compile model and use Adam as optimizer
@@ -105,4 +106,3 @@ class nnstacking(EnsembleClassifier):
         for classifier in self.subclassifiers:
             descriptions.append(classifier.descriptions)
         return descriptions
-
