@@ -339,157 +339,157 @@ determined by your automatic classifier matched your intuitive classification."
 	<tr>
 	    <td>https://github.com/ga-chicago/wdi5-homework</td>
 	    <td>HW</td>
-	    <td>None</td>
+	    <td>HW</td>
     </tr>
     <tr>
 	    <td>https://github.com/Aggregates/MI_HW2</td>
 	    <td>HW</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/datasciencelabs/2016/</td>
-	    <td>HW</td>
-	    <td>None</td>
+	    <td>EDU</td>
+	    <td>EDU</td>
     </tr>
     <tr>
 	    <td>https://github.com/githubteacher/intro-november-2015</td>
 	    <td>EDU</td>
-	    <td>None</td>
+	    <td>EDU</td>
     </tr>
     <tr>
 	    <td>https://github.com/atom/atom</td>
 	    <td>DEV</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/jmcglone/jmcglone.github.io</td>
 	    <td>WEB</td>
-	    <td>None</td>
+	    <td>WEB</td>
     </tr>
     <tr>
 	    <td>https://github.com/hpi-swt2-exercise/java-tdd-challenge</td>
 	    <td>HW</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/alphagov/performanceplatform-documentation</td>
 	    <td>DOCS</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/harvesthq/how-to-walkabout</td>
 	    <td>EDU</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/vhf/free-programming-books</td>
 	    <td>EDU</td>
-	    <td>None</td>
+	    <td>EDU</td>
     </tr>
     <tr>
 	    <td>https://github.com/d3/d3</td>
 	    <td>DEV</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/carlosmn/CoMa-II</td>
 	    <td>HW</td>
-	    <td>None</td>
+	    <td>DOCS</td>
     </tr>
     <tr>
 	    <td>https://github.com/git/git-scm.com</td>
 	    <td>DEV</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/PowerDNS/pdns</td>
 	    <td>DEV</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/cmrberry/cs6300-git-practice</td>
 	    <td>HW</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/Sefaria/Sefaria-Project</td>
 	    <td>DEV</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/mongodb/docs</td>
 	    <td>DOCS</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/sindresorhus/eslint-config-xo</td>
 	    <td>DEV</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/e-books/backbone.en.douceur</td>
 	    <td>EDU</td>
-	    <td>None</td>
+	    <td>EDU</td>
     </tr>
     <tr>
 	    <td>https://github.com/erikflowers/weather-icons</td>
 	    <td>DOCS</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/tensorflow/tensorflow</td>
 	    <td>DEV</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/cs231n/cs231n.github.io</td>
 	    <td>WEB</td>
-	    <td>None</td>
+	    <td>WEB</td>
     </tr>
     <tr>
 	    <td>https://github.com/m2mtech/smashtag-2015</td>
 	    <td>HW</td>
-	    <td>None</td>
+	    <td>HW</td>
     </tr>
     <tr>
 	    <td>https://github.com/openaddresses/openaddresses</td>
 	    <td>DATA</td>
-	    <td>None</td>
+	    <td>DATA</td>
     </tr>
     <tr>
 	    <td>https://github.com/benbalter/congressional-districts</td>
 	    <td>DATA</td>
-	    <td>None</td>
+	    <td>EDU</td>
     </tr>
     <tr>
 	    <td>https://github.com/Chicago/food-inspections-evaluation</td>
-	    <td>HW</td>
-	    <td>None</td>
+	    <td>DEV</td>
+	    <td>EDU</td>
     </tr>
     <tr>
 	    <td>https://github.com/OpenInstitute/OpenDuka</td>
 	    <td>DEV</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/torvalds/linux</td>
 	    <td>DEV</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/bhuga/bhuga.net</td>
 	    <td>WEB</td>
-	    <td>None</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/macloo/just_enough_code</td>
 	    <td>EDU</td>
-	    <td>None</td>
+	    <td>EDU</td>
     </tr>
     <tr>
 	    <td>https://github.com/hughperkins/howto-jenkins-ssl</td>
 	    <td>EDU</td>
-	    <td>None</td>
+	    <td>EDU</td>
     </tr>
 	</tbody>
 </table>
