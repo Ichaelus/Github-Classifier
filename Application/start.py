@@ -138,15 +138,9 @@ for classifier in classifiers:
 
 # Order the classifiers for the final submission
     orderedClassifiers = collections.OrderedDict()
-    orderedClassifiers['nnstacking'] = classifiers['nnstacking']
-    orderedClassifiers['nnall'] = classifiers['nnall']
-    orderedClassifiers['gbrtdescriptionmeta'] = classifiers['gbrtdescriptionmeta']
-    orderedClassifiers['svmall'] = classifiers['svmall']
-    orderedClassifiers['svmreadmemeta'] = classifiers['svmreadmemeta']
-    orderedClassifiers['allrandomforest'] = classifiers['allrandomforest']
-    orderedClassifiers['metaonlyrandomforest'] = classifiers['metaonlyrandomforest']
-    orderedClassifiers['metaonlysvc'] = classifiers['metaonlysvc']
-    orderedClassifiers['reponamelstm'] = classifiers['reponamelstm']
+    order = ['nnstacking', 'nnall', 'gbrtdescriptionmeta', 'svmall', 'svmreadmemeta', 'allrandomforest', 'metaonlyrandomforest', 'metaonlysvc', 'reponamelstm']
+    for classifiername in order:
+        classifiercollection.addClassificationModule(classifiers[classifiername])
 
 # Load classifiers into collection
 for c in orderedClassifiers:
