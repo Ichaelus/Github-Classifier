@@ -29,9 +29,9 @@ This variation works similar to Stream Based AI: it picks in turn a single class
 
 The testing mode has been designed to manage and analyse classification modules. This includes operations and visualisations regarding their train state, save files and measurable outcome.
 
-`Retrain all classifiers` will reset every (or every untrained) classifier and trains them on the current train set. Note that this will take a lot of time for modules that use large features. `Save all classifiers` saves a copy of every module state to the disk.
+`Retrain all classifiers` will reset every (or every untrained) classifier and trains them on the current train set. Note that this will take a lot of time for modules that use high-dimensional features. `Save all classifiers` saves a copy of every module state to the disk.
 
-If `Use extended test set` is disabled, test results are based on the [Appendix B](https://informaticup.github.io/InformatiCup2017/appendix-b-repositories), which has been pre-classified by our own classification criteria. When enabled, a more representative test set of about 300 samples is being top calculate test results.
+If `Use extended test set` is disabled, test results are based on the [Appendix B](https://informaticup.github.io/InformatiCup2017/appendix-b-repositories), which has been pre-classified by our own classification criteria. When enabled, a more representative test set of about 300 samples is being used to calculate test results.
 
 The button `Test classifiers` will bring the test results up to date if the checkbox above has changed. Note that you don't need to test classification modules manually in any other case.
 
@@ -42,7 +42,7 @@ In order to get a rough idea about the train/test set sample class distribution 
 
 At times it might be interesting to test the classification modules on one or more non-random self-chosen repositories. If you are interested in the classification only, select the radio button `Always show prediction`. If you want to train the classifiers on your manual classification, chose `Always require user feedback`.
 
-Clicking on `Predict single` will ask you to insert the link a repository. It will then fetch information about that given repository from the server and calculate classifier results that are being shown to the user. Even entire lists of repository URLs can be processed by clicking the button `Predict list`.
+Clicking on `Predict single` will ask you to insert the link of a repository. It will then fetch information about that given repository from the server and calculate classifier results that are being shown to the user. Even entire lists of repository URLs can be processed by clicking the button `Predict list`.
 
 ## Main Sections
 
