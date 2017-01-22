@@ -20,15 +20,15 @@ class allrandomforest(ClassificationModule):
         It has access to all available features: readme, description, metadata, filetypes/-names and foldernames.\
         The readme and description are both encoded by the same Tfidf-Vectorizer with a vocabulary of 6000 words.\
         Also the filetypes are encoded by such vectorizer, allowing encoding of 30 distinct filetypes.\
-        The vectorizer for foldernames and filenames distinguish 100 and 200 different names."
+        The vectorizer for foldernames and filenames distinguishes 100 and 200 different names."
 
 
-        ClassificationModule.__init__(self, "All Random Forest", "This ")
+        ClassificationModule.__init__(self, "All Random Forest", description)
 
         self.vectorizer = getTextVectorizer(6000) # Maximum of different columns
-        self.filetypeVectorizer = getTextVectorizer(30) # TODO: Find better number
-        self.foldernameVectorizer = getTextVectorizer(100) # TODO: Find better number
-        self.filenameVectorizer = getTextVectorizer(200) # TODO: Find better number
+        self.filetypeVectorizer = getTextVectorizer(30)
+        self.foldernameVectorizer = getTextVectorizer(100)
+        self.filenameVectorizer = getTextVectorizer(200)
 
         # Vectorizer for descriptions and/or readmes
         corpus = []

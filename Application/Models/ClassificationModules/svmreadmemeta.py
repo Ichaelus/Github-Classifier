@@ -27,7 +27,7 @@ class svmreadmemeta(ClassificationModule):
         self.vectorizer.fit(corpus)
 
         # Create classifier
-        self.clf = SVC(C=1000.0, class_weight='balanced', probability=True) # TODO: Find better C, gamma
+        self.clf = SVC(C=1000.0, class_weight='balanced', probability=True) 
         
         print "\t-", self.name
 
