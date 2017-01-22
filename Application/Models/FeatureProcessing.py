@@ -55,6 +55,7 @@ max_file_count = 150
 max_commit_interval_max = 20
 max_commit_count = 200
 max_readme_length = 4000
+max_description_length = 200
 max_lev_files = 10 # Maximal Levenshtein distance
 max_lev_folders = 10
 
@@ -67,7 +68,7 @@ possibleLanguages = ['JavaScript', 'Java', 'Python', 'C#', 'C++', 'Ruby',
                     'R', 'CSS', 'HTML']
 
 label_dict = {'DEV':0, 'HW':1, 'EDU':2, 'DOCS':3, 'WEB':4, 'DATA':5, 'OTHER':6}
-class_weights = {0:0.11, 1:0.58, 2:0.34, 3:0.33, 4:0.79, 5:1, 6: 0.55}
+class_weights = {0:0.11, 1:0.58, 2:0.33, 3:0.33, 4:0.8, 5:1, 6: 0.55}
 
 # Save vectorizer so it doesnt have to be loaded from serialised file each time
 global_vectorizer = None
@@ -102,17 +103,13 @@ def getVectorsFromData(data, processText=True):
 def getReducedMetadata(sample):
     vec = []
     vec.append(min(1., float(sample['folder_count']) / max_folder_count))
-    vec.append(min(1., float(sample['treeDepth']) / max_treeDepth))
-    vec.append(min(1., float(sample['avg_commit_length']) / max_avg_commit_length))
     vec.append(min(1., float(sample['file_count']) / max_file_count))
-    vec.append(min(1., float(sample['commit_count']) / max_commit_count))
     vec.append(min(1., float(getReadmeLength(sample) / max_readme_length)))
-    vec.append(min(1., float(avgLev(sample['folders']) / max_lev_folders)))
-    vec.append(min(1., float(avgLev(sample['files']) / max_lev_files)))
+    vec.append(min(1., float(getDescriptionLength(sample) / max_description_length)))
     return vec
 
 def getReducedMetadataLength():
-    return 8 # TODO: Find better way
+    return 4 # TODO: Find better way
 
 def getLabelIndex(sample):
     """Returns the index for the class of a given sample"""
@@ -157,6 +154,11 @@ def getReadmeLength(sample):
     """Returns the string length of the readme"""
     readme = getReadme(sample)
     return len(readme)
+
+def getDescriptionLength(sample):
+    """Returns the string length of the readme"""
+    description = getDescription(sample)
+    return len(description)
 
 def getMetadataVector(sample):
     """ Get metadata """

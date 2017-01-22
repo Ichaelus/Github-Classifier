@@ -65,7 +65,8 @@ class nnstacking(EnsembleClassifier):
             train_samples.append(formatted_sample)
             train_lables.append(oneHot(getLabelIndex(sample)))
         train_lables = np.asarray(train_lables)
-        train_result = self.model.fit(train_samples, train_lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose, class_weight=getClassWeights())
+        class_weights = {0:0.2, 1:0.58, 2:0.8, 3:0.4, 4:0.79, 5:1, 6: 0.2}
+        train_result = self.model.fit(train_samples, train_lables, nb_epoch=nb_epoch, shuffle=shuffle, verbose=verbose, class_weight=class_weights)
         self.isTrained = True
         return train_result
 
