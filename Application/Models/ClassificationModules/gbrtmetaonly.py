@@ -15,8 +15,7 @@ class gbrtmetaonly(ClassificationModule):
     """A Gradient Tree Boosting Classifier """
 
     def __init__(self, n_estimators=150):
-        description = "Gradient Tree Boosting or Gradient Boosted Regression Trees (GBRT) is a generalization of boosting to arbitrary differentiable loss functions. GBRT is an accurate and effective off-the-shelf procedure that can be used for both regression and classification problems. Gradient "
-        description += "Tree Boosting models are used in a variety of areas including Web search ranking and ecology."
+        description = "Gradient Tree Boosting / Gradient Boosted Regression Trees (GBRT)."
 
         ClassificationModule.__init__(self, "Meta Only Gradient Tree Boosting", description)
 
