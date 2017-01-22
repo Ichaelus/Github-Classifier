@@ -1,6 +1,7 @@
 # Documentation
 
 ## Overview
+
 ### Problems with train data
 One of the biggest challenges was the unclear class definitions. We spent a lot of time discussing how to classify different
 samples, there were many samples where different classes would have been a reasonable fit. We tried to extend the class definitions
@@ -161,7 +162,6 @@ Specific requirements and information about installation: **Installation Manual.
 An explanation of our User-Interface with all functionas can be found in **Frontend Manual.md**.
 Design of framework: **Active Learning Framework Planning Phase.md**
 
-
 ### Webserver
 The server provides access to all collected data samples with additional filters and count-functionalities.
 For more detailled information see **API.md**.
@@ -169,10 +169,17 @@ For more detailled information see **API.md**.
 ## Data Exploration and Prediction Model
 ### Features
 
-#### Text
+#### Implementation Details
+All classifiers have access to the features of a repository by using the functions provided in *FeatureProcessing.py*.
+They can request the features for a repository by calling the specific functions like *getMetadataVector* or *getReadme*.
+
+
+#### Feature Details
 Early on we agreed on a distinction of numerical features and text features such as readme and description.
 While it is no problem to feed numerical features directly into our machine-learning model of choice, 
 we tried multiple approaches of how to encode the text presented to us.
+
+#### Text
 
 > **Frequency-based methods:** We count the frequency of specific tokens or words in our documents and 
 therefore encode the text in a sparse vector with each element representing how often one specific word/token occurs (large number = high frequency).
@@ -215,6 +222,8 @@ In many cases the name was too specific and complex to have ever appeared before
 * **Average Levenshtein distance of filenames**
 * **Average Levenshtein distance of foldernames**
 
+#### Numerical features
+
 #### Dismissed features:
 * **Commit messages:** We considered them to not obtain enough valuable information to sacrifice both the increase in input-dimension for the classifiers 
 and necessary api-calls.
@@ -245,8 +254,15 @@ and necessary api-calls.
 A possible approach similar to word embeddings is often refered to as __Doc2Vec__, presented [in this paper](https://cs.stanford.edu/~quocle/paragraph_vector.pdf).
 While we weren't able to test this approach yet we're excited to see how it will compete against our current methods.
 
-
 ### Prediction Model
+
+#### Implementation Details
+We wrote a lot about the desired interchangeability and modularity of our models in order to train, evaluate and compare them as efficient as possible.
+This was achieved through the following design:
+Classifiers are represented by an abstract class called **ClassificationModule** (*ClassificationModule.py*), Ensemble Classifiers
+are classes which inherit the class **EnsembleClassifier** (*EnsembleCLassifier.py*) which just adds a small amount of functionality to the ClassificationModule.
+Through that we got a unified interface for our classifiers and each Model is represented by a class which just
+has to implement the abstract methods from ClassificationModule like *train* or *predictLabelAndProbability*.
 
 #### Used models
 > **Neural Networks** are without any doubt the most hyped up machine learning models since many years. 
@@ -322,9 +338,7 @@ of your program, the element in the matrix will result to true, otherwise to fal
 Compute the recall per category- the number of repositories intuitively placed within a 
 category in the set of repositories that got placed in the same category by your classifier.
 Compute the  precision per category- the number of repositories per category where the results 
-determined by your automatic classifier matched your intuitive classification.
-Discuss the quality of your results and argue whether, according to your opinion, 
-a higher yield or a higher precision is more important for automated repository classification."
+determined by your automatic classifier matched your intuitive classification."
 
 <table>
 	<thead>
@@ -544,6 +558,8 @@ a higher yield or a higher precision is more important for automated repository 
 > maybe the table on top of this picture is redundant then?
 <img src="/Documentation/Konfusionsmatrix.png" height=350>
 
+***"Discuss the quality of your results and argue whether, according to your opinion, 
+a higher yield or a higher precision is more important for automated repository classification."***  
 We consider a higher precision to be more relevant than a high recall per class. When thinking about a user, looking for repositories of a specific
 class on GitHub, it appears way more desirable if the repositories proposed by us are actually of the right class.
 Making sure every *DEV*-repository is presented to the user, potentially including wrongly as *DEV* labeled repositores didn't seem like the right approach.
@@ -559,7 +575,7 @@ hundreds and thousands of repos before. So, if we humans disagree on every secon
 can´t expect our classifiers to perform a lot better that that, especially considering the extreme 
 amount of information per repo.
 ### Features
-Talk about information per repo we used and didn´t use here
+Talk about information per repo we used and didn´t use here. **Nein, das haben wir doch oben schon genau gemacht?**
 Word counts aren´t that good and we tried our luck with LSTMS.
 We had our reasons for not using the commits.
 File contents are utopical and impossible to use in this situation.
@@ -567,12 +583,12 @@ So we used/tried using everything or had a good reason for not using it.
 ### Our classifiers clearly reached a ceiling
 No classifier performed much better than 60% precision M, no matter how much parameter tuning, but we reached a value 
 near that with several different classifiers, so that probably was some sort of limit how much can be achieved with our 
-features and amount/cleanness of our train data. With a Ensemble classifier, just like in competitions like Kaggle, 
+features and amount/cleanness of our train data. With an Ensemble classifier, just like in competitions like Kaggle, 
 we somewhat managed to gain a few extra percent points.
 ### Interpretation of our results
 60% x sounds like a pretty good number when we humans disagreed on what felt like every second sample.
 While working on the given challenge, we learned a lot about machine learning, although we unfortunatley couldn´t utilize 
-every method we learnt about during the project on the project. 
-However, we developed a framework that we will most likely again the next time we get to work on a machine learning 
+every method we learnt about during the work on the project. 
+However, we developed a framework that we will very likely use again the next time we get to work on a machine learning 
 project. After building our application, the testing and comparison of different methods and parameters was incredible 
 comfortable.
