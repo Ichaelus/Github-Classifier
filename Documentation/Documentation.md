@@ -147,9 +147,19 @@ Specific requirements and information about installation: **Installation Manual.
 
 ### Python application
 An explanation of our User-Interface with all functionas can be found in **Frontend Manual.md**.
-Design of framework: **Active Learning Framework Planning Phase.md**
-The main functionalities are split up in our 3 core components:
-First being *DatabaseCommunication.py* which handles all acces to our database
+Design of framework: **Active Learning Framework Planning Phase.md**  
+
+The main functionality is split up in 5 core components:
+First being *DatabaseCommunication.py* which handles all access to our database.
+This way we can for example download all our training data by just calling one function.
+The returned samples/repositories provide all features available, it's now up to the classifier to filter out the features it needs.
+This happens in *FeatureProcessing.py*. The extraction and preprocessing of a sample's features happens here.  
+Formatting and processing for I/O and presentation is done in *JSONCommunication.py*. Here we turn classifier results into confusion matrices 
+and create XML-files for saved classifiers.  
+The managment of all classifiers currently presented is the goal of *ClassifierCollection.py*. At the start of the application we load all used classifiers in this collection 
+and so when we want to train, test, save and generally use them, we just call the methods of this class.  
+The interchangeability of these classifiers is guaranteed by creating the abstract class *ClassificationModules.py*.
+You will find more information about them later under *Prediction Model*.
 
 
 
