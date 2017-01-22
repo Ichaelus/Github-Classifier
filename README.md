@@ -12,15 +12,15 @@ Welcome to the InformatiCup 2017 submission from the team of the **University of
 
 GitHub is a place where everyone is able to create new repositories, and nobody is asked to keep them assignable to **one and only one** class given by the InformatiCup guidelines. As a matter of facts, we chose not to make our life easy and had long discussions for many train samples - and labeled them based on nuances, which won't be easy to imitate by a machine learning tool. The very first 5 train samples per class have been given by the _Appendix A_, which we then increased with both **Stream Based** and **Pool Based** [Active Learning](https://en.wikipedia.org/wiki/Active_learning_(machine_learning)). As we kept classifying manually, we saw that a grand part of our input samples would possibly fit in two or more classes (for instance DOCS and EDU) - it is therefore unlikely to reach a near perfect precision score.
 
-Over the time we tried out many different approaches to use varying algorithms on partitions of our feature set. We could observe a _natural limitation_ for single classifiers at precisions of ~ 60%. **For comparison only**:
+Over the time we tried out many different approaches to use varying algorithms on partitions of our feature set. We could observe a _natural limitation_ for single classifiers at precisions around ~ 60%. **For comparison only**:
 
-* If every sample would basically fit in two classes, but has been manually classified as one of those, random classification would be reach 1/7 precision, thus 14%
+* If every sample would basically fit in two classes, but has been manually classified as one of those, random classification would reach 1/7 precision, thus 14% accuracy
 * If the classifier would identify the two possibly classes and chose a random one, precision would be 50%
 * 60% would mean in this abstract example, that possibly classes are being spotted and the classifier tends to the correct class
 
 This comparison is far from being close to reality, but does justice to the underlying **evaluation problem**.
 
-To outreach that boundary of ~ 60%, we made use of an [Ensemble learning module](https://en.wikipedia.org/wiki/Ensemble_learning) that combines the decisions of other modules to a final, more accurate one. All that combined - **AL**, modularisation, a train set with > 2000 samples and **Ensemble Learning** brought us to a total prediction precision of ~ 65%.
+To outreach that boundary of ~ 60%, we made use of an [Ensemble learning module](https://en.wikipedia.org/wiki/Ensemble_learning) that combines the decisions of other modules to a final, more accurate one. All that combined - **AL**, modularisation, a train set with > 2000 samples and **Ensemble Learning** brought us to a total F-score M (each class weighted equally) of ~ 65%.
 
 _You can read further about our goals in **Documentation/Documentation.md**._
 
