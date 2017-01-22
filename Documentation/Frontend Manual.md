@@ -56,9 +56,9 @@ If any **A**ctive **L**earning or user input mode has been selected, the input w
 
 <img src="/Documentation/Section_Test_Input.png" height=350>
 
-In the `test mode`, a class distribution of the selected test set will be displayed. The test set can be changed inside the header section.
-
-### Classifiers
+In the `test mode`, a class distribution of the selected test set will be displayed. The test set can be changed inside the header section.  
+  
+### Classifiers and Classification Results
 
 This section is basically an ordered list of classification modules (defined in `/Application/Modules/ClassificationModules`). The green little box consists of the module name, the value of the selected measure, and two actions:
 

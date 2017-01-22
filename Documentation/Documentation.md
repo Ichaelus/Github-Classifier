@@ -124,7 +124,7 @@ consistent.
 As we already tried several different classification methods and spent a lot of time iterating and 
 trying to understand how to use each other's code we decided we needed a tool that allowed us to use
 different classifiers as black box and to analyse their performance independent of the inner 
-workings. ...
+workings.
 
 ### Goals
 * The probably highest priority was to make it as easy as possible to try and compare different solutions. 
@@ -154,7 +154,7 @@ Specific requirements and information about the installation can be found in: **
 ### Python application
 Design of framework: **Active Learning Framework Planning Phase.md**  
 
-The main functionality is split up in 5 core components:
+The main functionality is split up in 6 core components:
 First being *DatabaseCommunication.py* which handles all access to our database.
 This way we can - for example - download all our training data by just calling a single function.
 The returned samples/repositories provide all features available, it's now up to the classifier to filter out the features it needs.
@@ -163,6 +163,8 @@ Formatting and processing for I/O and presentation is done in *JSONCommunication
 The management of all classifiers currently presented is the goal of *ClassifierCollection.py*. At the start of the application we load all used classifiers in this collection and so if we want to train, test, save and generally use them, we just need to call the methods of this specific class.
 The interchangeability of these classifiers is guaranteed by creating the abstract class *ClassificationModules.py*.
 You will find more information about them later under *Prediction Model*.
+To evaluate our classifiers we use *classifierMeasures.py*. Given a confusion matrix it generates the desired evaluation scores (Fscore, Precision, ...).
+
 
 ### User Interface
 An explanation of our User-Interface with all functions can be found in **Frontend Manual.md**.
@@ -247,6 +249,7 @@ In many cases the name was too specific and complex to have ever appeared before
 * **branch_count**: Count of branches currently in use.
 * **forks**: Count of created forks.
 * **commit_interval_avg**: Average interval in which commits where created.
+* **Commit count**: Number of commits since creation of repository.
 * **contributors_count**: Count of contributors to this repository.
 * **open_issues_count**: Count of open issue.
 * **avg_commit_length**: Average text-length of commit messages.
@@ -260,7 +263,7 @@ In many cases the name was too specific and complex to have ever appeared before
 #### Dismissed features:
 * **Commit messages:** We considered them to not obtain enough valuable information to sacrifice both the increase in input-dimension for the classifiers 
 and necessary API-calls.
-* **Commit count**: Weren't used as we didn't measure any correlation with specific classes.
+
 
 #### Possible features for the future
 * **Count of filenames with min. Lev-distance**: Could be more informative for classes like __HW__ or __DOCS__ than the average Levenshtein distance and might be implemented in the future. 
@@ -584,26 +587,32 @@ With it it's possible to combine both values into one while being able to favour
 
 ## Conclusion
 ### Hard Problem
-Text Classification isn´t easy and the different classes are extremely hard to distinguish.
-So hard in fact, that even us as humans had problems agreeing on the class labels after classifying
-hundreds and thousands of repos before. So, if we humans disagree on every second sample, we probably 
-can´t expect our classifiers to perform a lot better that that, especially considering the extreme 
+Text Classification isn't easy and the different classes are extremely hard to distinguish.
+In fact so hard that even as humans we had problems agreeing on the class labels after classifying
+hundreds and thousands of repositories before. So, if we humans disagree on every second sample, we probably 
+can´t expect our classifiers to perform a lot better than that, especially considering the extreme
 amount of information per repo.
 ### Features
-Talk about information per repo we used and didn´t use here. **Nein, das haben wir doch oben schon genau gemacht?**
-Word counts aren´t that good and we tried our luck with LSTMS.
-We had our reasons for not using the commits.
-File contents are utopic and impossible to use in this situation.
-So we used/tried using everything or had a good reason for not using it. 
+During our work on this project we had to make serveral sacrifices.
+When we discussed which features were important to us as humans while classifying 
+we weren't limited by API-Calls or processing power.
+But these limitations turned out to be a crucial part of our work. 
+When training on over 2000 repositories it's infeasible to measure edit distances 
+for every filename-combination just as it is utopic to compare the content of every file in a repository.
+So it's been an exciting process finding little tricks and optimizations to get the most out of this situation.
+Even though we had to omit the use of some features (Word2Vec-embeddings, file-content, ...) and weren't able to try 
+all possible feature-combinations due to limited time we're pretty happy and confident about our results and feel
+like this experience will enable us to approach similar problems way more efficiently in the future.
 ### Our classifiers clearly reached a ceiling
-No classifier performed much better than 60% precision M, no matter how much parameter tuning, but we reached a value 
-near that with several different classifiers, so that probably was some sort of limit how much can be achieved with our 
+No classifier performed much better than 60% precision M, no matter how long we tried to tweak its parameters. 
+But we reached a value around these 60% with almost every other classifiers, 
+so it appears that what we experienced was some kind of limit how much can possibly be achieved with our 
 features and amount/cleanness of our train data. With an Ensemble classifier, just like in competitions like Kaggle, 
-we somewhat managed to gain a few extra percent points.
+we somewhat managed to gain a few crucial extra percent points.
 ### Interpretation of our results
-60% x sounds like a pretty good number when we humans disagreed on what felt like every second sample.
+71% precision (M) sounds like a pretty good number when we humans disagreed on what felt like every second sample.
 While working on the given challenge, we learned a lot about machine learning, although unfortunately we couldn´t utilize 
 every method we learnt about during the work on the project. 
 However, we developed a framework that we will very likely use again the next time we get to work on a machine learning 
-project. After building our application, the testing and comparison of different methods and parameters was incredible 
+project. After building our application, the testing and comparison of different methods and parameters was incredibly
 comfortable.
