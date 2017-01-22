@@ -115,7 +115,7 @@ for classifier in classifiers:
 
 # Order the classifiers for the final submission
     orderedClassifiers = collections.OrderedDict()
-    order = ['nnstacking', 'nnall', 'gbrtdescriptionmeta', 'svmall', 'svmreadmemeta', 'allrandomforest', 'metaonlyrandomforest', 'metaonlysvc', 'reponamelstm']
+    order = ['nnstacking', 'gbrtdescriptionmeta', 'svmall', 'nnall', 'svmreadmemeta', 'allrandomforest', 'metaonlyrandomforest', 'metaonlysvc', 'reponamelstm']
     for classifiername in order:
         orderedClassifiers[classifiername] = classifiers[classifiername]
 

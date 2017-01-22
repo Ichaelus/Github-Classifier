@@ -44,7 +44,7 @@ _Installed with the command `pip install xxx`_
 
 Now that every library and dependency is installed, you can open the **command shell** as a superuser in the folder `Application`. Type `python start.py` and wait until the GUI is being opened in a new Tab in Firefox (this will take a couple of minutes). Meanwhile, you can learn how to interact with the GUI in the separate documentation file `Frontend Manual.md`. Note that you can read the docfiles in the User Interface as well.
 
-If you want to test a file  of repository links without a GUI (e.g. the Appendix B file) switch into the folder `Application` and place your input file. It must consist of a line separated list of GitHub repository URLs. Open the command shell and type `python testLinkFile.py <yourfile>` and wait until the script has finished. The results will be saved at `classification_result.txt` in the same directory. 
+If you want to test a file  of repository links without a GUI (e.g. the Appendix B file) switch into the folder `Application` and place your input file. It must consist of a line separated list of GitHub repository URLs. Open the command shell and type `python predict.py <yourfile>` and wait until the script has finished. The results will be saved at `classification_result.txt` in the same directory. 
 
 _Note: If there are still packages missing that do not show up in the list, please install them via pip._
 

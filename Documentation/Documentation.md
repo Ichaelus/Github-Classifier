@@ -87,7 +87,7 @@ Using this method we finally classified over 2000 repositories by hand.
 
 After building up our first set of training-data we were confronted with a serious problem:
 We encountered a so called Majority Class Problem. As GitHub is mainly used for software development projects the class
-**Development (DEV)** appeared way more frequently as any other class, taking up around 80% of all public repositories on GitHub. **Better %?**
+**Development (DEV)** appeared way more frequently as any other class, taking up around 80% of all public repositories on GitHub.
 This resulted in our first classifiers assigning *DEV* to almost every repository as it was right  doing so most of the time.
 Our first approach to this problem was to split up the prediction process into a first step where only the distinction between *DEV* and *NOT Dev* 
 has to been made. If it was classified as *NOT Dev* we'd show the repository to a classifier which only knew how to classify such 
@@ -342,7 +342,12 @@ This method allowed us to produce even more robust predictions, outperforming al
 
 
 ## Validation
-"Apply your classifier on the repositories included in  Appendix B . 
+
+For our own model evaluation we used an extended test-set of approx. 40 repositories per class. 
+In addition to the ones in Appendix B we used respositories committed by another participating team.
+We reclassified many of them to match our own classification guidelines.
+
+> "Apply your classifier on the repositories included in  Appendix B . 
 You can find this file on https://github.com/InformatiCup/InformatiCup2017 as well. 
 Create a Boolean matrix where you compare the results where you compare the results of your 
 classifier and your intuitive classification (if your intuitive classification matches the output 
@@ -350,7 +355,7 @@ of your program, the element in the matrix will result to true, otherwise to fal
 Compute the recall per category- the number of repositories intuitively placed within a 
 category in the set of repositories that got placed in the same category by your classifier.
 Compute the  precision per category- the number of repositories per category where the results 
-determined by your automatic classifier matched your intuitive classification."
+determined by your automatic classifier matched your intuitive classification."  
 
 <table>
 	<thead>
@@ -519,63 +524,22 @@ determined by your automatic classifier matched your intuitive classification."
 	</tbody>
 </table>
 
-<table>
-    <thead>
-        <tr>
-            <th>Class</th>
-            <th>Precision obtained</th>
-            <th>Recall obtained</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><strong>DEV</strong></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><strong>HW</strong></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><strong>EDU</strong></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><strong>DOCS</strong></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><strong>WEB</strong></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><strong>DATA</strong></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td><strong>OTHER</strong></td>
-            <td></td>
-            <td></td>
-        </tr>
-    </tbody>
-</table>
-
-> Confusion matrix, later to be replaced with the resulting confusion matrix of the final classifier when classifying Appendix_B Repos,
-> maybe the table on top of this picture is redundant then?
-<img src="/Documentation/Konfusionsmatrix.png" height=350>
+<img src="/Documentation/Appendix_B_Confusion_Matrix.png" height=350>
 
 ### Example Repositories
-"Please document three repositories where you assume that your 
-application will yield better results as compared to the results of other teams."
-Hinweise um solche bei uns zu finden:
-* HW/DOC könnte durch Levenshtein distance besser sein...
-* ??
+> "Please document three repositories where you assume that your 
+application will yield better results as compared to the results of other teams."  
+* [Repo name](link) **DEV**
+reasoning
+
+* [Repo name](link) **DEV**
+reasoning
+
+* [Repo name](link) **DEV**
+reasoning
+
+
+
 
 ### Precision vs Yield/ Recall
 We consider a higher precision to be more relevant than a high recall per class. When thinking about a user, looking for repositories of a specific
