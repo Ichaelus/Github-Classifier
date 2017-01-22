@@ -26,9 +26,9 @@ class svmall(ClassificationModule):
         ClassificationModule.__init__(self, "ALL Support Vector Classifier", my_description)
 
         self.vectorizer = getTextVectorizer(7000) # Maximum of different columns
-        self.filetypeVectorizer = getTextVectorizer(30) # TODO: Find better number
-        self.foldernameVectorizer = getTextVectorizer(150) # TODO: Find better number
-        self.filenameVectorizer = getTextVectorizer(150) # TODO: Find better number
+        self.filetypeVectorizer = getTextVectorizer(30) 
+        self.foldernameVectorizer = getTextVectorizer(150)
+        self.filenameVectorizer = getTextVectorizer(150) 
 
         # Vectorizer for descriptions and/or readmes
         corpus = []
@@ -55,7 +55,7 @@ class svmall(ClassificationModule):
         self.foldernameVectorizer.fit(corpus)
 
         # Create classifier
-        self.clf = SVC(C=2000.0, class_weight="balanced", gamma = 0.01,probability=True) # TODO: Find better C, gamma
+        self.clf = SVC(C=2000.0, class_weight="balanced", gamma = 0.01,probability=True)
         
         print "\t-", self.name
 

@@ -19,8 +19,8 @@ class gbrtfilesandfolders(ClassificationModule):
 
         ClassificationModule.__init__(self, "Files and Folders Gradient Tree Boosting", description)
 
-        self.fileVectorizer = getTextVectorizer(50) # TODO: Find better number
-        self.foldernameVectorizer = getTextVectorizer(50) # TODO: Find better number
+        self.fileVectorizer = getTextVectorizer(50) 
+        self.foldernameVectorizer = getTextVectorizer(50) 
 
         # Vectorizer for filetypes
         corpus = []

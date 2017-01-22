@@ -20,7 +20,7 @@
 > **Example:** [language-tag-extensions](https://github.com/ppKrauss/language-tag-extensions) is 'DATA'  
 
 ### DEV vs DATA
-> [food-inspections-evaluation](https://github.com/Chicago/food-inspections-evaluation) is 'DEV'. # TODO: Explain why...
+> [food-inspections-evaluation](https://github.com/Chicago/food-inspections-evaluation) is 'DEV'.
 
 ### Websites
 > Decision if Web or Dev depends on complexity of website.   

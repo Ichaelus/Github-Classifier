@@ -22,7 +22,6 @@ x_train, x_test, y_train, y_test = split_train_test(features, labels, ratio=0.7)
 # das trainieren mit den daten
 from sklearn.svm import  SVC
 
-# TODO: Experimentiere mit C, Gamma
 clf = SVC(C=1000., kernel='rbf')
 clf.fit(x_train, y_train)
 

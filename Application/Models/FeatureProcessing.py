@@ -39,7 +39,6 @@ except ImportError:
 
 # Constants
 
-# TODO: Update values
 max_stars = 1000
 max_forks =  100
 max_watches = 10
@@ -109,7 +108,7 @@ def getReducedMetadata(sample):
     return vec
 
 def getReducedMetadataLength():
-    return 4 # TODO: Find better way
+    return 4 
 
 def getLabelIndex(sample):
     """Returns the index for the class of a given sample"""
@@ -188,13 +187,11 @@ def getMetadataVector(sample):
 
 def getMetadataLength():
     """Get length of Metadata Vector"""
-    # TODO: Remove hardcoded answer
     return 19 + getLanguagesLength()
 
 def getLanguageVector(sample):
     """Get vector of used languages"""
     # Some of the most popular languages on Github
-    # TODO: Create better list
     global possibleLanguages
 
     vector = []
@@ -354,10 +351,6 @@ def getLstmCharLength():
 def getWord2VecModel():
     path= os.path.dirname(__file__) + "/../Word2VecModel/"
     modelName = 'GoogleNews-vectors-negative300.bin'
-    #if modelName not in os.listdir("../Classifier_SavePoints/Word2Vec"):
-    #    print "Word2Vec-Model not found, try downloading from source"
-    #    pass    # TODO: Actually implement downlaod
-    #    return None
     return Word2Vec.load_word2vec_format(path + modelName, binary=True)
 
 def resetWeights(kerasModel):

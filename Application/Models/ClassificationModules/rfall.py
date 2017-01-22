@@ -26,9 +26,9 @@ class allrandomforest(ClassificationModule):
         ClassificationModule.__init__(self, "All Random Forest", description)
 
         self.vectorizer = getTextVectorizer(6000) # Maximum of different columns
-        self.filetypeVectorizer = getTextVectorizer(30) # TODO: Find better number
-        self.foldernameVectorizer = getTextVectorizer(100) # TODO: Find better number
-        self.filenameVectorizer = getTextVectorizer(200) # TODO: Find better number
+        self.filetypeVectorizer = getTextVectorizer(30)
+        self.foldernameVectorizer = getTextVectorizer(100)
+        self.filenameVectorizer = getTextVectorizer(200)
 
         # Vectorizer for descriptions and/or readmes
         corpus = []
