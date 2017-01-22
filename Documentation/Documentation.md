@@ -1,8 +1,14 @@
 # Documentation
 
-## Overview
+1. First insight
+2. Software Architecture
+3. Features and Prediction Model
+4. Validation
+5. Conclusion
 
-### Problems with train data
+## First insight
+
+### Confusion with class definitions
 One of the biggest challenges was the unclear class definitions. We spent a lot of time discussing how to classify different
 samples, there were many samples where different classes would have been a reasonable fit. We tried to extend the class definitions
 on our own while trying to avoid conflicts with the sample repos and the short definitions in the challenge descriptions. 
@@ -15,6 +21,7 @@ What we want to emphasize in the beginning: we didn´t take shortcuts and also d
 it would have been possible to just put every website that´s not a huge webapp into WEB instead of trying to differentiate
 like the given class definitions suggest. Doing that would have led to a huge increase in the precision of our classifiers
 in the WEB class and other classes made us make similar decisions.
+
 ### Intelligent Sample Collection
 Probably the most important sources of information about a Github repository is the readme and the short description text. 
 As we knew we had to use them, we knew to achieve really good results we would need an extreme amount of samples, as text is 
@@ -166,7 +173,7 @@ Design of framework: **Active Learning Framework Planning Phase.md**
 The server provides access to all collected data samples with additional filters and count-functionalities.
 For more detailled information see **API.md**.
 
-## Data Exploration and Prediction Model
+## Features and Prediction Model
 ### Features
 
 #### Implementation Details
