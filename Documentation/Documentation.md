@@ -14,23 +14,23 @@ samples, there were many samples where different classes would have been a reaso
 on our own while trying to avoid conflicts with the sample repos and the short definitions in the challenge descriptions. 
 We decided we wanted to classify the samples in a logical, consistent and somewhat intuitive way, even though some things
 are debatable, e.g. WEB was defined as static personal websites and blogs. But when is a website non-static? As soon as there´s
-some Javascript or PHP involved? And is *personal websites only* a reasonable definition? Or shouldn´t a small, static website of some
+some JavaScript or PHP involved? And is *personal websites only* a reasonable definition? Or shouldn´t a small, static website of some
 sports team also be classified as a WEB sample?
 Because of that we expect the results of the different teams to be very diverse and hard to compare. 
 What we want to emphasize in the beginning: we didn´t take shortcuts and also deliberately chose to not make our lifes easy, e.g.
-it would have been possible to just put every website that´s not a huge webapp into WEB instead of trying to differentiate
+it would have been possible to just put every website that´s not a huge web app into WEB instead of trying to differentiate
 like the given class definitions suggest. Doing that would have led to a huge increase in the precision of our classifiers
 in the WEB class and other classes made us make similar decisions.
 
 ### Intelligent Sample Collection
-Probably the most important sources of information about a Github repository is the readme and the short description text. 
+Probably the most important sources of information about a GitHub repository is the readme and the short description text. 
 As we knew we had to use them, we knew to achieve really good results we would need an extreme amount of samples, as text is 
 a very hard to use feature for a classifier. Using word counts as example we knew we would get an input vector
 with a dimension of several thousand. So for a classifier to actually learn the importance of each value of the input
 vector, we would probably need at least ten thousands samples, and that´s not even counting in the majority class problem - 
 repos belonging into the *DEV* category outnumber the repos of other categories by a large factor. As the repositories 
 are really difficult to classify cleanly and consistently and because classification is really time consuming in this
-particular szenario, we set ourself the goal to try to utilize several different techniques to 
+particular scenario, we set ourselves the goal to try to utilize several different techniques to 
 achieve a good result with a much smaller amount of samples.
 The main method we used for that was **Active Learning**. We also tried different methods, like manually selecting repositories,
 (for that, it was really important to choose them as diverse as possible) of different subclasses of the different classes,
@@ -39,9 +39,9 @@ Later, when our classifier got better, we also tried to only classify samples wh
 confident that it was neither a *DEV* nor *OTHER* repo, as these classes are much less interesting then the other ones.
 By utilizing methods like these we are pretty happy with the performance we reached with only around 2000 samples.
 
-### We built ourself a somewhat reusable tool to help us with machine learning tasks like the given one
-Experimenting with different features, classifiers and parameters can take a huge amount of time. So we designed and implented
-a tool that allowed us to use different classifiers like a blackbox, to save and load them and to test and analyze and compare
+### We built ourselves a somewhat reusable tool to help us with machine learning tasks like the given one
+Experimenting with different features, classifiers and parameters can take a huge amount of time. So we designed and implemented
+a tool that allowed us to use different classifiers like a black box, to save and load them and to test and analyse and compare
 their performance. To make experimenting with different features possible, we didn´t only save the features we ended up using
 in the end in our database, but saved all the information we thought could be useful in our database, so each classifier
 could independently choose and process the features for itself.
@@ -61,10 +61,10 @@ large and diverse collection of manually classified examples. We immediately dec
 to help us building up a large collection of training samples. So, in order to speed up this process and make it
 as pleasant as possible, we first set up a website whose aim was to display all necessary information about a repository
 and to make it easy to classify the samples, the resulting data got saved to a database server.
-GitHub only grants a limited number of Api-calls available in a short amount of time so early on we stored
+GitHub only grants a limited number of API-calls available in a short amount of time so early on we stored
 all hand-classified repositories with extracted features in a database to access them without restrictions.
 In this process we filtered out all information (features) we needed and also possibly lacked to do so confidently.
-Pretty soon we were suprised by how different our perspectives were in regards to which class to asign to many repositores.
+Pretty soon we were surprised by how different our perspectives were in regards to which class to assign to many repositories.
 Following this we decided to abolish all samples we classified through weeks and start from the beginning.
 The danger this diversity proposed to our classification-results was unacceptable.
 So we worked out precise definitions of each class and listed vital edge cases.
@@ -80,7 +80,7 @@ Using this method we finally classified over 2000 repositories by hand.
 ### First Data Set Impressions
 
 After building up our first set of training-data we were confronted with a serious problem:
-We encounterd a so called Majority Class Problem. As GitHub is mainly used for software development projects the class
+We encountered a so called Majority Class Problem. As GitHub is mainly used for software development projects the class
 **Development (DEV)** appeared way more frequently as any other class, taking up around 80% of all public repositories on GitHub. **Better %?**
 This resulted in our first classifiers assigning *DEV* to almost every repository as it was right  doing so most of the time.
 Our first approach to this problem was to split up the prediction process into a first step where only the distinction between *DEV* and *NOT Dev* 
@@ -95,10 +95,10 @@ We used this approach to improve our classifiers more effectively by not hand-cl
 This was achieved by maintaining a large pool (~35,000) of unlabeled repositories in our database.
 Two modes were implemented:
 * *Stream based* One random repository from the pool is selected and shown to the classifiers. If a classifier is unsure about the class, 
-the user (like an Orakel) is being questioned.
+the user (like an Oracle) is being questioned.
 * *Pool based* In turns each classifier is shown a subset of these repositories and picks the one it's most uncertain about for further questioning.  
 To measure the uncertainty about a sample, various formulas are provided.
-Our experience with this method was very positive altough it turned out to not solve the issue of training altogether.
+Our experience with this method was very positive although it turned out to not solve the issue of training altogether.
 The repositories presented to the user were almost exclusively edge-cases.
 On the one hand that was beneficial but in order for most of our classifiers to work correctly we needed a 
 large amount of samples with clear and easy to interpret features to confirm assumptions about correlation between features.
@@ -106,18 +106,18 @@ We partly tackled this problem by adjusting the parameters which determine when 
 
 ### Class Descriptions
 As we didn't consider the class descriptions to be precise we added further explanations and
-also partially changed the preexisting ones, later we decided we have too many new
+also partially changed the pre-existing ones, later we decided we have too many new
 border cases all the time so a single team member took over all the classifying at some point
 to save the extreme amount of time we spent discussing samples and trying to keep our classifications
 consistent.
-(To examine our old extended class descriptions and explanation of edge cases see **Classification Ambiguities.md** )
+(To examine our old extended class descriptions and explanation of edge cases see **Classification Ambiguities.md**)
 
 
 ## Software Architecture
 ### Motivation
 As we already tried several different classification methods and spent a lot of time iterating and 
-trying to understand how to use each others code we decided we needed a tool that allowed us to use
-different classifiers as black box and to analyze their performance independet of the inner 
+trying to understand how to use each other's code we decided we needed a tool that allowed us to use
+different classifiers as black box and to analyse their performance independent of the inner 
 workings. ...
 
 ### Goals
@@ -137,8 +137,8 @@ For evaluation we predominantly used:
 
 ### Overview
 <img src="/Documentation/component_correlation.png">
-The basic components of our Application are divided into a PHP-server with a dedicated databasec connection and a local Python-Bottle-server.
-The PHP-server manages the storage and acces to all saved repositories and a large part of generating and preprocessing them.
+The basic components of our Application are divided into a PHP-server with a dedicated database connection and a local Python-Bottle-server.
+The PHP-server manages the storage and access to all saved repositories and a large part of generating and pre-processing them.
 To be independent of operating systems and further complications we decided to present all graphic elements in the client browser using HTML.
 As most machine-learning algorithms are too complex to implement them by ourselves without spending an extraordinary time effort,
 we relied on pre-existing libraries. The easiest access to such is available with Python so we chose it as our main backend language.
@@ -152,9 +152,9 @@ The main functionality is split up in 5 core components:
 First being *DatabaseCommunication.py* which handles all access to our database.
 This way we can - for example - download all our training data by just calling a single function.
 The returned samples/repositories provide all features available, it's now up to the classifier to filter out the features it needs.
-This happens in *FeatureProcessing.py*. The extraction and preprocessing of a sample's features happens here.  
+This happens in *FeatureProcessing.py*. The extraction and pre-processing of a sample's features happens here.  
 Formatting and processing for I/O and presentation is done in *JSONCommunication.py*. Here we turn classifier results into confusion matrices and create XML-files for saved classifiers. 
-The managment of all classifiers currently presented is the goal of *ClassifierCollection.py*. At the start of the application we load all used classifiers in this collection and so if we want to train, test, save and generally use them, we just need to call the methods of this specific class.
+The management of all classifiers currently presented is the goal of *ClassifierCollection.py*. At the start of the application we load all used classifiers in this collection and so if we want to train, test, save and generally use them, we just need to call the methods of this specific class.
 The interchangeability of these classifiers is guaranteed by creating the abstract class *ClassificationModules.py*.
 You will find more information about them later under *Prediction Model*.
 
@@ -165,9 +165,9 @@ In order to keep the Frontend highly dynamic even with time-intensive user reque
 
 ### Webserver
 
-The _Webserver_ is basically a PHP server running the file contents of the folder **Backend**. Its main file _ajax.php_ provides a bunch of services such as access to all collected data samples with additional filters and count-functionalities. In order to store and fetch those samples, it is connected to a MySQL database via _mysqli_class.php_. _Ajax.php_ is also the only file that has access to the GitHub API via the controller _GitHandler.class.php_ - this is why the server can be used to _mine_ random repository samples and store extracted data to the database in order not to being limited to GitHubs API in production.
+The _Webserver_ is basically a PHP server running the file contents of the folder **Backend**. Its main file _ajax.php_ provides a bunch of services such as access to all collected data samples with additional filters and count-functionalities. In order to store and fetch those samples, it is connected to a MySQL database via _mysqli_class.php_. _Ajax.php_ is also the only file that has access to the GitHub API via the controller _GitHandler.class.php_ - this is why the server can be used to _mine_ random repository samples and store extracted data to the database in order not to being limited to GitHub's API in production.
 
-More detailled information about its services and more can be found in **API.md**.
+More detailed information about its services and more can be found in **API.md**.
 
 ## Features and Prediction Model
 ### Features
@@ -180,7 +180,7 @@ They can request the features for a repository by calling the specific functions
 To create the optimal feature vector every team member compiled a list of possible features (see Discussion/Feature Vector Ideas).
 We then discussed every proposal and added further ones.
 It's notable that the features considered most important by us at first where almost exclusively text based.
-Readme, description, foldernames, filenames, authorname and more. Unfortunatley we had to limit the access of our models to 
+Readme, description, folder names, file names, author name and more. Unfortunately we had to limit the access of our models to 
 the folder and filenames of only the first layer in a repository's folder-structure. This was due to the previously mention API-Call limit.
 "In Diskussionen einigten wir uns auch der Verlockung durch festgelegte
 Schlüsselwörter zu widerstehen, Mustererkennung sollte dem Klassifizierer überlassen bleiben." # Soll das hier rein?
@@ -195,7 +195,7 @@ therefore encode the text in a sparse vector with each element representing how 
 Using this approach we had to consider how long this vector may be in order to be as efficient as possible.
 We only count the frequency of the __x__ most frequent terms (excluding stop-words). 
 While short vectors (and therefore less words we can keep track of) allow more robust classification
-results for our classifiers, we may loose important information that could make important distinctions (such as HW vs EDU) impossible.
+results for our classifiers, we may lose important information that could make important distinctions (such as HW vs EDU) impossible.
 Having this problem in mind we also used a trick to reduce the necessary dimensionality a lot by not encoding each word 
 but the word stem ('library' and 'libraries' are bot represented by '__librari__').
 The resulting number of necessary words/tokens turned out to differ from the text we encoded. 
@@ -203,11 +203,11 @@ We use smaller numbers (~2000) for repository-descriptions and even less (~200) 
 The readme turned out to need a lot more (~6000).
 This all was implemented using the *Tfidf-Vectorizer* from the sklearn-package.
 
-> **Word embeddings:** An alternative approach is to not represent a document as a vector accounting for all used words 
+> **Word embedding:** An alternative approach is to not represent a document as a vector accounting for all used words 
 but to represent each word as vector which holds information about the context of it. 
-So we end up with a matrix where each row stands for such a wordrepresenation. This embedding is learned through algorithms 
+So we end up with a matrix where each row stands for such a word representation. This embedding is learned through algorithms 
 like presented in [this paper](https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf).
-A so called __Word2Vec__ model pretrained on Google-News articles which has a vocabulary size of 3 million distinct words is being used herefore.
+A so called __Word2Vec__ model pre-trained on Google-News articles which has a vocabulary size of 3 million distinct words is being used here for.
 Each word-vector is fed into a recurrent neural network (explained later) one after another.
 
 > **Character by character:**
@@ -235,8 +235,8 @@ In many cases the name was too specific and complex to have ever appeared before
 #### Metadata:
 * **hasDownload**: Boolean value if repository can be downloaded directly.
 * **watches**: Count of people who follow latest news in respect to new pull requests and issues that are created.
-* **folder_count**: Count of folders is currently limited due to limited api-calls available.
-* **treeDepth**: Depth of folder-structure. Also capped at the moment due to limited api-calls.
+* **folder_count**: Count of folders is currently limited due to limited API-calls available.
+* **treeDepth**: Depth of folder-structure. Also capped at the moment due to limited API-calls.
 * **stars**: Count of people who use this notification system.
 * **branch_count**: Count of branches currently in use.
 * **forks**: Count of created forks.
@@ -249,17 +249,17 @@ In many cases the name was too specific and complex to have ever appeared before
 * **commit_interval_max**: Longest interval between commits.
 * **isFork**: Boolean value if repository is fork of another.
 * **ReadmeLength**: Count of characters in readme.
-* **verwendete Sprachen**: Used programming languages (represented as vector with each column representing one language. 0.5 if language is beeing used, 1.0 if it's the repository's main language).
+* **verwendete Sprachen**: Used programming languages (represented as vector with each column representing one language. 0.5 if language is being used, 1.0 if it's the repository's main language).
 
 #### Dismissed features:
 * **Commit messages:** We considered them to not obtain enough valuable information to sacrifice both the increase in input-dimension for the classifiers 
-and necessary api-calls.
+and necessary API-calls.
 * **Commit count**: Weren't used as we didn't measure any correlation with specific classes.
 
 #### Possible features for the future
-* **Count of filenames with min. Lev-Distanz**: Could be more informative for classes like __HW__ or __DOCS__ than the average Levenshtein distance and might be implemented in the future. 
+* **Count of filenames with min. Lev-distance**: Could be more informative for classes like __HW__ or __DOCS__ than the average Levenshtein distance and might be implemented in the future. 
 * **Document vector:**
-A possible approach similar to word embeddings is often refered to as __Doc2Vec__, presented [in this paper](https://cs.stanford.edu/~quocle/paragraph_vector.pdf).
+A possible approach similar to word embedding is often referred to as __Doc2Vec__, presented [in this paper](https://cs.stanford.edu/~quocle/paragraph_vector.pdf).
 While we weren't able to test this approach yet we're excited to see how it will compete against our current methods.
 
 ### Prediction Model
@@ -285,7 +285,7 @@ When using more layers we quickly saw an immense loss in *generalization* and th
 As activation function we favored the newer [*ReLU* or *Noisy ReLU*](https://en.wikipedia.org/wiki/Rectifier_(neural_networks)) over the previously used *tanh* and *sigmoid* functions [for various reasons](https://stats.stackexchange.com/questions/126238/what-are-the-advantages-of-relu-over-sigmoid-function-in-deep-neural-network).
 As our *optimizer* we chose [*ADAM*](http://sebastianruder.com/optimizing-gradient-descent/index.html#adam) for this network-type.
 Having these things in mind our networks performed pretty well, always being among the best classifiers.
-The above mentioned **LSTM** networks came in handy when classifying based on a sequence of inputs (like characters or word-embeddings).
+The above mentioned **LSTM** networks came in handy when classifying based on a sequence of inputs (like characters or word-embedding).
 By feeding their last activation to themselves, these neurons "remember" their previous inputs (like the last characters forming a sentence).
 A helpful explanation can be found [here](https://colah.github.io/posts/2015-08-Understanding-LSTMs/).
 For reasons like improving training time *Stochastic gradient descent* was used for training here.    
@@ -304,9 +304,9 @@ After trying different combinations of lengths of the Frequency based features w
 Same for our [Nearest Neighbors classifiers](http://scikit-learn.org/stable/modules/neighbors.html), even though we also tried non-text features with them.
 Both are contained in the [Scikit-learn library](http://scikit-learn.org/stable/).
 
-> **Ensemble methods** combine the capabilities of various classifiers to make an even more powerful prediciton.
+> **Ensemble methods** combine the capabilities of various classifiers to make an even more powerful prediction.
 The methods we used were incredibly powerful like the **Random Forests** or **Gradient Tree Boosting**. **AdaBoost** turned out to 
-depend strongly on the used base-classifiers but after some tries our other methods outperformed them most of the time so we ommited further use.
+depend strongly on the used base-classifiers but after some tries our other methods outperformed them most of the time so we omitted further use.
 All these were already implemented in the Scikit-learn library. Parameter tuning mostly depended on adjusting the number of base-classifiers.
 They were not only often times the most robust classifiers but also outperformed *neural nets* or *SVMs* in many cases.
 After reading [articles like this](http://mlwave.com/kaggle-ensembling-guide/) we began creating our final classifier used for the competition.
@@ -335,7 +335,7 @@ This method allowed us to produce even more robust predictions, outperforming al
 ## Validation
 "Apply your classifier on the repositories included in  Appendix B . 
 You can find this file on https://github.com/InformatiCup/InformatiCup2017 as well. 
-Create a boolean matrix where you compare the results where you compare the results of your 
+Create a Boolean matrix where you compare the results where you compare the results of your 
 classifier and your intuitive classification (if your intuitive classification matches the output 
 of your program, the element in the matrix will result to true, otherwise to false).
 Compute the recall per category- the number of repositories intuitively placed within a 
@@ -557,7 +557,7 @@ determined by your automatic classifier matched your intuitive classification."
     </tbody>
 </table>
 
-> Confusion matrix, later to be replaced with the resulting confusion matrix of the final classifer when classifying Appendix_B Repos,
+> Confusion matrix, later to be replaced with the resulting confusion matrix of the final classifier when classifying Appendix_B Repos,
 > maybe the table on top of this picture is redundant then?
 <img src="/Documentation/Konfusionsmatrix.png" height=350>
 
@@ -565,21 +565,21 @@ determined by your automatic classifier matched your intuitive classification."
 "Please document three repositories where you assume that your 
 application will yield better results as compared to the results of other teams."
 Hinweise um solche bei uns zu finden:
-* HW/DOC könnte durch Levenshtein Distanz besser sein...
+* HW/DOC könnte durch Levenshtein distance besser sein...
 * ??
 
 ### Precision vs Yield/ Recall
 We consider a higher precision to be more relevant than a high recall per class. When thinking about a user, looking for repositories of a specific
 class on GitHub, it appears way more desirable if the repositories proposed by us are actually of the right class.
-Making sure every *DEV*-repository is presented to the user, potentially including wrongly as *DEV* labeled repositores didn't seem like the right approach.
+Making sure every *DEV*-repository is presented to the user, potentially including wrongly as *DEV* labeled repositories didn't seem like the right approach.
 As the precision per class goes up during training, the recall will do so automatically as well.
 Emphasising precision while not neglecting recall completely we agreed upon Fscore as our metric.
-With it it's possible to combine both values into one while being able to favor one over another.
+With it it's possible to combine both values into one while being able to favour one over another.
 
 ## Conclusion
 ### Hard Problem
 Text Classification isn´t easy and the different classes are extremely hard to distinguish.
-So hard in fact, that even we as humans had problems agreeing on the class labels after classifying
+So hard in fact, that even us as humans had problems agreeing on the class labels after classifying
 hundreds and thousands of repos before. So, if we humans disagree on every second sample, we probably 
 can´t expect our classifiers to perform a lot better that that, especially considering the extreme 
 amount of information per repo.
@@ -587,7 +587,7 @@ amount of information per repo.
 Talk about information per repo we used and didn´t use here. **Nein, das haben wir doch oben schon genau gemacht?**
 Word counts aren´t that good and we tried our luck with LSTMS.
 We had our reasons for not using the commits.
-File contents are utopical and impossible to use in this situation.
+File contents are utopic and impossible to use in this situation.
 So we used/tried using everything or had a good reason for not using it. 
 ### Our classifiers clearly reached a ceiling
 No classifier performed much better than 60% precision M, no matter how much parameter tuning, but we reached a value 
@@ -596,7 +596,7 @@ features and amount/cleanness of our train data. With an Ensemble classifier, ju
 we somewhat managed to gain a few extra percent points.
 ### Interpretation of our results
 60% x sounds like a pretty good number when we humans disagreed on what felt like every second sample.
-While working on the given challenge, we learned a lot about machine learning, although we unfortunatley couldn´t utilize 
+While working on the given challenge, we learned a lot about machine learning, although unfortunately we couldn´t utilize 
 every method we learnt about during the work on the project. 
 However, we developed a framework that we will very likely use again the next time we get to work on a machine learning 
 project. After building our application, the testing and comparison of different methods and parameters was incredible 
