@@ -538,8 +538,11 @@ As the stacking model has knowledge whether a readme or description exists it ap
 trusts the prediction of this classifier and also few classifiers trained on metadata and not those trained on the readme or description.
 And therefore classifying it correctly.
 
-* [Repo name](link) **DEV**
-reasoning
+* [Demo](https://github.com/xifengxx/demo) **EDU**
+At a first glance it seems pretty obvious that *WEB* is the right category.
+Among all these chinese characters 99% of the words are Web-related. "Web", "HTML", "CSS", "Ajax" and more.
+But even tough some classifiers fall into this trap, the ensemble-model is very confident that the focus lays on a demonstration and knowledge transfer,
+as it states only 2 times on the site with the word "Demo". Therefore **EDU** is the right choice.
 
 * [Repo name](link) **DEV**
 reasoning
