@@ -1,12 +1,12 @@
 # Documentation
 
-1. First insight
+1. First Insights
 2. Software Architecture
 3. Features and Prediction Model
 4. Validation
 5. Conclusion
 
-## First insight
+## First Insights
 
 ### Confusion with class definitions
 One of the biggest challenges was the unclear class definitions. We spent a lot of time discussing how to classify different
@@ -53,10 +53,9 @@ So we knew that we would somehow end up incorporating this technique right from 
 Eventually it ended up increasing the quality of our classifications drastically thus confirming our previous assumption.
 In addition to that we wanted to try several state of the art algorithms and neural net architectures like *Word2Vec* or *LSTMs*.
 
-## Inital Approach/Planning Phase 
 
 ### Our Strategy to get our train data
-
+**Zeug aus diesem Absatz gegenchecken zu 1. Absatz**
 As we approached this problem from a machine learning perspective we knew from the start that our models require a 
 large and diverse collection of manually classified examples. We immediately decided we needed a tool
 to help us building up a large collection of training samples. So, in order to speed up this process and make it
@@ -70,26 +69,20 @@ Following this we decided to abolish all samples we classified through weeks and
 The danger this diversity proposed to our classification-results was unacceptable.
 So we worked out precise definitions of each class and listed vital edge cases.
 The focus hereby laid on understandable definitions, finally sacrificing better evaluation scores of our models since 
-many important distinctions are very hard 'to get' for these models. **MAYBE EMPHASIS THIS MORE?**
+many important distinctions are very hard 'to get' for these models.
 After we learned from our mistakes we started to only classify in groups, later on handing this task over to only two team members
 and finally to only one person as it became too time-consuming.
 Mistakes made by this one person couldn't be prevented but eliminating the possibility of confusing differences in proposed classifications
 was our priority.
-Using this method we finally classified over 2000 repositories by hand in the course of one month. **FIND BETTER TIME-WINDOW**
+Using this method we finally classified over 2000 repositories by hand.
 
 
 ### First Data Set Impressions
-* Erste Versuche mit ersten Classifiern/Entdecken des Majority Class Problems
-* Erste Überlegungen zu den Features
-
-
-Erste Versuche starteten wir mit neuronalen Netzwerken und Support Vector Maschines (zu finden unter **First Trys**).
-Theoretische Überlegungen waren uns zu diesem Zeitpunkt aber wichtiger. **Das vlt rauslassen und erst bei classifiers erwähnen?**
 
 After building up our first set of training-data we were confronted with a serious problem:
 We encounterd a so called Majority Class Problem. As GitHub is mainly used for software development projects the class
 **Development (DEV)** appeared way more frequently as any other class, taking up around 80% of all public repositories on GitHub. **Better %?**
-This resulted in our first classifiers assigning *DEV* to almost every repository. **Explanation?**
+This resulted in our first classifiers assigning *DEV* to almost every repository as it was right  doing so most of the time.
 Our first approach to this problem was to split up the prediction process into a first step where only the distinction between *DEV* and *NOT Dev* 
 has to been made. If it was classified as *NOT Dev* we'd show the repository to a classifier which only knew how to classify such 
 (see classification-skizze.png for more).
@@ -99,7 +92,7 @@ Furthermore we incorporated the use of *Active Learning* in our training process
 ([click here for more information](https://goo.gl/TPWjGo)).
 By this we were able to only present such repositories to us for manual classification which our classifiers were particularly unsure about.
 We used this approach to improve our classifiers more effectively by not hand-classifying redundant repositories.
-This was achieved by maintaining a large pool (~30,000) of unlabeled repositories in our database.
+This was achieved by maintaining a large pool (~35,000) of unlabeled repositories in our database.
 Two modes were implemented:
 * *Stream based* One random repository from the pool is selected and shown to the classifiers. If a classifier is unsure about the class, 
 the user (like an Orakel) is being questioned.
@@ -110,19 +103,6 @@ The repositories presented to the user were almost exclusively edge-cases.
 On the one hand that was beneficial but in order for most of our classifiers to work correctly we needed a 
 large amount of samples with clear and easy to interpret features to confirm assumptions about correlation between features.
 We partly tackled this problem by adjusting the parameters which determine when a classification is assumed to be confident/unsure.
-
-To create the optimal feature vector every team member compiled a list of possible features (see Discussion/Feature Vector Ideas).
-We then discussed every proposal and added further ones.
-It's notable that the features considered most important by us at first where almost exclusively text based.
-Readme, description, foldernames, filenames, authorname and more. Unfortunatley we had to limit the access of our models to 
-the folder and filenames of only the first layer in a repository's folder-structure. This was due to the previously mention API-Call limit.
-"In Diskussionen einigten wir uns auch der Verlockung durch festgelegte
-Schlüsselwörter zu widerstehen, Mustererkennung sollte dem Klassifizierer überlassen bleiben." # Soll das hier rein?
-In these discussion we discovered many features we first neglected: used programming languages (with a possible emphasis on the main language),
-depth of the folder-structure, commit count, average commit-length, branch count, whether a download of the repository is allowed, folder-count,
-number of files and more. Later we additionally implemented the average Levenshtein distance between folder and filenames. This was done
-due to a lack of any feature that can give us valuable information despite the fact that many DOCS or HW folder-/filenames are often similar.
-
 
 ### Class Descriptions
 As we didn't consider the class descriptions to be precise we added further explanations and
@@ -180,14 +160,20 @@ For more detailled information see **API.md**.
 All classifiers have access to the features of a repository by using the functions provided in *FeatureProcessing.py*.
 They can request the features for a repository by calling the specific functions like *getMetadataVector* or *getReadme*.
 
-
-#### Feature Details
-Early on we agreed on a distinction of numerical features and text features such as readme and description.
-While it is no problem to feed numerical features directly into our machine-learning model of choice, 
-we tried multiple approaches of how to encode the text presented to us.
+#### Feature Development
+To create the optimal feature vector every team member compiled a list of possible features (see Discussion/Feature Vector Ideas).
+We then discussed every proposal and added further ones.
+It's notable that the features considered most important by us at first where almost exclusively text based.
+Readme, description, foldernames, filenames, authorname and more. Unfortunatley we had to limit the access of our models to 
+the folder and filenames of only the first layer in a repository's folder-structure. This was due to the previously mention API-Call limit.
+"In Diskussionen einigten wir uns auch der Verlockung durch festgelegte
+Schlüsselwörter zu widerstehen, Mustererkennung sollte dem Klassifizierer überlassen bleiben." # Soll das hier rein?
+In these discussion we discovered many features we first neglected: used programming languages (with a possible emphasis on the main language),
+depth of the folder-structure, commit count, average commit-length, branch count, whether a download of the repository is allowed, folder-count,
+number of files and more. Later we additionally implemented the average Levenshtein distance between folder and filenames. This was done
+due to a lack of any feature that can give us valuable information despite the fact that many DOCS or HW folder-/filenames are often similar.
 
 #### Text
-
 > **Frequency-based methods:** We count the frequency of specific tokens or words in our documents and 
 therefore encode the text in a sparse vector with each element representing how often one specific word/token occurs (large number = high frequency).
 Using this approach we had to consider how long this vector may be in order to be as efficient as possible.
@@ -218,7 +204,6 @@ In many cases the name was too specific and complex to have ever appeared before
  Such repositories often contain folders like __Week 1, Week 2, Week 3, ...__. So to hand that information directly to our classifiers 
  we measured the average __Levenshtein distance__  of all files and folders.
 
-
 #### Summary of used text-features:
 * **Repository-name**
 * **Author-name**
@@ -230,11 +215,6 @@ In many cases the name was too specific and complex to have ever appeared before
 * **Average Levenshtein distance of foldernames**
 
 #### Numerical features
-
-#### Dismissed features:
-* **Commit messages:** We considered them to not obtain enough valuable information to sacrifice both the increase in input-dimension for the classifiers 
-and necessary api-calls.
-* **Commit count**: Weren't used as we didn't measure any correlation with specific classes.
 
 #### Metadata:
 * **hasDownload**: Boolean value if repository can be downloaded directly.
@@ -255,6 +235,11 @@ and necessary api-calls.
 * **ReadmeLength**: Count of characters in readme.
 * **verwendete Sprachen**: Used programming languages (represented as vector with each column representing one language. 0.5 if language is beeing used, 1.0 if it's the repository's main language).
 
+#### Dismissed features:
+* **Commit messages:** We considered them to not obtain enough valuable information to sacrifice both the increase in input-dimension for the classifiers 
+and necessary api-calls.
+* **Commit count**: Weren't used as we didn't measure any correlation with specific classes.
+
 #### Possible features for the future
 * **Count of filenames with min. Lev-Distanz**: Could be more informative for classes like __HW__ or __DOCS__ than the average Levenshtein distance and might be implemented in the future. 
 * **Document vector:**
@@ -272,6 +257,8 @@ Through that we got a unified interface for our classifiers and each Model is re
 has to implement the abstract methods from ClassificationModule like *train* or *predictLabelAndProbability*.
 
 #### Used models
+We hereby present all models used in the process, to look at our first tests see the **First Try** folder.
+
 > **Neural Networks** are without any doubt the most hyped up machine learning models since many years. 
 Mastering many difficult challenges [like finding the right category out of thousands for images](http://image-net.org/) at human like performance.
 So we tried the most popular architectures to make use of this immense capability.
@@ -328,13 +315,6 @@ small or it's even empty the classifiers depending on the readme will not produc
 that and watch out specifically what other classifiers like the repo-name LSTM predict.
 This method allowed us to produce even more robust predictions, outperforming all previously mentioned ones.
 
-
-### Example Repositories
-"Please document three repositories where you assume that your 
-application will yield better results as compared to the results of other teams."
-Hinweise um solche bei uns zu finden:
-* HW/DOC könnte durch Levenshtein Distanz besser sein...
-* ??
 
 ## Validation
 "Apply your classifier on the repositories included in  Appendix B . 
@@ -565,8 +545,14 @@ determined by your automatic classifier matched your intuitive classification."
 > maybe the table on top of this picture is redundant then?
 <img src="/Documentation/Konfusionsmatrix.png" height=350>
 
-***"Discuss the quality of your results and argue whether, according to your opinion, 
-a higher yield or a higher precision is more important for automated repository classification."***  
+### Example Repositories
+"Please document three repositories where you assume that your 
+application will yield better results as compared to the results of other teams."
+Hinweise um solche bei uns zu finden:
+* HW/DOC könnte durch Levenshtein Distanz besser sein...
+* ??
+
+### Precision vs Yield/ Recall
 We consider a higher precision to be more relevant than a high recall per class. When thinking about a user, looking for repositories of a specific
 class on GitHub, it appears way more desirable if the repositories proposed by us are actually of the right class.
 Making sure every *DEV*-repository is presented to the user, potentially including wrongly as *DEV* labeled repositores didn't seem like the right approach.
