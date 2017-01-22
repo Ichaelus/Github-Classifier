@@ -16,7 +16,7 @@ class nnstacking(EnsembleClassifier):
     def __init__(self, subclassifiers):
         EnsembleClassifier.__init__(self, "Stacking NN", "This is our best and therefore final classifier.\
         The input to this shallow neural net comprises the predictions of various Support Vector Machines, Random Forests, Gradient Boosted Regression Trees and neural networks (LSTM and normal).\
-        Most trained on different feature-combinations.\
+        Most of them being trained on different feature-combinations.\
         Additionally we supply it with a hand selected subset of meta-features for context.\
         For an in-depth explanation see the Documentation.\
         The input is followed by one hidden layer with a leaky (smoothed) ReLu-Activation.\

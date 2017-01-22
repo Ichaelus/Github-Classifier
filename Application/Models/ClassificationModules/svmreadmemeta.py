@@ -13,7 +13,7 @@ class svmreadmemeta(ClassificationModule):
     """A basic SVC"""
 
     def __init__(self, text_corpus):
-        my_description = "This Support Vector Machine is trained on the readme, encoded with an TfIdf-Vectorizer and meta-features. \
+        my_description = "This Support Vector Machine is trained on the readme, encoded with an TfIdf-Vectorizer, and metadata. \
                           This vectorizer has a vocabulary of 6000 distinct words."
         ClassificationModule.__init__(self, "Readme and Meta Support Vector Classifier", my_description)
 
