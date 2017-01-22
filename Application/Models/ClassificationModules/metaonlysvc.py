@@ -15,7 +15,7 @@ class metaonlysvc(ClassificationModule):
     """A basic SVC"""
 
     def __init__(self):
-        my_description = "Support Vector Classifier which uses Meta-Data (Programming-Languages, stars, watches, ...).\
+        my_description = "Support Vector Classifier which uses Metadata (Programming-Languages, stars, watches, ...).\
         C-parameter of rbf-kernel is set to 500.0."
         ClassificationModule.__init__(self, "Meta Only Support Vector Classifier", my_description)
 

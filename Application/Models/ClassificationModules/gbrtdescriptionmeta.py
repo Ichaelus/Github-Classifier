@@ -16,7 +16,7 @@ class gbrtdescriptionmeta(ClassificationModule):
 
     def __init__(self, text_corpus, n_estimators=150):
         description = "Here 150 base classifiers are being used to predict \
-        the class based on meta-features as well as the short-description which gets encoded by a Tfidf-Vectorizer (Vocabulary Size: 6000)."
+        the class based on metadata as well as the short-description which gets encoded by a Tfidf-Vectorizer (Vocabulary Size: 6000)."
 
         ClassificationModule.__init__(self, "Description and Metadata Gradient Tree Boosting", description)
 
