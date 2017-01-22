@@ -67,7 +67,7 @@ Username: InformatiCupClient
 Password: InformatiCupClient1
 ```
 
-Once Ubuntu has booted, change to the folder `~/GithubClassificator/Application` and replace it with the folder `Application` of our submission. Open the folder and run `python start.py` inside the terminal as root.
+Once Ubuntu has booted, change to the folder `~/GithubClassifier/` and replace it with the folder `GithubClassifier` of our submission. Open the folder and run `python Application/start.py` inside the terminal as root.
 
 ## And what about the Backend?
 
