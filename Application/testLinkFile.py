@@ -7,6 +7,7 @@
 
 import time
 import sys
+import collections
 from bottle import Bottle
 import webbrowser
 from Controllers.HomeController import homebottle, homesetclassifiercollection
@@ -36,15 +37,28 @@ from Models.ClassificationModules.gbrtmetaonly import gbrtmetaonly
 from Models.ClassificationModules.gbrtreadmeonly import gbrtreadmeonly
 from Models.ClassificationModules.gbrtfilesandfolders import gbrtfilesandfolders
 from Models.ClassificationModules.gbrtdescriptionmeta import gbrtdescriptionmeta
+from Models.ClassificationModules.svmreadmemeta import svmreadmemeta
+from Models.ClassificationModules.allbernoullinb import allbernoullinb
+from Models.ClassificationModules.allmultinomialnb import allmultinomialnb
+from Models.ClassificationModules.averageensemble import averageensemble
+from Models.ClassificationModules.nnstacking import nnstacking
+from Models.ClassificationModules.lrstackingmeta import lrstackingmeta
+from Models.ClassificationModules.foldernameslstm import foldernameslstm
+from Models.ClassificationModules.descriptionfoldersreponamelstm import descriptionfoldersreponamelstm
+from Models.ClassificationModules.descriptionlstm import descriptionlstm
+from Models.ClassificationModules.descriptionreponamelstm import descriptionreponamelstm
+
 import Models.DatabaseCommunication as DC
 
 print("Starting application..")
+
 
 # Initialize ClassifierCollection
 classifiercollection = ClassifierCollection()
 
 print 'Getting DB Data to be able to create vectorizers for classifiers that need it'
 descriptionCorpus, readmeCorpus, filenameCorpus, filetypeCorpus, foldernameCorpus = DC.getCorpi()
+
 
 #Initialize Classifiers
 print 'Creating and adding Classifiers to Classifier Collection:'
@@ -54,19 +68,17 @@ print 'Creating and adding Classifiers to Classifier Collection:'
 loadedClassifiers = [] # Keep track, which classifiers have be loaded or such attempt has been made
 
 classifiers = {}
-#classifiers['filenamesonlysvc'] = filenamesonlysvc(filenameCorpus)
-#classifiers['nnmetaonly'] = nnmetaonly()
-classifiers['metaonlysvc'] = metaonlysvc()
-#classifiers['metaonlyadaboost'] = metaonlyadaboost()
-classifiers['metaonlyrandomforest'] = metaonlyrandomforest()
-classifiers['reponamelstm'] = reponamelstm()
-#classifiers['gbrtreadmeonly'] = gbrtreadmeonly(readmeCorpus)
-#classifiers['gbrtfilesandfolders'] = gbrtfilesandfolders(filenameCorpus, foldernameCorpus)
-#classifiers['gbrtmetaonly'] = gbrtmetaonly()
-#classifiers['gbrtdescriptionmeta'] = gbrtdescriptionmeta(descriptionCorpus)
-#classifiers['svmreadmemeta'] = svmreadmemeta(readmeCorpus)
 
+classifiers['metaonlyrandomforest'] = metaonlyrandomforest()
+classifiers['metaonlysvc'] = metaonlysvc()
+classifiers['gbrtdescriptionmeta'] = gbrtdescriptionmeta(descriptionCorpus)
+classifiers['svmreadmemeta'] = svmreadmemeta(readmeCorpus)
+
+#classifiers['descriptionlstm'] = descriptionlstm() # Remove all commented classifiers?
+#classifiers['descriptionfoldersreponamelstm'] = descriptionfoldersreponamelstm()
+classifiers['reponamelstm'] = reponamelstm()
 #classifiers['readmelstm'] = readmelstm()
+#classifiers['descriptionreponamelstm'] = descriptionreponamelstm()
 
 
 for classifier in classifiers:
@@ -81,9 +93,6 @@ for classifier in classifiers:
 classifiers['nnall'] = nnall(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
 classifiers['svmall'] = svmall(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
 classifiers['allrandomforest'] = allrandomforest(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
-#classifiers['allmultinomialnb'] = allmultinomialnb(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
-#classifiers['allbernoullinb'] = allbernoullinb(readmeCorpus + descriptionCorpus, filetypeCorpus, filenameCorpus, foldernameCorpus)
-
 
 for classifier in classifiers:
     if classifier not in loadedClassifiers:
@@ -91,9 +100,11 @@ for classifier in classifiers:
         if loaded_classifier is not None:
             classifiers[classifier] = loaded_classifier
         loadedClassifiers.append(classifier)
-
-classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest']])
-
+        
+#classifiers['lrstacking'] = lrstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
+#classifiers['averageensemble'] = averageensemble([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
+classifiers['nnstacking'] = nnstacking([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
+#classifiers['lrstackingmeta'] = lrstackingmeta([classifiers['nnall'], classifiers['metaonlyrandomforest'], classifiers['svmall'], classifiers['metaonlysvc'], classifiers['allrandomforest'], classifiers['reponamelstm'], classifiers['gbrtdescriptionmeta'], classifiers['svmreadmemeta']])
 # Finally load all meta-models such as lrstacking
 
 for classifier in classifiers:
@@ -102,16 +113,18 @@ for classifier in classifiers:
         if loaded_classifier is not None:
             classifiers[classifier] = loaded_classifier
 
+# Order the classifiers for the final submission
+    orderedClassifiers = collections.OrderedDict()
+    order = ['nnstacking', 'nnall', 'gbrtdescriptionmeta', 'svmall', 'svmreadmemeta', 'allrandomforest', 'metaonlyrandomforest', 'metaonlysvc', 'reponamelstm']
+    for classifiername in order:
+        orderedClassifiers[classifiername] = classifiers[classifiername]
 
-#print 'Loading last checkpoint for classifiers if available:'
-for c in classifiers:
-	classifiercollection.addClassificationModule(classifiers[c])
+# Load classifiers into collection
+for c in orderedClassifiers:
+    classifiercollection.addClassificationModule(classifiers[c])
 
 # Pass ClassifierCollection to Controller
 homesetclassifiercollection(classifiercollection)
-
-# Wait a bit so website doesnt get called before it's ready
-time.sleep(3)
 
 
 if len(sys.argv) <= 1:
@@ -126,7 +139,7 @@ try:
         if api_link[-1] == '/':     #remove / at the end
             api_link = api_link[0:-1]
         data = DC.getInformationsForRepo(api_link)
-        prediction = classifiers['lrstacking'].predictLabelAndProbability(data)
+        prediction = classifiers['nnstacking'].predictLabelAndProbability(data)
         resultFile.write(line.rstrip() + ' ' + classes[prediction[0]] + '\n')
     linkFile.close()
     resultFile.close()
