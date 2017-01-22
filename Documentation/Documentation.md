@@ -137,34 +137,37 @@ For evaluation we predominantly used:
 
 ### Overview
 <img src="/Documentation/component_correlation.png">
-The basic components of our Application are divided into a php-server with database and a local python-Bottle-server.
-The php-server manages the storage and acces to all saved repositories and a large part of preprocessing new ones.
-To be independent of operating systems and further complications we decided to present all graphic elements in the browser with HTML.
-As most machine-learning algorithms are too complex to implement them by ourselves without spending an extraordinary effort,
+The basic components of our Application are divided into a PHP-server with a dedicated databasec connection and a local Python-Bottle-server.
+The PHP-server manages the storage and acces to all saved repositories and a large part of generating and preprocessing them.
+To be independent of operating systems and further complications we decided to present all graphic elements in the client browser using HTML.
+As most machine-learning algorithms are too complex to implement them by ourselves without spending an extraordinary time effort,
 we relied on pre-existing libraries. The easiest access to such is available with Python so we chose it as our main backend language.
 
-Specific requirements and information about installation: **Installation Manual.md**
+Specific requirements and information about the installation can be found in: **Installation Manual.md**
 
 ### Python application
-An explanation of our User-Interface with all functionas can be found in **Frontend Manual.md**.
 Design of framework: **Active Learning Framework Planning Phase.md**  
 
 The main functionality is split up in 5 core components:
 First being *DatabaseCommunication.py* which handles all access to our database.
-This way we can for example download all our training data by just calling one function.
+This way we can - for example - download all our training data by just calling a single function.
 The returned samples/repositories provide all features available, it's now up to the classifier to filter out the features it needs.
 This happens in *FeatureProcessing.py*. The extraction and preprocessing of a sample's features happens here.  
-Formatting and processing for I/O and presentation is done in *JSONCommunication.py*. Here we turn classifier results into confusion matrices 
-and create XML-files for saved classifiers.  
-The managment of all classifiers currently presented is the goal of *ClassifierCollection.py*. At the start of the application we load all used classifiers in this collection 
-and so when we want to train, test, save and generally use them, we just call the methods of this class.  
+Formatting and processing for I/O and presentation is done in *JSONCommunication.py*. Here we turn classifier results into confusion matrices and create XML-files for saved classifiers. 
+The managment of all classifiers currently presented is the goal of *ClassifierCollection.py*. At the start of the application we load all used classifiers in this collection and so if we want to train, test, save and generally use them, we just need to call the methods of this specific class.
 The interchangeability of these classifiers is guaranteed by creating the abstract class *ClassificationModules.py*.
 You will find more information about them later under *Prediction Model*.
 
+### User Interface
+An explanation of our User-Interface with all functions can be found in **Frontend Manual.md**.
+
+In order to keep the Frontend highly dynamic even with time-intensive user requests such as _train a classifier_ we decided to use the JavaScript library [VueJS](http://vuejs.org/) in order to bind certain 'states' to the HTML DOM tree. This results in a quite large _index.html_ file which represents every possible GUI states that are being styled by _overview.css_. Reactivity and observation is being brought to it by the file _frontend.js_, which also has a connection to the Python Controller *HomeController.py*. To sum up this nested relationship of different files: JavaScript tries to satisfy user wishes by updating the internal view state via Python services.
 
 ### Webserver
-The server provides access to all collected data samples with additional filters and count-functionalities.
-For more detailled information see **API.md**.
+
+The _Webserver_ is basically a PHP server running the file contents of the folder **Backend**. Its main file _ajax.php_ provides a bunch of services such as access to all collected data samples with additional filters and count-functionalities. In order to store and fetch those samples, it is connected to a MySQL database via _mysqli_class.php_. _Ajax.php_ is also the only file that has access to the GitHub API via the controller _GitHandler.class.php_ - this is why the server can be used to _mine_ random repository samples and store extracted data to the database in order not to being limited to GitHubs API in production.
+
+More detailled information about its services and more can be found in **API.md**.
 
 ## Features and Prediction Model
 ### Features
