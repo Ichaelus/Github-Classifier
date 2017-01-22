@@ -454,7 +454,7 @@
                   </div>
                   <div
                       v-show="(mode != 'test')" 
-                      :class="'result_vector ' + (typeof(c.unsure) != 'undefined' ? (c.unsure ? 'uncertain ' : 'certain ') : ' ')">
+                      :class="'result_vector ' + (typeof(c.unsure) != 'undefined' && mode != 'single' ? (c.unsure ? 'uncertain ' : 'certain ') : ' ')">
                       <div v-for="(r, i) in c.probability" :class="'v ' + (getMax(c.name)  == r.val ? 'max' : '')">
                         <span>{{r.class}}</span><span>{{Math.round(r.val * 100) / 100}}</span>
                       </div>

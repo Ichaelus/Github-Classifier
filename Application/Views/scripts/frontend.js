@@ -183,9 +183,10 @@ function initVue(){
   					results = yield jQGetPromise("/get/doSingleStep"+getStateQuery(), "json");
   					stateView.updateResults(results);
             if(results.classifiersUnsure){
-              Vue.set(stateData, "action", "halt_loop");
               if(type == "single")
-                break;
+                Vue.set(stateData, "action", "halt"); // Halt and do not loop again
+              else
+                Vue.set(stateData, "action", "halt_loop"); // Halt until classified
             }else
               Vue.set(inoutData, "state", "Skipped " + skipped + " samples.");
   				}
@@ -682,7 +683,7 @@ function initVue(){
         let list = document.querySelector("#inputList").value.split("\n");
         let to_append = "\n";
         document.querySelector("#outputList").value = "";
- $(function *main(){
+        runGenerator(function *main(){
           notify("List prediction", "List prediction started. Results will soon show up.")
           for (var i = 0; i < list.length; i++) {
             if(list[i].length > 0){
