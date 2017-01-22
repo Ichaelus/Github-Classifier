@@ -162,7 +162,6 @@ The interchangeability of these classifiers is guaranteed by creating the abstra
 You will find more information about them later under *Prediction Model*.
 
 
-
 ### Webserver
 The server provides access to all collected data samples with additional filters and count-functionalities.
 For more detailled information see **API.md**.
