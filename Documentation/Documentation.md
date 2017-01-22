@@ -273,7 +273,7 @@ Through that we got a unified interface for our classifiers and each Model is re
 has to implement the abstract methods from ClassificationModule like *train* or *predictLabelAndProbability*.
 
 #### Used models
-We hereby present all models used in the process, to look at our first tests see the **First Try** folder.
+We hereby present all models used in the process, to look at our first tests see the **Playground** folder.
 
 > **Neural Networks** are without any doubt the most hyped up machine learning models since many years. 
 Mastering many difficult challenges [like finding the right category out of thousands for images](http://image-net.org/) at human like performance.
