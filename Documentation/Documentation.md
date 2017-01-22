@@ -369,7 +369,7 @@ determined by your automatic classifier matched your intuitive classification."
 	<tr>
 	    <td>https://github.com/ga-chicago/wdi5-homework</td>
 	    <td>HW</td>
-	    <td>HW</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/Aggregates/MI_HW2</td>
@@ -424,7 +424,7 @@ determined by your automatic classifier matched your intuitive classification."
     <tr>
 	    <td>https://github.com/carlosmn/CoMa-II</td>
 	    <td>HW</td>
-	    <td>DOCS</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/git/git-scm.com</td>
@@ -449,7 +449,7 @@ determined by your automatic classifier matched your intuitive classification."
     <tr>
 	    <td>https://github.com/mongodb/docs</td>
 	    <td>DOCS</td>
-	    <td>DEV</td>
+	    <td>DOCS</td>
     </tr>
     <tr>
 	    <td>https://github.com/sindresorhus/eslint-config-xo</td>
@@ -459,12 +459,12 @@ determined by your automatic classifier matched your intuitive classification."
     <tr>
 	    <td>https://github.com/e-books/backbone.en.douceur</td>
 	    <td>EDU</td>
-	    <td>EDU</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/erikflowers/weather-icons</td>
 	    <td>DOCS</td>
-	    <td>DEV</td>
+	    <td>WEB</td>
     </tr>
     <tr>
 	    <td>https://github.com/tensorflow/tensorflow</td>
@@ -484,12 +484,12 @@ determined by your automatic classifier matched your intuitive classification."
     <tr>
 	    <td>https://github.com/openaddresses/openaddresses</td>
 	    <td>DATA</td>
-	    <td>DATA</td>
+	    <td>DEV</td>
     </tr>
     <tr>
 	    <td>https://github.com/benbalter/congressional-districts</td>
 	    <td>DATA</td>
-	    <td>EDU</td>
+	    <td>DOCS</td>
     </tr>
     <tr>
 	    <td>https://github.com/Chicago/food-inspections-evaluation</td>
@@ -529,8 +529,14 @@ determined by your automatic classifier matched your intuitive classification."
 ### Example Repositories
 > "Please document three repositories where you assume that your 
 application will yield better results as compared to the results of other teams."  
-* [Repo name](link) **DEV**
-reasoning
+* [Homework](https://github.com/Sta523-Fa15/Homework) **HW**
+As this repository does neither contain a description nor a readme, there are only a handful of features that could lead to a correct classification:
+Filenames, Foldernames, repository name and somehow maybe the metadata. 
+But most classifiers which are also trained on filenames and foldernames would classify this repository as DEV.
+The most certain and also correct classifier was trained on the repository name, made possible by using a Recurrent Neural Net with LSTM-layers.
+As the stacking model has knowledge whether a readme or description exists it apparently
+trusts the prediction of this classifier and also few classifiers trained on metadata and not those trained on the readme or description.
+And therefore classifying it correctly.
 
 * [Repo name](link) **DEV**
 reasoning

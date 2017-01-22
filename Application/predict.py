@@ -126,6 +126,7 @@ for c in orderedClassifiers:
 # Pass ClassifierCollection to Controller
 homesetclassifiercollection(classifiercollection)
 
+print "Predicting..."
 
 if len(sys.argv) <= 1:
     sys.exit()
