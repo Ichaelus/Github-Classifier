@@ -18,8 +18,8 @@ class filenamesonlysvc(ClassificationModule):
     """A basic SVC"""
 
     def __init__(self, filenameCorpus):
-        my_description = "Support Vector Classifier which uses filename - word-counts\
-                          Sklearn can't predict individual probabilities per class so one-hot encoding for these is used."
+        my_description = "Support Vector Classifier which uses filenames. These are encoded by a Tfidf-Vectorizer with a vocabulary of 500 different filenames. \
+        The C-parameter of the rbf-kernel is set to 1000."
         ClassificationModule.__init__(self, "Filenames Only Support Vector Classifier", my_description)
 
         self.vectorizer = getTextVectorizer(500)

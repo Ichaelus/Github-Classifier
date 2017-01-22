@@ -15,7 +15,10 @@ class readmew2vlstm(ClassificationModule):
     """A basic lstm neural network"""
     
     def __init__(self, num_hidden_layers=3):
-        ClassificationModule.__init__(self, "Readme Only Word2Vec LSTM", "A LSTM reading the Readme word by word")
+        ClassificationModule.__init__(self, "Readme Only Word2Vec LSTM", "A LSTM-Network reading the Readme word by word.\
+        We used a Word2Vec-Model trained on Google-News articles, providing an embedding of 3 million different words.\
+        This embedding comprises 300 dimensions. Each word is then fed into an LSTM-layer being followed by 3 Dense-layers.\
+        Optimizer: Adam, loss: categorical crossentropy.")
 
         hidden_size = 300
         self.maxlen = 1000

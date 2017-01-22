@@ -15,7 +15,15 @@ class allrandomforest(ClassificationModule):
     """A basic Random Forest Classifier"""
 
     def __init__(self, text_corpus, filetype_corpus, filename_corpus, foldername_corpus, n_estimators=200):
-        ClassificationModule.__init__(self, "All Random Forest", "Ensemble Learner with multiple Decision-Trees")
+
+        description = "This is a Random Forest with 200 Decision Trees as base classifiers.\
+        It has access to all available features: readme, description, metadata, filetypes/-names and foldernames.\
+        The readme and description are both encoded by the same Tfidf-Vectorizer with a vocabulary of 6000 words.\
+        Also the filetypes are encoded by such vectorizer, allowing encoding of 30 distinct filetypes.\
+        The vectorizer for foldernames and filenames distinguish 100 and 200 different names."
+
+
+        ClassificationModule.__init__(self, "All Random Forest", "This ")
 
         self.vectorizer = getTextVectorizer(6000) # Maximum of different columns
         self.filetypeVectorizer = getTextVectorizer(30) # TODO: Find better number

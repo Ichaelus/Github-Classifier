@@ -15,7 +15,8 @@ class readmeonlyrandomforest(ClassificationModule):
     """A basic Random Forest Classifier"""
 
     def __init__(self, text_corpus):
-        ClassificationModule.__init__(self, "Readme Only Random Forest", "Ensemble Learner with multiple Decision-Trees")
+        ClassificationModule.__init__(self, "Readme Only Random Forest", "Ensemble Learner with 200 Decision-Trees as base-classifiers.\
+        The text is encoded by a Tfidf-Vectorizer, containing a vocabulary of 5000 distinct words.")
 
         # Create vectorizer and fit on all available Descriptions
         self.vectorizer = getTextVectorizer(5000) # Maximum of different columns
@@ -24,7 +25,7 @@ class readmeonlyrandomforest(ClassificationModule):
             corpus.append(process_text(description))
         self.vectorizer.fit(corpus)
 
-        self.clf = RandomForestClassifier()
+        self.clf = RandomForestClassifier(n_estimators=200)
         
         print "\t-", self.name
 

@@ -23,7 +23,7 @@ class averageensemble(EnsembleClassifier):
             else:
                 self.subclassifiers.append(classifier)
 
-        EnsembleClassifier.__init__(self, "Average Ensemble", "Averaging the predictions of subclassifiers.")
+        EnsembleClassifier.__init__(self, "Average Ensemble", "Here we just average the predictions of all subclassifiers, letting them vote democratically on the class-probabilities.")
         print "\t-", self.name
 
 

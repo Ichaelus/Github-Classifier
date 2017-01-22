@@ -18,8 +18,11 @@ class svmall(ClassificationModule):
     """A basic SVC"""
 
     def __init__(self, text_corpus, filetype_corpus, filename_corpus, foldername_corpus):
-        my_description = "All SVC\
-                          Sklearn can't predict individual probabilities per class so one-hot encoding for these is used."
+        my_description = "This Support Vector Machine has access to the readme, description, all metadata, filenames, filetypes and foldernames. \
+        The C and gamma for the non-linear rbf-kernel were set to 2000.0 and 0.01.\
+        The readme and description are both encoded by the same Tfidf-Vectorizer with a vocabulary of 7000 words.\
+        Also the filetypes are encoded by such vectorizer, allowing encoding of 30 distinct filetypes.\
+        The vectorizer for foldernames and filenames both distinguish 150 different words."
         ClassificationModule.__init__(self, "ALL Support Vector Classifier", my_description)
 
         self.vectorizer = getTextVectorizer(7000) # Maximum of different columns

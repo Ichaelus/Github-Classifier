@@ -24,7 +24,7 @@ class lrstackingmeta(EnsembleClassifier):
             else:
                 self.subclassifiers.append(classifier)
         self.clf = LogisticRegression(class_weight='balanced')
-        EnsembleClassifier.__init__(self, "Logistic Regression Stacking with Metadata", "Logistic Regression Stacking")
+        EnsembleClassifier.__init__(self, "Logistic Regression Stacking with Metadata", "Logistic Regression Stacking with all kinds of classifiers as base. Additional context through hand-selected meta-features provided.")
         print "\t-", self.name
 
 

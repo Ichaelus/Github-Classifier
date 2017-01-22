@@ -14,8 +14,11 @@ from ClassificationModule import ClassificationModule
 class nnall(ClassificationModule):
     """A basic feedforward neural network"""
     def __init__(self, text_corpus, filetype_corpus, filename_corpus, foldername_corpus, num_hidden_layers=1):
-        ClassificationModule.__init__(self, "All NN", "A basic feedforward neural network")
-
+        ClassificationModule.__init__(self, "All NN", "A basic feedforward neural network\
+        The readme and description are both encoded by the same Tfidf-Vectorizer with a vocabulary of 7000 words.\
+        Also the filetypes are encoded by such vectorizer, allowing encoding of 30 distinct filetypes.\
+        The vectorizer for foldernames and filenames both distinguish 150 different words.")
+        
         self.vectorizer = getTextVectorizer(7000) # Maximum of different columns
         self.filetypeVectorizer = getTextVectorizer(30) # TODO: Find better number
         self.foldernameVectorizer = getTextVectorizer(150) # TODO: Find better number

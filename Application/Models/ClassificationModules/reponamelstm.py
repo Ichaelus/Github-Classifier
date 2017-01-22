@@ -13,7 +13,11 @@ class reponamelstm(ClassificationModule):
     """A basic feedforward neural network"""
     
     def __init__(self, num_hidden_layers=3):
-        ClassificationModule.__init__(self, "Repo-Name Only LSTM", "A LSTM reading the repository-name character by character")
+        ClassificationModule.__init__(self, "Repo-Name Only LSTM", "A LSTM reading the repository-name character by character.\
+        The input is a matrix, each row standing for a character with each column representing a lowercase ASCII-Character, punctuation or a number.\
+        Up to 30 characters are fed into this net.\
+        The first hidden layer is the LSTM-layer, the next 3 are standard and fully connected. The outputs are normalized using a softmax function.\
+        The loss function is categorical crossentropy and the learning-rate of the used Adam-optimizer was set to 0.0025.")
 
         hidden_size = 250
         self.maxlen = 30

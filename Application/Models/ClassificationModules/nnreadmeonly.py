@@ -16,7 +16,7 @@ class nnreadmeonly(ClassificationModule):
     """A basic feedforward neural network"""
     
     def __init__(self, text_corpus, num_hidden_layers=1):
-        ClassificationModule.__init__(self, "Readme Only NN", "A basic feedforward neural network")
+        ClassificationModule.__init__(self, "Readme Only NN", "A basic feedforward neural network with 2 hidden layers trained on readme (Tfidf-Vectorizer dimension = 6000).")
         # Create vectorizer and fit on all available Descriptions
         self.vectorizer = getTextVectorizer(6000) # Maximum of different columns
         corpus = []
