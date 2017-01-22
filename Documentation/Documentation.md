@@ -55,7 +55,6 @@ In addition to that we wanted to try several state of the art algorithms and neu
 
 
 ### Our Strategy to get our train data
-**Zeug aus diesem Absatz gegenchecken zu 1. Absatz**
 As we approached this problem from a machine learning perspective we knew from the start that our models require a 
 large and diverse collection of manually classified examples. We immediately decided we needed a tool
 to help us building up a large collection of training samples. So, in order to speed up this process and make it
@@ -524,11 +523,12 @@ determined by your automatic classifier matched your intuitive classification."
 	</tbody>
 </table>
 
-<img src="/Documentation/Appendix_B_Confusion_Matrix.png" height=350>
+<img src="/Documentation/Appendix_B_Confusion_Matrix.png" height=350>  
 
-### Example Repositories
-> "Please document three repositories where you assume that your 
-application will yield better results as compared to the results of other teams."  
+### Example Repositories  
+> "Please document three repositories where you assume that your
+application will yield better results as compared to the results of other teams."      
+
 * [Homework](https://github.com/Sta523-Fa15/Homework) **HW**
 As this repository does neither contain a description nor a readme, there are only a handful of features that could lead to a correct classification:
 Filenames, Foldernames, repository name and somehow maybe the metadata. 
@@ -544,8 +544,14 @@ Among all these chinese characters 99% of the words are Web-related. "Web", "HTM
 But even tough some classifiers fall into this trap, the ensemble-model is very confident that the focus lays on a demonstration and knowledge transfer,
 as it states only 2 times on the site with the word "Demo". Therefore **EDU** is the right choice.
 
-* [Repo name](link) **DEV**
-reasoning
+* [Data](https://github.com/rgnewsroom/data) **EDU**
+*Data* was one of the classes we struggled with the most. It's so rare that we hardly found sufficient samples first.
+But after incorporating Active Learning and also looking up some samples manually the classification of such repositories is very robust.
+To get this right our classifiers had to look out for triggers like *Data* or *Datasets* and react very strongly to them.
+But anyway our ensemble-classifier still figured out that this repository is not **DATA**.
+The focus lays on knowledge transfer as it gets more and more clear by reading the readme.
+Even though for example the LSTM-Net is 100% sure the repository is **DATA** the ensemble learner is being supplied enough 
+meta information to recognize it has to rely on other classifiers here.
 
 
 
@@ -576,7 +582,7 @@ So it's been an exciting process finding little tricks and optimizations to get 
 Even though we had to omit the use of some features (Word2Vec-embeddings, file-content, ...) and weren't able to try 
 all possible feature-combinations due to limited time we're pretty happy and confident about our results and feel
 like this experience will enable us to approach similar problems way more efficiently in the future.
-### Our classifiers clearly reached a ceiling
+### Our classifiers clearly reached some sort of ceiling
 No classifier performed much better than 60% precision M, no matter how long we tried to tweak its parameters. 
 But we reached a value around these 60% with almost every other classifiers, 
 so it appears that what we experienced was some kind of limit how much can possibly be achieved with our 
