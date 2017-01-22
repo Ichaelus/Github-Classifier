@@ -65,13 +65,19 @@ GitHub only grants a limited number of API-calls available in a short amount of 
 all hand-classified repositories with extracted features in a database to access them without restrictions.
 In this process we filtered out all information (features) we needed and also possibly lacked to do so confidently.
 Pretty soon we were surprised by how different our perspectives were in regards to which class to assign to many repositories.
+For some thoughts on this at this time see *Discussions/List of corner cases.md*.
 Following this we decided to abolish all samples we classified through weeks and start from the beginning.
 The danger this diversity proposed to our classification-results was unacceptable.
 So we worked out precise definitions of each class and listed vital edge cases.
 The focus hereby laid on understandable definitions, finally sacrificing better evaluation scores of our models since 
 many important distinctions are very hard 'to get' for these models.
 After we learned from our mistakes we started to only classify in groups, later on handing this task over to only two team members
-and finally to only one person as it became too time-consuming.
+and finally to only one person as it became too time-consuming. 
+Finally this person is responsible for more than 3/4 of all samples we use now. This way we maximized constistency and efficiency
+without compiling a list of every single corner case to prevent ambiguity. 
+Altough keeping this list updated would be nice to have, especially for outsiders, it has proven to be impossible
+to do so without sacrificing an immense amount of time (and therefore collecting only half the samples we have now).
+This problem arose with *Classification Ambiguities.md* and *List of corner cases.md* in the *Discussions* folder.
 Mistakes made by this one person couldn't be prevented but eliminating the possibility of confusing differences in proposed classifications
 was our priority.
 Using this method we finally classified over 2000 repositories by hand.
