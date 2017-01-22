@@ -551,6 +551,9 @@ button.control {
   vertical-align: middle;
   padding-top: 15px;
 }
+.subtitle a{
+  word-wrap: break-word;
+}
 .portrait{
   height: 200px;
   background-size: auto 100%;
