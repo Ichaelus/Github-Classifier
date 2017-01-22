@@ -148,6 +148,10 @@ Specific requirements and information about installation: **Installation Manual.
 ### Python application
 An explanation of our User-Interface with all functionas can be found in **Frontend Manual.md**.
 Design of framework: **Active Learning Framework Planning Phase.md**
+The main functionalities are split up in our 3 core components:
+First being *DatabaseCommunication.py* which handles all acces to our database
+
+
 
 ### Webserver
 The server provides access to all collected data samples with additional filters and count-functionalities.
