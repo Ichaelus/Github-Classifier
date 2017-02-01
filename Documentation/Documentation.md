@@ -189,8 +189,6 @@ We then discussed every proposal and added further ones.
 It's notable that the features considered most important by us at first where almost exclusively text based.
 Readme, description, folder names, file names, author name and more. Unfortunately we had to limit the access of our models to 
 the folder and filenames of only the first layer in a repository's folder-structure. This was due to the previously mention API-Call limit.
-"In Diskussionen einigten wir uns auch der Verlockung durch festgelegte
-Schlüsselwörter zu widerstehen, Mustererkennung sollte dem Klassifizierer überlassen bleiben." # Soll das hier rein?
 In these discussion we discovered many features we first neglected: used programming languages (with a possible emphasis on the main language),
 depth of the folder-structure, commit count, average commit-length, branch count, whether a download of the repository is allowed, folder-count,
 number of files and more. Later we additionally implemented the average Levenshtein distance between folder and filenames. This was done
