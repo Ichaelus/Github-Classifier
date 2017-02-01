@@ -61,13 +61,9 @@ Username: informaticup
 Password: informaticup
 ```
 
-GitHub credentials for [our project](https://github.com/Ichaelus/Github-Classifier) are
-```
-Username: InformatiCupClient
-Password: InformatiCupClient1
-```
-
 Once Ubuntu has booted, change to the folder `~/GithubClassifier/` and replace it with the folder `GithubClassifier` of our submission. Open the folder and run `python Application/start.py` inside the terminal as root.
+
+Note that [our project repository](https://github.com/Ichaelus/Github-Classifier) is now public and visible for everyone.
 
 ## And what about the Backend?
 
@@ -78,12 +74,12 @@ Therefore we decided to rely on the remote server even in the final submission, 
 ```
 Accessible via PuTTY on SSH port 7822
 IP:  67.209.116.156
-Username: root
-Password: d4b4176bd5443f89
+Username: <provided separately>
+Password: <provided separately>
 Backend location: /var/www/html
 Database access: http://67.209.116.156/phpmyadmin/
-Database username: root
-Database password: c99t6%3NSjte7eaub8iw7y1a!
+Database username: <provided separately>
+Database password: <provided separately>
 ```
 
 If you still insist running the Backend locally, follow this guideline:
