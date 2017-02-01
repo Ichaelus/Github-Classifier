@@ -6,6 +6,8 @@ _Note: Open [UserManual.html](UserManual.html) with [Firefox 50](https://ftp.moz
 ## Introduction
 
 Welcome to the InformatiCup 2017 submission from the team of the **University of Augsburg**.
+Please note that this repository doesn't contain our trained classifier save-files. Training them on your own can take really long (1h+) 
+and due to the non-deterministic nature of the traing process of most models, results can vary greatly. We recommend using [the save-files from our submission](https://drive.google.com/drive/folders/0B3nBoE608aQyaG9iZkk0UFFpSm8).
 
 
 ## Classification Goals and Restrictions
