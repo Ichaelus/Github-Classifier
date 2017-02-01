@@ -23,7 +23,7 @@ This comparison is far from being close to reality, but does justice to the unde
 
 To surpass that boundary of ~ 60%, we made use of an [Ensemble learning module](https://en.wikipedia.org/wiki/Ensemble_learning) that combines the decisions of other modules to a final, more accurate one. All that combined - **AL**, modularisation, a train set with > 2000 samples and **Ensemble Learning** brought us to a total F-score M (each class weighted equally) of ~ 65%.
 
-_You can read further about our goals in **Documentation/Documentation.md**._
+_You can read further about our goals in **Documentation/Documentation.md** or open the file **Documentation.pdf** for a bundled documentation._
 
 ## Component Correlation
 
