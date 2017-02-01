@@ -1,7 +1,8 @@
 <?php
-##################################################
-# The interface between PHP and the MySQL server #
-##################################################
+#################################################################
+# The interface between PHP and the MySQL server		#
+# Username, Password and Database are being provided separately #
+#################################################################
 
 class MYSQL{
 	var $CONN = "";
