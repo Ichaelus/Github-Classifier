@@ -2,13 +2,28 @@
 
 _Note: Open [UserManual.html](UserManual.html) with [Firefox 50](https://ftp.mozilla.org/pub/firefox/releases/50.1.0/) for a better Markdown representation._
 
-
 ## Introduction
 
 Welcome to the InformatiCup 2017 submission from the team of the **University of Augsburg**.
 Please note that this repository doesn't contain our trained classifier save-files. Training them on your own can take really long (1h+) 
 and due to the non-deterministic nature of the traing process of most models, results can vary greatly. We recommend using [the save-files from our submission](https://drive.google.com/drive/folders/0B3nBoE608aQyaG9iZkk0UFFpSm8).
 
+
+## Update 13.03.17: We did it!
+<p style="text-align:center" align="center">
+  <img src="Documentation/team-augsburg.jpg"  width="600px">
+  <br>
+  <span style="font-style:italic">Photo credit: GI</span>
+</p>
+
+Yeah! We have been chosen the winning team of the InformatiCup 2017 challenge, what a great honor. Time to say thank you to:
+
+* The Gesellschaft für Informatik to host and organize such a great challenge - keep it up!
+* The chair of Organic Computing with Jörg Hähner
+* The sponsoring companies
+* Moreover: Our competitors - we saw many great solutions back at the BTW, it was nice meeting you!
+
+See you next year :-)
 
 ## Classification Goals and Restrictions
 
