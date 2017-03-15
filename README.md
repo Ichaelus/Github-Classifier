@@ -18,7 +18,7 @@ and due to the non-deterministic nature of the traing process of most models, re
 
 Yeah! We have been chosen the winning team of the InformatiCup 2017 challenge, what a great honor. Time to say thank you to:
 
-* The Gesellschaft für Informatik to host and organize such a great challenge - keep it up!
+* The Gesellschaft für Informatik for hosting and organizing such a great challenge - keep it up!
 * The chair of Organic Computing with Jörg Hähner
 * The sponsoring companies
 * Moreover: Our competitors - we saw many great solutions back at the BTW, it was nice meeting you!
