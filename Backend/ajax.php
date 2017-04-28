@@ -4,6 +4,10 @@
 ############################################################
 
 
+    // Report all errors except E_NOTICE
+    // This is the default value set in php.ini
+    error_reporting(E_ALL & ~E_NOTICE);
+
     header("Access-Control-Allow-Origin: *");
     require('mysqli_class.php');
     require("GitHandler.class.php");

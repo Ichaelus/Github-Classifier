@@ -15,7 +15,7 @@ def api_call(keyString, filterString="", tableString="", limitString="", selecto
     filterString = base64.b64encode(b'' + filterString)
     url = None
     data = None
-    url = 'http://67.209.116.156/ajax.php?key=api:' + keyString.decode("utf-8") + '&filter=' + quote(filterString.decode("utf-8")) + '&table=' + quote(tableString.decode("utf-8")) + '&limit=' + quote(limitString.decode("utf-8")) + "&selector=" + quote(selector.decode("utf-8"))
+    url = 'http://localhost:800/ajax.php?key=api:' + keyString.decode("utf-8") + '&filter=' + quote(filterString.decode("utf-8")) + '&table=' + quote(tableString.decode("utf-8")) + '&limit=' + quote(limitString.decode("utf-8")) + "&selector=" + quote(selector.decode("utf-8"))
     request = Request(url)
     try:
         response = urlopen(request)

@@ -28,7 +28,7 @@
       files: "",
       readme: ""
     },
-    server = "http://67.209.116.156/";
+    server = "http://localhost:800/";
 
 // Startup
 try {

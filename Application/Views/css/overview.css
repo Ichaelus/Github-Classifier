@@ -43,7 +43,7 @@ h1 span{
   top: 0;
   background-color: rgba(233, 233, 233, 0.4);
   /*box-shadow: 0 0 1px rgba(0,0,0,0.25);*/
-  border-bottom: 1px dashed #00000080;
+  border-bottom: 1px dashed rgba(0,0,0,.094);
   transition: background-color 0.3s ease-in-out;
   padding: 10px 60px;
   z-index: 2;
@@ -215,7 +215,7 @@ button.control {
 .classifier .name{
   display: block;
   border-bottom: 1px solid black;
-  background: #008000cc;
+  background: rgba(0,128,0,.8);
   color: white;
   padding: 5px 0;
   font-family: "RaleWay";
@@ -263,14 +263,14 @@ button.control {
   font-size: 80px;
   top: 13px;
   margin-left: -5px;
-  color: #0000004d;
+  color: 0000004d;
   font-weight: 100;
 }
 .result_vector.uncertain::before, .result_vector.uncertain::after{
-  color: #ff000080;
+  color: rgba(255,0,0,.313);
 }
 .result_vector.certain::before, .result_vector.certain::after{
-  color: #01962880;
+  color: rgba(1,150,40,.5);
 }
 
 .result_vector::after{
@@ -283,6 +283,7 @@ button.control {
   width: 47.6px;
   float: left;
   height: 80px;
+  margin-top: -2px;
 }
 .v span:first-child {
   font-weight: bold;
@@ -321,7 +322,7 @@ button.control {
   position: fixed;
   width: 100%;
   height: 100%;
-  background: #ffffffe6;
+  background: rgba(255,255,255,.902);
   top: 0;
   left: 0;
   z-index: 3;
@@ -355,7 +356,7 @@ button.control {
   text-align: left;
   font-style: unset;
   display: inline;
-  border-bottom: 1px dotted #21212133;
+  border-bottom: 1px dotted rgba(33,33,33,.2);
   margin: -2px 0 5px 0;
   letter-spacing: 1px;
   width: unset;
@@ -547,7 +548,7 @@ button.control {
 .subtitle{
   min-height: 75px;
   text-align: center;
-  border-top: 1px dashed #00000080;
+  border-top: 1px dashed rgba(0,0,0,.5);
   vertical-align: middle;
   padding-top: 15px;
 }
