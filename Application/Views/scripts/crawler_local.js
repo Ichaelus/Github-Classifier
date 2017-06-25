@@ -182,7 +182,7 @@ function getTree(type, fileNames){
   assert(isNotEmpty(type), "Type missing");
   let r = "";
   for(let i = 0; i < fileNames.length; i++)
-    if(String.trim(fileNames[i]) != "")
+    if(fileNames[i].trim() != "")
       r+= '<div title="'+type+'" class="col-xs-12 '+type+'">\
             <div class="col-xs-12">'+fileNames[i]+'</div>\
             <div class="col-xs-0"></div>\
@@ -314,7 +314,7 @@ function get_name_tag(){
   // Requires a name tag from every user
   let name_tag = localStorage.getItem("name_tag");
   if(name_tag == null){
-    name_tag = String.trim(prompt("Please insert your name tag")).toLowerCase();
+    name_tag = prompt("Please insert your name tag").trim().toLowerCase();
     assert(isNotEmpty(name_tag), "Invalid name tag");
     localStorage.setItem("name_tag", name_tag);
   }
@@ -430,4 +430,14 @@ function getParameterByName(name, url) {
     if (!results) return null;
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+if (!String.prototype.trim) {
+    (function() {
+        // Make sure we trim BOM and NBSP
+        var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
+        String.prototype.trim = function() {
+            return this.replace(rtrim, '');
+        };
+    })();
 }
